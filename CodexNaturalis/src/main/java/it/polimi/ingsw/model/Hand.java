@@ -1,7 +1,5 @@
 package main.java.it.polimi.ingsw.model;
 
-import java.util.ArrayList;
-
 public class Hand {
     PlayableCard[] HandCard;
 
@@ -28,7 +26,7 @@ public class Hand {
 
     public void playCard(PlayableCard card ){
         // mi servono sapere gli angoli che voglio andare a coprire
-        // come li recupero?
+        // come li recupero? Oppure li prendo in input?
 
         // gioca carta
 

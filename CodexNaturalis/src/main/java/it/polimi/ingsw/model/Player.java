@@ -37,11 +37,19 @@ public class Player {
         // settare manualmente currentResources con le risorse di startCard
     }
 
-    public static Token getToken() {
+    public Token getToken() {
         return token;
     }
 
     public CurrentResources getCurrentResources() {
         return currentResources;
+    }
+
+    public Hand getHand() {
+        return Hand;
+    }
+
+    public StartingCard getStartCard() {
+        return startCard;
     }
 }
