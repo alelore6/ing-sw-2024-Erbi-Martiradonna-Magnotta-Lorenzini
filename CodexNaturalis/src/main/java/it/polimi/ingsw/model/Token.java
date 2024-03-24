@@ -8,7 +8,7 @@ public class Token {
     private Scoretrack scoretrack;
 
     private Player player;
-    public Token(int color, int scoreTrackPos, Scoretrack scoretrack, Player player) {
+    public Token(int color, Scoretrack scoretrack, Player player) {
         this.color = color;
         this.scoreTrackPos = 0;
         this.scoretrack = scoretrack;
@@ -33,14 +33,18 @@ public class Token {
     }
 
     public void move(int points){
-        if(scoreTrackPos + points <= 29) {
-            getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
-            getScoretrack().getTokenPos()[scoreTrackPos + points] += 1;
-        }
-        else{
+        if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //se supera o si trova all'ultima posizione
             getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
             getScoretrack().getTokenPos()[29] += 1;
+            scoreTrackPos = 29;
         }
+        else if((scoreTrackPos + points) <= 29) {  //altrimenti vado alla nuova posizione
+            getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
+            getScoretrack().getTokenPos()[scoreTrackPos + points] += 1;
+            scoreTrackPos = scoreTrackPos + points;
+        }
+
+
     }
 }
 
