@@ -34,7 +34,7 @@ public class Game {
 
     public void startGame(int numPlayers){
 
-        tablecenter = new TableCenter(new Object(), new Object(), new Object());
+        tablecenter = new TableCenter(new Object(), new Object(), new Object()); //TODO FIXARE
     }
     public void endGame(){
 
