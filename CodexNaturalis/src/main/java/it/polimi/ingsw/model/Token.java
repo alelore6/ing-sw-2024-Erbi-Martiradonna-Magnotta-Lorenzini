@@ -1,4 +1,4 @@
-package main.java.it.polimi.ingsw.model;
+package it.polimi.ingsw.model;
 
 public class Token {
 
@@ -33,12 +33,12 @@ public class Token {
     }
 
     public void move(int points){
-        if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //se supera o si trova all'ultima posizione
+        if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //if currentpos is 29 or goes over 29 sets position at 29
             getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
             getScoretrack().getTokenPos()[29] += 1;
-            scoreTrackPos = 29;
+            scoreTrackPos = 29; //update attribute
         }
-        else if((scoreTrackPos + points) <= 29) {  //altrimenti vado alla nuova posizione
+        else if((scoreTrackPos + points) <= 29) {  //if new move does not go all the way to 29, sets new position
             getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
             getScoretrack().getTokenPos()[scoreTrackPos + points] += 1;
             scoreTrackPos = scoreTrackPos + points;

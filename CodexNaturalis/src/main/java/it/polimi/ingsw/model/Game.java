@@ -1,5 +1,6 @@
-package main.java.it.polimi.ingsw.model;
+package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.model.Player;
 import jdk.javadoc.internal.doclets.formats.html.Table;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import sun.tools.jconsole.Tab;
@@ -34,7 +35,10 @@ public class Game {
 
     public void startGame(int numPlayers){
 
-        tablecenter = new TableCenter(new Object(), new Object(), new Object()); //TODO FIXARE
+        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new Object()); //TODO FIXARE
+        for(int i = 0; i < numPlayers; i++){
+
+        }
     }
     public void endGame(){
 

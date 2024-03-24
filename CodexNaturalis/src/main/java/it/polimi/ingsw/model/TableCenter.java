@@ -1,18 +1,18 @@
-package main.java.it.polimi.ingsw.model;
+package it.polimi.ingsw.model;
 
 public class TableCenter {
 
-    private Object resDeck;  //TODO sostituire "Object" con classi corrette
-    private Object goldDeck;
+    private ResourceDeck resDeck;  //TODO sostituire "Object" con classi corrette
+    private GoldDeck goldDeck;
 
     private Object objCards;
 
-    private Object[] resCards = new Object[2];
+    private ResourceCard[] resCards = new ResourceCard[2];
 
-    private Object[] goldCards = new Object[2];
+    private GoldCard[] goldCards = new GoldCard[2];
 
 
-    public TableCenter(Object resDeck, Object goldDeck, Object objCards) {
+    public TableCenter(ResourceDeck resDeck, GoldDeck goldDeck, Object objCards) {  //TODO sostituire OBJECT
         this.resDeck = resDeck;
         this.goldDeck = goldDeck;
         this.objCards = objCards;
@@ -28,7 +28,7 @@ public class TableCenter {
 
     public Object getObjCards() {
         return objCards;
-    }
+    }  //TODO sostituire object
 
     public static PlayableCard drawAndPosition(PlayableCard playablecard){
 
