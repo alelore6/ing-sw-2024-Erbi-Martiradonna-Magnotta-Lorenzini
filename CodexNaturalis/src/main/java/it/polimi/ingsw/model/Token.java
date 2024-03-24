@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package main.java.it.polimi.ingsw.model;
 
 public class Token {
 

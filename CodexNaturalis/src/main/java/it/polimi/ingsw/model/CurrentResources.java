@@ -12,8 +12,12 @@ public class CurrentResources {
          }
      }
 
-     public static void update(PlayableCard LastPlayedCard){
+     public void update(PlayableCard LastPlayedCard){
         // aggiornamento delle risorse
-        Player.getToken().move();
+
+         int addPoints=0;
+        //calcolo punti
+
+         Player.getToken().move(addPoints);
      }
 }
