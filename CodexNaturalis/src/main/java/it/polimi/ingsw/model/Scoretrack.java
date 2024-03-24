@@ -5,7 +5,7 @@ public class Scoretrack {
     private int[] tokenPos;
 
     public Scoretrack() {
-        tokenPos = new int[29];
+        tokenPos = new int[30];
     }
 
     public int[] getTokenPos() {
