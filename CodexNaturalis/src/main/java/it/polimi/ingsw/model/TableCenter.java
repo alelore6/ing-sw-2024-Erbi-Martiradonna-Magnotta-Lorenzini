@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package main.java.it.polimi.ingsw.model;
 
 public class TableCenter {
 
@@ -30,7 +30,7 @@ public class TableCenter {
         return objCards;
     }
 
-    public void drawAndPosition(Object playablecard){
+    public static PlayableCard drawAndPosition(PlayableCard playablecard){
 
     }
 }

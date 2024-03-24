@@ -1,4 +1,4 @@
-package it.polimi.ingsw.model;
+package main.java.it.polimi.ingsw.model;
 
 import jdk.javadoc.internal.doclets.formats.html.Table;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

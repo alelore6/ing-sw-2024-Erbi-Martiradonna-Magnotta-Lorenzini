@@ -1,38 +1,47 @@
-package it.polimi.ingsw.model;
+package main.java.it.polimi.ingsw.model;
 
 public class Player {
 
-    private String nickname;
-    private objectiveCard objective;
-    private startingCard startCard;
-    private Token token;
-    private CurrentResources currentResources;
-    private Hand hand;
+    private final String nickname;
+    private ObjectiveCard objective;
+    private final StartingCard startCard;
+    private final Token token;
+    private final CurrentResources currentResources;
+    private final Hand Hand;
 
-    Player(String nickname, startingCard startCard, Token token){
+    Player(String nickname, StartingCard startCard, Token token){
         this.nickname=nickname;
         this.startCard=startCard;
         this.token= token;
         currentResources= new CurrentResources();
-        hand = new Hand();
+        Hand = new Hand();
+        PlaceStartingCard();
     }
     public String getNickname() {
         return nickname;
     }
 
-    public objectiveCard getObjective() {
+    public ObjectiveCard getObjective() {
         return objective;
     }
 
-    public void chooseObjective(objectiveCard obj1, objectiveCard obj2){
+    public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
         //richiede input utente
     }
-    public startingCard getStartcard() {
+    public StartingCard getStartcard() {
         return startcard;
     }
 
-    public Token getToken() {
+    public void PlaceStartingCard(){
+        //possibilità di rotare carta
+        // settare manualmente currentResources con le risorse di startCard
+    }
+
+    public static Token getToken() {
         return token;
     }
 
+    public CurrentResources getCurrentResources() {
+        return currentResources;
+    }
 }
