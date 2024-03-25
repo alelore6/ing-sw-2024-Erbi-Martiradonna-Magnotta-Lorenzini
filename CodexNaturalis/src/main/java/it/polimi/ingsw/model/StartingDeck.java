@@ -6,7 +6,7 @@ public class StartingDeck {
     public StartingDeck(){
         startcards = new StartingCard[6];
     }
-    public ObjectiveCard draw() {
+    public StartingCard draw() {
         return startcards;
     }
 
