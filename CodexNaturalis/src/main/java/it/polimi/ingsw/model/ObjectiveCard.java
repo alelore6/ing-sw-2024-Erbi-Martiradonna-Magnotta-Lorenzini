@@ -5,7 +5,7 @@ public abstract class ObjectiveCard {
     private int ID;
     public int points;
 
-    protected ObjectiveCard(int ID) {
+    ObjectiveCard(int ID) {
         this.ID = ID;
     }
     public abstract ObjectiveCard getCard();

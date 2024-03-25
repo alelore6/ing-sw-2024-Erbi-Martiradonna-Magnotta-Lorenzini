@@ -42,7 +42,7 @@ public class TableCenter {
 
 
     public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException {
-
+                //TODO l'eccezzione va gestita qui e non propagata
                 int i;
                 boolean found = false;
                 for(i = 0; i < centerCards.length; i++) {   //itero array per trovare carta passata come parametro

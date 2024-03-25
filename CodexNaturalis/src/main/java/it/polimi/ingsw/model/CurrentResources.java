@@ -5,19 +5,21 @@ import java.util.Map;
 
 public class CurrentResources {
      Map<Resource,Integer> CurrentResources;
-     CurrentResources(){
+     private final Player player;
+     CurrentResources(Player player){
          CurrentResources=new HashMap<>();
+         this.player=player;
          for (Resource r: Resource.values()){
              CurrentResources.put(r, 0);
          }
      }
 
      public void update(PlayableCard LastPlayedCard){
-        // aggiornamento delle risorse
+        //TODO aggiornamento delle risorse basato sulla carta giocata e gli angoli coperti da essa
 
          int addPoints=0;
-        //calcolo punti
+        //TODO calcolo punti
 
-         Player.getToken().move(addPoints);
+         player.getToken().move(addPoints);
      }
 }
