@@ -3,13 +3,13 @@ package it.polimi.ingsw.model;
 public class GoldCard extends PlayableCard{
     public GoldCard(int ID){
         super(ID);
-        //% inserire i dati dal database
+        //% insert data from DB
     }
-    public Resource RPoint;
+    // WARNING! In the back of the gold cards, there's no requirement nor points
+    public GoldResource RPoint;
     public Resource[] req = new Resource[5];
 
     public void flip(){
-        //fare altro
         isFacedown = !isFacedown;
     }
     public GoldCard getCard(){

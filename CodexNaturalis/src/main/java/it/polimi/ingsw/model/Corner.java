@@ -9,7 +9,9 @@ public class Corner {
     public Corner(Position pos, Resource resource){
         this.pos = pos;
         this.resource = resource;
-
         isCovered = false;
+    }
+    protected void setCardOn(PlayableCard cardOn){
+        this.cardOn = cardOn;
     }
 }

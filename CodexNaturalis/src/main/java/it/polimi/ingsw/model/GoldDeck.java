@@ -3,9 +3,9 @@ package it.polimi.ingsw.model;
 public class GoldDeck extends Deck{
     private GoldCard[] cards;
     public GoldDeck(){
-        //si considera la prima carta del mazzo quella con indice più alto
+        // the first card of the deck will be the one with the highest index i.e. NCards - 1
         cards = new GoldCard[40];
-        //% mettere in ordine randomico le 40 carte dal database
+        //% insert the 40 cards from DB randomly
     }
     public GoldCard draw() throws isEmptyException{
         if(getNCards() == 0){
@@ -15,6 +15,6 @@ public class GoldDeck extends Deck{
             NCards--;
             return cards[NCards];
         }
-        //% così però non si elimina la carta dal vettore
+        //% we don't delete the card from the array doing this
     }
 }

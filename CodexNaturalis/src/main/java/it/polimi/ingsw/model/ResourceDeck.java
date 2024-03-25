@@ -3,9 +3,9 @@ package it.polimi.ingsw.model;
 public class ResourceDeck extends Deck{
     private ResourceCard[] cards;
     public ResourceDeck(){
-        //si considera la prima carta del mazzo quella con indice più alto
+        // the first card of the deck will be the one with the highest index i.e. NCards - 1
         cards = new ResourceCard[40];
-        //% mettere in ordine randomico le 40 carte dal database
+        //% insert the 40 cards from DB randomly
     }
     public ResourceCard draw() throws isEmptyException{
         if(getNCards() == 0){
