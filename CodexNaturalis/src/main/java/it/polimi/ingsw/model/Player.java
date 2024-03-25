@@ -9,6 +9,9 @@ public class Player {
     private final CurrentResources currentResources;
     private final Hand Hand;
 
+
+    private boolean isFirst;
+
     Player(String nickname, StartingCard startCard, Token token){
         this.nickname=nickname;
         this.startCard=startCard;
@@ -16,6 +19,7 @@ public class Player {
         currentResources= new CurrentResources();
         Hand = new Hand();
         PlaceStartingCard();
+        isFirst = false;
     }
     public String getNickname() {
         return nickname;
@@ -27,9 +31,6 @@ public class Player {
 
     public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
         //richiede input utente
-    }
-    public StartingCard getStartcard() {
-        return startcard;
     }
 
     public void PlaceStartingCard(){
@@ -51,5 +52,9 @@ public class Player {
 
     public StartingCard getStartCard() {
         return startCard;
+    }
+
+    public void setisFirst() {
+        isFirst = true;
     }
 }
