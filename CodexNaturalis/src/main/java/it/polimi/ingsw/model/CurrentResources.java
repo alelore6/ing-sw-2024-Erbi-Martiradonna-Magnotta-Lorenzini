@@ -14,9 +14,9 @@ public class CurrentResources {
          }
      }
 
-     public void update(PlayableCard LastPlayedCard){
-        //TODO aggiornamento delle risorse basato sulla carta giocata e gli angoli coperti da essa
-
+     public void update(Card LastPlayedCard){
+        //TODO aggiornamento delle risorse basato sulla carta giocata
+        // e gli angoli coperti da essa e lato carta
          int addPoints=0;
         //TODO calcolo punti
 

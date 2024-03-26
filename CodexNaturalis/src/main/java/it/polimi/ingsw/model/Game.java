@@ -20,6 +20,7 @@ public class Game {
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i], this );
         }
+
     }
 
     public TableCenter getTablecenter() {return tablecenter;}
@@ -53,7 +54,7 @@ public class Game {
 
         for(Player p: players){
             //TODO DISTRIBUIRE STARTING CARD DA STARTING DECK
-            p.PlaceStartingCard();
+            //p.PlaceStartingCard();
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi instanzio nuova classe token
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0 );
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1 );   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold

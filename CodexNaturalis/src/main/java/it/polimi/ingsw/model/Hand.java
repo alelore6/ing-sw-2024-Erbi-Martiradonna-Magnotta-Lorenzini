@@ -2,9 +2,11 @@ package it.polimi.ingsw.model;
 
 public class Hand {
     PlayableCard[] HandCard;
+    private Card[][] displayedCards;
     private final Player player;
     Hand(Player player){
         HandCard= new PlayableCard[3];
+        displayedCards=new Card[81][81];
         this.player=player;
     }
 
@@ -28,18 +30,14 @@ public class Hand {
         return HandCard[pos];
     }
 
-    public void playCard(PlayableCard card ){
-        // mi servono sapere gli angoli che voglio andare a coprire
-        // come li recupero? Oppure li prendo in input?
-
-        //TODO controllare se la carta si può giocare su quegli angoli
-
+    public void playCard(Card card, int x, int y ){
+        // devo controllare che la carta in input sia veramente nella mano? Non nel caso di starting card
+        // TODO controllo se la carta è girata
         //TODO se carta oro devo controllare CurrentResources
+        //TODO controllare se la carta si può in quella posizione
 
-        //TODO gioca carta
-
+        displayedCards[x][y] = card;
         player.getCurrentResources().update(card);
 
-        //da input scegliere se pescare da mazzo o da terra
     }
 }

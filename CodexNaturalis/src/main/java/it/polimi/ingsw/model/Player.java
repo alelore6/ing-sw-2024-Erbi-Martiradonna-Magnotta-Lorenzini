@@ -4,11 +4,9 @@ public class Player {
 
     private final String nickname;
     private ObjectiveCard objective;
-    private StartingCard startCard;
     private Token token;
     private final CurrentResources currentResources;
     private final Hand Hand;
-
     private final Game game;
     private boolean isFirst;
     //ha più senso ordinare l'array di players in game con l'ordine di gioco
@@ -33,10 +31,9 @@ public class Player {
 
     }
 
-    public void PlaceStartingCard(){
+    public void PlaceStartingCard(StartingCard StartCard){
         //possibilità di rotare carta da input
-        //TODO settare currentResources con le risorse di startCard
-        //perchè per come è implementato ora non posso passare una startingCard a update
+        Hand.playCard(StartCard,40,40);
     }
 
     public Token getToken() {
@@ -51,9 +48,6 @@ public class Player {
         return Hand;
     }
 
-    public StartingCard getStartCard() {
-        return startCard;
-    }
 
     public void setisFirst() {
         isFirst = true;
@@ -62,10 +56,6 @@ public class Player {
 
     public Game getGame() {
         return game;
-    }
-
-    public void setStartCard(StartingCard startCard) {
-        this.startCard = startCard;
     }
 
     public void setToken(Token token) {
