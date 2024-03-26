@@ -1,11 +1,8 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Player;
-
-
 public class Game {
 
-    private int numPlayers;
+    private final int numPlayers;
     private int turnCounter;
     private boolean isFinished;
     private int remainingTurns;
@@ -13,13 +10,16 @@ public class Game {
     TableCenter tablecenter;
 
 
-    Game(int numPlayers, int turnCounter, boolean isFinished, int remainingTurns)
+    Game(int numPlayers, String[] nicknames)
     {
         this.numPlayers = numPlayers;
-        this.turnCounter = turnCounter;
-        this.isFinished = isFinished;
-        this.remainingTurns = remainingTurns;
+        this.turnCounter = 0;
+        this.isFinished = false;
+        this.remainingTurns = -1;
         players = new Player[numPlayers];
+        for (int i=0;i<numPlayers;i++ ){
+            players[i]= new Player(nicknames[i], this );
+        }
     }
 
     public TableCenter getTablecenter() {return tablecenter;}
@@ -28,7 +28,7 @@ public class Game {
     public int getRemainingTurns() {return remainingTurns;}
     public int getTurnCounter() {return turnCounter;}
 
-    public void startGame(int numPlayers) throws isEmptyException {
+    public void startGame(int numPlayers) throws RuntimeException {
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck()); //TODO FIXARE object
 
@@ -53,6 +53,7 @@ public class Game {
 
         for(Player p: players){
             //TODO DISTRIBUIRE STARTING CARD DA STARTING DECK
+            p.PlaceStartingCard();
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi instanzio nuova classe token
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0 );
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1 );   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
@@ -74,12 +75,13 @@ public class Game {
     public Player checkWinner(){
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo. se parità persiste allora i giocatori condividono la vittoria!
-        Player winner;
+        Player winner = null;
         int punteggi[] = new int[numPlayers];
 
-        for(int i = 0; i < numPlayers){
+        for(int i = 0; i < numPlayers; i++){
 
         }
+        return winner;
     }
 
     public void nextPlayer(){

@@ -2,22 +2,26 @@ package it.polimi.ingsw.model;
 
 public class Hand {
     PlayableCard[] HandCard;
-
-    Hand(){
+    private final Player player;
+    Hand(Player player){
         HandCard= new PlayableCard[3];
-        HandCard[0]= DrawFromDeck(ResourceDeck, 0);
-        HandCard[1]= DrawFromDeck(ResourceDeck, 1);
-        HandCard[2]= DrawFromDeck(GoldDeck, 2);
+        this.player=player;
     }
 
     public void DrawFromDeck(Deck deck, int posHand){
         //la scelta del deck da cui pescare sarà dell'utente
-        HandCard[posHand]= deck.draw();
+        try {
+            HandCard[posHand]= deck.draw();
+        } catch (isEmptyException e) {
+            //TODO gestire eccezione
+            //pesco nell'altro mazzo
+            //se anche lui vuoto chiamo endgame()
+        }
     }
 
     public void DrawPositionedCard( PlayableCard card, int posHand){
         //l'utente sceglie direttamente la carta presente in tableCenter da pescare
-        HandCard[posHand]= TableCenter.drawAndPosition(card);
+        HandCard[posHand]= player.getGame().tablecenter.drawAndPosition(card);
     }
 
     public PlayableCard getHandCard(int pos){
@@ -28,8 +32,14 @@ public class Hand {
         // mi servono sapere gli angoli che voglio andare a coprire
         // come li recupero? Oppure li prendo in input?
 
-        // gioca carta
+        //TODO controllare se la carta si può giocare su quegli angoli
 
-        CurrentResources.update(card);
+        //TODO se carta oro devo controllare CurrentResources
+
+        //TODO gioca carta
+
+        player.getCurrentResources().update(card);
+
+        //da input scegliere se pescare da mazzo o da terra
     }
 }

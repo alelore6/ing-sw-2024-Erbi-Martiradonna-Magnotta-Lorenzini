@@ -7,7 +7,8 @@ public class ObjectiveDeck {
         objcards = new ObjectiveCard[16];
     }
     public ObjectiveCard draw() {
-        return objcards;
+        //TODO da sistemare
+        return objcards[0];
     }
 
 

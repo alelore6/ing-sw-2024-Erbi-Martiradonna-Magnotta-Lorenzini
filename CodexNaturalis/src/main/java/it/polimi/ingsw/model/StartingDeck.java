@@ -7,7 +7,8 @@ public class StartingDeck {
         startcards = new StartingCard[6];
     }
     public StartingCard draw() {
-        return startcards;
+        //TODO da sistemare
+        return startcards[0];
     }
 
 

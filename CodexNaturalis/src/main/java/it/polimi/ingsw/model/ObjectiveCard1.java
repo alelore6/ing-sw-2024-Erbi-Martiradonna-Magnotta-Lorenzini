@@ -5,10 +5,12 @@ package it.polimi.ingsw.model;
 public class ObjectiveCard1 extends ObjectiveCard{
 
     public int[] req1= new int[3];
-    public color[] Color= new color[4];
+    public Color[] Color= new Color[4];
+
+    //TODO aggiungere costruttore
 
     public ObjectiveCard getCard(){
-        return objectivecard;
+        return this;
     }
 
     public int getPoints(){
