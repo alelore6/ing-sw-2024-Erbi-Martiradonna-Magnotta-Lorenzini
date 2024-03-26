@@ -4,14 +4,12 @@ import java.util.Optional;
 
 public class TableCenter {
 
-    private ResourceDeck resDeck;  //TODO sostituire "Object" con classi corrette
+    private ResourceDeck resDeck;
     private GoldDeck goldDeck;
 
     private ObjectiveDeck objDeck;
 
     private ObjectiveCard[] objCards = new ObjectiveCard[2];
-
-
 
     private PlayableCard[] centerCards = new PlayableCard[4]; //le prime 2 sono resource card, le ultime gold cards
 
@@ -26,9 +24,11 @@ public class TableCenter {
     public ObjectiveCard[] getObjCards() {
         return objCards;
     }    //GETTER
+
     public PlayableCard[] getCenterCards() {
         return centerCards;
     }
+
     public ResourceDeck getResDeck() {
         return resDeck;
     }
@@ -36,46 +36,58 @@ public class TableCenter {
     public GoldDeck getGoldDeck() {
         return goldDeck;
     }
+
     public ObjectiveDeck getObjDeck() {
         return objDeck;
     }
 
 
     public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException {
-                //TODO l'eccezzione va gestita qui e non propagata
-                int i;
-                boolean found = false;
-                for(i = 0; i < centerCards.length; i++) {   //itero array per trovare carta passata come parametro
-                    if (centerCards[i] == playablecard) {
-                        found = true;
-                        break;
-                    }
-                }
-
-            if(found) {
-                if (playablecard instanceof ResourceCard) {  //se la carta è una resource card prima pesco dal resDeck
-                    if (resDeck.getNCards() > 0) {
-                        centerCards[i] = resDeck.draw();
-                        return Optional.of(playablecard);
-                    } else if (goldDeck.getNCards() > 0) {
-                        centerCards[i] = goldDeck.draw();
-                        return Optional.of(playablecard);
-                    }
-
-                }
-                else if (playablecard instanceof GoldCard) { //altrimenti prima pesco dal GoldDeck
-                    if (goldDeck.getNCards() > 0) {
-                        centerCards[i] = resDeck.draw();
-                        return Optional.of(playablecard);
-                    } else if (resDeck.getNCards() > 0) {
-                        centerCards[i] = goldDeck.draw();
-                        return Optional.of(playablecard);
-                    }
-
-                }
-                centerCards[i] = null;
+        //TODO exception is to be dealt here
+        int i;
+        boolean found = false;
+        for (i = 0; i < centerCards.length; i++) {   //iterate array to find card passed by parameter
+            if (centerCards[i] == playablecard) {
+                found = true;
+                break;
             }
-            return Optional.ofNullable(playablecard);
+        }
+
+        if (found) {
+            if (playablecard instanceof ResourceCard) {  //if card passed by param. is a resource card I draw from ResourceDeck
+                if (resDeck.getNCards() > 0) {
+                    try {
+                        centerCards[i] = resDeck.draw();
+                        return Optional.of(playablecard);
+                    } catch (isEmptyException e) {
+                        try {
+                            centerCards[i] = goldDeck.draw();
+                            return Optional.of(playablecard);
+                        } catch (isEmptyException e1) {
+                            //TODO what to do if both decks are empty?
+                        }
+                    }
+                }
+
+            } else if (playablecard instanceof GoldCard) { //if instead card is GoldCard I first draw from goldDeck
+                try {
+                    centerCards[i] = goldDeck.draw();
+                    return Optional.of(playablecard);
+                } catch (isEmptyException e) {
+                    try {
+                        centerCards[i] = resDeck.draw();
+                        return Optional.of(playablecard);
+                    } catch (isEmptyException e1) {
+                        //TODO what to do if both decks are empty?
+                    }
+
+                }
+
+            }
+            centerCards[i] = null; //if card  passed by parameter is found but I cant draw, just empty the space
+
+        }
+        return Optional.ofNullable(playablecard); //return statement in case the card is not found (the player won't draw anything)
     }
 }
 

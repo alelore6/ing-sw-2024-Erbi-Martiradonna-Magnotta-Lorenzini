@@ -30,7 +30,7 @@ public class Game {
 
     public void startGame(int numPlayers) throws RuntimeException {
 
-        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck()); //TODO FIXARE object
+        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck());
 
         for(int i = 0; i < 4; i++){  //Riempio le carte a terra per la prima volta dai deck
             if(i < 2){
