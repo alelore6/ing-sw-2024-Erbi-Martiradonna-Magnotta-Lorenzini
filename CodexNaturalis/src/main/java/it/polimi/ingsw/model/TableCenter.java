@@ -41,7 +41,7 @@ public class TableCenter {
     }
 
 
-    public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException {
+    public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException { //TODO gestire con try catch exception
 
                 int i;
                 boolean found = false;

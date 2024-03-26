@@ -9,7 +9,7 @@ public class Game {
     private int turnCounter;
     private boolean isFinished;
     private int remainingTurns;
-    Player[] players;
+    Player[] players; //TODO domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
     TableCenter tablecenter;
 
 
@@ -41,7 +41,7 @@ public class Game {
                 }
                 tablecenter.getObjCards()[i] = tablecenter.getObjDeck().draw();
             }
-            if(i > 2){
+            if(i >= 2){
                 try {
                     tablecenter.getCenterCards()[i] = tablecenter.getGoldDeck().draw();
                 } catch (isEmptyException e) {
