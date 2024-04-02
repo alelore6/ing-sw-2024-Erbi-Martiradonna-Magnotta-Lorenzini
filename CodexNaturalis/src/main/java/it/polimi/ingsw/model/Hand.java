@@ -2,7 +2,7 @@ package it.polimi.ingsw.model;
 
 public class Hand {
     PlayableCard[] HandCard;
-    private Card[][] displayedCards;
+    private final Card[][] displayedCards;
     private final Player player;
     Hand(Player player){
         HandCard= new PlayableCard[3];
@@ -15,9 +15,21 @@ public class Hand {
         try {
             HandCard[posHand]= deck.draw();
         } catch (isEmptyException e) {
-            //TODO gestire eccezione
-            //pesco nell'altro mazzo
-            //se anche lui vuoto chiamo endgame()
+            // draw from other deck or ask the player another draw source
+            if(deck instanceof GoldDeck){
+                try {
+                    HandCard[posHand]= player.getGame().tablecenter.getResDeck().draw();
+                } catch (isEmptyException e2) {
+                    player.getGame().endGame();
+                }
+            }
+            else {
+                try {
+                    HandCard[posHand]= player.getGame().tablecenter.getGoldDeck().draw();
+                } catch (isEmptyException e2) {
+                    player.getGame().endGame();
+                }
+            }
         }
     }
 
@@ -30,14 +42,19 @@ public class Hand {
         return HandCard[pos];
     }
 
-    public void playCard(Card card, int x, int y ){
+    public void playCard(Card card, int x, int y ) throws WrongPlayException{
         // devo controllare che la carta in input sia veramente nella mano? Non nel caso di starting card
         // TODO controllo se la carta è girata
         //TODO se carta oro devo controllare CurrentResources
-        //TODO controllare se la carta si può in quella posizione
+        if (card instanceof GoldCard){
 
+        }
+        //check surrounding places
+        if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
+            throw new WrongPlayException(player,x,y,card);
+            //TODO check corner liberi
+        }
         displayedCards[x][y] = card;
         player.getCurrentResources().update(card);
-
     }
 }

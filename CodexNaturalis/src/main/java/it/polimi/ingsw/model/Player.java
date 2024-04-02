@@ -31,7 +31,7 @@ public class Player {
 
     }
 
-    public void PlaceStartingCard(StartingCard StartCard){
+    public void PlaceStartingCard(StartingCard StartCard) throws WrongPlayException {
         //possibilità di rotare carta da input
         Hand.playCard(StartCard,40,40);
     }
