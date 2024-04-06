@@ -43,16 +43,60 @@ public class Hand {
     }
 
     public void playCard(Card card, int x, int y ) throws WrongPlayException{
-        // devo controllare che la carta in input sia veramente nella mano? Non nel caso di starting card
-        // TODO controllo se la carta è girata
-        //TODO se carta oro devo controllare CurrentResources
-        if (card instanceof GoldCard){
-
+        // controllo che la carta in input sia veramente nella mano? Non nel caso di starting card
+        boolean found=false;
+        if (!(card instanceof StartingCard)){
+            for (Card c: HandCard){
+                if (c.equals(card)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found){
+                throw new WrongPlayException(player,-1,-1,card);
+                //pos -1,-1 indicates this specific type of error
+            }
+        }
+        if (card instanceof GoldCard && !card.isFacedown){
+            //TODO devo controllare CurrentResources
         }
         //check surrounding places
         if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
             throw new WrongPlayException(player,x,y,card);
-            //TODO check corner liberi
+        }
+        // numero di angoli che la cartà andrà a sovrapporre
+        // deve essercene almeno 1
+        int overlaps=0;
+        // check overlapping corners are free
+        if (displayedCards[x-1][y-1]!=null){
+            // 0: UP_SX; 1: UP_DX; 2: DOWN_SX; 3: DOWN_DX
+            //if there's no corner, it's NULL
+            //come è definito un angolo libero ma vuoto?
+            if ((displayedCards[x-1][y-1]).corners[1]==null){
+                throw new WrongPlayException(player,x,y,card);
+            }
+            else overlaps++;
+        }
+        if (displayedCards[x-1][y+1]!=null){
+            if ((displayedCards[x-1][y+1]).corners[3]==null){
+                throw new WrongPlayException(player,x,y,card);
+            }
+            else overlaps++;
+        }
+        if (displayedCards[x+1][y+1]!=null){
+            if ((displayedCards[x+1][y+1]).corners[2]==null){
+                throw new WrongPlayException(player,x,y,card);
+            }
+            else overlaps++;
+        }
+        if (displayedCards[x+1][y-1]!=null){
+            if ((displayedCards[x+1][y-1]).corners[0]==null){
+                throw new WrongPlayException(player,x,y,card);
+            }
+            else overlaps++;
+        }
+        if(overlaps==0){
+            throw new WrongPlayException(player,-2,-2,card);
         }
         displayedCards[x][y] = card;
         player.getCurrentResources().update(card);
