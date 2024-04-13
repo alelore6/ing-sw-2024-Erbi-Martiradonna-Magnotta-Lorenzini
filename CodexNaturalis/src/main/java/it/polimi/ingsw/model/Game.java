@@ -33,7 +33,7 @@ public class Game {
     public int getRemainingTurns() {return remainingTurns;}
     public int getTurnCounter() {return turnCounter;}
 
-    public void startGame(int numPlayers) throws RuntimeException, WrongPlayException {
+    public void startGame(int numPlayers) throws RuntimeException, WrongPlayException{
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck());
 
@@ -60,10 +60,13 @@ public class Game {
             p.PlaceStartingCard(StartingDeck.draw());
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
 
-
-            p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0 );
-            p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1 );   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
-            p.getHand().DrawFromDeck(tablecenter.getGoldDeck(), 2 );
+            try {
+                p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0);
+                p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1);   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
+                p.getHand().DrawFromDeck(tablecenter.getGoldDeck(), 2);
+            } catch(isEmptyException e){
+                throw new RuntimeException(e);
+            }
             p.chooseObjective(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw());
             //ogni giocatore riceve 2 carte obiettivo, le guarda e ne sceglie 1, quello sarà il suo obiettivo segreto
 
@@ -105,6 +108,4 @@ public class Game {
             if(p == players[i]){break;}
         }
     }
-
-
 }
