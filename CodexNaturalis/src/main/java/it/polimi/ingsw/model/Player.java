@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public class Player {  //TODO check slack and probably use 81x81 matrix per il CAMPO DEL GIOCATORE
+public class Player {
 
     private final String nickname;
     private ObjectiveCard objective;
@@ -9,7 +9,6 @@ public class Player {  //TODO check slack and probably use 81x81 matrix per il C
     private final Hand Hand;
     private final Game game;
     protected int position;
-    //ha più senso ordinare l'array di players in game con l'ordine di gioco
 
     Player(String nickname, Game game){
         this.nickname=nickname;
@@ -26,12 +25,11 @@ public class Player {  //TODO check slack and probably use 81x81 matrix per il C
     }
 
     public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
-        //richiede input utente
-
+        //TODO client's input request
     }
 
-    public void PlaceStartingCard(StartingCard StartCard) throws WrongPlayException {
-        //possibilità di ruotare carta da input
+    protected void PlaceStartingCard(StartingCard StartCard) throws WrongPlayException {
+        //TODO Card can be rotated, do i ask here?
         Hand.playCard(StartCard,40,40);
     }
 
