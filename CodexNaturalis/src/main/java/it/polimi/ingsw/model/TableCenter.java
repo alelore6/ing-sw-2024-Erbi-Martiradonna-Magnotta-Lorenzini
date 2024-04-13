@@ -59,7 +59,7 @@ public class TableCenter {
                 if (resDeck.getNCards() > 0) {
                     try {
                         centerCards[i] = resDeck.draw();
-                        return playablecard;
+
                     } catch (isEmptyException e) {
                         try {
                             centerCards[i] = goldDeck.draw();
@@ -76,11 +76,11 @@ public class TableCenter {
             } else if (playablecard instanceof GoldCard) { //if instead card is GoldCard I first draw from goldDeck
                 try {
                     centerCards[i] = goldDeck.draw();
-                    return playablecard;
+
                 } catch (isEmptyException e) {
                     try {
                         centerCards[i] = resDeck.draw();
-                        return playablecard;
+
                     } catch (isEmptyException e1) {
                         //TODO what to do if both decks are empty? CALL ENDGAME
                     }
