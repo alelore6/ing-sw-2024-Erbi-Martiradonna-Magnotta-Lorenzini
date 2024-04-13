@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-public class Player {
+public class Player {  //TODO check slack and probably use 81x81 matrix per il CAMPO DEL GIOCATORE
 
     private final String nickname;
     private ObjectiveCard objective;

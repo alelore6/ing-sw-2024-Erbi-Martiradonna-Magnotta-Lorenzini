@@ -6,7 +6,11 @@ public class Game {
     private int turnCounter;
     private boolean isFinished;
     private int remainingTurns;
-    Player[] players; //TODO domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
+
+    private int curPlayerPosition;
+
+    private StartingDeck StartingDeck;
+    Player[] players; // domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
     TableCenter tablecenter;
 
 
@@ -20,7 +24,7 @@ public class Game {
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i], this );
         }
-
+        StartingDeck = new StartingDeck();
     }
 
     public TableCenter getTablecenter() {return tablecenter;}
@@ -29,7 +33,7 @@ public class Game {
     public int getRemainingTurns() {return remainingTurns;}
     public int getTurnCounter() {return turnCounter;}
 
-    public void startGame(int numPlayers) throws RuntimeException {
+    public void startGame(int numPlayers) throws RuntimeException, WrongPlayException {
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck());
 
@@ -53,9 +57,10 @@ public class Game {
         }
 
         for(Player p: players){
-            //TODO DISTRIBUIRE STARTING CARD DA STARTING DECK
-            //p.PlaceStartingCard();
-             //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi instanzio nuova classe token
+            p.PlaceStartingCard(StartingDeck.draw());
+             //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
+
+
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0 );
             p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1 );   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
             p.getHand().DrawFromDeck(tablecenter.getGoldDeck(), 2 );
@@ -68,9 +73,15 @@ public class Game {
         //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
         int firstPlayerPos = (int) (Math.random()*numPlayers);
         players[firstPlayerPos].setisFirst();  //setto il player come primo
+
+        if(players[0] != players[firstPlayerPos]){ //swap
+
+        }
+        curPlayerPosition = 0;
     }
     public void endGame(){
         //TODO da implementare logica
+
         isFinished = true;
     }
     public Player checkWinner(){
@@ -85,8 +96,14 @@ public class Game {
         return winner;
     }
 
-    public void nextPlayer(){
+    public void nextPlayer(Player p){
+        //Iterate through array of players calling all players methods such as draw,
+        int nextPlayerPos = 0;
+        int i;
 
+        for(i = 0; i < numPlayers; i++){
+            if(p == players[i]){break;}
+        }
     }
 
 

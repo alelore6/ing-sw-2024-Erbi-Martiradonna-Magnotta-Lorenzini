@@ -42,7 +42,7 @@ public class TableCenter {
     }
 
 
-    public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException {
+    public Optional<PlayableCard> drawAndPosition(PlayableCard playablecard) throws isEmptyException  {
         //TODO exception is to be dealt here
         int i;
         boolean found = false;
@@ -64,7 +64,7 @@ public class TableCenter {
                             centerCards[i] = goldDeck.draw();
                             return Optional.of(playablecard);
                         } catch (isEmptyException e1) {
-                            //TODO what to do if both decks are empty?
+                            //TODO what to do if both decks are empty? CALL ENDGAME
                         }
                     }
                 }
@@ -78,7 +78,7 @@ public class TableCenter {
                         centerCards[i] = resDeck.draw();
                         return Optional.of(playablecard);
                     } catch (isEmptyException e1) {
-                        //TODO what to do if both decks are empty?
+                        //TODO what to do if both decks are empty? CALL ENDGAME
                     }
 
                 }
