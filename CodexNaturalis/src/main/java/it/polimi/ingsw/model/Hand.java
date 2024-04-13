@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import java.util.Optional;
+
 public class Hand {
     PlayableCard[] HandCard;
     private final Card[][] displayedCards;
@@ -10,32 +12,14 @@ public class Hand {
         this.player=player;
     }
 
-    public void DrawFromDeck(Deck deck, int posHand){
-        //la scelta del deck da cui pescare sarà dell'utente
-        try {
+    public void DrawFromDeck(Deck deck, int posHand) throws isEmptyException {
             HandCard[posHand]= deck.draw();
-        } catch (isEmptyException e) {
-            // draw from other deck or ask the player another draw source
-            if(deck instanceof GoldDeck){
-                try {
-                    HandCard[posHand]= player.getGame().tablecenter.getResDeck().draw();
-                } catch (isEmptyException e2) {
-                    player.getGame().endGame();
-                }
-            }
-            else {
-                try {
-                    HandCard[posHand]= player.getGame().tablecenter.getGoldDeck().draw();
-                } catch (isEmptyException e2) {
-                    player.getGame().endGame();
-                }
-            }
-        }
     }
 
-    public void DrawPositionedCard( PlayableCard card, int posHand){
-        //l'utente sceglie direttamente la carta presente in tableCenter da pescare
-        HandCard[posHand]= player.getGame().tablecenter.drawAndPosition(card);
+    public void DrawPositionedCard( PlayableCard card, int posHand) throws isEmptyException {
+        //ha senso tenere l'optional ?
+        Optional<PlayableCard> c=player.getGame().tablecenter.drawAndPosition(card);
+        c.ifPresent(playableCard -> HandCard[posHand] = playableCard);
     }
 
     public PlayableCard getHandCard(int pos){
@@ -43,7 +27,7 @@ public class Hand {
     }
 
     public void playCard(Card card, int x, int y ) throws WrongPlayException{
-        // controllo che la carta in input sia veramente nella mano? Non nel caso di starting card
+        // check that the input card is in the hand, not in case of starting card
         boolean found=false;
         if (!(card instanceof StartingCard)){
             for (Card c: HandCard){
@@ -57,21 +41,21 @@ public class Hand {
                 //pos -1,-1 indicates this specific type of error
             }
         }
+        // check required resource to play that card
         if (card instanceof GoldCard && !card.isFacedown){
             //TODO devo controllare CurrentResources
         }
-        //check surrounding places
+        //check position and its surroundings are free
         if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
             throw new WrongPlayException(player,x,y,card);
         }
-        // numero di angoli che la cartà andrà a sovrapporre
-        // deve essercene almeno 1
+        // number of corner that the card overlaps, must be at least 1
         int overlaps=0;
-        // check overlapping corners are free
+        // check overlapping corners are visible
         if (displayedCards[x-1][y-1]!=null){
             // 0: UP_SX; 1: UP_DX; 2: DOWN_SX; 3: DOWN_DX
             //if there's no corner, it's NULL
-            //come è definito un angolo libero ma vuoto?
+            //if corner is visible but without resource, the attribute resource will be null
             if ((displayedCards[x-1][y-1]).corners[1]==null){
                 throw new WrongPlayException(player,x,y,card);
             }
@@ -99,6 +83,6 @@ public class Hand {
             throw new WrongPlayException(player,-2,-2,card);
         }
         displayedCards[x][y] = card;
-        player.getCurrentResources().update(card);
+        player.getCurrentResources().update(card,x ,y);
     }
 }

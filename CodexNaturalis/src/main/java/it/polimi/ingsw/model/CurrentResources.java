@@ -14,7 +14,7 @@ public class CurrentResources {
          }
      }
 
-     public void update(Card LastPlayedCard){
+     public void update(Card LastPlayedCard, int x, int y){
         //TODO aggiornamento delle risorse basato sulla carta giocata
         // e gli angoli coperti da essa e lato carta
          int addPoints=0;
