@@ -35,7 +35,7 @@ public class Game {
 
     public void startGame(int numPlayers) throws RuntimeException, WrongPlayException{
 
-        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck());
+        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
 
         for(int i = 0; i < 4; i++){  //Riempio le carte a terra per la prima volta dai deck
             if(i < 2){

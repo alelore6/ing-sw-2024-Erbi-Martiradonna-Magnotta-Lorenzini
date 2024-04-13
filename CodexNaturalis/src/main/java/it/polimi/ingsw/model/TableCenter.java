@@ -4,6 +4,7 @@ import java.util.Optional;
 
 public class TableCenter {
 
+    private final Game game;
     private ResourceDeck resDeck;
     private GoldDeck goldDeck;
 
@@ -14,10 +15,11 @@ public class TableCenter {
     private PlayableCard[] centerCards = new PlayableCard[4]; //le prime 2 sono resource card, le ultime gold cards
 
 
-    public TableCenter(ResourceDeck resDeck, GoldDeck goldDeck, ObjectiveDeck objDeck) {
+    public TableCenter(ResourceDeck resDeck, GoldDeck goldDeck, ObjectiveDeck objDeck, Game game) {
         this.resDeck = resDeck;
         this.goldDeck = goldDeck;
         this.objDeck = objDeck;
+        this.game = game;
     }
 
 
@@ -43,8 +45,6 @@ public class TableCenter {
 
 
     public PlayableCard drawAndPosition(PlayableCard playablecard) throws isEmptyException  {
-        //TODO exception is to be dealt here
-        //TODO togliere GLI OPTIONAL
         int i;
         boolean found = false;
         for (i = 0; i < centerCards.length; i++) {   //iterate array to find card passed by parameter
@@ -55,21 +55,21 @@ public class TableCenter {
         }
 
         if (found) {
+            centerCards[i] = null; //if card  passed by parameter is found but I cant draw, just empty the space
+
             if (playablecard instanceof ResourceCard) {  //if card passed by param. is a resource card I draw from ResourceDeck
                 if (resDeck.getNCards() > 0) {
                     try {
                         centerCards[i] = resDeck.draw();
 
                     } catch (isEmptyException e) {
+
                         try {
                             centerCards[i] = goldDeck.draw();
 
                         } catch (isEmptyException e1) {
-                            //TODO what to do if both decks are empty? CALL ENDGAME
+                            game.endGame();
                         }
-                    }
-                    finally{
-                        return playablecard;
                     }
                 }
 
@@ -82,17 +82,13 @@ public class TableCenter {
                         centerCards[i] = resDeck.draw();
 
                     } catch (isEmptyException e1) {
-                        //TODO what to do if both decks are empty? CALL ENDGAME
+                        game.endGame();
                     }
 
                 }
-                finally{
-                    return playablecard;
-                }
 
             }
-            centerCards[i] = null; //if card  passed by parameter is found but I cant draw, just empty the space
-
+            return playablecard;
         }
         return null; //return statement in case the card is not found (the player won't draw anything)
     }
