@@ -8,7 +8,7 @@ public class Player {  //TODO check slack and probably use 81x81 matrix per il C
     private final CurrentResources currentResources;
     private final Hand Hand;
     private final Game game;
-    private boolean isFirst;
+    protected int position;
     //ha più senso ordinare l'array di players in game con l'ordine di gioco
 
     Player(String nickname, Game game){
@@ -16,7 +16,6 @@ public class Player {  //TODO check slack and probably use 81x81 matrix per il C
         this.game = game;
         currentResources= new CurrentResources(this);
         Hand = new Hand(this);
-        isFirst = false;
     }
     public String getNickname() {
         return nickname;
@@ -47,12 +46,6 @@ public class Player {  //TODO check slack and probably use 81x81 matrix per il C
     public Hand getHand() {
         return Hand;
     }
-
-
-    public void setisFirst() {
-        isFirst = true;
-    }
-
 
     public Game getGame() {
         return game;
