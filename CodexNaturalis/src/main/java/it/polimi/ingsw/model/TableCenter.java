@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+
+import java.util.HashMap;
 import java.util.Optional;
 
 public class TableCenter {
@@ -44,7 +46,10 @@ public class TableCenter {
     }
 
 
-    public PlayableCard drawAndPosition(PlayableCard playablecard) throws isEmptyException  {
+    public HashMap<PlayableCard, Boolean> drawAndPosition(PlayableCard playablecard) throws isEmptyException  {
+        HashMap<PlayableCard, Boolean> hashMap = new HashMap<>();
+        hashMap.put(playablecard, false);
+
         int i;
         boolean found = false;
         for (i = 0; i < centerCards.length; i++) {   //iterate array to find card passed by parameter
@@ -62,8 +67,8 @@ public class TableCenter {
                     try {
                         centerCards[i] = resDeck.draw();
 
-                    } catch (isEmptyException e) {
-
+                    } catch(isEmptyException e){
+                        hashMap.put(playablecard, true);
                         try {
                             centerCards[i] = goldDeck.draw();
 
@@ -78,17 +83,16 @@ public class TableCenter {
                     centerCards[i] = goldDeck.draw();
 
                 } catch (isEmptyException e) {
+                    hashMap.put(playablecard, true);
                     try {
                         centerCards[i] = resDeck.draw();
 
                     } catch (isEmptyException e1) {
                         game.endGame();
                     }
-
                 }
-
             }
-            return playablecard;
+            return hashMap;
         }
         return null; //return statement in case the card is not found (the player won't draw anything)
     }
