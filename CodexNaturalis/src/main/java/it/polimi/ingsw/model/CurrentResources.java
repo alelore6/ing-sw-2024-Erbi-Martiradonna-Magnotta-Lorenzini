@@ -1,10 +1,10 @@
 package it.polimi.ingsw.model;
 
 import java.util.HashMap;
-import java.util.Map;
+
 
 public class CurrentResources {
-     Map<Resource,Integer> CurrentResources;
+     HashMap<Resource,Integer> CurrentResources;
      private final Player player;
      CurrentResources(Player player){
          CurrentResources=new HashMap<>();
@@ -14,9 +14,10 @@ public class CurrentResources {
          }
      }
 
-     protected void update(Card LastPlayedCard, int x, int y){
+     protected void update(Card card, Corner[] overlaps){
         //TODO aggiornamento delle risorse basato sulla carta giocata
         // e gli angoli coperti da essa e lato carta
+         //if corner is visible but without resource, the attribute resource will be null
          int addPoints=0;
         //TODO calcolo punti
 

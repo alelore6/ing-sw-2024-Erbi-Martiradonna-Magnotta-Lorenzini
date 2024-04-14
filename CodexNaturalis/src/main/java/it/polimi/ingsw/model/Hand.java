@@ -52,7 +52,11 @@ public class Hand {
         }
         // check required resource to play that card
         if (card instanceof GoldCard && !card.isFacedown){
-            //TODO devo controllare CurrentResources
+            for (Resource r : Resource.values()){
+                if (((GoldCard) card).req.get(r) > player.getCurrentResources().CurrentResources.get(r)){
+                    throw new WrongPlayException(player, -3,-3, card);
+                }
+            }
         }
         //check position and its surroundings are free
         if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
@@ -64,7 +68,6 @@ public class Hand {
         if (displayedCards[x-1][y-1]!=null){
             // 0: UP_SX; 1: UP_DX; 2: DOWN_SX; 3: DOWN_DX
             //if there's no corner, it's NULL
-            //if corner is visible but without resource, the attribute resource will be null
             if ((displayedCards[x-1][y-1]).corners[1]==null){
                 throw new WrongPlayException(player,x,y,card);
             }
@@ -102,7 +105,7 @@ public class Hand {
                 throw new WrongPlayException(player,-2,-2,card);
         }
         displayedCards[x][y] = card;
-        player.getCurrentResources().update(card,x ,y);
+        player.getCurrentResources().update(card, overlaps);
         //card is removed from the hand
         if (i!=-1){
             HandCard[i]=null;
