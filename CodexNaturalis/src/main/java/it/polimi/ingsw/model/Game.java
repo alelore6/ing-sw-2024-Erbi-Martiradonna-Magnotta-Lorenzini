@@ -99,13 +99,35 @@ public class Game {
         checkWinner();
     }
 
-    public Player checkWinner(){
+    public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
-        // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo. se parità persiste allora i giocatori condividono la vittoria!
+        // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
+        // se parità persiste allora i giocatori condividono la vittoria!
+
         Player winner = null;
         int punteggi[] = new int[numPlayers];
 
-        for(int i = 0; i < numPlayers; i++){
+        for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
+            punteggi[i] = players[i].getToken().getScoreTrackPos();
+
+            if(players[i].getObjective() instanceof  ObjectiveCard1){ //calcolo punti a seconda del tipo di obj card
+
+            }
+            else if(players[i].getObjective() instanceof  ObjectiveCard2){
+
+            }
+            else{ // ObjectiveCard3
+
+            }
+        }
+
+        int maxpoints = 0;
+        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
+        {
+            if(punteggi[i] > maxpoints){
+                winner = players[i];
+                maxpoints = punteggi[i];
+            }
 
         }
         return winner;

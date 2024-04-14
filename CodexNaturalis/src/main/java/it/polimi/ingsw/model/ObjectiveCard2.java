@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class ObjectiveCard2 {
-    //TODO aggiungere extends e costruttore
+public class ObjectiveCard2 extends ObjectiveCard {
+    //TODO aggiungere costruttore
     Map <Resource,Integer> ObjectiveCard2;
     ObjectiveCard2(){
         ObjectiveCard2 =new HashMap<Resource,Integer>();
