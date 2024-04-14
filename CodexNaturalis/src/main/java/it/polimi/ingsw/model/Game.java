@@ -90,10 +90,15 @@ public class Game {
 
     }
     public void endGame(){
-        //TODO da implementare logica
 
+        remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
+        for(int i = 0; i < remainingTurns; i++){
+            nextPlayer(players[curPlayerPosition]);
+        }
         isFinished = true;
+        checkWinner();
     }
+
     public Player checkWinner(){
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo. se parità persiste allora i giocatori condividono la vittoria!
