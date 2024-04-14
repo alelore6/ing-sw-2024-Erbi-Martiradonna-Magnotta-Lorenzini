@@ -7,7 +7,8 @@ public class Game {
     private boolean isFinished;
     private int remainingTurns;
 
-    private int curPlayerPosition;
+    private int curPlayerPosition;  //TODO ORA player ha l'attributo position quindi FIXARE TUTTO DI
+                                    // CONSEGUENZA (ENDGAME per il calcolo turni, nextplayer ecc..)
 
     private StartingDeck StartingDeck;
     Player[] players; // domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
@@ -75,12 +76,18 @@ public class Game {
 
         //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
         int firstPlayerPos = (int) (Math.random()*numPlayers);
-        players[firstPlayerPos].setisFirst();  //setto il player come primo
+        players[firstPlayerPos].position = 0;  //setto il player come primo
 
-        if(players[0] != players[firstPlayerPos]){ //swap
-
+        int j = firstPlayerPos;
+        for(int i = 0; i < numPlayers; i++){  //loop per settare la posizione in senso orario (da sinistra a destra) di tutti i player
+            if (j >= numPlayers) {j = 0;}
+            players[j].position = i;
+            j++;
         }
-        curPlayerPosition = 0;
+
+        curPlayerPosition = firstPlayerPos;
+        nextPlayer(players[firstPlayerPos]); //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
+
     }
     public void endGame(){
         //TODO da implementare logica
@@ -99,13 +106,22 @@ public class Game {
         return winner;
     }
 
-    public void nextPlayer(Player p){
-        //Iterate through array of players calling all players methods such as draw,
-        int nextPlayerPos = 0;
-        int i;
-
-        for(i = 0; i < numPlayers; i++){
-            if(p == players[i]){break;}
+    public void nextPlayer(Player PreviousPlayer){
+        int nextPlayerIndex;
+        for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){  //trovo l'indice del giocatore prossimo
+            if(players[nextPlayerIndex] == PreviousPlayer){break;}
         }
+
+        if(nextPlayerIndex == numPlayers-1){ nextPlayerIndex = 0;}
+        else{nextPlayerIndex++;}
+
+        curPlayerPosition = nextPlayerIndex;
+        // players[nextPlayerIndex].getHand().DrawFromDeck();
+        // players[nextPlayerIndex].getHand().DrawPositionedCard();
+        //TODO da input utente serve sapere dove deve pescare. forse serve un metodo Draw generico contentente i due tipi di draw?
+        //TODO stessa cosa per play card
+
+        //nextPlayer(players[nextPlayerIndex]);
+        //Sarebbe da chiamare il metodo nextplayer ma sta al controllore farlo perché sennò diventa ricorsivo credo
     }
 }

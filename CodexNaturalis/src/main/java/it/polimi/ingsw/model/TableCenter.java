@@ -46,9 +46,11 @@ public class TableCenter {
     }
 
 
-    public HashMap<PlayableCard, Boolean> drawAndPosition(PlayableCard playablecard) throws isEmptyException  {
+    public HashMap<PlayableCard, Boolean> drawAndPosition(PlayableCard playablecard){
         HashMap<PlayableCard, Boolean> hashMap = new HashMap<>();
         hashMap.put(playablecard, false);
+
+
 
         int i;
         boolean found = false;
