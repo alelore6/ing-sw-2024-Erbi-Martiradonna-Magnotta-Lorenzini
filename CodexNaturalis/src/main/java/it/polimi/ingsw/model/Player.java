@@ -7,7 +7,7 @@ public class Player {
     private Token token;
     private final CurrentResources currentResources;
     private final Hand Hand;
-    private final Game game;
+    public final Game game;
     protected int position;
 
     Player(String nickname, Game game){
@@ -29,7 +29,7 @@ public class Player {
     }
 
     protected void PlaceStartingCard(StartingCard StartCard) throws WrongPlayException {
-        //TODO Card can be rotated, do i ask here?
+        //TODO Card can be rotated from client's view
         Hand.playCard(StartCard,40,40);
     }
 
@@ -43,10 +43,6 @@ public class Player {
 
     public Hand getHand() {
         return Hand;
-    }
-
-    public Game getGame() {
-        return game;
     }
 
     public void setToken(Token token) {
