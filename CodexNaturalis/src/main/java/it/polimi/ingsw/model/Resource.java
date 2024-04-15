@@ -1,11 +1,11 @@
 package it.polimi.ingsw.model;
 
 public enum Resource {
-    Fungi,
-    Plant,
-    Insect,
-    Animal,
-    Quill,
-    Inkwell,
-    Manuscript
+    FUNGI,
+    PLANT,
+    INSECT,
+    ANIMAL,
+    QUILL,
+    INKWELL,
+    MANUSCRIPT
 }
