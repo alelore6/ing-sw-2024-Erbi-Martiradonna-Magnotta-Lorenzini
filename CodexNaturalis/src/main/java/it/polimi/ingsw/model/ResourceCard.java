@@ -11,10 +11,10 @@ public class ResourceCard extends PlayableCard{
 
         // TODO insert data from DB
 
-        corners[4] = Optional.of(new Corner(UP_SX, Optional.empty()));
-        corners[5] = Optional.of(new Corner(UP_DX, Optional.empty()));
-        corners[6] = Optional.of(new Corner(DOWN_SX, Optional.empty()));
-        corners[7] = Optional.of(new Corner(DOWN_DX, Optional.empty()));
+        corners[4] = new Corner(UP_SX, null);
+        corners[5] = new Corner(UP_DX, null);
+        corners[6] = new Corner(DOWN_SX, null);
+        corners[7] = new Corner(DOWN_DX, null);
     }
      public void flip(){
          isFacedown = !isFacedown;

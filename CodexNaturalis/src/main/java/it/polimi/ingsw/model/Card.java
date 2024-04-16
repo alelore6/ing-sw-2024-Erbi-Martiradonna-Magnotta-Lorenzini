@@ -6,7 +6,7 @@ public abstract class Card {
 
      final int ID;
      public boolean isFacedown;
-     public Optional<Corner>[] corners;
+     public Corner[] corners;
 
      protected Card(int ID) {
         this.ID = ID;

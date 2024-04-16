@@ -1,11 +1,15 @@
 package it.polimi.ingsw.model;
 
+import java.util.stream.IntStream;
+
 public class GoldDeck extends Deck{
-    private GoldCard[] cards;
+    private final GoldCard[] cards;
     public GoldDeck(){
-        // the first card of the deck will be the one with the highest index i.e. NCards - 1
+        // the first card of the deck will be the one with the highest index, i.e. NCards - 1
         cards = new GoldCard[40];
-        //% insert the 40 cards from DB randomly
+
+        // TODO: insert cards randomly
+        IntStream.range(0, 40).forEach(i -> cards[i] = new GoldCard(40 + i));
     }
     public GoldCard draw() throws isEmptyException{
         if(getNCards() == 0){
@@ -15,6 +19,6 @@ public class GoldDeck extends Deck{
             NCards--;
             return cards[NCards];
         }
-        //% we don't delete the card from the array doing this
+        // WARNING! We don't delete the card from the array doing this.
     }
 }
