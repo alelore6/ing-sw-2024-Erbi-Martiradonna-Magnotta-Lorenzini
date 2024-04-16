@@ -15,31 +15,31 @@ public class CurrentResources {
      }
 
      protected void update(Card card, Corner[] overlaps){
-        //TODO aggiornamento delle risorse basato sulla carta giocata
-         //overlapped resources must be removed
+         //remove overlapped corners resources
          for (Corner c: overlaps){
-             if (c.getResource() !=null){
+             if (c!=null && c.getResource() !=null){
                  Resource r = c.getResource();
                  if(currentResources.get(r)>0)
                      currentResources.replace(r,currentResources.get(r)-1);
              }
          }
-         // facedown cards are different
+         // face down cards are different
          if(card.isFacedown){
              if(card instanceof StartingCard){
-                 //corners
+                 //add back corners resources
                 for(int i=4; i<8; i++){
                     if (card.corners[i]!=null && card.corners[i].getResource()!=null){
                         Resource r=card.corners[i].getResource();
                         currentResources.replace(r,currentResources.get(r)+1);
                     }
                 }
-                //central resources
+                //add central resources for starting card
                  for(Resource t : ((StartingCard) card).resource){
                      currentResources.replace(t,currentResources.get(t)+1);
                  }
              }
              else {
+                 //add central resources for resource and gold card
                  switch (((PlayableCard) card).getColor()){
                      case RED -> currentResources.replace(Resource.FUNGI,currentResources.get(Resource.FUNGI)+1);
                      case GREEN -> currentResources.replace(Resource.PLANT,currentResources.get(Resource.PLANT)+1);
@@ -48,11 +48,27 @@ public class CurrentResources {
                  }
              }
          } else {
-             // add new card's resources
+             // add new card's front resources
+             for(int i=0; i<4; i++){
+                 Resource temp= card.corners[i].getResource();
+                 currentResources.replace(temp,currentResources.get(temp)+1);
+             }
          }
-         int addPoints=0;
-        //TODO calcolo punti
-
-         player.getToken().move(addPoints);
+        if (!(card instanceof StartingCard)){
+            int addPoints=((PlayableCard) card).getPoints();
+            if (card instanceof GoldCard){
+                if (((GoldCard) card).getRPoints()!=null){
+                    Resource g=((GoldCard) card).getRPoints();
+                    addPoints= addPoints*currentResources.get(g);
+                }else if(((GoldCard) card).isRpointsCorner()){
+                    for(Corner c: overlaps){
+                        if (c!=null){
+                            addPoints+=addPoints;
+                        }
+                    }
+                }
+            }
+            player.getToken().move(addPoints);
+        }
      }
 }

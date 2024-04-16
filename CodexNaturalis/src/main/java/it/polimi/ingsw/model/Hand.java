@@ -59,6 +59,7 @@ public class Hand {
             }
         }
         //check position and its surroundings are free
+        //TODO sistemare per bordi matrice
         if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
             throw new WrongPlayException(player,x,y,card);
         }

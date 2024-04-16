@@ -7,7 +7,9 @@ import static it.polimi.ingsw.model.Position.*;
 public class GoldCard extends PlayableCard{
 
     // WATCH OUT! In the back of the gold cards, there's no requirement nor points
-    private final GoldResource RPoints;
+    private final Resource RPoints;
+
+    private final boolean RpointsCorner;
     final HashMap<Resource,Integer> req = new HashMap<>();
 
     public GoldCard(int ID){
@@ -30,5 +32,13 @@ public class GoldCard extends PlayableCard{
     }
     public GoldCard getCard(){
         return this;
+    }
+
+    public Resource getRPoints() {
+        return RPoints;
+    }
+
+    public boolean isRpointsCorner() {
+        return RpointsCorner;
     }
 }
