@@ -59,9 +59,16 @@ public class Hand {
             }
         }
         //check position and its surroundings are free
-        if( displayedCards[x][y]!=null && displayedCards[x-1][y]!=null && displayedCards[x+1][y]!=null && displayedCards[x][y-1]!=null && displayedCards[x][y+1]!=null){
+        if (displayedCards[x][y]!=null)
             throw new WrongPlayException(player,x,y,card);
-        }
+        if (x!=0 && displayedCards[x-1][y]!=null)
+            throw new WrongPlayException(player,x,y,card);
+        if (x!=80 && displayedCards[x+1][y]!=null)
+            throw new WrongPlayException(player,x,y,card);
+        if (y!=0 && displayedCards[x][y-1]!=null)
+            throw new WrongPlayException(player,x,y,card);
+        if (y!=80 && displayedCards[x][y+1]!=null)
+            throw new WrongPlayException(player,x,y,card);
         // corner that the card overlaps, must be at least 1
         Corner[] overlaps= new Corner[4];
         // if there is a card, check overlapping corners are visible
@@ -127,7 +134,9 @@ public class Hand {
         //play the card
         displayedCards[x][y] = card;
         //card is removed from the hand
-        HandCard[i]=null;
+        if (found) {
+            HandCard[i] = null;
+        }
         // update current resources
         player.getCurrentResources().update(card, overlaps);
     }
