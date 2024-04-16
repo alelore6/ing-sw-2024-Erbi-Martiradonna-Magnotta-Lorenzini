@@ -61,11 +61,13 @@ public class CurrentResources {
                     Resource g=((GoldCard) card).getRPoints();
                     addPoints= addPoints*currentResources.get(g);
                 }else if(((GoldCard) card).isRpointsCorner()){
+                    int count=0;
                     for(Corner c: overlaps){
                         if (c!=null){
-                            addPoints+=addPoints;
+                            count++;
                         }
                     }
+                    addPoints=addPoints*count;
                 }
             }
             player.getToken().move(addPoints);
