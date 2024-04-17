@@ -62,9 +62,9 @@ public class Game {
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
 
             try {
-                p.getHand().DrawFromDeck(tablecenter.getResDeck(), 0);
-                p.getHand().DrawFromDeck(tablecenter.getResDeck(), 1);   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
-                p.getHand().DrawFromDeck(tablecenter.getGoldDeck(), 2);
+                p.getHand().DrawFromDeck(tablecenter.getResDeck());
+                p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
+                p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
             } catch(isEmptyException e){
                 throw new RuntimeException(e);
             }

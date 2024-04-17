@@ -2,36 +2,73 @@ package it.polimi.ingsw.model;
 
 import java.util.HashMap;
 
+/**
+ * Class that contains player's hand and played cards
+ */
 public class Hand {
     PlayableCard[] HandCard;
     private final Card[][] displayedCards;
     private final Player player;
+
+    /**
+     * Constructor of the class
+     * @param player player that own the class
+     */
     Hand(Player player){
         HandCard= new PlayableCard[3];
         displayedCards=new Card[81][81];
         this.player=player;
     }
 
-    public void DrawFromDeck(Deck deck, int posHand) throws isEmptyException {
-            HandCard[posHand]= deck.draw();
+    /**
+     * Draw from deck
+     * @param deck the chosen deck to draw from
+     * @throws isEmptyException if deck is empty, the exception will be handled by the controller asking the client a new source for the draw
+     */
+    public void DrawFromDeck(Deck deck) throws isEmptyException {
+        for(int i=0; i< 3; i++){
+            if (HandCard[i]==null){
+                HandCard[i] = deck.draw();
+                break;
+            }
+        }
     }
 
+    /**
+     * Draw one of the positioned card in table center
+     * @param card the chosen card
+     * @throws isEmptyException if the deck that should substitute the card drawn is empty
+     */
     public void DrawPositionedCard( PlayableCard card) throws isEmptyException {
         //map is useless, needed only an integer instead of the boolean
         HashMap<PlayableCard, Boolean> hashMap = player.game.tablecenter.drawAndPosition(card);
         for(int i=0; i< 3; i++){
-            if (HandCard[i]==null)
+            if (HandCard[i]==null){
                 HandCard[i] = card;
+                break;
+            }
         }
         // if one deck is empty throw exception
         if (hashMap.get(card))
             throw new isEmptyException();
     }
 
+    /**
+     * Getter for card in hand
+     * @param pos the position that describes the card in the hand we want to get
+     * @return the card in tha hand at the pos position
+     */
     public PlayableCard getHandCard(int pos){
         return HandCard[pos];
     }
 
+    /**
+     * check that play is valid, lastly the card is played and the resources updated
+     * @param card the card in the hand that will be played
+     * @param x the x-axis coordinates that describes the position where the card will be played
+     * @param y the y-axis coordinates that describes the position where the card will be played
+     * @throws WrongPlayException if play is not valid, the exception will be handled by the controller asking the client a new play
+     */
     public void playCard(Card card, int x, int y ) throws WrongPlayException{
         //check that the input card is in the hand, not in case of starting card
         boolean found=false;

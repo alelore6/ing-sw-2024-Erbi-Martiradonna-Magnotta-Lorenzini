@@ -2,10 +2,17 @@ package it.polimi.ingsw.model;
 
 import java.util.HashMap;
 
-
+/**
+ * Class that contains the information about the resources owned by the player
+ */
 public class CurrentResources {
      HashMap<Resource,Integer> currentResources;
      private final Player player;
+
+    /**
+     * Constructor
+     * @param player the player that owns the resources
+     */
      CurrentResources(Player player){
          currentResources=new HashMap<>();
          this.player=player;
@@ -14,6 +21,11 @@ public class CurrentResources {
          }
      }
 
+    /**
+     * update the player's resources after every card played
+     * @param card the card that has just been played
+     * @param overlaps the corners that have been covered
+     */
      protected void update(Card card, Corner[] overlaps){
          //remove overlapped corners resources
          for (Corner c: overlaps){
