@@ -6,11 +6,12 @@ import java.util.HashMap;
  * Class that contains the information about the resources owned by the player
  */
 public class CurrentResources {
-     HashMap<Resource,Integer> currentResources;
+     protected final HashMap<Resource,Integer> currentResources;
      private final Player player;
 
     /**
      * Constructor
+     * Initialize all resources values to 0
      * @param player the player that owns the resources
      */
      CurrentResources(Player player){

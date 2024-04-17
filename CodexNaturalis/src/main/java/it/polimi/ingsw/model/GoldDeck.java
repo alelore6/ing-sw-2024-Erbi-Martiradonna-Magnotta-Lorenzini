@@ -13,7 +13,7 @@ public class GoldDeck extends Deck{
     }
     public GoldCard draw() throws isEmptyException{
         if(getNCards() == 0){
-            throw new isEmptyException();
+            throw new isEmptyException(this);
         }
         else {
             NCards--;

@@ -65,7 +65,8 @@ public class Game {
                 p.getHand().DrawFromDeck(tablecenter.getResDeck());
                 p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
                 p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
-            } catch(isEmptyException e){
+            } catch(isEmptyException | HandFullException e){
+                //should not happen
                 throw new RuntimeException(e);
             }
             p.chooseObjective(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw());

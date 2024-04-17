@@ -6,7 +6,7 @@ import java.util.HashMap;
  * Class that contains player's hand and played cards
  */
 public class Hand {
-    PlayableCard[] HandCard;
+    private final PlayableCard[] HandCard;
     private final Card[][] displayedCards;
     private final Player player;
 
@@ -21,36 +21,43 @@ public class Hand {
     }
 
     /**
-     * Draw from deck
+     * Draw a card from a deck and add it to the player's hand
      * @param deck the chosen deck to draw from
      * @throws isEmptyException if deck is empty, the exception will be handled by the controller asking the client a new source for the draw
+     * @throws HandFullException if hand is already full, should not happen
      */
-    public void DrawFromDeck(Deck deck) throws isEmptyException {
+    public void DrawFromDeck(Deck deck) throws isEmptyException, HandFullException {
         for(int i=0; i< 3; i++){
             if (HandCard[i]==null){
                 HandCard[i] = deck.draw();
-                break;
+                return;
             }
         }
+        throw new HandFullException(player);
     }
 
     /**
-     * Draw one of the positioned card in table center
+     * Draw one of the positioned card in table center and add it to the player's hand
      * @param card the chosen card
      * @throws isEmptyException if the deck that should substitute the card drawn is empty
+     * @throws HandFullException if hand is already full, should not happen
      */
-    public void DrawPositionedCard( PlayableCard card) throws isEmptyException {
+    public void DrawPositionedCard( PlayableCard card) throws isEmptyException, HandFullException {
         //map is useless, needed only an integer instead of the boolean
         HashMap<PlayableCard, Boolean> hashMap = player.game.tablecenter.drawAndPosition(card);
+        boolean done=false;
         for(int i=0; i< 3; i++){
             if (HandCard[i]==null){
                 HandCard[i] = card;
+                done=true;
                 break;
             }
         }
+        if(!done)
+            throw new HandFullException(player);
         // if one deck is empty throw exception
         if (hashMap.get(card))
-            throw new isEmptyException();
+            throw new isEmptyException(card instanceof GoldCard? player.game.tablecenter.getGoldDeck() : player.game.tablecenter.getResDeck());
     }
 
     /**

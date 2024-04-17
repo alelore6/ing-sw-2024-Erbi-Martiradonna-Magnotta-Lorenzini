@@ -1,7 +1,7 @@
 package it.polimi.ingsw.model;
 
 /**
- * Class that contains information about the player
+ * Class that contains player's information and game items
  */
 public class Player {
 
@@ -17,6 +17,7 @@ public class Player {
      * Constructor
      * @param nickname the player's nickname
      * @param game the game the player is in
+     * Also calls the constructor for class Hand and currentResources
      */
     Player(String nickname, Game game){
         this.nickname=nickname;
@@ -35,7 +36,7 @@ public class Player {
 
     /**
      * Getter for player's secret objective card
-     * @return player's secret objective card
+     * @return player's objective card
      */
     public ObjectiveCard getObjective() {
         return objective;
@@ -46,12 +47,13 @@ public class Player {
      * @param obj1 the random objective card the player can choose
      * @param obj2 the random objective card the player can choose
      */
-    public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
+    protected void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
         //TODO client's input request
     }
 
     /**
-     * Play the starting card in the central position,before playing the card can be rotated
+     * Play the starting card in the central position
+     * before playing the card can be rotated
      * @param StartCard the player's random starting card
      * @throws WrongPlayException is the play is not valid
      */
@@ -62,7 +64,7 @@ public class Player {
 
     /**
      * Getter for player's token
-     * @return player's token
+     * @return player's token object
      */
     public Token getToken() {
         return token;
@@ -72,7 +74,7 @@ public class Player {
      * Getter for player's current resources
      * @return player's current resources object
      */
-    public CurrentResources getCurrentResources() {
+    protected CurrentResources getCurrentResources() {
         return currentResources;
     }
 
@@ -88,7 +90,7 @@ public class Player {
      * Setter for player's token after choosing the color
      * @param token the chosen token
      */
-    public void setToken(Token token) {
+    protected void setToken(Token token) {
         this.token = token;
     }
 }
