@@ -1,10 +1,7 @@
 package it.polimi.ingsw.model;
 
-import java.util.Optional;
-
 public abstract class Card {
-
-     protected final int ID;
+     protected int ID;
 
     // Everything about the back of the card is based on this boolean:
      public boolean isFacedown;

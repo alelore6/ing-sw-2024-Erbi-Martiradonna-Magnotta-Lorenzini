@@ -1,16 +1,18 @@
 package it.polimi.ingsw.model;
 
-import java.util.HashMap;
+import com.google.gson.Gson;
 
-import static it.polimi.ingsw.model.Position.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class GoldCard extends PlayableCard{
 
     // WATCH OUT! In the back of the gold cards, there's no requirement nor points
-    private final Resource RPoints;
+    private Resource RPoints;
 
-    private final boolean RpointsCorner;
-    final HashMap<Resource,Integer> req = new HashMap<>();
+    private boolean RPointsCorner;
+    protected HashMap<Resource,Integer> req = new HashMap<>();
 
     public GoldCard(int ID){
         super(ID);
@@ -23,7 +25,18 @@ public class GoldCard extends PlayableCard{
 
         isFacedown = false;
 
-        // TODO: insert data from DB
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+
+            ResourceCard[] rCards = gson.fromJson(reader, ResourceCard[].class);
+
+        } catch (IOException e) {
+            // This is only for debugging: it'll be removed later.
+            System.out.println("FILE non trovato!");
+
+            // TODO: add the catch action
+        }
 
     }
 
@@ -38,7 +51,7 @@ public class GoldCard extends PlayableCard{
         return RPoints;
     }
 
-    public boolean isRpointsCorner() {
-        return RpointsCorner;
+    public boolean isRPointsCorner() {
+        return RPointsCorner;
     }
 }

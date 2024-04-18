@@ -73,7 +73,7 @@ public class CurrentResources {
                 if (((GoldCard) card).getRPoints()!=null){
                     Resource g=((GoldCard) card).getRPoints();
                     addPoints= addPoints*currentResources.get(g);
-                }else if(((GoldCard) card).isRpointsCorner()){
+                }else if(((GoldCard) card).isRPointsCorner()){
                     int count=0;
                     for(Corner c: overlaps){
                         if (c!=null){
