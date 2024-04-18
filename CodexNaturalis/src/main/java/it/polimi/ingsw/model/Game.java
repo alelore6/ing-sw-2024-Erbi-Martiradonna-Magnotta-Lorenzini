@@ -90,20 +90,25 @@ public class Game {
         nextPlayer(players[firstPlayerPos]); //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
     }
-    public void endGame(){
+    public void endGame(int occasion){
 
         remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
-        for(int i = 0; i < remainingTurns; i++){
-            nextPlayer(players[curPlayerPosition]); //faccio i turni rimanenti chiamando nextPlayer
+
+        switch(occasion){
+            case 0,1,2,3:
+                System.out.println("Player " + occasion + " has reached 20 points");
+            case 4:
+                System.out.println("Zero cards left!");
         }
-        isFinished = true;
-        checkWinner();
+        //TODO: notificare il controllore e la condizione su cui è stato chiamato
+
     }
 
     public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI (sul segnapunti). in caso di parità vince chi ha fatto piu' carte obiettivo.
         // se parità persiste allora i giocatori condividono la vittoria!
+        isFinished = true;
 
         Player winner = null;
         int punteggi[] = new int[numPlayers];
@@ -135,6 +140,7 @@ public class Game {
     }
 
     public void nextPlayer(Player PreviousPlayer){
+
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){  //trovo l'indice del giocatore prossimo
             if(players[nextPlayerIndex] == PreviousPlayer){break;}
@@ -144,12 +150,17 @@ public class Game {
         else{nextPlayerIndex++;}
 
         curPlayerPosition = nextPlayerIndex;
-        // players[nextPlayerIndex].getHand().DrawFromDeck();
-        // players[nextPlayerIndex].getHand().DrawPositionedCard();
+
+
         //TODO da input utente serve sapere dove deve pescare. forse serve un metodo Draw generico contentente i due tipi di draw?
         //TODO stessa cosa per play card
 
-        //nextPlayer(players[nextPlayerIndex]);
+        if(remainingTurns != -1){
+            if(remainingTurns == 0) checkWinner();
+            remainingTurns --;
+        }
+        if(remainingTurns!= 0) nextPlayer(players[nextPlayerIndex]);
+
         //Sarebbe da chiamare il metodo nextplayer ma sta al controllore farlo perché sennò diventa ricorsivo credo
     }
 }

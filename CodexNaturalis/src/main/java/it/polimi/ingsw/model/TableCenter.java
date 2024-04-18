@@ -75,7 +75,7 @@ public class TableCenter {
                             centerCards[i] = goldDeck.draw();
 
                         } catch (isEmptyException e1) {
-                            game.endGame();
+                            game.endGame(4);
                         }
                     }
                 }
@@ -90,7 +90,7 @@ public class TableCenter {
                         centerCards[i] = resDeck.draw();
 
                     } catch (isEmptyException e1) {
-                        game.endGame();
+                        game.endGame(4);
                     }
                 }
             }
