@@ -11,7 +11,7 @@ public class Game {
                                     // CONSEGUENZA (ENDGAME per il calcolo turni, nextplayer ecc..)
 
     private StartingDeck StartingDeck;
-    Player[] players; // domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
+    Player[] players;
     TableCenter tablecenter;
 
 
@@ -93,7 +93,7 @@ public class Game {
 
         remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
         for(int i = 0; i < remainingTurns; i++){
-            nextPlayer(players[curPlayerPosition]);
+            nextPlayer(players[curPlayerPosition]); //faccio i turni rimanenti chiamando nextPlayer
         }
         isFinished = true;
         checkWinner();
@@ -101,7 +101,7 @@ public class Game {
 
     public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
-        // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
+        // e li aggiunge al segnapunti. MAX 29 PUNTI (sul segnapunti). in caso di parità vince chi ha fatto piu' carte obiettivo.
         // se parità persiste allora i giocatori condividono la vittoria!
 
         Player winner = null;
