@@ -1,9 +1,22 @@
 package it.polimi.ingsw.model;
 
+/**
+ * Exception that is thrown if the play is not valid
+ * contains the information about the play
+ */
 public class WrongPlayException extends Throwable{
-    Player player;
-    String message;
-    Card card;
+    public final Player player;
+    public final String message;
+    public final Card card;
+
+    /**
+     * Constructor
+     * @param player the player that causes the exception
+     * @param x the x-axis coordinate where the card cant be played
+     * @param y the y-axis coordinate where the card cant be played
+     * negative values for x and y represent specific types of error
+     * @param card the card that cant be played
+     */
     WrongPlayException(Player player,int x,int y, Card card){
         this.player=player;
         this.card=card;

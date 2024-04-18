@@ -1,17 +1,14 @@
 package it.polimi.ingsw.model;
 
 public class Corner {
-    private final Position pos;
-    private final Resource resource;
-    private Card cardOn;
+    protected Position pos;
+    protected Resource resource;
     public boolean isCovered;
 
     public Corner(Position pos, Resource resource){
-        this.pos = pos;
-        this.resource = resource;
         isCovered = false;
     }
-    protected void setCardOn(PlayableCard cardOn){
-        this.cardOn = cardOn;
+    public Resource getResource(){
+        return resource;
     }
 }
