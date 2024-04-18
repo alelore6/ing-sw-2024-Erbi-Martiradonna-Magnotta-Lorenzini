@@ -11,7 +11,7 @@ public class Game {
                                     // CONSEGUENZA (ENDGAME per il calcolo turni, nextplayer ecc..)
 
     private StartingDeck StartingDeck;
-    Player[] players;
+    Player[] players; // domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
     TableCenter tablecenter;
 
 
@@ -91,7 +91,13 @@ public class Game {
 
     }
     public void endGame(int occasion){
-
+        //0 : causato da player pos 0 che arriva a 20 pt
+        //1: player 1 ...
+        //2: player 2 ...
+        //3: player 3 ...
+        //4: entrambi i mazzi finiti
+        //5: mazzo gold finito
+        //6: mazzo risorsa finito
         remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
 
         switch(occasion){
@@ -106,7 +112,7 @@ public class Game {
 
     public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
-        // e li aggiunge al segnapunti. MAX 29 PUNTI (sul segnapunti). in caso di parità vince chi ha fatto piu' carte obiettivo.
+        // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
         // se parità persiste allora i giocatori condividono la vittoria!
         isFinished = true;
 
@@ -140,7 +146,6 @@ public class Game {
     }
 
     public void nextPlayer(Player PreviousPlayer){
-
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){  //trovo l'indice del giocatore prossimo
             if(players[nextPlayerIndex] == PreviousPlayer){break;}
@@ -150,8 +155,8 @@ public class Game {
         else{nextPlayerIndex++;}
 
         curPlayerPosition = nextPlayerIndex;
-
-
+        // players[nextPlayerIndex].getHand().DrawFromDeck();
+        // players[nextPlayerIndex].getHand().DrawPositionedCard();
         //TODO da input utente serve sapere dove deve pescare. forse serve un metodo Draw generico contentente i due tipi di draw?
         //TODO stessa cosa per play card
 

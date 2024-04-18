@@ -1,20 +1,16 @@
 package it.polimi.ingsw.model;
 
-
-import java.util.HashMap;
-import java.util.Optional;
-
 public class TableCenter {
 
     private final Game game;
-    private ResourceDeck resDeck;
-    private GoldDeck goldDeck;
+    private final ResourceDeck resDeck;
+    private final GoldDeck goldDeck;
 
-    private ObjectiveDeck objDeck;
+    private final ObjectiveDeck objDeck;
 
-    private ObjectiveCard[] objCards = new ObjectiveCard[2];
+    private final ObjectiveCard[] objCards = new ObjectiveCard[2];
 
-    private PlayableCard[] centerCards = new PlayableCard[4]; //le prime 2 sono resource card, le ultime gold cards
+    private final PlayableCard[] centerCards = new PlayableCard[4]; //le prime 2 sono resource card, le ultime gold cards
 
 
     public TableCenter(ResourceDeck resDeck, GoldDeck goldDeck, ObjectiveDeck objDeck, Game game) {
@@ -46,12 +42,8 @@ public class TableCenter {
     }
 
 
-    public HashMap<PlayableCard, Boolean> drawAndPosition(PlayableCard playablecard){
-        HashMap<PlayableCard, Boolean> hashMap = new HashMap<>();
-        hashMap.put(playablecard, false);
-
-
-
+    public int drawAndPosition(PlayableCard playablecard){
+        int result=0;
         int i;
         boolean found = false;
         for (i = 0; i < centerCards.length; i++) {   //iterate array to find card passed by parameter
@@ -70,7 +62,7 @@ public class TableCenter {
                         centerCards[i] = resDeck.draw();
 
                     } catch(isEmptyException e){
-                        hashMap.put(playablecard, true);
+                        result=1;
                         try {
                             centerCards[i] = goldDeck.draw();
 
@@ -85,7 +77,7 @@ public class TableCenter {
                     centerCards[i] = goldDeck.draw();
 
                 } catch (isEmptyException e) {
-                    hashMap.put(playablecard, true);
+                    result=1;
                     try {
                         centerCards[i] = resDeck.draw();
 
@@ -94,9 +86,9 @@ public class TableCenter {
                     }
                 }
             }
-            return hashMap;
+            return result;
         }
-        return null; //return statement in case the card is not found (the player won't draw anything)
+        return -1; //return statement in case the card is not found (the player won't draw anything)
     }
 }
 
