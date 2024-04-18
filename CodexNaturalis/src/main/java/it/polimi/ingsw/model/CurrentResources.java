@@ -6,12 +6,17 @@ import java.util.HashMap;
  * Class that contains the information about the resources owned by the player
  */
 public class CurrentResources {
-     protected final HashMap<Resource,Integer> currentResources;
-     private final Player player;
+    /**
+     * the player that owns the class
+     */
+    private final Player player;
+    /**
+     * the map that connects every resource to relative number owned by the player
+     */
+    protected final HashMap<Resource,Integer> currentResources;
 
     /**
-     * Constructor
-     * Initialize all resources values to 0
+     * Constructor: initialize all resources values to 0
      * @param player the player that owns the resources
      */
      CurrentResources(Player player){
@@ -72,7 +77,7 @@ public class CurrentResources {
             if (card instanceof GoldCard){
                 if (((GoldCard) card).getRPoints()!=null){
                     Resource g=((GoldCard) card).getRPoints();
-                    addPoints= addPoints*currentResources.get(g);
+                    addPoints *= currentResources.get(g);
                 }else if(((GoldCard) card).isRPointsCorner()){
                     int count=0;
                     for(Corner c: overlaps){
@@ -80,7 +85,7 @@ public class CurrentResources {
                             count++;
                         }
                     }
-                    addPoints=addPoints*count;
+                    addPoints *= count;
                 }
             }
             player.getToken().move(addPoints);

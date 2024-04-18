@@ -58,7 +58,7 @@ public class Game {
         }
 
         for(Player p: players){
-            p.PlaceStartingCard(StartingDeck.draw());
+            p.placeStartingCard(StartingDeck.draw());
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
 
             try {
@@ -90,8 +90,14 @@ public class Game {
         nextPlayer(players[firstPlayerPos]); //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
     }
-    public void endGame(){
-
+    public void endGame(int cause){
+        //0 : causato da player pos 0 che arriva a 20 pt
+        //1: player 1 ...
+        //2: player 2 ...
+        //3: player 3 ...
+        //4: entrambi i mazzi finiti
+        //5: mazzo gold finito
+        //6: mazzo risorsa finito
         remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
         for(int i = 0; i < remainingTurns; i++){
             nextPlayer(players[curPlayerPosition]);

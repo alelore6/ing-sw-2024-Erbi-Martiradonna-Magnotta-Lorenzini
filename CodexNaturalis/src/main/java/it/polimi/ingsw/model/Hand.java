@@ -1,18 +1,25 @@
 package it.polimi.ingsw.model;
 
-import java.util.HashMap;
-
 /**
  * Class that contains player's hand and played cards
  */
 public class Hand {
-    private final PlayableCard[] HandCard;
-    private final Card[][] displayedCards;
+    /**
+     * the player that owns the class
+     */
     private final Player player;
+    /**
+     * player's hand card
+     */
+    private final PlayableCard[] HandCard;
+    /**
+     * player's played cards
+     */
+    private final Card[][] displayedCards;
 
     /**
      * Constructor of the class
-     * @param player player that own the class
+     * @param player player that owns the class
      */
     Hand(Player player){
         HandCard= new PlayableCard[3];
@@ -21,15 +28,20 @@ public class Hand {
     }
 
     /**
-     * Draw a card from a deck and add it to the player's hand
+     * Draw a card from a deck and add it to the player's hand,
+     * if deck is empty endGame() is called
      * @param deck the chosen deck to draw from
-     * @throws isEmptyException if deck is empty, the exception will be handled by the controller asking the client a new source for the draw
      * @throws HandFullException if hand is already full, should not happen
+     * @throws isEmptyException if the chosen deck is empty, the controller will ask the player a new source for the draw
      */
-    public void DrawFromDeck(Deck deck) throws isEmptyException, HandFullException {
+    public void DrawFromDeck(Deck deck) throws HandFullException, isEmptyException {
         for(int i=0; i< 3; i++){
             if (HandCard[i]==null){
-                HandCard[i] = deck.draw();
+                try{ HandCard[i] = deck.draw();}
+                catch (isEmptyException e){
+                    player.game.endGame(deck instanceof GoldDeck? 5 : 6);
+                    throw new isEmptyException(deck);
+                }
                 return;
             }
         }
@@ -39,12 +51,14 @@ public class Hand {
     /**
      * Draw one of the positioned card in table center and add it to the player's hand
      * @param card the chosen card
-     * @throws isEmptyException if the deck that should substitute the card drawn is empty
      * @throws HandFullException if hand is already full, should not happen
+     * @throws isEmptyException if the deck that should substitute the chosen card is empty
      */
-    public void DrawPositionedCard( PlayableCard card) throws isEmptyException, HandFullException {
-        //map is useless, needed only an integer instead of the boolean
-        HashMap<PlayableCard, Boolean> hashMap = player.game.tablecenter.drawAndPosition(card);
+    public void DrawPositionedCard( PlayableCard card) throws HandFullException, isEmptyException {
+        int result = player.game.tablecenter.drawAndPosition(card);
+        //the card chosen cant be found
+        if (result<0)
+            return;
         boolean done=false;
         for(int i=0; i< 3; i++){
             if (HandCard[i]==null){
@@ -56,8 +70,10 @@ public class Hand {
         if(!done)
             throw new HandFullException(player);
         // if one deck is empty throw exception
-        if (hashMap.get(card))
-            throw new isEmptyException(card instanceof GoldCard? player.game.tablecenter.getGoldDeck() : player.game.tablecenter.getResDeck());
+        if (result==1) {
+            player.game.endGame(card instanceof GoldCard ? 5 : 6);
+            throw new isEmptyException( card instanceof GoldCard? player.game.tablecenter.getGoldDeck() : player.game.tablecenter.getResDeck());
+        }
     }
 
     /**
@@ -70,7 +86,8 @@ public class Hand {
     }
 
     /**
-     * check that play is valid, lastly the card is played and the resources updated
+     * check that play is valid following the game rules,
+     * lastly the card is set on displayedCards and removed from the hand and the player's resources updated by calling currentResources.update()
      * @param card the card in the hand that will be played
      * @param x the x-axis coordinates that describes the position where the card will be played
      * @param y the y-axis coordinates that describes the position where the card will be played
