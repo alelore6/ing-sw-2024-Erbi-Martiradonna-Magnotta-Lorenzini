@@ -30,6 +30,12 @@ public class TableCenter {
      */
     private final PlayableCard[] centerCards = new PlayableCard[4]; //first two are resource cards, last two are gold
 
+
+    /**
+     * attribute Scoretrack representing the score track of the current game
+     */
+    private Scoretrack scoretrack;
+
     /**
      * Constructor: initializes the table center, linking all the attributes to the class
      * @param resDeck resource cards deck that will be placed on the table center
@@ -42,6 +48,7 @@ public class TableCenter {
         this.goldDeck = goldDeck;
         this.objDeck = objDeck;
         this.game = game;
+        scoretrack = new Scoretrack();
     }
 
     /**
@@ -81,6 +88,14 @@ public class TableCenter {
      */
     public ObjectiveDeck getObjDeck() {
         return objDeck;
+    }
+
+    /**
+     * getter for scoretrack
+     * @return scoretrack
+     */
+    public Scoretrack getScoretrack() {
+        return scoretrack;
     }
 
     /**

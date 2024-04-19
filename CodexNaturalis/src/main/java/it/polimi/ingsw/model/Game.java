@@ -116,7 +116,9 @@ public class Game {
 
         for(Player p: players){
             p.placeStartingCard(StartingDeck.draw());
-             //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
+            TokenColor playercolor;
+             //TODO il colore deve essere passato come input dal player!
+            p.setToken(new Token(playercolor, tablecenter.getScoretrack(), p)); //set token
 
             try {
                 p.getHand().DrawFromDeck(tablecenter.getResDeck());
