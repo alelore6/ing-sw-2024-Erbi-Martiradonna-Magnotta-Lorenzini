@@ -5,8 +5,17 @@ package it.polimi.ingsw.model;
  * contains the information about the play
  */
 public class WrongPlayException extends Throwable{
+    /**
+     * the player that makes the play
+     */
     public final Player player;
+    /**
+     * message that will be sent to the client describing the cause of the exception
+     */
     public final String message;
+    /**
+     * the card that should have been played
+     */
     public final Card card;
 
     /**

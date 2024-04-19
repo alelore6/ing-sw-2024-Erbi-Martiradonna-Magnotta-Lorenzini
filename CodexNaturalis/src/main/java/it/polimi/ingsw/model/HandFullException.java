@@ -5,6 +5,9 @@ package it.polimi.ingsw.model;
  * This situation should never happen
  */
 public class HandFullException extends Throwable {
+    /**
+     * the player that causes the exception
+     */
     public final Player player;
 
     /**
