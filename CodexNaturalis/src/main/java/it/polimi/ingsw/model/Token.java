@@ -8,7 +8,7 @@ public class Token {
     /**
      * color of the Token
      */
-    private int color;
+    private TokenColor color;
     /**
      * token's current position on the score track
      */
@@ -28,7 +28,7 @@ public class Token {
      * @param scoretrack scoretrack on which the token is set
      * @param player player that will own this token
      */
-    public Token(int color, Scoretrack scoretrack, Player player) { //TODO capire da dove è chiamato!
+    public Token(TokenColor color, Scoretrack scoretrack, Player player) { //TODO capire da dove è chiamato!
         this.color = color;
         this.scoreTrackPos = 0;
         this.scoretrack = scoretrack;
@@ -40,7 +40,7 @@ public class Token {
      * getter for the token's color
      * @return token's color
      */
-    public int getColor() {
+    public TokenColor getColor() {
         return color;
     }
 
