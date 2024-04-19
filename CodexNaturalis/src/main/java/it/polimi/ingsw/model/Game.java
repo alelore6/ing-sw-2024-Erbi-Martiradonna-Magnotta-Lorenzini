@@ -1,20 +1,50 @@
 package it.polimi.ingsw.model;
-
+/**
+ * Class that manages the game life cycle, from the start to end.
+ */
 public class Game {
-
+    /**
+     * number of players in the current game
+     */
     private final int numPlayers;
+    /**
+     * attribute that keeps count of the number of turns completed since the beginning
+     */
     private int turnCounter;
+    /**
+     * boolean that states if the game is either finished or still in act
+     */
     private boolean isFinished;
+    /**
+     * attribute that keeps count of remaining turns when the ending stage of the game is triggered
+     */
     private int remainingTurns;
+    /**
+     * integer representing the current player position in the array of players
+     */
+    private int curPlayerPosition;
 
-    private int curPlayerPosition;  //TODO ORA player ha l'attributo position quindi FIXARE TUTTO DI
-                                    // CONSEGUENZA (ENDGAME per il calcolo turni, nextplayer ecc..)
-
+    /**
+     * The starting cards deck
+     */
     private StartingDeck StartingDeck;
-    Player[] players; // domanda: ESISTONO PRIMA O DOPO LA CREAZIONE DEL GIOCO? PER COMODITà IN TEORIA PRIMA.
+    /**
+     * The dynamic array containing the players of this current game
+     */
+    Player[] players;
+    /**
+     * The tablecenter attribute containing the two decks (resource and gold) and aswell the cards
+     * layed on it (2 res, 2 gold, 2 obj)
+     */
     TableCenter tablecenter;
 
 
+    /**
+     * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
+     * creating the startingDeck instance aswell.
+     * @param numPlayers number of players in the current game
+     * @param nicknames array of nicknames passed by user, used to create the players classes
+     */
     Game(int numPlayers, String[] nicknames)
     {
         this.numPlayers = numPlayers;
@@ -28,12 +58,40 @@ public class Game {
         StartingDeck = new StartingDeck();
     }
 
+    /**
+     * Getter for tablecenter instance
+     * @return Tablecenter istance
+     */
     public TableCenter getTablecenter() {return tablecenter;}
+    /**
+     * Getter for array of players
+     * @return array of players
+     */
     public Player[] getPlayers() {return players;}
+    /**
+     * Getter for number of players
+     * @return number of players
+     */
     public int getNumPlayers() {return numPlayers;}
+    /**
+     * Getter for remainingTurns attribute
+     * @return remainingTurns
+     */
     public int getRemainingTurns() {return remainingTurns;}
+    /**
+     * Getter for turnCounter attribute
+     * @return turnCounter
+     */
     public int getTurnCounter() {return turnCounter;}
 
+    /**
+     * After the game has been initialized, the method starts it, laying all the cards on the table
+     * and filling each player's hand, making them also choose the objective card between the two given.
+     * It also randomly chooses the first player and orders the other ones from left to right.
+     * @param numPlayers number of players in this game
+     * @throws RuntimeException if the decks are empty (should not happen at the beginning)
+     * @throws WrongPlayException thrown by the method playStartingCard
+     */
     public void startGame(int numPlayers) throws RuntimeException, WrongPlayException{
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
@@ -58,7 +116,7 @@ public class Game {
         }
 
         for(Player p: players){
-            p.PlaceStartingCard(StartingDeck.draw());
+            p.placeStartingCard(StartingDeck.draw());
              //TODO SCELTA TOKEN DA PARTE DEL GIOCATORE TRAMITE INPUT (colore) e quindi poi istanzio nuova classe token
 
             try {
@@ -90,6 +148,14 @@ public class Game {
         nextPlayer(players[firstPlayerPos]); //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
     }
+
+    /**
+     * sets the parameter remainingTurns accordingly, displays a message on the user screen stating which
+     * occasion triggered the endgame status notifying the controller aswell.
+     * @param occasion states the case that triggered the endgame process such as:
+     * "player X has reached 20 points" or
+     * "both decks are empty"
+     */
     public void endGame(int occasion){
         //0 : causato da player pos 0 che arriva a 20 pt
         //1: player 1 ...
@@ -102,14 +168,18 @@ public class Game {
 
         switch(occasion){
             case 0,1,2,3:
-                System.out.println("Player " + occasion + " has reached 20 points");
+                System.out.println("Player " + occasion + " has reached 20 points. Starting endgame process");
             case 4:
-                System.out.println("Zero cards left!");
+                System.out.println("Zero cards left! Starting endgame process");
         }
         //TODO: notificare il controllore e la condizione su cui è stato chiamato
 
     }
 
+    /**
+     * //TODO
+     * @return winning player or players
+     */
     public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
@@ -145,27 +215,32 @@ public class Game {
         return winner;
     }
 
+    /**
+     * Calculates the index of the next player cycling through the players array and sets it to the current player index,
+     * increments turnCounter and calls checkWinner method if remainingTurns is 0.
+     * If remainingTurns are greater than zero, nextPlayer calls itself with the current player passed by parameter
+     * @param PreviousPlayer the instance of the player holding the previous turn
+     */
     public void nextPlayer(Player PreviousPlayer){
+        //find next player index
         int nextPlayerIndex;
-        for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){  //trovo l'indice del giocatore prossimo
+        for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
             if(players[nextPlayerIndex] == PreviousPlayer){break;}
         }
-
         if(nextPlayerIndex == numPlayers-1){ nextPlayerIndex = 0;}
         else{nextPlayerIndex++;}
 
+
         curPlayerPosition = nextPlayerIndex;
-        // players[nextPlayerIndex].getHand().DrawFromDeck();
-        // players[nextPlayerIndex].getHand().DrawPositionedCard();
+
         //TODO da input utente serve sapere dove deve pescare. forse serve un metodo Draw generico contentente i due tipi di draw?
-        //TODO stessa cosa per play card
 
-        if(remainingTurns != -1){
-            if(remainingTurns == 0) checkWinner();
-            remainingTurns --;
-        }
-        if(remainingTurns!= 0) nextPlayer(players[nextPlayerIndex]);
+        turnCounter++;
 
-        //Sarebbe da chiamare il metodo nextplayer ma sta al controllore farlo perché sennò diventa ricorsivo credo
+        if(remainingTurns == 0) checkWinner();
+
+        else nextPlayer(players[nextPlayerIndex]);
+
+
     }
 }

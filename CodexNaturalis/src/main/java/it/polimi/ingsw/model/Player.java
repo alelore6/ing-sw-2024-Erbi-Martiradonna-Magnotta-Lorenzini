@@ -74,7 +74,7 @@ public class Player {
 
     /**
      * Play the starting card in the central position,
-     * before playing the card can be rotated by the player
+     * before playing, the card can be rotated by the player
      * @param StartCard the player's random starting card
      * @throws WrongPlayException is the play is not valid
      */
