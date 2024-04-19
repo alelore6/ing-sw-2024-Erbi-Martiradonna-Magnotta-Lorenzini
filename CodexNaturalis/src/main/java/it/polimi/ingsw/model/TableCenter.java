@@ -1,18 +1,42 @@
 package it.polimi.ingsw.model;
 
+/**
+ *  Class containing the table center of the game, holding the playing card decks aswell the cards layed common for everyone.
+ */
 public class TableCenter {
-
+    /**
+     * Game instance linked to this table center
+     */
     private final Game game;
+    /**
+     * Deck instance containing the resource cards to be drawn by the players
+     */
     private final ResourceDeck resDeck;
+    /**
+     * Deck instance containing the gold cards to be drawn by the players
+     */
     private final GoldDeck goldDeck;
-
+    /**
+     * Deck instance containing the objective cards to be drawn by the players
+     */
     private final ObjectiveDeck objDeck;
-
+    /**
+     * array containing the two common objective cards laying on the table
+     */
     private final ObjectiveCard[] objCards = new ObjectiveCard[2];
+    /**
+     * array containing the four playing cards (two resource and two gold) layed on the table,
+     * that can be drawn alternatively to the two decks
+     */
+    private final PlayableCard[] centerCards = new PlayableCard[4]; //first two are resource cards, last two are gold
 
-    private final PlayableCard[] centerCards = new PlayableCard[4]; //le prime 2 sono resource card, le ultime gold cards
-
-
+    /**
+     * Constructor: initializes the table center, linking all the attributes to the class
+     * @param resDeck resource cards deck that will be placed on the table center
+     * @param goldDeck gold cards deck that will be placed on the table center
+     * @param objDeck objective cards deck that will be placed on the table center
+     * @param game Game instance linked to the table center
+     */
     public TableCenter(ResourceDeck resDeck, GoldDeck goldDeck, ObjectiveDeck objDeck, Game game) {
         this.resDeck = resDeck;
         this.goldDeck = goldDeck;
@@ -20,28 +44,58 @@ public class TableCenter {
         this.game = game;
     }
 
-
+    /**
+     * getter for the two objective cards layed on the table
+     * @return objective cards array
+     */
     public ObjectiveCard[] getObjCards() {
         return objCards;
     }    //GETTER
-
+    /**
+     * getter for the four playable cards layed on the table
+     * @return playable cards array
+     */
     public PlayableCard[] getCenterCards() {
         return centerCards;
     }
 
+    /**
+     * getter for the resource cards deck placed on the table center
+     * @return resource card deck instance
+     */
     public ResourceDeck getResDeck() {
         return resDeck;
     }
 
+    /**
+     * getter for the gold cards deck placed on the table center
+     * @return gold card deck instance
+     */
     public GoldDeck getGoldDeck() {
         return goldDeck;
     }
 
+    /**
+     * getter for the objective cards deck placed on the table center
+     * @return objective card deck instance
+     */
     public ObjectiveDeck getObjDeck() {
         return objDeck;
     }
 
-
+    /**
+     * method that can be called by the user ALTERNATIVELY to the standard draw from deck method.
+     * Finds the playable card the user requested through the array, returns it if it exists.
+     * Later it replaces it (if possible) with a card of the same type (gold or resource) and if not
+     * just replaces it with the other type.
+     * If both decks are empty, the card slot remains empty and endgame process is triggered
+     * @param playablecard
+     * @return an integer representing the state of the draw:
+     *   0 means the draw was correct and neither of the decks were empty
+     *   1 means the draw was correct but one or both the decks were empty
+     *  -1 means the card requested by the user was not found (the player will not draw anything, and it
+     *   will be prompted to draw again either from the deck or from the cards layed on the table)
+     */
     public int drawAndPosition(PlayableCard playablecard){
         int result=0;
         int i;
