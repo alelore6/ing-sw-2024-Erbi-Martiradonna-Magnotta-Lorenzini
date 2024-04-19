@@ -38,7 +38,6 @@ public class Game {
      */
     TableCenter tablecenter;
 
-
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance aswell.
