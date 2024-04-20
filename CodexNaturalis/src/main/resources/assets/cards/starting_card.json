@@ -1,0 +1,18 @@
+[
+  {
+    "ID" : 81,
+    "corners" : [
+      {
+        "pos" : "UP_SX",
+        "resource" : "FUNGI"
+      },
+      {
+        "pos" : "UP_DX"
+      },
+      {
+        "pos" : "DOWN_SX",
+        "resource" : "FUNGI"
+      }
+    ]
+  }
+]
