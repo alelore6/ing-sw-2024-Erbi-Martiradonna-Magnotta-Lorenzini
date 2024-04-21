@@ -86,8 +86,13 @@ public class Hand {
     }
 
     /**
-     * check that play is valid following the game rules,
-     * lastly the card is set on displayedCards and removed from the hand and the player's resources updated by calling currentResources.update()
+     * check that play is valid following the game rules:
+     * 1. if not a starting card check that the card is found in the hand cards
+     * 2. if card is a gold card, check required resources
+     * 3. check x,y position and its surroundings are free
+     * 4. check that overlapping corners are visible
+     * 5. setting overlapping corners to covered
+     * 6. the card is set on displayedCards and removed from the hand and the player's resources updated by calling currentResources.update()
      * @param card the card in the hand that will be played
      * @param x the x-axis coordinates that describes the position where the card will be played
      * @param y the y-axis coordinates that describes the position where the card will be played
@@ -137,47 +142,57 @@ public class Hand {
         if (x!=0 && y!=0 && displayedCards[x-1][y-1]!=null){
             // 0,4: UP_SX; 1,5: UP_DX; 2,6: DOWN_SX; 3,7: DOWN_DX (4,5,6,7 are backs corner)
             //if there's no corner, it's NULL
-            // back corners don't need to be checked because are all visible for all cards
-            if (!displayedCards[x-1][y-1].isFacedown && (displayedCards[x-1][y-1]).corners[1]==null){
-                throw new WrongPlayException(player,x,y,card);
+            if (!displayedCards[x-1][y-1].isFacedown){
+                if ((displayedCards[x-1][y-1]).corners[1]==null)
+                    throw new WrongPlayException(player,x,y,card);
+                //save the corner that is overlapped
+                else overlaps[0]= (displayedCards[x-1][y-1]).corners[1];
             }
             else {
+                //check back corner
+                if ((displayedCards[x-1][y-1]).corners[5]==null)
+                    throw new WrongPlayException(player,x,y,card);
                 //save the corner that is overlapped
-                if(!displayedCards[x-1][y-1].isFacedown)
-                    overlaps[0]= (displayedCards[x-1][y-1]).corners[1];
                 else overlaps[0]= (displayedCards[x-1][y-1]).corners[5];
             }
         }
         //card up SX
         if (x!=0 && y!=80 && displayedCards[x-1][y+1]!=null) {
-            if (!displayedCards[x-1][y+1].isFacedown && (displayedCards[x-1][y+1]).corners[3] == null) {
-                throw new WrongPlayException(player, x, y, card);
-            } else {
-                if(!displayedCards[x-1][y+1].isFacedown)
-                    overlaps[1] = (displayedCards[x-1][y+1]).corners[3];
+            if (!displayedCards[x-1][y+1].isFacedown){
+                if ((displayedCards[x-1][y+1]).corners[3] == null)
+                    throw new WrongPlayException(player, x, y, card);
+                else overlaps[1] = (displayedCards[x-1][y+1]).corners[3];
+            }
+            else {
+                if ((displayedCards[x-1][y+1]).corners[7] == null)
+                    throw new WrongPlayException(player, x, y, card);
                 else overlaps[1] = (displayedCards[x-1][y+1]).corners[7];
             }
         }
         //card up DX
         if (x!=80 && y!=80 && displayedCards[x+1][y+1]!=null){
-            if (!displayedCards[x+1][y+1].isFacedown && (displayedCards[x+1][y+1]).corners[2]==null){
-                throw new WrongPlayException(player,x,y,card);
+            if (!displayedCards[x+1][y+1].isFacedown){
+                if((displayedCards[x+1][y+1]).corners[2]==null)
+                    throw new WrongPlayException(player,x,y,card);
+                else overlaps[2]=(displayedCards[x+1][y+1]).corners[2];
             }
             else {
-                if(!displayedCards[x+1][y+1].isFacedown)
-                    overlaps[2]=(displayedCards[x+1][y+1]).corners[2];
+                if((displayedCards[x+1][y+1]).corners[6]==null)
+                    throw new WrongPlayException(player,x,y,card);
                 else overlaps[2]=(displayedCards[x+1][y+1]).corners[6];
             }
         }
         //card down SX
-        if (x!=0 && y!=80 && displayedCards[x+1][y-1]!=null){
-            if (!displayedCards[x+1][y-1].isFacedown && (displayedCards[x+1][y-1]).corners[0]==null){
-                throw new WrongPlayException(player,x,y,card);
-            }
+        if (x!=80 && y!=0 && displayedCards[x+1][y-1]!=null){
+            if (!displayedCards[x+1][y-1].isFacedown){
+                if((displayedCards[x+1][y-1]).corners[0]==null)
+                    throw new WrongPlayException(player,x,y,card);
+                overlaps[3]=(displayedCards[x+1][y-1]).corners[0];
+                }
             else {
-                if(!displayedCards[x+1][y-1].isFacedown)
-                    overlaps[3]=(displayedCards[x+1][y-1]).corners[0];
-                else overlaps[3]=(displayedCards[x+1][y-1]).corners[4];
+                if((displayedCards[x+1][y-1]).corners[4]==null)
+                    throw new WrongPlayException(player,x,y,card);
+                overlaps[3]=(displayedCards[x+1][y-1]).corners[4];
             }
         }
         //if it's not a starting card: overlaps must be at least 1 and all overlaps corners are set covered
@@ -189,12 +204,19 @@ public class Hand {
                     overlaps[j].isCovered=true;
                 }
             }
-            if (count ==0)
+            if (count ==0){
+                //corner are set free again
+                for( int k=0; k<4; k++) {
+                    if (overlaps[k] != null) {
+                        overlaps[k].isCovered = false;
+                    }
+                }
                 throw new WrongPlayException(player,-2,-2,card);
+            }
         }
         //play the card
         displayedCards[x][y] = card;
-        //card is removed from the hand
+        //card is removed from the hand, not in case of starting card
         if (found) {
             HandCard[i] = null;
         }

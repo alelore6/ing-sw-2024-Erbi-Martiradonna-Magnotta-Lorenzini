@@ -28,7 +28,10 @@ public class CurrentResources {
      }
 
     /**
-     * update the player's resources after every card played
+     * update the player's resources after every card played:
+     * 1. remove overlapped corners resources
+     * 2. add card resources
+     * 3. calculate card points
      * @param card the card that has just been played
      * @param overlaps the corners that have been covered
      */
@@ -67,9 +70,11 @@ public class CurrentResources {
              }
          } else {
              // add new card's front resources
-             for(int i=0; i<4; i++){
-                 Resource temp= card.corners[i].getResource();
-                 currentResources.replace(temp,currentResources.get(temp)+1);
+             for(int j=0; j<4; j++){
+                 if (card.corners[j]!=null && card.corners[j].getResource()!=null){
+                     Resource temp= card.corners[j].getResource();
+                     currentResources.replace(temp,currentResources.get(temp)+1);
+                 }
              }
          }
         if (!(card instanceof StartingCard)){
