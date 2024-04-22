@@ -8,7 +8,7 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 public class ObjectiveCard2 extends ObjectiveCard {
-    private Resource points;
+    private int points;
     private Map<Resource, Integer> objectivecard2Map;
 
     public ObjectiveCard2(int ID) {
@@ -20,12 +20,12 @@ public class ObjectiveCard2 extends ObjectiveCard {
 
         Gson gson = new Gson();
         try (FileReader reader = new FileReader("src/main/resources/assets/cards/objective_card.json")) {
-            ObjCard[] oCards = gson.fromJson(reader, ObjCard[].class); //
+            ObjectiveCard2[] oCards = gson.fromJson(reader, ObjectiveCard2[].class); //
         } catch (IOException e) {
            System.out.println("Error, not found.");
         }
     }
-    public Resource getpoints() {
+    public int getpoints() {
         return points;
     }
 }

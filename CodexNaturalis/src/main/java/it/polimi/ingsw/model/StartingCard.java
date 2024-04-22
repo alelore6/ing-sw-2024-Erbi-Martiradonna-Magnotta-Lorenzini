@@ -1,9 +1,10 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.model.Player;
-
-
 import com.google.gson.Gson;
+
+import java.io.FileReader;
+import java.io.IOException;
+
 public class StartingCard extends Card{
     public Resource[] resource = new Resource[3];
 

@@ -8,8 +8,5 @@ public abstract class ObjectiveCard {
     public ObjectiveCard(int ID) {
         this.ID = ID;
     }
-    public abstract ObjectiveCard getCard();
-    public int getpoints(){
-        return this.points;
-    }
+    public abstract int getpoints();
 }
