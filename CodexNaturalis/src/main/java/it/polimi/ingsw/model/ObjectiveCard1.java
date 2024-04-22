@@ -6,22 +6,24 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class ObjectiveCard1 extends ObjectiveCard{
-    public int[] req1= new int[3];
-    public Color[] Color= new Color[4];
+    private int points;
+    private int[] req;
+    private Color[] color;
     public ObjectiveCard1(int ID) {
         super(ID);
     }
+
+    public int getpoints() {
+        return points;
+    }
+
     Gson gson = new Gson();
-        try(FileReader reader = new FileReader("src/main/resources/assets/cards/objective_card.json")) {
-        ObjCard[] oCards = gson.fromJson(reader, ObjCard[].class); //
+
+    try(FileReader reader = new FileReader("src/main/resources/assets/cards/objective_card.json")) {
+        ObjectiveCard1[] oCards = gson.fromJson(reader, ObjectiveCard1[].class); //
     } catch (IOException e) {
         System.out.println("Error, not found.");
     }
-    public ObjectiveCard getCard(){
-        return objectivecard;
-    }
 
-    public int getPoints(){
-        return points;
-    }
+
 }
