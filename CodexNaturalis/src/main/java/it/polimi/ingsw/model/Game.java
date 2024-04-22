@@ -196,6 +196,7 @@ public class Game {
             if(players[i].getObjective() instanceof  ObjectiveCard1){ //calcolo punti a seconda del tipo di obj card
 
 
+
             }
             else{// ObjectiveCard2
 

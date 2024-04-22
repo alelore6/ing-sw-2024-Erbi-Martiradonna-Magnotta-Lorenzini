@@ -9,6 +9,11 @@ import com.google.gson.Gson;
 
 public class ObjectiveCard2 extends ObjectiveCard {
     private int points;
+
+    public Map<Resource, Integer> getObjectivecard2Map() {
+        return objectivecard2Map;
+    }
+
     private Map<Resource, Integer> objectivecard2Map;
 
     public ObjectiveCard2(int ID) {
