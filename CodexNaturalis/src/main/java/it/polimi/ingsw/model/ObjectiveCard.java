@@ -2,8 +2,8 @@ package it.polimi.ingsw.model;
 
 public abstract class ObjectiveCard {
 
-    private int ID;
-    public int points;
+     protected int ID;
+    protected int points;
 
     public ObjectiveCard(int ID) {
         this.ID = ID;
