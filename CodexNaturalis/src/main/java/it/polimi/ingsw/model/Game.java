@@ -179,6 +179,10 @@ public class Game {
 
     /**
      * //TODO
+     * Calculates the total points of each player, adding the total points to the points acquired by the player's objective card
+     * two different ways of calculating the points, one for each type of objective card.
+     * The first one simply requires to check how many times the player has the required set of resources
+     * The second one checks through matrix operations if the players respected a certain card pattern
      * @return winning player or players
      */
     public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
@@ -192,13 +196,26 @@ public class Game {
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
             punteggi[i] = players[i].getToken().getScoreTrackPos();
+            int minPoints = 1000;
 
-            if(players[i].getObjective() instanceof  ObjectiveCard1){ //calcolo punti a seconda del tipo di obj card
+            if(players[i].getObjective() instanceof  ObjectiveCard2){ //calcolo punti a seconda del tipo di obj card
+                for( Resource resource : ((ObjectiveCard2) players[i].getObjective()).getObjectivecard2Map().keySet()){
+                    //controllo le risorse necessarie per i punti
+                    int required = ((ObjectiveCard2) players[i].getObjective()).getObjectivecard2Map().get(resource);
+                    //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
+                    //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
+                    //avrà totalizzato
+                    if(players[i].getCurrentResources().currentResources.get(resource)/ required < minPoints) {
+                        minPoints = players[i].getCurrentResources().currentResources.get(resource)/required;
+                    }
+                    punteggi[i]= minPoints + players[i].getToken().getScoreTrackPos(); //aggiungo il punteggio all'array posizionalmente
+
+                }
 
 
 
             }
-            else{// ObjectiveCard2
+            else{// ObjectiveCard1
 
             }
         }
