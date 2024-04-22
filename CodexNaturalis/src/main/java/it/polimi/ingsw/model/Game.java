@@ -188,18 +188,16 @@ public class Game {
         isFinished = true;
 
         Player winner = null;
-        int punteggi[] = new int[numPlayers];
+        int[] punteggi = new int[numPlayers];
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
             punteggi[i] = players[i].getToken().getScoreTrackPos();
 
             if(players[i].getObjective() instanceof  ObjectiveCard1){ //calcolo punti a seconda del tipo di obj card
 
-            }
-            else if(players[i].getObjective() instanceof  ObjectiveCard2){
 
             }
-            else{ // ObjectiveCard3
+            else{// ObjectiveCard2
 
             }
         }
