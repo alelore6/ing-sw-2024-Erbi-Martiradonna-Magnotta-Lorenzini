@@ -1,20 +1,25 @@
-
 package it.polimi.ingsw.model;
 
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ObjectiveCard1 extends ObjectiveCard{
-    // req and color have a 1 to 1 mapping: it means that req[i] is referred to color[i].
-    // They also have length 3.
-    private int[] req;
-    private Color[] color;
-
+    public int[] req1= new int[3];
+    public color[] Color= new color[4];
     public ObjectiveCard1(int ID) {
         super(ID);
     }
-
-    //TODO aggiungere costruttore
-
+    Gson gson = new Gson();
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/objective_card.json")) {
+        ObjCard[] oCards = gson.fromJson(reader, ObjCard[].class); //
+    } catch (IOException e) {
+        System.out.println("Error, not found.");
+    }
     public ObjectiveCard getCard(){
-        return this;
+        return objectivecard;
+    }
+
+    public int getPoints(){
+        return points;
     }
 }
