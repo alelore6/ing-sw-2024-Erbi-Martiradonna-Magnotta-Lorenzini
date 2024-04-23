@@ -12,14 +12,15 @@ public class StartingDeck {
         for (int i = 0; i < 6; i++) {
             startcards[i] = new StartingCard(6 + i);
         }
-        public StartingCard draw () throws isEmptyException {
-            if (NCards == 0) {
-                throw new isEmptyException(this);
-            } else {
-                StartingCard drawnCard = startcards[--NCards];
-                return drawnCard;
-            } //Not removing from array,
-        }
+
+    }
+    public StartingCard draw() throws isEmptyException {        //TODO: FIXARE ERRORI
+        if (NCards == 0) {
+            throw new isEmptyException(this);
+        } else {
+            StartingCard drawnCard = startcards[--NCards];
+            return drawnCard;
+        } //Not removing from array,
     }
         public void shuffle () {
             Collections.shuffle(startcards);

@@ -87,7 +87,6 @@ public class Game {
      * After the game has been initialized, the method starts it, laying all the cards on the table
      * and filling each player's hand, making them also choose the objective card between the two given.
      * It also randomly chooses the first player and orders the other ones from left to right.
-     * @param numPlayers number of players in this game
      * @throws RuntimeException if the decks are empty (should not happen at the beginning)
      * @throws WrongPlayException thrown by the method playStartingCard
      */
@@ -197,7 +196,7 @@ public class Game {
         // se parità persiste allora i giocatori condividono la vittoria!
         isFinished = true;
 
-        Player winner = null;
+
         int[] punteggi = new int[numPlayers];
 
         for(int i = 0; i < numPlayers; i++) { //inizializzazione array punteggi tutti a 0
@@ -208,10 +207,9 @@ public class Game {
             punteggi[i] = players[i].getToken().getScoreTrackPos();
 
 
-            //TODO punteggi[i]+= checkWinner() aggiungere i punteggi per ogni giocatore
-                    //buco nero gigante
-
-
+            punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[0], i);
+            punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[1], i);
+            punteggi[i] += checkObjectivePoints(players[i].getObjective(), i);
 
             }
 
@@ -219,13 +217,32 @@ public class Game {
         int maxpoints = 0;
         for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
         {
-            if(punteggi[i] > maxpoints){
-                winner = players[i];
+            if(punteggi[i] >= maxpoints){
                 maxpoints = punteggi[i];
             }
 
         }
-        return winner;
+        int pareggi = 0;
+
+        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo il numero di pareggi
+        {
+            if(punteggi[i] == maxpoints){
+                pareggi++;
+            }
+
+        }
+        Player[] winners = new Player[pareggi];
+
+        int j = 0;
+        for(int i = 0; i < numPlayers; i++){
+
+            if(punteggi[i]==maxpoints){
+                winners[j] = players[i];
+                j++;
+            }
+        }
+
+        return winners;
     }
 
     /**
@@ -336,7 +353,7 @@ public class Game {
                                     y = 2;
                             }
 
-                            if (subMatrix[x][y] == null || subMatrix[x][y] instanceof StartingCard) {
+                            if (subMatrix[x][y] == null || subMatrix[x][y] instanceof StartingCard || ((PlayableCard)subMatrix[x][y]).isChecked == 1) {
                                 found = false;
                                 break;
                             }
@@ -354,7 +371,9 @@ public class Game {
                         if(found){
                             for(int z = 0; z < 3; z++){
                                 ((PlayableCard)savedCards[z]).isChecked = 1;
+
                             }
+                            totalpoints += objectiveCard.points;
 
                         }
 
@@ -365,6 +384,7 @@ public class Game {
                     ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
                 }
             }
+
             return totalpoints;
         }
     }
