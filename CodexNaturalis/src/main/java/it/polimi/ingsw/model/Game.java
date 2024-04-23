@@ -44,7 +44,7 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    Game(int numPlayers, String[] nicknames)
+    public Game(int numPlayers, String[] nicknames)
     {
         this.numPlayers = numPlayers;
         this.turnCounter = 0;
@@ -209,7 +209,7 @@ public class Game {
 
 
 
-
+                    //buco nero gigante
 
 
 
@@ -300,8 +300,8 @@ public class Game {
                         int x;
                         int y;
                         //switch case to translate position into matrix position[][]
-                        switch ((ObjectiveCard1)objectiveCard.)
-                        if ()
+                        switch (((ObjectiveCard1) objectiveCard).getRequiredPositions()[index]){
+                        case
                     }
 
 
