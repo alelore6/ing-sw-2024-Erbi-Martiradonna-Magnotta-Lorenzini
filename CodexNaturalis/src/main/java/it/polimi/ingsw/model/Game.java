@@ -216,6 +216,18 @@ public class Game {
 
             }
             else{// ObjectiveCard1
+                //Serve scannerizzare l'intera matrice del player 81x81 in sottomatrici 3x3 e se trovo la pattern indicata
+                //allora setto un attributo found sulla carta ad 1. SE l'attributo found è a 1 sulle carte trovate (ne basta una)
+                //allora i punti NON SARANNO VALIDI!!! 0 punti.
+                int rows = 81;
+                int columns = 81;
+                for(int k = 0; k < rows - 3; k++){
+                    for(int j = 0; j < columns-3 ; j++){
+                        //TODO implementare
+
+                    }
+                }
+
 
             }
         }

@@ -67,7 +67,7 @@ public class Player {
      * @param obj1 the random objective card the player can choose
      * @param obj2 the random objective card the player can choose
      */
-    protected void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
+    public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
         //TODO client's input request
         objective=obj1;
     }
@@ -78,7 +78,7 @@ public class Player {
      * @param StartCard the player's random starting card
      * @throws WrongPlayException is the play is not valid
      */
-    protected void placeStartingCard(StartingCard StartCard) throws WrongPlayException {
+    public void placeStartingCard(StartingCard StartCard) throws WrongPlayException {
         //TODO Card can be rotated from the player
         Hand.playCard(StartCard,40,40);
     }

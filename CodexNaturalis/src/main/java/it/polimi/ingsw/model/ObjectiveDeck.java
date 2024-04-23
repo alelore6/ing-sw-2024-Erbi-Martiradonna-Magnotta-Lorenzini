@@ -7,7 +7,7 @@ public class ObjectiveDeck {
     private ObjectiveCard[] objcards;
 
     public ObjectiveDeck() {
-        objcards = new ObjectiveCard[16];
+        objcards = new ObjectiveCard[16];       //TODO: FIXARE ERRORI
         for (int i = 0; i < 16; i++) {
             objcards[i] = new ObjectiveCard(16 + i);
         }

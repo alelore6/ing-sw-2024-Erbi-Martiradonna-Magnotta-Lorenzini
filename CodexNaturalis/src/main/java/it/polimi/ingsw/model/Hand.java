@@ -18,6 +18,14 @@ public class Hand {
     private final Card[][] displayedCards;
 
     /**
+     * getter for displayed cards
+     * @return displayedCards
+     */
+    public Card[][] getDisplayedCards() {
+        return displayedCards;
+    }
+
+    /**
      * Constructor of the class
      * @param player player that owns the class
      */
