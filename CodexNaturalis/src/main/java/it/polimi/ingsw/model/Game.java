@@ -200,50 +200,21 @@ public class Game {
         Player winner = null;
         int[] punteggi = new int[numPlayers];
 
+        for(int i = 0; i < numPlayers; i++) { //inizializzazione array punteggi tutti a 0
+            punteggi[i] = 0;
+        }
+
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
             punteggi[i] = players[i].getToken().getScoreTrackPos();
-            int minPoints = 1000;
-
-            if(players[i].getObjective() instanceof  ObjectiveCard2){ //calcolo punti a seconda del tipo di obj card
-                for( Resource resource : ((ObjectiveCard2) players[i].getObjective()).getObjectivecard2Map().keySet()){
-                    //controllo le risorse necessarie per i punti
-                    int required = ((ObjectiveCard2) players[i].getObjective()).getObjectivecard2Map().get(resource);
-                    //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
-                    //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
-                    //avrà totalizzato
-                    if(players[i].getCurrentResources().currentResources.get(resource)/ required < minPoints) {
-                        minPoints = players[i].getCurrentResources().currentResources.get(resource)/required;
-                    }
-                    punteggi[i]= minPoints + players[i].getToken().getScoreTrackPos(); //aggiungo il punteggio all'array posizionalmente
-
-                }
 
 
 
-            }
-            else{// ObjectiveCard1
-                //Serve scannerizzare l'intera matrice del player 81x81 in sottomatrici 3x3 e se trovo la pattern indicata
-                //allora setto un attributo found sulla carta ad 1. SE l'attributo found è a 1 sulle carte trovate (ne basta una)
-                //allora i punti NON SARANNO VALIDI!!! 0 punti.
-                int rows = 81;
-                int columns = 81;
-                for(int k = 0; k < rows - 3; k++){
-                    for(int j = 0; j < columns-3 ; j++){
-                        //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
-                        Card[][] subMatrix = getSubmatrix(players[i].getHand().getDisplayedCards(), k, j);
-
-
-
-
-
-                    }
-                }
 
 
 
 
             }
-        }
+
 
         int maxpoints = 0;
         for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
@@ -294,6 +265,52 @@ public class Game {
             }
         }
         return submatrix;
+    }
+
+    protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos, int[] punteggi) {
+        int minPoints = 1000;
+
+        if (objectiveCard instanceof ObjectiveCard2) { //calcolo punti a seconda del tipo di obj card
+            for (Resource resource : ((ObjectiveCard2)objectiveCard).getObjectivecard2Map().keySet()) {
+                //controllo le risorse necessarie per i punti
+                int required = ((ObjectiveCard2)objectiveCard).getObjectivecard2Map().get(resource);
+                //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
+                //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
+                //avrà totalizzato
+                if (players[playerPos].getCurrentResources().currentResources.get(resource) / required < minPoints) {
+                    minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
+                }
+                punteggi[playerPos] += minPoints; //aggiungo il punteggio all'array posizionalmente
+
+            }
+
+
+        } else {// ObjectiveCard1
+            //Serve scannerizzare l'intera matrice del player 81x81 in sottomatrici 3x3 e se trovo la pattern indicata
+            //allora setto un attributo found sulla carta ad 1. SE l'attributo found è a 1 sulle carte trovate (ne basta una)
+            //allora i punti NON SARANNO VALIDI!!! 0 punti.
+            int rows = 81;
+            int columns = 81;
+            for (int k = 0; k < rows - 3; k++) {
+                for (int j = 0; j < columns - 3; j++) {
+                    //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
+                    Card[][] subMatrix = getSubmatrix(players[playerPos].getHand().getDisplayedCards(), k, j);
+                    boolean found = true;
+                    for (int index = 0; index < 3; index++) {
+                        int x;
+                        int y;
+                        //switch case to translate position into matrix position[][]
+                        switch ((ObjectiveCard1)objectiveCard.)
+                        if ()
+                    }
+
+
+                }
+            }
+        }
+    }
+
+
     }
 
 
