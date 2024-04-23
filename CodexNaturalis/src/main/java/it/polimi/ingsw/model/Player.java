@@ -72,6 +72,8 @@ public class Player {
         objective=obj1;
     }
 
+    //TODO: in RMI connection methods always throw RemoteException perché sto bastardo non ti avvisa
+
     /**
      * Play the starting card in the central position,
      * before playing, the card can be rotated by the player

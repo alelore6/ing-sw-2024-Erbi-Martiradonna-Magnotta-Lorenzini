@@ -165,27 +165,33 @@ public class Game {
         //4: entrambi i mazzi finiti
         //5: mazzo gold finito
         //6: mazzo risorsa finito
-        remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
+
 
         switch(occasion){
             case 0,1,2,3:
+                remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
                 System.out.println("Player " + occasion + " has reached 20 points. Starting endgame process");
             case 4:
+                remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
                 System.out.println("Zero cards left! Starting endgame process");
+            case 5,6:
+            {
+                //do nothing
+            }
         }
         //TODO: notificare il controllore e la condizione su cui è stato chiamato
 
     }
 
     /**
-     * //TODO
      * Calculates the total points of each player, adding the total points to the points acquired by the player's objective card
      * two different ways of calculating the points, one for each type of objective card.
      * The first one simply requires to check how many times the player has the required set of resources
      * The second one checks through matrix operations if the players respected a certain card pattern
      * @return winning player or players
      */
-    public Player checkWinner(){ //TODO possibilità di ritornare più player (array?)
+    public Player[] checkWinner(){ // possibilità di ritornare più player, array con dimensione generata dinamicamente
+                                    // a seconda di quanti player hanno lo score più alto e uguale
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
         // se parità persiste allora i giocatori condividono la vittoria!
@@ -223,10 +229,17 @@ public class Game {
                 int columns = 81;
                 for(int k = 0; k < rows - 3; k++){
                     for(int j = 0; j < columns-3 ; j++){
-                        //TODO implementare
+                        //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
+                        Card[][] subMatrix = getSubmatrix(players[i].getHand().getDisplayedCards(), k, j);
+
+
+
+
 
                     }
                 }
+
+
 
 
             }
@@ -272,4 +285,16 @@ public class Game {
 
 
     }
+
+    protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
+        Card[][] submatrix = new Card[3][3];
+        for (int i = row, x = 0; i < row + 3; i++, x++) {
+            for (int j = col, y = 0; j < col + 3; j++, y++) {
+                submatrix[x][y] = matrix[i][j];
+            }
+        }
+        return submatrix;
+    }
+
+
 }
