@@ -91,7 +91,7 @@ public class Game {
      * @throws RuntimeException if the decks are empty (should not happen at the beginning)
      * @throws WrongPlayException thrown by the method playStartingCard
      */
-    public void startGame(int numPlayers) throws RuntimeException, WrongPlayException{
+    public void startGame() throws RuntimeException, WrongPlayException{
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
 
@@ -116,7 +116,7 @@ public class Game {
 
         for(Player p: players){
             p.placeStartingCard(StartingDeck.draw());
-            TokenColor playercolor;
+            TokenColor playercolor = null;
              //TODO il colore deve essere passato come input dal player!
             p.setToken(new Token(playercolor, tablecenter.getScoretrack(), p)); //set token
 
@@ -208,7 +208,7 @@ public class Game {
             punteggi[i] = players[i].getToken().getScoreTrackPos();
 
 
-
+            //TODO punteggi[i]+= checkWinner() aggiungere i punteggi per ogni giocatore
                     //buco nero gigante
 
 
@@ -267,28 +267,32 @@ public class Game {
         return submatrix;
     }
 
-    protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos, int[] punteggi) {
-        int minPoints = 1000;
+    protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
-        if (objectiveCard instanceof ObjectiveCard2) { //calcolo punti a seconda del tipo di obj card
-            for (Resource resource : ((ObjectiveCard2)objectiveCard).getObjectivecard2Map().keySet()) {
+
+        if (objectiveCard instanceof ObjectiveCard2) {
+            int minPoints = 1000;
+            //calcolo punti a seconda del tipo di obj card
+            for (Resource resource : ((ObjectiveCard2) objectiveCard).getObjectivecard2Map().keySet()) {
                 //controllo le risorse necessarie per i punti
-                int required = ((ObjectiveCard2)objectiveCard).getObjectivecard2Map().get(resource);
+                int required = ((ObjectiveCard2) objectiveCard).getObjectivecard2Map().get(resource);
                 //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
                 //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
                 //avrà totalizzato
                 if (players[playerPos].getCurrentResources().currentResources.get(resource) / required < minPoints) {
                     minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
                 }
-                punteggi[playerPos] += minPoints; //aggiungo il punteggio all'array posizionalmente
+
 
             }
+            return minPoints; //aggiungo il punteggio all'array posizionalmente
 
 
         } else {// ObjectiveCard1
             //Serve scannerizzare l'intera matrice del player 81x81 in sottomatrici 3x3 e se trovo la pattern indicata
             //allora setto un attributo found sulla carta ad 1. SE l'attributo found è a 1 sulle carte trovate (ne basta una)
             //allora i punti NON SARANNO VALIDI!!! 0 punti.
+            int totalpoints = 0;
             int rows = 81;
             int columns = 81;
             for (int k = 0; k < rows - 3; k++) {
@@ -296,22 +300,81 @@ public class Game {
                     //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
                     Card[][] subMatrix = getSubmatrix(players[playerPos].getHand().getDisplayedCards(), k, j);
                     boolean found = true;
-                    for (int index = 0; index < 3; index++) {
-                        int x;
-                        int y;
-                        //switch case to translate position into matrix position[][]
-                        switch (((ObjectiveCard1) objectiveCard).getRequiredPositions()[index]){
-                        case
+                    Card[] savedCards = new Card[3];
+                    //PER OGNI 3X3 MATRICE SVOLGO
+                        for (int index = 0; index < 3; index++) {
+                            int x = 0;
+                            int y = 0;
+                            //switch case to translate position into matrix position[][]
+                            switch (((ObjectiveCard1) objectiveCard).getRequiredPositions()[index]) {
+                                case 1:
+                                    x = 0;
+                                    y = 0;
+                                case 2:
+                                    x = 0;
+                                    y = 1;
+                                case 3:
+                                    x = 0;
+                                    y = 2;
+                                case 4:
+                                    x = 1;
+                                    y = 0;
+                                case 5:
+                                    x = 1;
+                                    y = 1;
+                                case 6:
+                                    x = 1;
+                                    y = 2;
+                                case 7:
+                                    x = 2;
+                                    y = 0;
+                                case 8:
+                                    x = 2;
+                                    y = 1;
+                                case 9:
+                                    x = 2;
+                                    y = 2;
+                            }
+
+                            if (subMatrix[x][y] == null || subMatrix[x][y] instanceof StartingCard) {
+                                found = false;
+                                break;
+                            }
+
+                            if (((PlayableCard) subMatrix[x][y]).getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) {
+                                savedCards[index] = subMatrix[x][y];
+                            } else {
+                                found = false;
+                                break;
+                            }
+
+
+                        }
+
+                        if(found){
+                            for(int z = 0; z < 3; z++){
+                                ((PlayableCard)savedCards[z]).isChecked = 1;
+                            }
+
+                        }
+
                     }
-
-
+                }
+            for(int rowz = 0; rowz < 81; rowz++){
+                for(int columnz = 0; columnz < 81; columnz++){
+                    ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
                 }
             }
+            return totalpoints;
         }
     }
-
-
-    }
-
-
 }
+
+
+
+
+
+
+
+
+

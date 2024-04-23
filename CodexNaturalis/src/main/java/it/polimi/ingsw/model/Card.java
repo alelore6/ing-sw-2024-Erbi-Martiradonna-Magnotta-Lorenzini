@@ -11,15 +11,7 @@ public abstract class Card {
         this.ID = ID;
     }
 
-    public int getIsChecked() {
-        return isChecked;
-    }
-
-    public void setIsChecked(int isChecked) {
-        this.isChecked = isChecked;
-    }
-
-    private int isChecked;
+;
 
     // Everything is stored and the game uses a side of the card based ONLY on this
      public abstract void flip();

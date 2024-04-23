@@ -8,7 +8,7 @@ public class ObjectiveDeck {
     private ObjectiveCard[] objcards;
 
     public ObjectiveDeck() {
-        objcards = new ObjectiveCard[16];       //TODO: FIXARE ERRORI
+        objcards = new ObjectiveCard[16];       //TODO: FIXARE ERRORI, ci sono 2 metodi draw e ne serve solo 1!!
         for (int i = 0; i < 16; i++) {
             objcards[i] = new ObjectiveCard(16 + i);
         }
