@@ -2,6 +2,7 @@ package it.polimi.ingsw.model;
 
 import java.util.Collections;
 
+
 public class ObjectiveDeck {
     int NCards = 16;
     private ObjectiveCard[] objcards;
@@ -11,7 +12,8 @@ public class ObjectiveDeck {
         for (int i = 0; i < 16; i++) {
             objcards[i] = new ObjectiveCard(16 + i);
         }
-        public ObjectiveCard draw () throws isEmptyException {
+    }
+        public ObjectiveCard draw() throws isEmptyException {
             if (NCards == 0) {
                 throw new isEmptyException(this);
             } else {
