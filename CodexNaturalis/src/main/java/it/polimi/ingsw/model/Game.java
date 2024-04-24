@@ -90,7 +90,7 @@ public class Game {
      * @throws RuntimeException if the decks are empty (should not happen at the beginning)
      * @throws WrongPlayException thrown by the method playStartingCard
      */
-    public void startGame() throws RuntimeException, WrongPlayException{
+    public void startGame() throws RuntimeException{
 
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
 
@@ -114,7 +114,13 @@ public class Game {
         }
 
         for(Player p: players){
-            p.placeStartingCard(StartingDeck.draw());
+            try {
+                p.placeStartingCard(StartingDeck.draw());
+            } catch (WrongPlayException e) {
+                throw new RuntimeException(e);
+            } catch (isEmptyException e) {
+                throw new RuntimeException(e);
+            }
             TokenColor playercolor = null;
              //TODO il colore deve essere passato come input dal player!
             p.setToken(new Token(playercolor, tablecenter.getScoretrack(), p)); //set token
@@ -151,32 +157,48 @@ public class Game {
 
     /**
      * sets the parameter remainingTurns accordingly, displays a message on the user screen stating which
-     * occasion triggered the endgame status notifying the controller aswell.
+     * occasion triggered the endgame status notifying the controller as well.
      * @param occasion states the case that triggered the endgame process such as:
      * "player X has reached 20 points" or
      * "both decks are empty"
      */
     public void endGame(int occasion){
-        //0 : causato da player pos 0 che arriva a 20 pt
-        //1: player 1 ...
-        //2: player 2 ...
-        //3: player 3 ...
-        //4: entrambi i mazzi finiti
-        //5: mazzo gold finito
-        //6: mazzo risorsa finito
-
-
         switch(occasion){
+            // a player reached 20 points
             case 0,1,2,3:
-                remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
+                // un giro + i turni rimanenti per completare questo
+                remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
                 System.out.println("Player " + occasion + " has reached 20 points. Starting endgame process");
+            //both decks are found empty simultaneously
             case 4:
-                remainingTurns = numPlayers + (players[curPlayerPosition].position); //calcolo turni rimanenti
+                tablecenter.getGoldDeck().AckEmpty=true;
+                tablecenter.getResDeck().AckEmpty=true;
+                remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
                 System.out.println("Zero cards left! Starting endgame process");
-            case 5,6:
-            {
-                //do nothing
-            }
+            //gold deck is found empty
+            case 5:
+                // if i already had this information do nothing
+                if(tablecenter.getGoldDeck().AckEmpty)
+                    break;
+                //else set AckEmpty to true
+                tablecenter.getGoldDeck().AckEmpty=true;
+                //check if resource deck is known empty
+                if(tablecenter.getResDeck().AckEmpty){
+                    //both decks are empty: same as case 4
+                    remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position);
+                    System.out.println("Zero cards left! Starting endgame process");
+                }
+            //resource deck is found empty
+            case 6:
+                //same as case 5 but decks are inverted
+                if( tablecenter.getResDeck().AckEmpty){
+                    break;
+                }
+                tablecenter.getResDeck().AckEmpty=true;
+                if (tablecenter.getGoldDeck().AckEmpty){
+                    remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position);
+                    System.out.println("Zero cards left! Starting endgame process");
+                }
         }
         //TODO: notificare il controllore e la condizione su cui è stato chiamato
 
@@ -263,10 +285,14 @@ public class Game {
 
         curPlayerPosition = nextPlayerIndex;
 
-        //TODO da input utente serve sapere dove deve pescare. forse serve un metodo Draw generico contentente i due tipi di draw?
+        // TODO play card from input
+        //if both deck are not empty, a draw will be requested
+        if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty){
+            //TODO draw card from input
+        }
 
         turnCounter++;
-
+        remainingTurns--;
         if(remainingTurns == 0) checkWinner();
 
         else nextPlayer(players[nextPlayerIndex]);
