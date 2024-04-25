@@ -4,11 +4,11 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Network.GameServer;
 
 public class Controller {
-    private Game GameModel;
-    private GameServer gameServer;
-    private Lobby lobby;
+    public Game GameModel;
+    private final GameServer gameServer;
+    private final Lobby lobby;
 
-    Controller(GameServer gameServer){
+    public Controller(GameServer gameServer){
         this.gameServer=gameServer;
         lobby= new Lobby();
     }
@@ -17,12 +17,14 @@ public class Controller {
         //va qui?
         GameModel.startGame();
     }
-    protected boolean addPlayerToLobby(String nickname){
-        //ha senso?
-        if(lobby.addPlayer(nickname)){
-            return true;
+    public boolean addPlayerToLobby(String nickname){
+        if(lobby.numPlayers==0){
+            // find the client with this nickname
+            gameServer.findClient(nickname);
+            // and ask him to set numplayers (a lui o tramite il suo listener?)
+            lobby.setNumPlayers(4);
         }
-        return false;
+        return lobby.addPlayer(nickname);
     }
 
 }

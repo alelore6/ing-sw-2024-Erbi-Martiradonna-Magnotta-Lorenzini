@@ -4,38 +4,40 @@ import it.polimi.ingsw.controller.Controller;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameServer {
-    private Controller controller;
-    private String[] playingUsers;
+    public Controller controller = new Controller(this);
+    private static final List<Client> clientList = new ArrayList<>();
+    private static int numClient = 0;
+    public static void main(String[] args){
 
-    //e i client???
-    public static void main( String[] args ){
 
-        ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(/*port number*/);
-        } catch (IOException e) {
-            e.printStackTrace();
+    }
+
+    public boolean addClient(Client client){
+        // controllo nickname
+        boolean ok=false;
+        try{
+            findClient(client.nickname);
+        }catch (RuntimeException e){
+            ok=true;
         }
-
-        while(true){
-            boolean newConnection=false;
-            //1. accetto connessioni in entrambi i modi
-                //1.1 cerco connessione nel primo modo, se trovata newConnection=true;
-                //1.2 se !newConnection cerco nel secondo modo
-            //2. se ho una nuova connessione creo una istanza della classe client
-            //3. al client verrà richiesto il nickname e il numero di giocatori se è il primo
-                // da chi? dal controller (chiamato da qui), da qui direttamente o dal costruttore del client stesso?
-            //4. con la risposta lo si aggiunge alla lobby
-            //5. se la lobby è piena creo il game e (senza riconnessioni) break per uscire dal while
-            // altrimenti ripeto
-            break;
+        if(ok) {
+            clientList.add(client);
+            numClient++;
+            controller.addPlayerToLobby(client.nickname);
+            return true;
+        } else return false;
+    }
+    public Client findClient(String nickname){
+        for (Client c : clientList){
+            if (c.nickname.equalsIgnoreCase(nickname))
+                return c;
         }
-        while(true){
-            //se la partita è finita
-            break;
-        }
-
+        // client not found
+        throw new RuntimeException("client "+nickname+" not found");
     }
 }
