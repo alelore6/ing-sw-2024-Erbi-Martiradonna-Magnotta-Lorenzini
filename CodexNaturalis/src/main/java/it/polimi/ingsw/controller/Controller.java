@@ -1,28 +1,29 @@
 package it.polimi.ingsw.controller;
 
+import it.polimi.ingsw.Listener.ModelViewListener;
+import it.polimi.ingsw.Listener.ViewControllerListener;
+import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Network.GameServer;
 
 public class Controller {
-    public Game GameModel;
-    private final GameServer gameServer;
+    public Game game;
+    private final GameServer server;
     private final Lobby lobby;
 
-    public Controller(GameServer gameServer){
-        this.gameServer=gameServer;
+    public Controller(GameServer server){
+        this.server=server;
         lobby= new Lobby();
     }
     protected void createGame(){
-        GameModel= new Game(lobby.numPlayers,lobby.Nicknames);
-        //va qui?
-        GameModel.startGame();
+        game= new Game(lobby.numPlayers,lobby.Nicknames,new ModelViewListener(server.controller.game, server));
+        //faccio subito startGame?
+        game.startGame();
     }
     public boolean addPlayerToLobby(String nickname){
         if(lobby.numPlayers==0){
-            // find the client with this nickname
-            gameServer.findClient(nickname);
-            // and ask him to set numplayers (a lui o tramite il suo listener?)
-            lobby.setNumPlayers(4);
+            game.mvListener.sendMessage("Set numPlayers",nickname);
+            //vcListener will get the response and call lobby.setNumPlayers()
         }
         return lobby.addPlayer(nickname);
     }

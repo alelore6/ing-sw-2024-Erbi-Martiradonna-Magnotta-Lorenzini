@@ -7,17 +7,17 @@ import javax.swing.text.View;
 
 public class Client implements Runnable{
     //represent the player
-    public String nickname;
+    public final String nickname;
     private View view;
-    int viewType; //1 if GUI, 0 if CLI
-    int connectionType; //serve?
-    ModelViewListener mvListener;
-    ViewControllerListener vcListener;
-    public Client(String nickname, int viewType, GameServer server){
-        mvListener= new ModelViewListener(server.controller.GameModel,this);
-        vcListener= new ViewControllerListener(server.controller,this);
+    private int viewType; //1 if GUI, 0 if CLI
+    private int networkType; // 0 rmi, 1 socket
+    private ViewControllerListener vcListener;
+    private ModelViewListener mvListener;
+    public Client(String nickname, int viewType,int networkType, GameServer server){
+        this.vcListener=new ViewControllerListener(server.controller,this);
         this.nickname=nickname;
         this.viewType=viewType;
+        this.networkType=networkType;
         // create view based on view type
 
     }

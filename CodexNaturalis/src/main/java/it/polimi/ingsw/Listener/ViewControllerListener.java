@@ -9,6 +9,10 @@ public class ViewControllerListener {
     Client client;
     public ViewControllerListener(Controller controller, Client client){
         this.controller=controller;
-        this.client=client;
+        this.client= client;
+    }
+
+    public void receiveEvent(){
+
     }
 }
