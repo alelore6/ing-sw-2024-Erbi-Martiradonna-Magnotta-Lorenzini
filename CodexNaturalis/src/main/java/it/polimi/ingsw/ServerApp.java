@@ -6,54 +6,109 @@ import it.polimi.ingsw.Network.GameServer;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.RemoteException;
+import java.util.Scanner;
 
 public class ServerApp {
-    private static GameServer server;
-    public static void main(String[] args){
-        String hostName = args[0];
-        int portNumber = Integer.parseInt(args[1]);
+    private static ServerApp instance = null;
+    private static GameServer server=null;
 
-        // creo server
-         ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(portNumber);
-        } catch (IOException e) {
-            System.err.println(e.getMessage()); // Porta non disponibile
-            return;
+    public static ServerApp getInstance() throws RemoteException {
+        if (instance == null) {
+            instance = new ServerApp();
         }
-        server=new GameServer();
-        System.out.println("Server ready");
-
-
-        while(true){
-            boolean newConnection=false;
-            //1. accetto connessioni in entrambi i modi
-            //1.1 cerco connessione nel primo modo
-            Socket socket =null;
-            try {
-                socket  = serverSocket.accept();
-                if (socket!=null){
-                    newConnection=true;
-                }
-            } catch (IOException e) {
-                break; //server not ready
-            }
-
-            //1.2 se !newConnection cerco nel secondo modo
-
-            //2. se ho una nuova connessione ClientApp avrà creato
-            // nel thread una istanza di Client, ma come la recupero?
-            if(newConnection){
-                //server.addClient(client)
-            }
-
-        }
-
-
+        return instance;
     }
 
-    public GameServer getServer() {
+    private GameServer getServer(){
+        if (server==null){
+            server=new GameServer();
+        }
         return server;
     }
 
+    public static void main(String[] args) throws RemoteException {
+
+        // come prendo l'indirizzo ip?
+
+        Scanner terminal = new Scanner(System.in);
+        Integer port = 0;
+        final int portRMI;
+        final int portSocket;
+
+        System.out.print("Insert Server RMI port number - 4 digit only: \n");
+        while (port.toString().length() != 4){
+            try {
+                port = Integer.parseInt(terminal.next());
+            } catch (NumberFormatException e) {
+                System.out.println("Not a valid number!!\n");
+            }
+            if (port.toString().length() != 4)
+                System.out.print("Enter a 4 digit number only: \n");
+        }
+        portRMI = port;
+
+        port = 0;
+        System.out.print("Insert Server Socket port number - 4 digit only: \n");
+        while (port.toString().length() != 4){
+            try {
+                port = Integer.parseInt(terminal.next());
+            } catch (NumberFormatException e) {
+                System.out.println("It is not a valid number!!");
+            }
+            if (port.toString().length() != 4)
+                System.out.print("Enter a 4 digit number only: ");
+        }
+        portSocket = port;
+
+        //creo il mio server
+        getInstance().getServer();
+
+        // creo server RMI
+        Thread rmiThread = new Thread(() -> {
+            try {
+                startRMI(portRMI);
+            } catch (RemoteException e) {
+                System.err.println("Cannot start RMI.\n");
+            }
+        });
+        rmiThread.start();
+
+        // creo server socket
+        Thread socketThread = new Thread(() -> {
+            try {
+                startSocket(portSocket);
+            } catch (RemoteException e) {
+                System.err.println("Cannot start socket.\n");
+            }
+        });
+        socketThread.start();
+        try {
+            rmiThread.join();
+            socketThread.join();
+        } catch (InterruptedException e) {
+            System.err.println("No connection available.");
+        }
+
     }
+
+
+    private static void startRMI (int port) throws RemoteException{
+
+    }
+
+    private static void startSocket(int port) throws RemoteException {
+        // try with resources se sono riuscito a creare il server
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            while(true){
+                //cerco connessione
+                Socket socket = serverSocket.accept();
+
+                }
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot start socket server", e);
+        }
+    }
+
+
+}
