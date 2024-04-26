@@ -1,8 +1,7 @@
-package it.polimi.ingsw.Network.Client;
+package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Listener.ModelViewListener;
 import it.polimi.ingsw.Listener.ViewControllerListener;
-import it.polimi.ingsw.Network.Server.GameServer;
 
 import javax.swing.text.View;
 

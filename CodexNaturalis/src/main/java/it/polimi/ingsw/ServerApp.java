@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.Network.Server.GameServer;
+import it.polimi.ingsw.Distributed.GameServer;
 
 import java.io.IOException;
 import java.net.ServerSocket;

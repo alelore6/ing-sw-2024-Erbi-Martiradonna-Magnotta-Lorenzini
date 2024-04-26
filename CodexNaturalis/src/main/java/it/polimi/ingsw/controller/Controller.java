@@ -2,7 +2,7 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Listener.ModelViewListener;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.Network.Server.GameServer;
+import it.polimi.ingsw.Distributed.GameServer;
 
 public class Controller {
     public Game game;

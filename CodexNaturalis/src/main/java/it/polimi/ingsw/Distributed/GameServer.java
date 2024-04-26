@@ -1,12 +1,11 @@
-package it.polimi.ingsw.Network.Server;
+package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.Network.Client.Client;
 import it.polimi.ingsw.controller.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer {
+public class GameServer implements Server{
     public Controller controller = new Controller(this);
     private static final List<Client> clientList = new ArrayList<>();
     private static int numClient = 0;
