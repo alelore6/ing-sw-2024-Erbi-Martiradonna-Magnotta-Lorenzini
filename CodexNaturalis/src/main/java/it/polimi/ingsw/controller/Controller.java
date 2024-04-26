@@ -2,14 +2,14 @@ package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Listener.ModelViewListener;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.Distributed.GameServer;
+import it.polimi.ingsw.Distributed.ServerImpl;
 
 public class Controller {
     public Game game;
-    private final GameServer server;
+    private final ServerImpl server;
     private final Lobby lobby;
 
-    public Controller(GameServer server){
+    public Controller(ServerImpl server){
         this.server=server;
         lobby= new Lobby();
     }

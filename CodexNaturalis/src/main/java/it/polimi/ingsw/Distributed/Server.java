@@ -7,9 +7,11 @@ public interface Server extends Remote {
 
     /**
      * binds a client to the server
-     * @param client the client to bind
+     * @param clientImpl the client to bind
      * @throws RemoteException
      */
     boolean addClient(Client client) throws RemoteException;
+
+    void update(Client client, String event) throws RemoteException;
 
 }

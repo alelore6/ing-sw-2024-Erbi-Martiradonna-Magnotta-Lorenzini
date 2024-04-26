@@ -1,15 +1,15 @@
 package it.polimi.ingsw.Listener;
 
-import it.polimi.ingsw.Distributed.Client;
-import it.polimi.ingsw.Distributed.GameServer;
+import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.model.Game;
 
 public final class ModelViewListener {
     //listen to model request to change view
     //one for every player?
     Game game;
-    GameServer server;
-    public ModelViewListener(Game game, GameServer server){
+    ServerImpl server;
+    public ModelViewListener(Game game, ServerImpl server){
         this.game=game;
         this.server=server;
     }
@@ -19,7 +19,7 @@ public final class ModelViewListener {
     }
 
     public void sendMessage(String message, String nickname){
-        Client c=server.findClient(nickname);
+        ClientImpl c=server.findClient(nickname);
         //c.view.update() ????
     }
 }

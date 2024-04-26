@@ -1,6 +1,6 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.Distributed.GameServer;
+import it.polimi.ingsw.Distributed.ServerImpl;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class ServerApp {
     private static ServerApp instance = null;
-    private static GameServer server=null;
+    private static ServerImpl server=null;
 
     public static ServerApp getInstance() throws RemoteException {
         if (instance == null) {
@@ -19,9 +19,9 @@ public class ServerApp {
         return instance;
     }
 
-    private GameServer getServer(){
+    private ServerImpl getServer(){
         if (server==null){
-            server=new GameServer();
+            server=new ServerImpl();
         }
         return server;
     }
