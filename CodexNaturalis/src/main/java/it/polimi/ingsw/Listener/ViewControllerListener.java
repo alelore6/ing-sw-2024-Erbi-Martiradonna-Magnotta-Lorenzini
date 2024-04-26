@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Listener;
 
-import it.polimi.ingsw.Network.Client;
+import it.polimi.ingsw.Network.Client.Client;
 import it.polimi.ingsw.controller.Controller;
 
 public class ViewControllerListener {

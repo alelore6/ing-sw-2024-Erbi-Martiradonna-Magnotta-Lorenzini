@@ -1,7 +1,5 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.Network.Client;
-
 import java.util.Scanner;
 
 public class ClientApp {

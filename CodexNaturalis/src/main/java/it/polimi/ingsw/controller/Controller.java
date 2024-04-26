@@ -1,10 +1,8 @@
 package it.polimi.ingsw.controller;
 
 import it.polimi.ingsw.Listener.ModelViewListener;
-import it.polimi.ingsw.Listener.ViewControllerListener;
-import it.polimi.ingsw.Network.Client;
 import it.polimi.ingsw.model.Game;
-import it.polimi.ingsw.Network.GameServer;
+import it.polimi.ingsw.Network.Server.GameServer;
 
 public class Controller {
     public Game game;

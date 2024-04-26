@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Listener;
 
-import it.polimi.ingsw.Network.Client;
-import it.polimi.ingsw.Network.GameServer;
+import it.polimi.ingsw.Network.Client.Client;
+import it.polimi.ingsw.Network.Server.GameServer;
 import it.polimi.ingsw.model.Game;
 
 public final class ModelViewListener {
