@@ -10,10 +10,6 @@ public class GameServer {
     public Controller controller = new Controller(this);
     private static final List<Client> clientList = new ArrayList<>();
     private static int numClient = 0;
-    public static void main(String[] args){
-
-
-    }
 
     public boolean addClient(Client client){
         // controllo nickname
@@ -24,6 +20,7 @@ public class GameServer {
             ok=true;
         }
         if(ok) {
+            //lo aggiungo
             clientList.add(client);
             numClient++;
             controller.addPlayerToLobby(client.nickname);
