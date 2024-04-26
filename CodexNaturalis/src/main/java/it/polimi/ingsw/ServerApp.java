@@ -1,5 +1,7 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
+import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
 import java.io.IOException;
@@ -10,20 +12,12 @@ import java.util.Scanner;
 
 public class ServerApp {
     private static ServerApp instance = null;
-    private static ServerImpl server=null;
 
     public static ServerApp getInstance() throws RemoteException {
         if (instance == null) {
             instance = new ServerApp();
         }
         return instance;
-    }
-
-    private ServerImpl getServer(){
-        if (server==null){
-            server=new ServerImpl();
-        }
-        return server;
     }
 
     public static void main(String[] args) throws RemoteException {
@@ -60,9 +54,6 @@ public class ServerApp {
         }
         portSocket = port;
 
-        //creo il mio server
-        getInstance().getServer();
-
         // creo server RMI
         Thread rmiThread = new Thread(() -> {
             try {
@@ -82,12 +73,14 @@ public class ServerApp {
             }
         });
         socketThread.start();
-        try {
+
+
+        /*try {
             rmiThread.join();
             socketThread.join();
         } catch (InterruptedException e) {
             System.err.println("No connection available.");
-        }
+        }*/
 
     }
 
@@ -97,16 +90,23 @@ public class ServerApp {
     }
 
     private static void startSocket(int port) throws RemoteException {
-        // try with resources se sono riuscito a creare il server
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            while(true){
-                //cerco connessione
-                Socket socket = serverSocket.accept();
-
+        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+            while (true) {
+                try (Socket socket = serverSocket.accept()) {
+                    ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
+                    Server server = new ServerImpl();
+                    server.register(clientSkeleton);
+                    while (true) {
+                        clientSkeleton.receive(server);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Socket failed: " + e.getMessage() +". Closing connection and waiting for a new one...");
                 }
+            }
         } catch (IOException e) {
-            throw new RuntimeException("Cannot start socket server", e);
+            throw new RemoteException("Cannot create server socket", e);
         }
+    }
     }
 
 
