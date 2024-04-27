@@ -1,14 +1,15 @@
 package it.polimi.ingsw.controller;
 
-import it.polimi.ingsw.Listener.ModelViewListener;
+import it.polimi.ingsw.Listener.ModelListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
 public class Controller {
+
     private final ServerImpl server;
     private final Lobby lobby;
 
-    public Game game;
+    private Game model;
 
     public Controller(ServerImpl server){
         this.server = server;
@@ -16,14 +17,24 @@ public class Controller {
     }
 
     protected void createGame(){
-        game = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelViewListener(server.controller.game, server));
-
-        //faccio subito startGame?
-        game.startGame();
+        // model = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelListener(server.controller.model, server));
     }
+
+    public void startGame(){
+        getGame().startGame();
+    }
+
+    public void endGame(int occasion){
+        getGame().endGame(occasion);
+    }
+
+    // TODO: why boolean?
     public boolean addPlayerToLobby(String nickname){
 
         return lobby.addPlayer(nickname);
     }
 
+    public Game getGame(){
+        return this.model;
+    }
 }

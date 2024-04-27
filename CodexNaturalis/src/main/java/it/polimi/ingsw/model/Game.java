@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Listener.ModelViewListener;
+import it.polimi.ingsw.Listener.ModelListener;
 
 /**
  * Class that manages the game life cycle, from the start to end.
@@ -41,7 +41,7 @@ public class Game {
      */
     TableCenter tablecenter;
 
-    public final ModelViewListener mvListener;
+    public final ModelListener mvListener;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
@@ -49,7 +49,7 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames,ModelViewListener mvListener)
+    public Game(int numPlayers, String[] nicknames,ModelListener mvListener)
     {
         this.mvListener=mvListener;
         this.numPlayers = numPlayers;
