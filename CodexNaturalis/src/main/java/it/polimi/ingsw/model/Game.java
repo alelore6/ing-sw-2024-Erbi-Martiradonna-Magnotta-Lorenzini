@@ -219,9 +219,7 @@ public class Game {
      */
     public Player[] checkWinner(){ // possibilità di ritornare più player, array con dimensione generata dinamicamente
                                     // a seconda di quanti player hanno lo score più alto e uguale
-        //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
-        // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
-        // se parità persiste allora i giocatori condividono la vittoria!
+
         isFinished = true;
 
 
