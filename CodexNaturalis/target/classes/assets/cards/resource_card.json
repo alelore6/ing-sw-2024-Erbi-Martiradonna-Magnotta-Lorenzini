@@ -1,0 +1,695 @@
+[
+    {
+        "ID" : 1,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 2,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 3,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 4,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 5,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "QUILL"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 6,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "INKWELL"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 7,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "MANUSCRIPT"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 8,
+        "color" : "RED",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_SX"
+            }
+        ]
+    },
+    {
+        "ID" : 9,
+        "color" : "RED",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 10,
+        "color" : "RED",
+        "corners" : [
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 11,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 12,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 13,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 14,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 15,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "QUILL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 16,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "FUNGI"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "INKWELL"
+            }
+        ]
+    },
+    {
+        "ID" : 17,
+        "color" : "GREEN",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "MANUSCRIPT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 18,
+        "color" : "GREEN",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 19,
+        "color" : "GREEN",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "PLANT"
+            }
+        ]
+    },
+    {
+        "ID" : 20,
+        "color" : "GREEN",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 21,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_SX"
+            }
+        ]
+    },
+    {
+        "ID" : 22,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 23,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 24,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 25,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "INKWELL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 26,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "MANUSCRIPT"
+            }
+        ]
+    },
+    {
+        "ID" : 27,
+        "color" : "BLUE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "QUILL"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 28,
+        "color" : "BLUE",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 29,
+        "color" : "BLUE",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "ANIMAL"
+            }
+        ]
+    },
+    {
+        "ID" : 30,
+        "color" : "BLUE",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_SX"
+            }
+        ]
+    },
+    {
+        "ID" : 31,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX"
+            }
+        ]
+    },
+    {
+        "ID" : 32,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "INSECT"
+            }
+        ]
+    },
+    {
+        "ID" : 33,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 34,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "INSECT"
+            }
+        ]
+    },
+    {
+        "ID" : 35,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "QUILL"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "ANIMAL"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "INSECT"
+            }
+        ]
+    },
+    {
+        "ID" : 36,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "MANUSCRIPT"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "FUNGI"
+            }
+        ]
+    },
+    {
+        "ID" : 37,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "UP_DX",
+                "resource" : "PLANT"
+            },
+            {
+                "pos" : "DOWN_SX",
+                "resource" : "INKWELL"
+            }
+        ]
+    },
+    {
+        "ID" : 38,
+        "color" : "PURPLE",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    },
+    {
+        "ID" : 39,
+        "color" : "PURPLE",
+        "points" : 1,
+        "corners" : [
+            {
+                "pos" : "UP_SX"
+            },
+            {
+                "pos" : "UP_DX"
+            },
+            {
+                "pos" : "DOWN_DX",
+                "resource" : "INSECT"
+            }
+        ]
+    },
+    {
+        "ID" : 40,
+        "color" : "PURPLE",
+        "corners" : [
+            {
+                "pos" : "UP_DX",
+                "resource" : "INSECT"
+            },
+            {
+                "pos" : "DOWN_SX"
+            },
+            {
+                "pos" : "DOWN_DX"
+            }
+        ]
+    }
+]

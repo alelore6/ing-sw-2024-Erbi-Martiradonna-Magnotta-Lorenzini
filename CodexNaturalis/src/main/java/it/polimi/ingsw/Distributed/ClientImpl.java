@@ -1,9 +1,7 @@
 package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.Listeners.ModelListener;
-import it.polimi.ingsw.Listeners.ViewListener;
-import it.polimi.ingsw.Messages.Events;
-import it.polimi.ingsw.View.TextualUI;
+import it.polimi.ingsw.Listener.ModelListener;
+import it.polimi.ingsw.Listener.ViewListener;
 
 
 import java.rmi.RemoteException;
@@ -13,25 +11,23 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
 
-    TextualUI view ;
-    //represent the player
-    public String nickname;
+    TextualUI view = new TextualUI();
+
+    private int viewType; //1 if GUI, 0 if CLI
+    private int networkType; // 0 rmi, 1 socket
     private ViewListener vcListener;
     private ModelListener mvListener;
 
 
-    public ClientImpl(Server server,int viewType) throws RemoteException {
-        // this.vcListener=new ViewListener(server.Controller,this);
+    public ClientImpl(Server server) throws RemoteException {
+        // this.vcListener=new ViewListener(server.controller,this);
         super();
-        //if viewType
-        view= new TextualUI();
+
         initialize(server);
     }
     //other constructors needed for overloading
-    public ClientImpl(int port, Server server, int viewType) throws RemoteException {
+    public ClientImpl(int port, Server server) throws RemoteException {
         super(port);
-        //if viewType
-        view= new TextualUI();
         initialize(server);
     }
 
