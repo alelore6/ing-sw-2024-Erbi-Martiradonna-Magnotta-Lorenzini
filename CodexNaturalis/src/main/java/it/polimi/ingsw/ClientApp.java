@@ -25,7 +25,7 @@ public class ClientApp {
         String nickname = input.next();
 
         System.out.print("\nChoose if you want a RMI or Socket client: 0 for RMI and 1 for Socket:");
-        while(networkType != 0 || networkType != 1){
+        while(networkType != 0 && networkType != 1){
             try{
                 networkType = Integer.parseInt(input.next());
             } catch (NumberFormatException e) {
@@ -33,11 +33,10 @@ public class ClientApp {
             }
             if(networkType != 0 && networkType != 1)
                 System.out.print("Enter 0 for RMI or 1 for Socket: \n");
-
         }
 
         System.out.print("\nChoose if you wanna play from CLI or GUI: 0 for CLI and 1 for GUI:");
-        while(typeView != 0 || typeView != 1){
+        while(typeView != 0 && typeView != 1){
             try{
                 typeView = Integer.parseInt(input.next());
             } catch (NumberFormatException e) {
