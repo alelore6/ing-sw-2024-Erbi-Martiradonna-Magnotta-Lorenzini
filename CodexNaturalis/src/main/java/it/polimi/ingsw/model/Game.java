@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Listener.ModelListener;
+import it.polimi.ingsw.Listeners.ModelListener;
 
 /**
  * Class that manages the game life cycle, from the start to end.
@@ -163,7 +163,7 @@ public class Game {
 
     /**
      * sets the parameter remainingTurns accordingly, displays a message on the user screen stating which
-     * occasion triggered the endgame status notifying the controller as well.
+     * occasion triggered the endgame status notifying the Controller as well.
      * @param occasion states the case that triggered the endgame process such as:
      * "player X has reached 20 points" or
      * "both decks are empty"

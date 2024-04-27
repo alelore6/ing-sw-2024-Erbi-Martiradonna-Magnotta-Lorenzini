@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.Listener.ModelListener;
-import it.polimi.ingsw.Listener.ViewListener;
+import it.polimi.ingsw.Listeners.ModelListener;
+import it.polimi.ingsw.Listeners.ViewListener;
 
 
 import java.rmi.RemoteException;
@@ -22,7 +22,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
 
 
     public ClientImpl(Server server) throws RemoteException {
-        // this.vcListener=new ViewListener(server.controller,this);
+        // this.vcListener=new ViewListener(server.Controller,this);
         super();
         initialize(server);
     }

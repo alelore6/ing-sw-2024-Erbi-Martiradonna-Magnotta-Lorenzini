@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.controller.Controller;
+import it.polimi.ingsw.Controller.Controller;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -15,13 +15,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     //server constructor with the default rmi port
     protected ServerImpl() throws RemoteException {
         super();
-        //need to bind the controller to the model, something like controller.setgame(model)
+        //need to bind the Controller to the model, something like Controller.setgame(model)
     }
 
     //server implementation with a certain RMI port
     protected ServerImpl(int port) throws RemoteException {
         super(port);
-        //need to bind the controller to the model, something like controller.setgame(model)
+        //need to bind the Controller to the model, something like Controller.setgame(model)
     }
 
 

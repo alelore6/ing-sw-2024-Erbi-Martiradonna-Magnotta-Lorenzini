@@ -1,22 +1,42 @@
 package it.polimi.ingsw.model;
 
-import java.util.stream.IntStream;
+import com.google.gson.Gson;
+
+import java.io.FileReader;
+import java.io.IOException;
 
 public class GoldDeck extends Deck{
-    private final GoldCard[] cards;
-    public GoldDeck(){
-        // the first card of the deck will be the one with the highest index, i.e. NCards - 1
-        cards = new GoldCard[40];
 
-        // TODO: insert cards randomly
-        IntStream.range(0, 40).forEach(i -> cards[i] = new GoldCard(40 + i));
+    private GoldCard[] cards;
+
+    public GoldDeck(){
+
+        NCards = 40;
+
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+
+            cards = gson.fromJson(reader, GoldCard[].class);
+
+        } catch (IOException e) {
+            // This is only for debugging: it'll be removed later.
+            System.out.println("FILE non trovato!");
+
+            // TODO: add the catch action
+        }
+
+        cards = (GoldCard[]) shuffle(cards);
     }
+
     public GoldCard draw() throws isEmptyException{
         if(getNCards() == 0){
             throw new isEmptyException(this);
         }
         else {
             NCards--;
+
+            // I supposed the drawn card is the one available with the highest index.
             return cards[NCards];
         }
         // WARNING! We don't delete the card from the array doing this.

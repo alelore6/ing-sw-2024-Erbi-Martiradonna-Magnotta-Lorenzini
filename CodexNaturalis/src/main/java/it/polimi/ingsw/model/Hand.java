@@ -40,12 +40,12 @@ public class Hand {
      * if deck is empty endGame() is called
      * @param deck the chosen deck to draw from
      * @throws HandFullException if hand is already full, should not happen
-     * @throws isEmptyException if the chosen deck is empty, the controller will ask the player a new source for the draw
+     * @throws isEmptyException if the chosen deck is empty, the Controller will ask the player a new source for the draw
      */
     public void DrawFromDeck(Deck deck) throws HandFullException, isEmptyException {
         for(int i=0; i< 3; i++){
             if (HandCard[i]==null){
-                try{ HandCard[i] = deck.draw();}
+                try{ HandCard[i] = (PlayableCard) deck.draw();}
                 catch (isEmptyException e){
                     player.game.endGame(deck instanceof GoldDeck? 5 : 6);
                     throw new isEmptyException(deck);
@@ -104,7 +104,7 @@ public class Hand {
      * @param card the card in the hand that will be played
      * @param x the x-axis coordinates that describes the position where the card will be played
      * @param y the y-axis coordinates that describes the position where the card will be played
-     * @throws WrongPlayException if play is not valid, the exception will be handled by the controller asking the client a new play
+     * @throws WrongPlayException if play is not valid, the exception will be handled by the Controller asking the client a new play
      */
     public void playCard(Card card, int x, int y ) throws WrongPlayException{
         //check that the input card is in the hand, not in case of starting card

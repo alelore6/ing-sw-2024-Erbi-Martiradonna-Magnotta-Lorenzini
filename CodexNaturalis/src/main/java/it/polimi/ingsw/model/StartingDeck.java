@@ -1,30 +1,34 @@
 package it.polimi.ingsw.model;
 
-import java.util.Collections;
+import com.google.gson.Gson;
 
-public class StartingDeck {
+import java.io.FileReader;
+import java.io.IOException;
+
+public class StartingDeck extends Deck{
 
     int NCards = 6;
-    private StartingCard[] startcards;
+    private StartingCard[] cards;
 
     public StartingDeck() {
-        startcards = new StartingCard[6];
-        for (int i = 0; i < 6; i++) {
-            startcards[i] = new StartingCard(6 + i);
+
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/starting_card.json")) {
+            cards = gson.fromJson(reader, StartingCard[].class);
+        } catch (IOException e) {
+            System.out.println("Error, not found.");
         }
 
+        cards = (StartingCard[]) shuffle(cards);
     }
+
     public StartingCard draw() throws isEmptyException {        //TODO: FIXARE ERRORI
         if (NCards == 0) {
             throw new isEmptyException(this);
         } else {
-            StartingCard drawnCard = startcards[--NCards];
+            StartingCard drawnCard = cards[--NCards];
             return drawnCard;
         } //Not removing from array,
-    }
-        public void shuffle () {
-            Collections.shuffle(startcards);
-        }
-
     }
 }
