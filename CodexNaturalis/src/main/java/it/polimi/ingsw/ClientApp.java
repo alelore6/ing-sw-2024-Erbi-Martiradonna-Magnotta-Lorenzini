@@ -1,9 +1,16 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Distributed.Server;
+
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.Scanner;
 
 public class ClientApp {
-    public static void main( String[] args ){
+    public static void main( String[] args ) throws RemoteException, NotBoundException {
 
         Scanner input = new Scanner(System.in);
         int networkType = -1;
@@ -41,5 +48,13 @@ public class ClientApp {
             // ask for nickname
             // Client client= new Client()
 
+
+        if(networkType ==0) { //RMI
+            Registry registry = LocateRegistry.getRegistry();
+            Server server = (Server) registry.lookup("Server");
+
+            ClientImpl client = new ClientImpl(server);
+            client.run();
+        }
     }
 }
