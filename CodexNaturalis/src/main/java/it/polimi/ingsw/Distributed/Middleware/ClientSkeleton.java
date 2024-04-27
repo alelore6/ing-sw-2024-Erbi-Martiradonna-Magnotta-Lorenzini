@@ -29,7 +29,7 @@ public class ClientSkeleton implements Client{
     }
 
     @Override
-    public void update(PreviousView v, Events e) throws RemoteException {
+    public void update( Events e) throws RemoteException {
 
     }
 

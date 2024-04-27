@@ -16,33 +16,28 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
         super();
-        //need to bind the Controller to the model, something like Controller.setgame(model)
     }
 
     //server implementation with a certain RMI port
     protected ServerImpl(int port) throws RemoteException {
         super(port);
-        //need to bind the Controller to the model, something like Controller.setgame(model)
     }
 
 
     @Override
-    public boolean register(Client client) throws RemoteException{
-        // controllo nickname
-        boolean ok=false;
+    public void register(Client client) throws RemoteException{
+        // check nickname
         try{
             findClient(((ClientImpl) client).nickname);
         }catch (RuntimeException e){
-            ok=true;
+            //add a sequential number at the end of the nickname
+            ((ClientImpl) client).nickname = ((ClientImpl) client).nickname + numClient;
         }
-        if(ok) {
-            //lo aggiungo
-            CLIENT_IMPL_LIST.add((ClientImpl) client);
-            numClient++;
-            controller.addPlayerToLobby(((ClientImpl) client).nickname);
-            return true;
-        } else return false;
+        CLIENT_IMPL_LIST.add((ClientImpl) client);
+        numClient++;
+        controller.addPlayerToLobby(((ClientImpl) client).nickname);
     }
+
     public ClientImpl findClient(String nickname){
         for (ClientImpl c : CLIENT_IMPL_LIST){
             if (c.nickname.equalsIgnoreCase(nickname))

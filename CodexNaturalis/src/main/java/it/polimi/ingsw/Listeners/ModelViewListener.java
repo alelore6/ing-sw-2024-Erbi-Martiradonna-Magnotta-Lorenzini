@@ -1,10 +1,13 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Distributed.Client;
+import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Messages.Generic;
 
-public interface ModelListener {
+public class ModelViewListener {
+    Client client;
 
-    void handleModelMessage(Generic msg);
+    void handleModelMessage(Generic msg){}
 
     /*// listens to model request to change view
     // one for each player?

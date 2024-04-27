@@ -1,10 +1,11 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Messages.Generic;
 
-public interface ViewListener {
-
-    void handleViewMsg(Generic msg);
+public class ViewControllerListener {
+    Controller controller;
+    void handleViewMsg(Generic msg){}
 
     /*// listens to view events and acts on the Controller
     Controller Controller;

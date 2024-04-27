@@ -21,7 +21,10 @@ public class ClientApp {
         int networkType = -1;
         int typeView = -1;
 
-        System.out.print("Choose if you want a RMI or Socket client: 0 for RMI and 1 for Socket: \n");
+        System.out.print("Enter your nickname: ");
+        String nickname = input.next();
+
+        System.out.print("\nChoose if you want a RMI or Socket client: 0 for RMI and 1 for Socket:");
         while(networkType != 0 || networkType != 1){
             try{
                 networkType = Integer.parseInt(input.next());
@@ -33,15 +36,15 @@ public class ClientApp {
 
         }
 
-        System.out.print("Choose if you wanna play from CLI or GUI: 0 for CLI and 1 for GUI: \n");
+        System.out.print("\nChoose if you wanna play from CLI or GUI: 0 for CLI and 1 for GUI:");
         while(typeView != 0 || typeView != 1){
             try{
                 typeView = Integer.parseInt(input.next());
             } catch (NumberFormatException e) {
-                System.out.println("It is not a valid number!!\n");
+                System.out.println("\nNot a valid number");
             }
             if(typeView != 0 && typeView != 1)
-                System.out.print("Enter 0 for CLI or 1 for GUI: \n");
+                System.out.print("\nEnter 0 for CLI or 1 for GUI:");
         }
 
         if(networkType ==0) {
@@ -49,21 +52,20 @@ public class ClientApp {
             Registry registry = LocateRegistry.getRegistry();
             Server server = (Server) registry.lookup("Server");
 
-            ClientImpl client = new ClientImpl(server,typeView);
+            ClientImpl client = new ClientImpl(typeView, server, nickname);
             client.run();
         }
         else{
             //socket
-            System.out.print("Enter server IP address: ");
+            System.out.print("\nEnter server IP address: ");
             String ip = input.next();
-            System.out.println("Server IP address is: " + ip);
 
-            System.out.print("Enter server port number: ");
+            System.out.print("\nEnter server port number: ");
             int port = Integer.parseInt(input.next());
-            System.out.println("Server port number is: " + port);
+
 
             ServerStub serverStub = new ServerStub(ip, port);
-            ClientImpl client = new ClientImpl(serverStub,typeView);
+            ClientImpl client = new ClientImpl(typeView, serverStub, nickname);
             new Thread(){
                 @Override
                 public void run() {
@@ -71,11 +73,11 @@ public class ClientApp {
                         try {
                             serverStub.receive(client);
                         } catch (RemoteException e) {
-                            System.err.println("Cannot receive from server.\n");
+                            System.err.println("\nCannot receive from server.");
                             try {
                                 serverStub.close();
                             } catch (RemoteException ex) {
-                                System.err.println("Cannot close connection with server.\n");
+                                System.err.println("\nCannot close connection with server.");
                             }
                             System.exit(1);
                         }
