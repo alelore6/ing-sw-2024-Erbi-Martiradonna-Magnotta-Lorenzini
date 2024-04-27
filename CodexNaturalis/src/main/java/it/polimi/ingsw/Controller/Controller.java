@@ -1,6 +1,5 @@
-package it.polimi.ingsw.controller;
+package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.Listener.ModelListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
@@ -17,7 +16,7 @@ public class Controller {
     }
 
     protected void createGame(){
-        // model = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelListener(server.controller.model, server));
+        // model = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelListener(server.Controller.model, server));
     }
 
     public void startGame(){

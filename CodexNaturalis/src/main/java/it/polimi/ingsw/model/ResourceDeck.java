@@ -1,15 +1,33 @@
 package it.polimi.ingsw.model;
 
-import java.util.stream.IntStream;
+import com.google.gson.Gson;
+
+import java.io.FileReader;
+import java.io.IOException;
 
 public class ResourceDeck extends Deck{
-    private ResourceCard[] cards;
-    public ResourceDeck(){
-        // the first card of the deck will be the one with the highest index i.e. NCards - 1
-        cards = new ResourceCard[40];
 
-        // TODO: insert cards randomly
-        IntStream.range(0, 40).forEach(i -> cards[i] = new ResourceCard(40 + i));
+    private ResourceCard[] cards;
+
+    public ResourceDeck(){
+
+        NCards = 40;
+
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+
+            cards = gson.fromJson(reader, ResourceCard[].class);
+
+        } catch (IOException e) {
+            // This is only for debugging: it'll be removed later.
+            System.out.println("FILE non trovato!");
+
+            // TODO: add the catch action
+        }
+
+        cards = (ResourceCard[]) shuffle(cards);
+
     }
     public ResourceCard draw() throws isEmptyException{
         if(getNCards() == 0){

@@ -1,31 +1,49 @@
 package it.polimi.ingsw.model;
 
+import com.google.gson.Gson;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
+public class ObjectiveDeck{
 
-public class ObjectiveDeck {
-    int NCards = 16;
-    private ObjectiveCard[] objcards;
+    private int NCards;
+    private ObjectiveCard[] cards;
 
     public ObjectiveDeck() {
-        objcards = new ObjectiveCard[16];       //TODO: FIXARE ERRORI, ci sono 2 metodi draw e ne serve solo 1!!
-        for (int i = 0; i < 16; i++) {
-            objcards[i] = new ObjectiveCard(16 + i);
+        NCards = 16;
+
+        Gson gson = new Gson();
+
+        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+
+            cards = gson.fromJson(reader, ObjectiveCard[].class);
+
+        } catch (IOException e) {
+            // This is only for debugging: it'll be removed later.
+            System.out.println("FILE non trovato!");
+
+            // TODO: add the catch action
         }
+
+        List<ObjectiveCard> cardList = Arrays.asList(cards);
+
+        Collections.shuffle(cardList);
+
+        cardList.toArray(cards);
+
     }
-        public ObjectiveCard draw() throws isEmptyException {
-            if (NCards == 0) {
-                throw new isEmptyException(this);
-            } else {
-                ObjectiveCard drawnCard = objcards[--NCards];
-                return drawnCard;
-            }
-        }
-        public ObjectiveCard draw () {
-            return objcards;
-        }
-        public void shuffle () {
-            Collections.shuffle(objcards);
-        }
+
+    public ObjectiveCard draw(){
+
+        NCards--;
+
+        // I supposed the drawn card is the one available with the highest index.
+        return cards[NCards];
+
+        // WARNING! We don't delete the card from the array doing this.
     }
 }

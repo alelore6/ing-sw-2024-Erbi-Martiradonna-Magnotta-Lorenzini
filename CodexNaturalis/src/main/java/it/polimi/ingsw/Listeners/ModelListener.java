@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Listener;
+package it.polimi.ingsw.Listeners;
 
 import it.polimi.ingsw.Messages.Generic;
 

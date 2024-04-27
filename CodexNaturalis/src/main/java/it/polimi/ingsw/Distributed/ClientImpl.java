@@ -22,6 +22,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     public ClientImpl(Server server) throws RemoteException {
         // this.vcListener=new ViewListener(server.controller,this);
         super();
+
         initialize(server);
     }
     //other constructors needed for overloading
@@ -36,7 +37,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     private void initialize(Server server) throws RemoteException {
-        server.addClient(this);
+        server.register(this);
         view.addObserver((v, e)-> {
             try{
                 server.update(this, e);
@@ -53,7 +54,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     @Override
-    public void update(PreviousView v, Event e) throws RemoteException {
+    public void update(PreviousView v, Events e) throws RemoteException {
         this.view.update(v, e);
     }
 }

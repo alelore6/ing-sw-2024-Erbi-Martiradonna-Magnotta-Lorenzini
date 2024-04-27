@@ -3,11 +3,16 @@ package it.polimi.ingsw.Distributed.Middleware;
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
+import it.polimi.ingsw.Messages.Events;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.rmi.RemoteException;
+
+
+
+
 
 public class ServerStub implements Server {
 
@@ -24,13 +29,13 @@ public class ServerStub implements Server {
     }
 
     @Override
-    public boolean addClient(Client client) throws RemoteException {
+    public boolean register(Client client) throws RemoteException {
         //TODO implement
         return false;
     }
 
     @Override
-    public void update(Client client, String event) throws RemoteException {
+    public void update(Client client, Events event) throws RemoteException {
         //TODO implement
     }
 }
