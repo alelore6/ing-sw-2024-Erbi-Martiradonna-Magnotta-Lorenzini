@@ -5,24 +5,24 @@ import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
 public class Controller {
-    public Game game;
     private final ServerImpl server;
     private final Lobby lobby;
 
+    public Game game;
+
     public Controller(ServerImpl server){
-        this.server=server;
-        lobby= new Lobby();
+        this.server = server;
+        lobby = new Lobby();
     }
+
     protected void createGame(){
-        game= new Game(lobby.numPlayers,lobby.Nicknames,new ModelViewListener(server.controller.game, server));
+        game = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelViewListener(server.controller.game, server));
+
         //faccio subito startGame?
         game.startGame();
     }
     public boolean addPlayerToLobby(String nickname){
-        if(lobby.numPlayers==0){
-            game.mvListener.sendMessage("Set numPlayers",nickname);
-            //vcListener will get the response and call lobby.setNumPlayers()
-        }
+
         return lobby.addPlayer(nickname);
     }
 

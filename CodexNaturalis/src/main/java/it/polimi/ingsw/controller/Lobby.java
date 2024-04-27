@@ -1,25 +1,24 @@
 package it.polimi.ingsw.controller;
 
 public class Lobby {
-    protected int numPlayers=0;
     protected String[] Nicknames;
 
+    public Lobby() {
+        this.Nicknames = new String[4];
+    }
+
     protected boolean addPlayer(String nickname){
-        if (Nicknames==null){
-            this.Nicknames=new String[numPlayers];
-            Nicknames[0]=nickname;
+
+        if(Nicknames.length < 4){
+            Nicknames[Nicknames.length] = nickname;
+
             return true;
         }
-        for(int i=0; i<numPlayers; i++){
-            if (Nicknames[i]==null){
-                Nicknames[i]=nickname;
-                return true;
-            }
-        }
+
         return false;
     }
 
-    public void setNumPlayers(int numPlayers) {
-        this.numPlayers = numPlayers;
+    public int getNumPlayers(){
+        return Nicknames.length;
     }
 }
