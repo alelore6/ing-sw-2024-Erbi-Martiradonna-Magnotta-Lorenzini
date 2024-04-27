@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Distributed;
 
+import it.polimi.ingsw.Messages.Events;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
@@ -10,8 +12,8 @@ public interface Server extends Remote {
      * @param clientImpl the client to bind
      * @throws RemoteException
      */
-    boolean addClient(Client client) throws RemoteException;
+    boolean register(Client client) throws RemoteException;
 
-    void update(Client client, String event) throws RemoteException;
+    void update(Client client, Events event) throws RemoteException;
 
 }

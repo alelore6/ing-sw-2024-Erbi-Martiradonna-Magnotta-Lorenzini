@@ -22,8 +22,6 @@ public class ServerApp {
 
     public static void main(String[] args) throws RemoteException {
 
-        // come prendo l'indirizzo ip?
-
         Scanner terminal = new Scanner(System.in);
         Integer port = 0;
         final int portRMI;
@@ -90,24 +88,21 @@ public class ServerApp {
     }
 
     private static void startSocket(int port) throws RemoteException {
-        try (ServerSocket serverSocket = new ServerSocket(1234)) {
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
             while (true) {
                 try (Socket socket = serverSocket.accept()) {
                     ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
-                    Server server = new ServerImpl();
+                    ServerImpl server = new ServerImpl();
                     server.register(clientSkeleton);
                     while (true) {
                         clientSkeleton.receive(server);
                     }
                 } catch (IOException e) {
-                    System.err.println("Socket failed: " + e.getMessage() +". Closing connection and waiting for a new one...");
+                    System.err.println("Socket failed: " + e.getMessage() );
                 }
             }
         } catch (IOException e) {
             throw new RemoteException("Cannot create server socket", e);
         }
     }
-    }
-
-
 }

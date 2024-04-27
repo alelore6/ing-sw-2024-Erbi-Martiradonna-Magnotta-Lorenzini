@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Distributed;
 
+import it.polimi.ingsw.Messages.Events;
 import it.polimi.ingsw.Controller.Controller;
 
 import java.rmi.RemoteException;
@@ -13,7 +14,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     private static int numClient = 0;
 
     //server constructor with the default rmi port
-    protected ServerImpl() throws RemoteException {
+    public ServerImpl() throws RemoteException {
         super();
         //need to bind the Controller to the model, something like Controller.setgame(model)
     }
@@ -26,19 +27,19 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
 
     @Override
-    public boolean addClient(Client client) throws RemoteException{
+    public boolean register(Client client) throws RemoteException{
         // controllo nickname
         boolean ok=false;
         try{
-            findClient(ClientImpl.nickname);
+            findClient(((ClientImpl) client).nickname);
         }catch (RuntimeException e){
             ok=true;
         }
         if(ok) {
             //lo aggiungo
-            CLIENT_IMPL_LIST.add(ClientImpl);
+            CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
-            controller.addPlayerToLobby(ClientImpl.nickname);
+            controller.addPlayerToLobby(((ClientImpl) client).nickname);
             return true;
         } else return false;
     }
@@ -53,7 +54,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
 
     @Override
-    public void update(Client client, String event) throws RemoteException {
+    public void update(Client client, Events event) throws RemoteException {
         //TODO implement
     }
 }
