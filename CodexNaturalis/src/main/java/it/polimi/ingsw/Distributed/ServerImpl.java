@@ -30,15 +30,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         // controllo nickname
         boolean ok=false;
         try{
-            findClient(clientImpl.nickname);
+            findClient(ClientImpl.nickname);
         }catch (RuntimeException e){
             ok=true;
         }
         if(ok) {
             //lo aggiungo
-            CLIENT_IMPL_LIST.add(clientImpl);
+            CLIENT_IMPL_LIST.add(ClientImpl);
             numClient++;
-            controller.addPlayerToLobby(clientImpl.nickname);
+            controller.addPlayerToLobby(ClientImpl.nickname);
             return true;
         } else return false;
     }

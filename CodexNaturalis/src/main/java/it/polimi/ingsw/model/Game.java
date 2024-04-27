@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Listener.ModelViewListener;
+import it.polimi.ingsw.Listener.ModelListener;
 
 /**
  * Class that manages the game life cycle, from the start to end.
@@ -41,7 +41,7 @@ public class Game {
      */
     TableCenter tablecenter;
 
-    public final ModelViewListener mvListener;
+    public final ModelListener mvListener;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
@@ -49,7 +49,7 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames,ModelViewListener mvListener)
+    public Game(int numPlayers, String[] nicknames,ModelListener mvListener)
     {
         this.mvListener=mvListener;
         this.numPlayers = numPlayers;
@@ -217,8 +217,9 @@ public class Game {
      * The second one checks through matrix operations if the players respected a certain card pattern
      * @return winning player or players
      */
-    public Player[] checkWinner(){ // possibilità di ritornare più player, array con dimensione generata dinamicamente
-                                    // a seconda di quanti player hanno lo score più alto e uguale
+    public Player[] checkWinner(){
+        // possibilità di ritornare più player, array con dimensione generata dinamicamente
+        // a seconda di quanti player hanno lo score più alto e uguale
         //TODO ogni giocatore conta i punti extra delle carte obiettivo (comuni + obiettivo segreto)
         // e li aggiunge al segnapunti. MAX 29 PUNTI. in caso di parità vince chi ha fatto piu' carte obiettivo.
         // se parità persiste allora i giocatori condividono la vittoria!
