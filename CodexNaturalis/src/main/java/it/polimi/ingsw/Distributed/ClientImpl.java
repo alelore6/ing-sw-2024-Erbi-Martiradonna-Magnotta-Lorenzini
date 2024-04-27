@@ -12,8 +12,6 @@ import java.rmi.server.UnicastRemoteObject;
 public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
 
     TextualUI view = new TextualUI();
-    //represent the player
-    public final String nickname;
 
     private int viewType; //1 if GUI, 0 if CLI
     private int networkType; // 0 rmi, 1 socket
@@ -41,7 +39,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         server.addClient(this);
         view.addObserver((v, e)-> {
             try{
-                server.update(this, e)
+                server.update(this, e);
             }catch(RemoteException e1){
                 System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
             }
