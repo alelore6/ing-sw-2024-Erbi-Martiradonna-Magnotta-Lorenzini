@@ -45,7 +45,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         // creare il listener
         view.addObserver((v, e)-> {
             try{
-                server.update(this, e);
+                server.update(this, Events.JoinServer, " ");
             }catch(RemoteException e1){
                 System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
             }

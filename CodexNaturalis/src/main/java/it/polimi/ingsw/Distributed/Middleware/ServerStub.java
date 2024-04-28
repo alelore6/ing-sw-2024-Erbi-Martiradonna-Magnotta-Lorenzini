@@ -29,7 +29,7 @@ public class ServerStub implements Server {
     }
 
     @Override
-    public void update(Client client, Events event) throws RemoteException {
+    public void update(Client client, Events event, String arg) throws RemoteException {
         //TODO implement
     }
 }

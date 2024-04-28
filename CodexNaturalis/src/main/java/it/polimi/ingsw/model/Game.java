@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Listeners.ModelListener;
+import it.polimi.ingsw.Listeners.ModelViewListener;
 
 /**
  * Class that manages the game life cycle, from the start to end.
@@ -36,20 +36,19 @@ public class Game {
      */
     Player[] players;
     /**
-     * The tablecenter attribute containing the two decks (resource and gold) and aswell the cards
-     * layed on it (2 res, 2 gold, 2 obj)
+     * The tablecenter attribute containing the two decks (resource and gold) and the cards on it (2 res, 2 gold, 2 obj)
      */
     TableCenter tablecenter;
 
-    public final ModelListener mvListener;
+    public final ModelViewListener mvListener;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
-     * creating the startingDeck instance aswell.
+     * creating the startingDeck instance as well.
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames,ModelListener mvListener)
+    public Game(int numPlayers, String[] nicknames,ModelViewListener mvListener)
     {
         this.mvListener=mvListener;
         this.numPlayers = numPlayers;
@@ -65,7 +64,7 @@ public class Game {
 
     /**
      * Getter for tablecenter instance
-     * @return Tablecenter istance
+     * @return Tablecenter instance
      */
     public TableCenter getTablecenter() {return tablecenter;}
     /**
@@ -88,6 +87,10 @@ public class Game {
      * @return turnCounter
      */
     public int getTurnCounter() {return turnCounter;}
+
+    public String getCurrentPlayer(){
+        return players[curPlayerPosition].getNickname();
+    }
 
     /**
      * After the game has been initialized, the method starts it, laying all the cards on the table

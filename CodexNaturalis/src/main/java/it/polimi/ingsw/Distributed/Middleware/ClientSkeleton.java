@@ -4,9 +4,7 @@ import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Messages.Events;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
@@ -30,19 +28,26 @@ public class ClientSkeleton implements Client{
 
     @Override
     public void update( Events e) throws RemoteException {
-
+        try {
+            out.writeObject(e);
+        } catch (IOException ex) {
+            throw new RemoteException("Cannot send to client.");
+        }
+        //TODO listener?
     }
 
 
     public void receive(ServerImpl server) throws RemoteException {
         Events event;
+        String arg;
         try {
             event =(Events) in.readObject();
+            arg = (String) in.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);
         } catch (ClassNotFoundException e) {
             throw new RemoteException("Cannot deserialize from client", e);
         }
-        server.update(this, event);
+        server.update(this, event, arg);
     }
 }

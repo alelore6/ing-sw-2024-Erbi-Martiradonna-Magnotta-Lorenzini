@@ -11,14 +11,6 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class ServerApp {
-    private static ServerApp instance = null;
-
-    public static ServerApp getInstance() throws RemoteException {
-        if (instance == null) {
-            instance = new ServerApp();
-        }
-        return instance;
-    }
 
     public static void main(String[] args) throws RemoteException {
 

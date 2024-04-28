@@ -15,6 +15,6 @@ public interface Server extends Remote {
      */
     void register(Client client) throws RemoteException;
 
-    void update(Client client, Events event) throws RemoteException;
+    void update(Client client, Events event, String arg) throws RemoteException;
 
 }

@@ -26,6 +26,7 @@ public class Controller {
     }
 
     public void endGame(int occasion){
+        //endGame viene gestito all'interno del model, al di fuori arriva solo la notifica che è stato triggerato
         getGame().endGame(occasion);
     }
 
