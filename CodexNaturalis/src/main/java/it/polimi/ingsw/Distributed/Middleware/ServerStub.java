@@ -3,7 +3,9 @@ package it.polimi.ingsw.Distributed.Middleware;
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.View.View;
 
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -25,11 +27,62 @@ public class ServerStub implements Server {
 
     @Override
     public void register(Client client) throws RemoteException {
-        //TODO implement
+        try{
+            this.socket = new Socket(ip, port);
+            try{
+                this.out = new ObjectOutputStream(socket.getOutputStream());
+                }catch(IOException e) {
+                throw new RemoteException("Error in creating output stream", e);
+            }
+            try {
+                this.in = new ObjectInputStream(socket.getInputStream());
+            }catch(IOException e) {
+                throw new RemoteException("Error in creating input stream", e);
+            }
+
+        }catch(IOException e) {
+            throw new RemoteException("Can't connect to the server", e);
+        }
     }
 
     @Override
-    public void update(Client client, Events event, String arg) throws RemoteException {
-        //TODO implement
+    public void update(Client client, Events event) throws RemoteException {
+        try {
+            out.writeObject(event);
+        } catch (IOException e) {
+            throw new RemoteException("Cannot send event", e);
+        }
+
+    }
+
+    public void receive(Client client) throws RemoteException {
+        View view;
+
+        try{
+            view = (View)in.readObject();
+        }catch(IOException e){
+            throw new RemoteException("Can't get model view from client", e);
+        }catch (ClassNotFoundException e){
+            throw new RemoteException("Can't deserialize model view from the client", e);
+        }
+
+        Events ev;
+        try{
+            ev = (Events)in.readObject();
+        }catch(IOException e){
+            throw new RemoteException("Can't receive event from client", e);
+        }catch(ClassNotFoundException e){
+            throw new RemoteException("Can't deserialize event from client", e);
+        }
+
+        client.update(view, ev);
+    }
+
+    public void close() throws RemoteException{
+        try {
+            socket.close();
+        } catch (IOException e) {
+            throw new RuntimeException("Can't close socket", e);
+        }
     }
 }

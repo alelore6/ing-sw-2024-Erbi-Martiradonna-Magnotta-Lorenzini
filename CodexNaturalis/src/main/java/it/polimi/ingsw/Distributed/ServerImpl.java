@@ -49,7 +49,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
 
     @Override
-    public void update(Client client, Events event, String arg) throws RemoteException {
+    public void update(Client client, Events event) throws RemoteException {
         //check it is client's turn
         if(client == findClient(controller.getGame().getCurrentPlayer())) {
             //TODO call respective method on the controller on every case

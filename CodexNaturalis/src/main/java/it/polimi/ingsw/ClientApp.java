@@ -49,7 +49,7 @@ public class ClientApp {
         if(networkType ==0) {
             //RMI
             Registry registry = LocateRegistry.getRegistry();
-            Server server = (Server) registry.lookup("Server");
+            Server server = (Server) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(typeView, server, nickname);
             client.run();

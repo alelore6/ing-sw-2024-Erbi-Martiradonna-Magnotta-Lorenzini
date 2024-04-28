@@ -35,9 +35,10 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         initialize(server);
     }
 
-    public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server) throws RemoteException {
+    public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server, String nickname) throws RemoteException {
         super(port, csf, ssf);
         initialize(server);
+        this.nickname=nickname;
     }
 
     private void initialize(Server server) throws RemoteException {
@@ -45,7 +46,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         // creare il listener
         view.addObserver((v, e)-> {
             try{
-                server.update(this, Events.JoinServer, " ");
+                server.update(this, Events.JoinServer);
             }catch(RemoteException e1){
                 System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
             }
@@ -59,7 +60,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     @Override
-    public void update(Events e) throws RemoteException {
-        this.view.update(e);
+    public void update(View v, Events e) throws RemoteException {
+        view.update(v, e);
     }
 }

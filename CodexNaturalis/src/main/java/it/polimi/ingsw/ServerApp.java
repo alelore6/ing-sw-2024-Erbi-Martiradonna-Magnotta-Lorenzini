@@ -8,7 +8,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.util.Scanner;
+import java.rmi.registry.Registry;
 
 public class ServerApp {
 
@@ -47,7 +49,7 @@ public class ServerApp {
         // creo server RMI
         Thread rmiThread = new Thread(() -> {
             try {
-                startRMI(portRMI);
+                startRMI();
             } catch (RemoteException e) {
                 System.err.println("Cannot start RMI.\n");
             }
@@ -75,7 +77,13 @@ public class ServerApp {
     }
 
 
-    private static void startRMI (int port) throws RemoteException{
+    private static void startRMI () throws RemoteException{
+        Server server = new ServerImpl();
+
+        //Getting the registry
+        Registry registry = LocateRegistry.getRegistry();
+        //Binding the server to the RMI registry so that the client can look up
+        registry.rebind("server", server);
 
     }
 
