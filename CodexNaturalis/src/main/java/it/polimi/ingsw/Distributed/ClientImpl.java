@@ -44,7 +44,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     private void initialize(Server server) throws RemoteException {
         server.register(this);
         // creare il listener
-        view.addObserver((v, e)-> {
+        view.addObserver((v, e)-> {  //TODO necessario un metodo per aggiungere un listener ad una view
             try{
                 server.update(this, Events.JoinServer);
             }catch(RemoteException e1){
