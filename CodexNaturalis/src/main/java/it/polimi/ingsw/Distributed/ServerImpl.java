@@ -28,19 +28,19 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void register(Client client) throws RemoteException{
         // check nickname
         try{
-            findClient(((ClientImpl) client).nickname);
+            findClient(((ClientImpl) client).getNickname());
         }catch (RuntimeException e){
             //add a sequential number at the end of the nickname if already present
-            ((ClientImpl) client).nickname = ((ClientImpl) client).nickname + numClient;
+            ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
         }
         CLIENT_IMPL_LIST.add((ClientImpl) client);
         numClient++;
-        controller.addPlayerToLobby(((ClientImpl) client).nickname);
+        controller.addPlayerToLobby(((ClientImpl) client).getNickname());
     }
 
     public ClientImpl findClient(String nickname){
         for (ClientImpl c : CLIENT_IMPL_LIST){
-            if (c.nickname.equalsIgnoreCase(nickname))
+            if (c.getNickname().equalsIgnoreCase(nickname))
                 return c;
         }
         // client not found
@@ -57,6 +57,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 default : //do nothing
             }
         }
-        else throw new RemoteException("It is not "+((ClientImpl)client).nickname +" turn to play");
+        else throw new RemoteException("It is not "+((ClientImpl)client).getNickname() +" turn to play");
     }
 }

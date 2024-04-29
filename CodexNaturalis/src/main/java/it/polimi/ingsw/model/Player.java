@@ -42,9 +42,6 @@ public class Player {
      * @param game the game the player is in
      */
     public Player(String nickname, Game game){
-        //TODO: serve davvero game per istanziare un giocatore?
-        //      devo poter creare una lobby di giocatori anche se non esiste ancora il game.
-
         this.nickname=nickname;
         this.game = game;
         currentResources= new CurrentResources(this);

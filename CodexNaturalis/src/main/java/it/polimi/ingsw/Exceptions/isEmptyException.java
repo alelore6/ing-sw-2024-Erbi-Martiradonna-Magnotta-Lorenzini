@@ -11,7 +11,7 @@ public class isEmptyException extends Throwable{
      * the deck that throws the exception
      */
     public final Deck deck;
-    isEmptyException(Deck deck){
+    public isEmptyException(Deck deck){
         this.deck=deck;
     }
 }

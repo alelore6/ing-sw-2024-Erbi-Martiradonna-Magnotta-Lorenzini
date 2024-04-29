@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Events.Generic;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
@@ -43,7 +44,7 @@ public class Game {
      */
     TableCenter tablecenter;
 
-    public final ModelViewListener[] mvListeners;
+    private final ModelViewListener[] mvListeners;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
@@ -51,12 +52,12 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames)
-    {
+    public Game(int numPlayers, String[] nicknames) {
         this.mvListeners = new ModelViewListener[numPlayers];
 
-        // TODO: fare riferimento a numPLayers in Lobby
+        // TODO: fare riferimento a numPLayers in Lobby e non usare quest'attributo
         this.numPlayers = numPlayers;
+
         this.turnCounter = 0;
         this.isFinished = false;
         this.remainingTurns = -1;
@@ -65,6 +66,24 @@ public class Game {
             players[i]= new Player(nicknames[i], this );
         }
         StartingDeck = new StartingDeck();
+    }
+
+    public void addListener(ModelViewListener listener, String nickname) {
+        for (int i=0;i<numPlayers;i++ ){
+            if (players[i].getNickname().equals(nickname)){
+                mvListeners[i] = listener;
+            }
+        }
+    }
+
+    private void notify(Generic e, ModelViewListener listener){
+        listener.handleModelMessage(e);
+    }
+
+    private void notifyAll(Generic e){
+        for (int i=0;i<numPlayers;i++ ){
+            mvListeners[i].handleModelMessage(e);
+        }
     }
 
     /**
@@ -225,8 +244,9 @@ public class Game {
      * The second one checks through matrix operations if the players respected a certain card pattern
      * @return winning player or players
      */
-    public Player[] checkWinner(){ // possibilità di ritornare più player, array con dimensione generata dinamicamente
-                                    // a seconda di quanti player hanno lo score più alto e uguale
+    public Player[] checkWinner(){
+        // possibilità di ritornare più player, array con dimensione generata dinamicamente
+        // a seconda di quanti player hanno lo score più alto e uguale
 
         isFinished = true;
 

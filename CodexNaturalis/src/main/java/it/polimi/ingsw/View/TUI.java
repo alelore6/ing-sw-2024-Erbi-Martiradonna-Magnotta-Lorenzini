@@ -1,12 +1,16 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Events.Generic;
-import it.polimi.ingsw.Listeners.ModelViewListener;
-import it.polimi.ingsw.Listeners.ViewControllerListener;
 
 import java.rmi.RemoteException;
 
-public class TextualUI extends UI {
+public class TUI extends UI {
+
+    public TUI(String nickname) {
+        super(nickname);
+
+
+    }
 
     @Override
     public void update(View v, Generic e) throws RemoteException {
@@ -25,7 +29,7 @@ public class TextualUI extends UI {
     }
 
     @Override
-    public void handleViewMsg(Generic msg) {
+    public void handleModelMessage(Generic msg) {
 
     }
 }

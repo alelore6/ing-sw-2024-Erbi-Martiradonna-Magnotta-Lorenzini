@@ -18,7 +18,10 @@ public class Controller implements ViewControllerListener {
     }
 
     protected void createGame(){
-        // model = new Game(lobby.getNumPlayers(), lobby.Nicknames, new ModelListener(server.Controller.model, server));
+        String[] temp = new String[lobby.getPlayers().size()];
+        temp = lobby.getPlayers().toArray(temp);
+
+        model = new Game(lobby.getNumPlayers(), temp);
     }
 
     public void startGame(){
