@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.ChooseObjective;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
@@ -69,6 +70,7 @@ public class Game {
     }
 
     public void addListener(ModelViewListener listener, String nickname) {
+        //come faccio a avere già il listener?
         for (int i=0;i<numPlayers;i++ ){
             if (players[i].getNickname().equals(nickname)){
                 mvListeners[i] = listener;
@@ -76,11 +78,11 @@ public class Game {
         }
     }
 
-    private void notify(Generic e, ModelViewListener listener){
+    private void notify(GenericEvent e, ModelViewListener listener){
         listener.handleModelMessage(e);
     }
 
-    private void notifyAll(Generic e){
+    private void notifyAll(GenericEvent e){
         for (int i=0;i<numPlayers;i++ ){
             mvListeners[i].handleModelMessage(e);
         }
@@ -145,8 +147,13 @@ public class Game {
 
             }
         }
-
+        int pos=0;
         for(Player p: players){
+
+            //every player gets to choose between 2 objective cards
+            ChooseObjective event=new ChooseObjective(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw());
+            notify(event,mvListeners[pos]);
+
             try {
                 p.placeStartingCard(StartingDeck.draw());
             } catch (WrongPlayException e) {
@@ -166,10 +173,7 @@ public class Game {
                 //should not happen
                 throw new RuntimeException(e);
             }
-            p.chooseObjective(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw());
-            //ogni giocatore riceve 2 carte obiettivo, le guarda e ne sceglie 1, quello sarà il suo obiettivo segreto
-
-
+            pos++;
         }
 
         //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer

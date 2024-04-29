@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
@@ -29,13 +29,12 @@ public class Controller implements ViewControllerListener {
     }
 
     public void endGame(int occasion){
-        //endGame viene gestito all'interno del model, al di fuori arriva solo la notifica che è stato triggerato
+        //( finchè non spostiamo)endGame viene gestito all'interno del model
+        // al di fuori arriva solo la notifica che è stato triggerato
         getGame().endGame(occasion);
     }
 
-    // TODO: why boolean?
     public boolean addPlayerToLobby(String nickname){
-
         return lobby.addPlayer(nickname);
     }
 
@@ -44,7 +43,7 @@ public class Controller implements ViewControllerListener {
     }
 
     @Override
-    public void handleViewMsg(Generic msg) {
+    public void handleViewMsg(GenericEvent msg) {
 
     }
 }

@@ -1,9 +1,8 @@
 package it.polimi.ingsw.Listeners;
 
-import it.polimi.ingsw.Controller.Controller;
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 
 public interface ViewControllerListener {
 
-    void handleViewMsg(Generic msg);
+    void handleViewMsg(GenericEvent msg);
 }

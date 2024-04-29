@@ -1,5 +1,6 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Events.ChooseObjective;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 
 /**
@@ -69,9 +70,8 @@ public class Player {
      * @param obj1 the random objective card the player can choose
      * @param obj2 the random objective card the player can choose
      */
-    public void chooseObjective(ObjectiveCard obj1, ObjectiveCard obj2){
-        //TODO client's input request
-        objective=obj1;
+    public void chooseObjective(ObjectiveCard objCard){
+        this.objective=objCard;
     }
 
     //TODO: in RMI connection methods always throw RemoteException perché sto bastardo non ti avvisa

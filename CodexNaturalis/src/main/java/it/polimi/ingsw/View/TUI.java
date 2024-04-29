@@ -1,6 +1,6 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
 
@@ -13,13 +13,13 @@ public class TUI extends UI {
     }
 
     @Override
-    public void update(View v, Generic e) throws RemoteException {
+    public void update(View v, GenericEvent e) throws RemoteException {
         //TODO update view based on receiving event
         //write a message describing the event and request a input
     }
 
-    @Override
-    public void notifyListeners(View view, Generic e) {
+
+    public void notifyListeners(View view, GenericEvent e) {
 
     }
 
@@ -29,7 +29,7 @@ public class TUI extends UI {
     }
 
     @Override
-    public void handleModelMessage(Generic msg) {
+    public void handleModelMessage(GenericEvent msg) {
 
     }
 }

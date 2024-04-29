@@ -1,15 +1,15 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 
 import java.rmi.RemoteException;
 
 public interface View extends Runnable {
 
-    void update(View view, Generic e) throws RemoteException;
+    void update(View view, GenericEvent e) throws RemoteException;
 
-    void notifyAll(Generic e);
+    void notifyAll(GenericEvent e);
 
     void addListener(ViewControllerListener listener);
 

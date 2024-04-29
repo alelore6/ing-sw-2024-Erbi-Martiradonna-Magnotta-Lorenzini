@@ -2,7 +2,7 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;
 
@@ -29,17 +29,18 @@ public class ClientSkeleton implements Client{
     }
 
     @Override
-    public void update(View v, Generic e) throws RemoteException {
+    public void update(View v, GenericEvent e) throws RemoteException {
         try {
             out.writeObject(e);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");
         }
-        //TODO listener?
+        //TODO avvisare listener?
     }
 
 
     public void receive(ServerImpl server) throws RemoteException {
+        //not sure of the type
         ReadObject event;
         String arg;
         try {

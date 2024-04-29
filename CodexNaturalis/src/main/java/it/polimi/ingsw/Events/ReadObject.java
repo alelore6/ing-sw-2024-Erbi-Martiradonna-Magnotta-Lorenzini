@@ -1,5 +1,5 @@
 package it.polimi.ingsw.Events;
 
-public class ReadObject extends Generic{
+public class ReadObject extends GenericEvent {
 
 }

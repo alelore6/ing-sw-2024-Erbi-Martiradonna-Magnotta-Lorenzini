@@ -2,7 +2,7 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.Server;
-import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;
 
@@ -47,7 +47,7 @@ public class ServerStub implements Server {
     }
 
     @Override
-    public void update(Client client, Generic event) throws RemoteException {
+    public void update(Client client, GenericEvent event) throws RemoteException {
         try {
             out.writeObject(event);
         } catch (IOException e) {
