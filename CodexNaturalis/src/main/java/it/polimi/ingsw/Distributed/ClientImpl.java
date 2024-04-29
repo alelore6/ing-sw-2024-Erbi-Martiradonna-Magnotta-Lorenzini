@@ -1,8 +1,10 @@
 package it.polimi.ingsw.Distributed;
 
 
+import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.JoinServer;
 import it.polimi.ingsw.Listeners.ModelViewListener;
-import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.Events.Events;
 import it.polimi.ingsw.View.TextualUI;
 import it.polimi.ingsw.View.View;
 
@@ -12,7 +14,7 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
+public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client, View{
 
     View view;
     public String nickname;
@@ -44,15 +46,15 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     private void initialize(Server server) throws RemoteException {
         server.register(this);
         // creare il listener
+        JoinServer ev = new JoinServer();
         view.addObserver((v, e)-> {  //TODO necessario un metodo per aggiungere un listener ad una view
             try{
-                server.update(this, Events.JoinServer);
+                server.update(this, ev);
             }catch(RemoteException e1){
                 System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
             }
         });
     }
-
 
     @Override
     public void run() {
@@ -60,7 +62,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     @Override
-    public void update(View v, Events e) throws RemoteException {
+    public void update(View v, Generic e) throws RemoteException {
         view.update(v, e);
     }
 }

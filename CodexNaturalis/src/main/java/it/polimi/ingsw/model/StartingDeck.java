@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.Exceptions.isEmptyException;
 
 import java.io.FileReader;
 import java.io.IOException;

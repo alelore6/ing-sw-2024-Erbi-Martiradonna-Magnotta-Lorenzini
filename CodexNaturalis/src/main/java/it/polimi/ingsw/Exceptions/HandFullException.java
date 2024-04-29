@@ -1,4 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.Exceptions;
+
+import it.polimi.ingsw.model.Player;
 
 /**
  * Exception that is thrown when a draw is requested but the hand is full

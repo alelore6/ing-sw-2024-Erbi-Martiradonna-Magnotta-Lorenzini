@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Exceptions.isEmptyException;
+
 /**
  *  Class containing the table center of the game, holding the playing card decks aswell the cards layed common for everyone.
  */

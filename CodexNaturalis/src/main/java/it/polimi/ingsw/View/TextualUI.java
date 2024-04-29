@@ -1,11 +1,14 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Events.Generic;
 
-public class TextualUI implements View {
+import java.rmi.RemoteException;
+
+public class TextualUI extends ClientImpl {
 
     @Override
-    public void update(Events e){
+    public void update(View v, Generic e) throws RemoteException {
         //TODO update view based on receiving event
         //write a message describing the event and request a input
     }

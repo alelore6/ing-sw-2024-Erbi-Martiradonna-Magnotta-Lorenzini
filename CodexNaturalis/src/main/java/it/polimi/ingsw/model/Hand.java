@@ -1,5 +1,9 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Exceptions.HandFullException;
+import it.polimi.ingsw.Exceptions.WrongPlayException;
+import it.polimi.ingsw.Exceptions.isEmptyException;
+
 /**
  * Class that contains player's hand and played cards
  */

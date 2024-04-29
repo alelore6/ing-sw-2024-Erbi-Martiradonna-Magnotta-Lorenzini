@@ -2,7 +2,9 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.Server;
-import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.Events.Events;
+import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;
 
 import java.io.IOException;
@@ -46,7 +48,7 @@ public class ServerStub implements Server {
     }
 
     @Override
-    public void update(Client client, Events event) throws RemoteException {
+    public void update(Client client, Generic event) throws RemoteException {
         try {
             out.writeObject(event);
         } catch (IOException e) {
@@ -66,9 +68,9 @@ public class ServerStub implements Server {
             throw new RemoteException("Can't deserialize model view from the client", e);
         }
 
-        Events ev;
+        ReadObject ev;
         try{
-            ev = (Events)in.readObject();
+            ev = (ReadObject) in.readObject();
         }catch(IOException e){
             throw new RemoteException("Can't receive event from client", e);
         }catch(ClassNotFoundException e){

@@ -1,5 +1,8 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Exceptions.HandFullException;
+import it.polimi.ingsw.Exceptions.WrongPlayException;
+import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
 /**
@@ -40,7 +43,7 @@ public class Game {
      */
     TableCenter tablecenter;
 
-    public final ModelViewListener mvListener;
+    public final ModelViewListener[] mvListeners;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
@@ -48,9 +51,11 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames,ModelViewListener mvListener)
+    public Game(int numPlayers, String[] nicknames)
     {
-        this.mvListener=mvListener;
+        this.mvListeners = new ModelViewListener[numPlayers];
+
+        // TODO: fare riferimento a numPLayers in Lobby
         this.numPlayers = numPlayers;
         this.turnCounter = 0;
         this.isFinished = false;

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.model;
 
+import it.polimi.ingsw.Exceptions.WrongPlayException;
+
 /**
  * Class that contains player's information and game items
  */
@@ -39,7 +41,10 @@ public class Player {
      * @param nickname the player's nickname
      * @param game the game the player is in
      */
-    Player(String nickname, Game game){
+    public Player(String nickname, Game game){
+        //TODO: serve davvero game per istanziare un giocatore?
+        //      devo poter creare una lobby di giocatori anche se non esiste ancora il game.
+
         this.nickname=nickname;
         this.game = game;
         currentResources= new CurrentResources(this);

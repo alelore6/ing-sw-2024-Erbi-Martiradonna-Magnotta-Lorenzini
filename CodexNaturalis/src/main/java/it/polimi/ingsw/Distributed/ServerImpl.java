@@ -1,7 +1,8 @@
 package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.Events.Events;
 import it.polimi.ingsw.Controller.Controller;
+import it.polimi.ingsw.Events.Generic;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -49,7 +50,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
 
     @Override
-    public void update(Client client, Events event) throws RemoteException {
+    public void update(Client client, Generic event) throws RemoteException {
         //check it is client's turn
         if(client == findClient(controller.getGame().getCurrentPlayer())) {
             //TODO call respective method on the controller on every case

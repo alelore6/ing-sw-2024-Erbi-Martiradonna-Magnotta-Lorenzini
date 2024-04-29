@@ -1,25 +1,43 @@
 package it.polimi.ingsw.Controller;
 
+import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
+import it.polimi.ingsw.model.Player;
+
+import java.util.ArrayList;
+
 public class Lobby {
-    protected String[] Nicknames;
-    //TODO serve l'attributo numPlayers e il suo setter
+    private ArrayList<Player> players;
+    private final Object lock_players = new Object();
 
     public Lobby() {
-        this.Nicknames = new String[4];
+        this.players = new ArrayList<Player>();
     }
 
     protected boolean addPlayer(String nickname){
-        //TODO questo if è sempre falso perchè l'array cosi facendo è sempre lungo 4
-        if(Nicknames.length < 4){
-            Nicknames[Nicknames.length] = nickname;
+        synchronized (lock_players){
+            if(players.size() < 4){
 
-            return true;
+                // vedi commento su Player
+                return players.add(new Player(nickname));
+            }
+
+            return false;
         }
+        // notify listeners
+    }
 
-        return false;
+    public void disconnect(String nickname) throws PlayerNotFoundException {
+        synchronized (lock_players){
+            for(Player player : players){
+                if(player.getNickname().equals(nickname)){
+                    players.remove(player);
+                }
+            }
+        }
+        // notify listeners
     }
 
     public int getNumPlayers(){
-        return Nicknames.length;
+        return players.size();
     }
 }

@@ -2,7 +2,9 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
-import it.polimi.ingsw.Messages.Events;
+import it.polimi.ingsw.Events.Events;
+import it.polimi.ingsw.Events.Generic;
+import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;
 
 import java.io.*;
@@ -28,7 +30,7 @@ public class ClientSkeleton implements Client{
     }
 
     @Override
-    public void update(View v, Events e) throws RemoteException {
+    public void update(View v, Generic e) throws RemoteException {
         try {
             out.writeObject(e);
         } catch (IOException ex) {
@@ -39,10 +41,10 @@ public class ClientSkeleton implements Client{
 
 
     public void receive(ServerImpl server) throws RemoteException {
-        Events event;
+        ReadObject event;
         String arg;
         try {
-            event =(Events) in.readObject();
+            event = (ReadObject) in.readObject();
             arg = (String) in.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);

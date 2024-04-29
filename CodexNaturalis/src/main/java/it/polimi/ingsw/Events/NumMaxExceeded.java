@@ -1,4 +1,4 @@
-package it.polimi.ingsw.Messages;
+package it.polimi.ingsw.Events;
 
 public class NumMaxExceeded extends Generic{
     private final String msg = "The lobby is full.";

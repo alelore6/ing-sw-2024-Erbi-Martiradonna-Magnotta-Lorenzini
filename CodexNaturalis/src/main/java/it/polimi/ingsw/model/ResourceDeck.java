@@ -1,6 +1,7 @@
 package it.polimi.ingsw.model;
 
 import com.google.gson.Gson;
+import it.polimi.ingsw.Exceptions.isEmptyException;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -29,7 +30,7 @@ public class ResourceDeck extends Deck{
         cards = (ResourceCard[]) shuffle(cards);
 
     }
-    public ResourceCard draw() throws isEmptyException{
+    public ResourceCard draw() throws isEmptyException {
         if(getNCards() == 0){
             throw new isEmptyException(this);
         }

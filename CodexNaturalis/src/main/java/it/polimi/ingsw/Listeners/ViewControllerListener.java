@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Listeners;
 
 import it.polimi.ingsw.Controller.Controller;
-import it.polimi.ingsw.Messages.Generic;
+import it.polimi.ingsw.Events.Generic;
 
 public class ViewControllerListener {
     Controller controller;

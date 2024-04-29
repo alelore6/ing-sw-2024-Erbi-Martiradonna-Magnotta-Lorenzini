@@ -1,4 +1,6 @@
-package it.polimi.ingsw.model;
+package it.polimi.ingsw.Exceptions;
+
+import it.polimi.ingsw.model.Deck;
 
 /**
  * Exception that is thrown when a draw is requested on an empty deck
