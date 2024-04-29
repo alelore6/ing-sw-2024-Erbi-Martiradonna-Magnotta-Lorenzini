@@ -2,7 +2,6 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
-import it.polimi.ingsw.Events.Events;
 import it.polimi.ingsw.Events.Generic;
 import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;

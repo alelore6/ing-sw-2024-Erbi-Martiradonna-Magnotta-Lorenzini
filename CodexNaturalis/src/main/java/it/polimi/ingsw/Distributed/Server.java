@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Distributed;
 
-import it.polimi.ingsw.Events.Events;
 import it.polimi.ingsw.Events.Generic;
 
 import java.rmi.Remote;

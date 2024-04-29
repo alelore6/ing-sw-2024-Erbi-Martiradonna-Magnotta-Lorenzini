@@ -3,8 +3,6 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Events.Generic;
 import it.polimi.ingsw.Events.JoinServer;
-import it.polimi.ingsw.Listeners.ModelViewListener;
-import it.polimi.ingsw.Events.Events;
 import it.polimi.ingsw.View.TextualUI;
 import it.polimi.ingsw.View.View;
 
@@ -14,13 +12,12 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client, View{
+public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
 
     View view;
     public String nickname;
     private int viewType; //1 if GUI, 0 if CLI
     private int networkType; // 0 rmi, 1 socket
-    private ModelViewListener mvListener;
 
     public ClientImpl(Server server, String nickname) throws RemoteException {
         // this.vcListener=new ViewListener(server.controller,this);
@@ -47,7 +44,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         server.register(this);
         // creare il listener
         JoinServer ev = new JoinServer();
-        view.addObserver((v, e)-> {  //TODO necessario un metodo per aggiungere un listener ad una view
+        view.addListener((v, e)-> { // TODO: fixare
             try{
                 server.update(this, ev);
             }catch(RemoteException e1){

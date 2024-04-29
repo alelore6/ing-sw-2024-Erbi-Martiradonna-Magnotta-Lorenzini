@@ -1,20 +1,20 @@
 package it.polimi.ingsw.Controller;
 
+import it.polimi.ingsw.Events.Generic;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
-public class Controller {
+public class Controller implements ViewControllerListener {
 
     private final ServerImpl server;
     private final Lobby lobby;
-    private ViewControllerListener vcListener;
     private Game model;
 
     public Controller(ServerImpl server){
         this.server = server;
         lobby = new Lobby();
-        vcListener=new ViewControllerListener();
+
     }
 
     protected void createGame(){
@@ -38,5 +38,10 @@ public class Controller {
 
     public Game getGame(){
         return this.model;
+    }
+
+    @Override
+    public void handleViewMsg(Generic msg) {
+
     }
 }
