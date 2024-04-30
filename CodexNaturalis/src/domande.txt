@@ -20,3 +20,23 @@
 
 4. CLI come far vedere le possibilità di scelta (tipo le carte)?
 
+
+
+
+
+
+-In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
+
+-Canali di comunicazione tra client e server: 4 canali diversi per ogni client che convergono in uno unico per il server?  è diramato oppure una cosa unica?
+
+                                                           SERVER
+                                                            | |
+                                                            | |
+                                                            / \
+                                                           /   \
+                                                          /     \
+                                                         /       \
+                                                        /         \
+                                                       /   /| |\   \
+                                                      /   / | | \   \
+                                                     CL_1 CL_2   CL_3
