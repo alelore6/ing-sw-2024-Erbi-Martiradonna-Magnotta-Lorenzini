@@ -252,6 +252,7 @@ public class Game {
         // possibilità di ritornare più player, array con dimensione generata dinamicamente
         // a seconda di quanti player hanno lo score più alto e uguale
 
+        //TODO ritornare un array di 4 player ordinati in ordine di punti
         isFinished = true;
 
 

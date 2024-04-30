@@ -3,6 +3,7 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.JoinServer;
+import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 import it.polimi.ingsw.View.View;
@@ -58,13 +59,13 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         server.register(this);
         JoinServer ev = new JoinServer();
 
-        /*view.addListener((v,e)-> {
+        view.addListener((v,e)-> {
             try{
                 server.update(this, ev);
             }catch(RemoteException e1){
                 System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
             }
-        });*/
+        });
 
 
         // TODO: assegnare il listener dopo che si è creato il game.

@@ -1,12 +1,12 @@
 1. funzionamento listener:
-    intermediari che contengono una coda di messaggi da scambiare, ma dove si posizionano?
+    intermediari che contengono una coda di messaggi da scambiare, ma dove si posizionano? (ora sono in Game)
 
-    ModelViewListener: (uno per ogni player ?)
-    model -> listener -> server -> rete -> client
+    ModelViewListener: (uno per ogni player ? )
+    model -> listener -> server -> rete -> client -> view
     (rete= ClientSkeleton e ServerStub per socket e sono in perenne lettura)
 
     ViewControllerListener: (uno per ogni view quindi client)
-    view -> listener -> client -> rete -> server -> controller (-> model)
+    view -> listener -> update(client) -> rete -> server -> controller (-> model)
 
 2. Eventi : problemi serializzazzione
     non immutabili -> dovrebbe essercene uno per la richiesta e un'altro per la risposta  ?
@@ -19,3 +19,4 @@
 3. come gestire client connessi a partita piena o già iniziata?
 
 4. CLI come far vedere le possibilità di scelta (tipo le carte)?
+
