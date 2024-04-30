@@ -53,8 +53,8 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames) {
-        this.mvListeners = new Listener[numPlayers];
+    public Game(int numPlayers, String[] nicknames, Listener[] mvListeners) {
+        this.mvListeners =  mvListeners;
 
         // TODO: fare riferimento a numPLayers in Lobby e non usare quest'attributo
         this.numPlayers = numPlayers;

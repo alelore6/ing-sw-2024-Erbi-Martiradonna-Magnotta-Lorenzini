@@ -21,7 +21,7 @@ public class Controller {
         String[] temp = new String[lobby.getPlayers().size()];
         temp = lobby.getPlayers().toArray(temp);
 
-        model = new Game(lobby.getNumPlayers(), temp);
+        model = new Game(lobby.getNumPlayers(), temp, ); // TODO: PASSARE I LISTENER O CREARLI DIRETTAMENTE PER OGNI PLAYER PER IL COSTRUTTORE DI GAME
     }
 
     public void startGame(){
@@ -42,8 +42,4 @@ public class Controller {
         return this.model;
     }
 
-    @Override
-    public void handleViewMsg(GenericEvent msg) {
-
-    }
 }
