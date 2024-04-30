@@ -5,7 +5,7 @@ import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
-import it.polimi.ingsw.Listeners.ModelViewListener;
+import it.polimi.ingsw.Listeners.Listener;
 
 /**
  * Class that manages the game life cycle, from the start to end.
@@ -45,7 +45,7 @@ public class Game {
      */
     TableCenter tablecenter;
 
-    private final ModelViewListener[] mvListeners;
+    private final Listener[] mvListeners;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
@@ -54,7 +54,7 @@ public class Game {
      * @param nicknames array of nicknames passed by user, used to create the players classes
      */
     public Game(int numPlayers, String[] nicknames) {
-        this.mvListeners = new ModelViewListener[numPlayers];
+        this.mvListeners = new Listener[numPlayers];
 
         // TODO: fare riferimento a numPLayers in Lobby e non usare quest'attributo
         this.numPlayers = numPlayers;
@@ -69,7 +69,7 @@ public class Game {
         StartingDeck = new StartingDeck();
     }
 
-    public void addListener(ModelViewListener listener, String nickname) {
+    public void addListener(Listener listener, String nickname) {
         //come faccio a avere già il listener?
         for (int i=0;i<numPlayers;i++ ){
             if (players[i].getNickname().equals(nickname)){
@@ -78,13 +78,13 @@ public class Game {
         }
     }
 
-    private void notify(GenericEvent e, ModelViewListener listener){
-        listener.handleModelMessage(e);
+    private void notify(GenericEvent e, Listener listener){
+        listener.addEvent(e);
     }
 
     private void notifyAll(GenericEvent e){
         for (int i=0;i<numPlayers;i++ ){
-            mvListeners[i].handleModelMessage(e);
+            mvListeners[i].addEvent(e);
         }
     }
 

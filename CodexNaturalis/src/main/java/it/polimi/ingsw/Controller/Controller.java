@@ -5,7 +5,7 @@ import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
-public class Controller implements ViewControllerListener {
+public class Controller {
 
     private final ServerImpl server;
     private final Lobby lobby;

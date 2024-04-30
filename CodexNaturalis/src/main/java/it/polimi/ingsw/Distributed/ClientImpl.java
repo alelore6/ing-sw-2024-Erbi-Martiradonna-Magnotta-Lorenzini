@@ -3,7 +3,6 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.JoinServer;
-import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 import it.polimi.ingsw.View.View;
@@ -16,7 +15,9 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
 
-    UI view;
+
+
+    private UI view;
     private String nickname;
     private int viewType; //1 if GUI, 0 if CLI
     private int networkType; // 0 rmi, 1 socket
@@ -89,5 +90,9 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     @Override
     public void update(View v, GenericEvent e) throws RemoteException {
         view.update(v, e);
+    }
+
+    public UI getView() {
+        return view;
     }
 }
