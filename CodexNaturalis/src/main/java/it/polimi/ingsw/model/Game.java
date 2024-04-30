@@ -1,6 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Events.ChooseObjective;
+import it.polimi.ingsw.Events.ChooseObjectiveRequest;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
@@ -147,7 +147,7 @@ public class Game {
         for(Player p: players){
 
             //every player gets to choose between 2 objective cards
-            ChooseObjective event=new ChooseObjective(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw());
+            ChooseObjectiveRequest event=new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw(),p.getNickname());
             mvListeners[pos].addEvent(event);
 
             try {

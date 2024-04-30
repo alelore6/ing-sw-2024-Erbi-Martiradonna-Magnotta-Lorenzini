@@ -1,25 +1,24 @@
 1. funzionamento listener:
-    intermediari che contengono una coda di messaggi da scambiare, ma dove si posizionano? (ora sono in Game)
+    intermediari che contengono una coda di messaggi da scambiare
 
-    ModelViewListener: (uno per ogni player ? )
-    model -> listener -> server -> rete -> client -> view
-    (rete= ClientSkeleton e ServerStub per socket e sono in perenne lettura)
+    ModelViewListener: (uno per ogni player: li creo nella lobby e devono essere passati al costruttore di game)
+    model -> listener -> server -> rete -> client
 
-    ViewControllerListener: (uno per ogni view quindi client)
-    view -> listener -> update(client) -> rete -> server -> controller (-> model)
+    ViewControllerListener: (uno per ogni view )
+    view -> listener -> client -> rete -> server -> controller (-> model)
 
 2. Eventi : problemi serializzazzione
-    non immutabili -> dovrebbe essercene uno per la richiesta e un'altro per la risposta  ?
+    togliere eventi non necessari
 
-    ad ora uso writeObject(GenericEvent) che è la classe padre per tutti gli eventi, perdo pezzi?
-    -> enum di tipo eventi che viene passata per prima cosi so cosa vado a leggere dopo
+    non immutabili -> dovrebbe essercene uno per la richiesta e un'altro per la risposta (tranne per quelli solo messaggio)
 
-    esempio chooseObjective
+    instance of negli update di client e server per i diversi casi di evento
 
-3. come gestire client connessi a partita piena o già iniziata?
+3. come gestire client connessi a partita piena o già iniziata? --> evento numMaxExceeded comprende questo caso
 
-4. CLI come far vedere le possibilità di scelta (tipo le carte)?
+4. CLI come far vedere le possibilità di scelta (tipo le carte)? --> stampare brutalmente attributi
 
+5. aggiungere setNumPlayer alla lobby
 
 
 
