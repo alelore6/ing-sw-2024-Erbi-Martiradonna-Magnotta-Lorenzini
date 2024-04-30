@@ -18,20 +18,8 @@ public class ServerApp {
 
         Scanner terminal = new Scanner(System.in);
         Integer port = 0;
-        final int portRMI;
-        final int portSocket;
 
-        System.out.print("Insert Server RMI port number - 4 digit only: \n");
-        while (port.toString().length() != 4){
-            try {
-                port = Integer.parseInt(terminal.next());
-            } catch (NumberFormatException e) {
-                System.out.println("Not a valid number!!\n");
-            }
-            if (port.toString().length() != 4)
-                System.out.print("Enter a 4 digit number only: \n");
-        }
-        portRMI = port;
+        final int portSocket;
 
         port = 0;
         System.out.print("Insert Server Socket port number - 4 digit only: \n");

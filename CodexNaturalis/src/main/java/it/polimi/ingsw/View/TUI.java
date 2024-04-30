@@ -30,6 +30,5 @@ public class TUI extends UI {
 
     @Override
     public void handleModelMessage(GenericEvent msg) {
-
     }
 }

@@ -9,7 +9,7 @@ public interface View extends Runnable {
 
     void update(View view, GenericEvent e) throws RemoteException;
 
-    void notifyAll(GenericEvent e);
+   // void notifyAll(GenericEvent e); a cosa serve precisamente?
 
     void addListener(ViewControllerListener listener);
 
