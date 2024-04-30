@@ -3,7 +3,6 @@ package it.polimi.ingsw.Distributed.Middleware;
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.ReadObject;
 import it.polimi.ingsw.View.View;
 
 import java.io.*;

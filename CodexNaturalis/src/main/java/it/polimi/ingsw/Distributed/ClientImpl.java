@@ -2,7 +2,6 @@ package it.polimi.ingsw.Distributed;
 
 
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.JoinServer;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 import it.polimi.ingsw.View.View;
@@ -58,7 +57,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
 
     private void initialize(Server server) throws RemoteException {
         server.register(this);
-        JoinServer ev = new JoinServer();
+        /*JoinServer ev = new JoinServer();
 
         view.addListener((v,e)-> {
             try{
@@ -69,8 +68,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         });
 
 
-        // TODO: assegnare il listener dopo che si è creato il game.
-        // game.addListener(nickname);
+        // game.addListener(nickname);*/
 
     }
 
