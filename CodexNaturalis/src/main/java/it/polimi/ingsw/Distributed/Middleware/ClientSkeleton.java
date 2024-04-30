@@ -31,21 +31,21 @@ public class ClientSkeleton implements Client{
     @Override
     public void update(View v, GenericEvent e) throws RemoteException {
         try {
+            out.writeObject(v);
             out.writeObject(e);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");
         }
-        //TODO avvisare listener?
+        //socket: server stub is always reading (same as receive() here)
     }
 
 
     public void receive(ServerImpl server) throws RemoteException {
+        //socket: receive from server stub update()
         //not sure of the type
-        ReadObject event;
-        String arg;
+        GenericEvent event;
         try {
-            event = (ReadObject) in.readObject();
-            arg = (String) in.readObject();
+            event = (GenericEvent) in.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);
         } catch (ClassNotFoundException e) {

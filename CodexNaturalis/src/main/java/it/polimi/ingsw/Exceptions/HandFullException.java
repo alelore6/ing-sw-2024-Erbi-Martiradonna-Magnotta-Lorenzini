@@ -16,7 +16,7 @@ public class HandFullException extends Throwable {
      * Constructor
      * @param player the player that causes the exception
      */
-    HandFullException(Player player){
+    public HandFullException(Player player){
         this.player=player;
     }
 }

@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Events;
 
-public abstract class GenericEvent {
+import java.io.Serializable;
+
+public abstract class GenericEvent implements Serializable {
     public String message;
 }

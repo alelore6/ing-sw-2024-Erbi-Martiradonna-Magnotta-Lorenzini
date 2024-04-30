@@ -53,12 +53,12 @@ public class ServerStub implements Server {
         } catch (IOException e) {
             throw new RemoteException("Cannot send event", e);
         }
-
+        //socket: client skeleton is always reading
     }
 
     public void receive(Client client) throws RemoteException {
+        //socket: receive from client skeleton update()
         View view;
-
         try{
             view = (View)in.readObject();
         }catch(IOException e){
@@ -67,15 +67,15 @@ public class ServerStub implements Server {
             throw new RemoteException("Can't deserialize model view from the client", e);
         }
 
-        ReadObject ev;
+        GenericEvent ev;
         try{
-            ev = (ReadObject) in.readObject();
+            ev = (GenericEvent) in.readObject();
         }catch(IOException e){
             throw new RemoteException("Can't receive event from client", e);
         }catch(ClassNotFoundException e){
             throw new RemoteException("Can't deserialize event from client", e);
         }
-
+        //call view update
         client.update(view, ev);
     }
 

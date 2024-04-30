@@ -29,7 +29,7 @@ public class WrongPlayException extends Throwable{
      * negative values for x and y represent specific types of error
      * @param card the card that cant be played
      */
-    WrongPlayException(Player player,int x,int y, Card card){
+    public WrongPlayException(Player player,int x,int y, Card card){
         this.player=player;
         this.card=card;
         if (x==-1 && y==-1){
