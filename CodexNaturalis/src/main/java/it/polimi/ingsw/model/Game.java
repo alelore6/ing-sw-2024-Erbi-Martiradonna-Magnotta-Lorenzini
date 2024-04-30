@@ -78,10 +78,6 @@ public class Game {
         }
     }
 
-    private void notify(GenericEvent e, Listener listener){
-        listener.addEvent(e);
-    }
-
     private void notifyAll(GenericEvent e){
         for (int i=0;i<numPlayers;i++ ){
             mvListeners[i].addEvent(e);
@@ -152,7 +148,7 @@ public class Game {
 
             //every player gets to choose between 2 objective cards
             ChooseObjective event=new ChooseObjective(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw());
-            notify(event,mvListeners[pos]);
+            mvListeners[pos].addEvent(event);
 
             try {
                 p.placeStartingCard(StartingDeck.draw());
