@@ -1,6 +1,5 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Events.ChooseObjective;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 
 /**
@@ -39,10 +38,10 @@ public class Player {
     /**
      * Constructor:
      * Also calls the constructor for class Hand and currentResources
+     *
      * @param nickname the player's nickname
-     * @param game the game the player is in
      */
-    public Player(String nickname, Game game){
+    public Player(String nickname){
         this.nickname=nickname;
         this.game = game;
         currentResources= new CurrentResources(this);
