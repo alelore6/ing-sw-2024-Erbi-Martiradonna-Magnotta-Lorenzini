@@ -33,7 +33,7 @@ public class Hand {
      * Constructor of the class
      * @param player player that owns the class
      */
-    Hand(Player player){
+    public Hand(Player player){
         HandCard= new PlayableCard[3];
         displayedCards=new Card[81][81];
         this.player=player;

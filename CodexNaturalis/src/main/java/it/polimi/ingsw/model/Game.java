@@ -64,7 +64,7 @@ public class Game {
         this.remainingTurns = -1;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
-            players[i]= new Player(nicknames[i], this );
+            players[i]= new Player(nicknames[i]);
         }
         StartingDeck = new StartingDeck();
     }
