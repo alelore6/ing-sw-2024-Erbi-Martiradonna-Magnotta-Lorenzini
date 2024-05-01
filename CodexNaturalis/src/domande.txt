@@ -1,3 +1,4 @@
+TODO per il 7/5
 1. funzionamento listener:
     intermediari che contengono una coda di messaggi da scambiare
 
@@ -6,6 +7,9 @@
 
     ViewControllerListener: (uno per ogni view )
     view -> listener -> client -> rete -> server -> controller (-> model)
+
+    la view a ogni azione dell'utente crea un evento e lo manda al listener
+    view.update prende gli eventi e li gestisce in base al tipo
 
 2. Eventi : problemi serializzazzione
     togliere eventi non necessari
@@ -22,7 +26,9 @@
 
 
 
+Domande per il 7/5
 
+- come gestire evento andato male? -> con ackResponse ma dove interviene?
 
 -In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
 
@@ -38,4 +44,4 @@
                                                         /         \
                                                        /   /| |\   \
                                                       /   / | | \   \
-                                                     CL_1 CL_2   CL_3
+                                                     CL_1  CL_2   CL_3

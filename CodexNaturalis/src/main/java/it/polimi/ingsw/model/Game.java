@@ -1,7 +1,6 @@
 package it.polimi.ingsw.model;
 
-import it.polimi.ingsw.Events.ChooseObjectiveRequest;
-import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
@@ -15,7 +14,6 @@ public class Game {
      * number of players in the current game
      */
     private final int numPlayers;
-    public Object tablecenter;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -36,11 +34,11 @@ public class Game {
     /**
      * The starting cards deck
      */
-    private StartingDeck StartingDeck;
+    private final StartingDeck StartingDeck;
     /**
      * The dynamic array containing the players of this current game
      */
-    Player[] players;
+    public final Player[] players;
     /**
      * The tablecenter attribute containing the two decks (resource and gold) and the cards on it (2 res, 2 gold, 2 obj)
      */
@@ -52,16 +50,12 @@ public class Game {
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
      *
-     * @param testGame
      * @param numPlayers number of players in the current game
      * @param nicknames  array of nicknames passed by user, used to create the players classes
      */
-    public Game(String testGame, int numPlayers, String[] nicknames, Listener[] mvListeners) {
+    public Game(int numPlayers, String[] nicknames, Listener[] mvListeners) {
         this.mvListeners =  mvListeners;
-
-        // TODO: fare riferimento a numPLayers in Lobby e non usare quest'attributo
         this.numPlayers = numPlayers;
-
         this.turnCounter = 0;
         this.isFinished = false;
         this.remainingTurns = -1;
@@ -72,20 +66,6 @@ public class Game {
         StartingDeck = new StartingDeck();
     }
 
-    public void addListener(Listener listener, String nickname) {
-        //come faccio a avere già il listener?
-        for (int i=0;i<numPlayers;i++ ){
-            if (players[i].getNickname().equals(nickname)){
-                mvListeners[i] = listener;
-            }
-        }
-    }
-
-    private void notifyAll(GenericEvent e){
-        for (int i=0;i<numPlayers;i++ ){
-            mvListeners[i].addEvent(e);
-        }
-    }
 
     /**
      * Getter for tablecenter instance
@@ -148,6 +128,9 @@ public class Game {
         }
         int pos=0;
         for(Player p: players){
+            TokenColor playercolor = null;
+            //TODO il colore deve essere passato come input dal player!
+            p.setToken(new Token(playercolor, tablecenter.getScoretrack(), p)); //set token
 
             //every player gets to choose between 2 objective cards
             ChooseObjectiveRequest event=new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw(),p.getNickname());
@@ -160,9 +143,6 @@ public class Game {
             } catch (isEmptyException e) {
                 throw new RuntimeException(e);
             }
-            TokenColor playercolor = null;
-             //TODO il colore deve essere passato come input dal player!
-            p.setToken(new Token(playercolor, tablecenter.getScoretrack(), p)); //set token
 
             try {
                 p.getHand().DrawFromDeck(tablecenter.getResDeck());
@@ -204,13 +184,21 @@ public class Game {
             case 0,1,2,3:
                 // un giro + i turni rimanenti per completare questo
                 remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
-                System.out.println("Player " + occasion + " has reached 20 points. Starting endgame process");
+                //notify all players
+                for(int i=0;i<numPlayers;i++){
+                    EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname());
+                    mvListeners[i].addEvent(event);
+                }
             //both decks are found empty simultaneously
             case 4:
                 tablecenter.getGoldDeck().AckEmpty=true;
                 tablecenter.getResDeck().AckEmpty=true;
                 remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
-                System.out.println("Zero cards left! Starting endgame process");
+                //notify all players
+                for(int i=0;i<numPlayers;i++){
+                    EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                    mvListeners[i].addEvent(event);
+                }
             //gold deck is found empty
             case 5:
                 // if i already had this information do nothing
@@ -222,7 +210,10 @@ public class Game {
                 if(tablecenter.getResDeck().AckEmpty){
                     //both decks are empty: same as case 4
                     remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position);
-                    System.out.println("Zero cards left! Starting endgame process");
+                    for(int i=0;i<numPlayers;i++){
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                        mvListeners[i].addEvent(event);
+                    }
                 }
             //resource deck is found empty
             case 6:
@@ -233,10 +224,12 @@ public class Game {
                 tablecenter.getResDeck().AckEmpty=true;
                 if (tablecenter.getGoldDeck().AckEmpty){
                     remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position);
-                    System.out.println("Zero cards left! Starting endgame process");
+                    for(int i=0;i<numPlayers;i++){
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                        mvListeners[i].addEvent(event);
+                    }
                 }
         }
-        //TODO: notificare il controllore e la condizione su cui è stato chiamato
 
     }
 
@@ -320,20 +313,19 @@ public class Game {
 
 
         curPlayerPosition = nextPlayerIndex;
+        mvListeners[curPlayerPosition].addEvent(new YourTurn(getCurrentPlayer()));
 
-        // TODO play card from input
+        // play card request
+        mvListeners[curPlayerPosition].addEvent(new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards()));
         //if both deck are not empty, a draw will be requested
         if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty){
-            //TODO draw card from input
+            //TODO draw card from input e sitemare l'if con anche le carte a terra vuote
         }
 
         turnCounter++;
         remainingTurns--;
         if(remainingTurns == 0) checkWinner();
-
         else nextPlayer(players[nextPlayerIndex]);
-
-
     }
 
     protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {

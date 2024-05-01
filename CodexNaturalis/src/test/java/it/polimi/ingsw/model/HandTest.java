@@ -63,7 +63,7 @@ public class HandTest {
         hand = new Hand(player);
 
         TableCenter mockTableCenter = new TableCenter();
-        player.game = new Game("Test Game", 2, null, null);
+        player.game = new Game( 2, null, null);
         player.game.tablecenter = mockTableCenter;
         PlayableCard mockCard = new PlayableCard();
         mockTableCenter.drawAndPosition(mockCard);
