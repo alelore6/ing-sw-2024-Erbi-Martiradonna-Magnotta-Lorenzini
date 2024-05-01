@@ -19,7 +19,7 @@ public class Hand {
     /**
      * player's played cards
      */
-    private final Card[][] displayedCards;
+    public final Card[][] displayedCards;
 
     /**
      * getter for displayed cards
@@ -235,4 +235,6 @@ public class Hand {
         // update current resources
         player.getCurrentResources().update(card, overlaps);
     }
+
+
 }

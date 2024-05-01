@@ -15,6 +15,7 @@ public class Game {
      * number of players in the current game
      */
     private final int numPlayers;
+    public Object tablecenter;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -43,17 +44,19 @@ public class Game {
     /**
      * The tablecenter attribute containing the two decks (resource and gold) and the cards on it (2 res, 2 gold, 2 obj)
      */
-    TableCenter tablecenter;
+    public TableCenter tablecenter;
 
     private final Listener[] mvListeners;
 
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
+     *
+     * @param testGame
      * @param numPlayers number of players in the current game
-     * @param nicknames array of nicknames passed by user, used to create the players classes
+     * @param nicknames  array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames, Listener[] mvListeners) {
+    public Game(String testGame, int numPlayers, String[] nicknames, Listener[] mvListeners) {
         this.mvListeners =  mvListeners;
 
         // TODO: fare riferimento a numPLayers in Lobby e non usare quest'attributo

@@ -1,3 +1,4 @@
+import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.model.*;
 
@@ -12,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 public class HandTest {
     public Hand hand;
-    private Player player;
+    public Player player;
     public Card cars;
-
+    public Deck deck;
 
     @Before
     public void setUp() throws Exception {
@@ -33,27 +34,61 @@ public class HandTest {
 
     @Test
     public void drawFromDeck() {
-      Deck  deck = new Deck() {
+        player = new Player("Test Player.");
+        hand = new Hand(player);
+        deck = new Deck();
+        try {
+            hand.drawFromDeck(deck);
+            fail("Expected HandFullException");
+        } catch (HandFullException e) {
 
-          @Override
-          public Card draw() throws isEmptyException {
-              return null;
-          }
-      };
-        assertDoesNotThrow(() -> hand.DrawFromDeck(deck));
-    }
+        } catch (isEmptyException e) {
+            fail("Unexpected isEmptyException");
+        }
+        try {
+            Deck emptyDeck = new Deck();
+            hand.DrawFromDeck(emptyDeck);
+            fail("Expected isEmptyException");
+        } catch (isEmptyException e) {
+        } catch (HandFullException e) {
+            fail("Unexpected HandFullException");
+        }
+
+
+        }
 
     @Test
     public void drawPositionedCard() {
+        player = new Player("Test Player.");
+        hand = new Hand(player);
+
+        TableCenter mockTableCenter = new TableCenter();
+        player.game = new Game("Test Game", 2, null, null);
+        player.game.tablecenter = mockTableCenter;
+        PlayableCard mockCard = new PlayableCard();
+        mockTableCenter.drawAndPosition(mockCard);
+        //created a mock to simulate the game//
+        assertDoesNotThrow(() -> hand.DrawPositionedCard(mockCard));
+        // verify there aren't exception//
+        assertNotNull(hand.getHandCard(0));
+        assertEquals(mockCard, hand.getHandCard(0));
+        //verify drawn card has been added to the hand//
     }
 
     @Test
     public void getHandCard() {
-
     }
 
     @Test
-    public void playCard() {
+    public void testplayCard() {
+    player = new Player("Test Player.");
+    hand = new Hand(player);
+
+    Card cardtoplay= new ResourceCard(); // i choose Resource Card as an example//
+         Card[][] displayedCards = new Card[81][81];
+
+        assertDoesNotThrow(() -> hand.playCard(cardtoplay, 10, 45)); // 10,45 as a possible position where a card can be positioned//
+        assertEquals(cardtoplay, displayedCards[10][45]);
 
     }
 
@@ -68,22 +103,5 @@ public class HandTest {
     }
 
 
-    @Test
-    public void testPlayCard() {
-           Card card = new Card() {
-               @Override
-               public void flip() {
-
-               }
-
-               @Override
-               public Card getCard() {
-                   return null;
-               }
-           };
-
-        int x= 5;
-        int y = 5;
-        assertDoesNotThrow(() -> hand.playCard(card, x, y));
-    }
+    4
 }

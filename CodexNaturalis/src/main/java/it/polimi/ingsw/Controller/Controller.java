@@ -1,7 +1,5 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
@@ -21,7 +19,7 @@ public class Controller {
         String[] temp = new String[lobby.getPlayers().size()];
         temp = lobby.getPlayers().toArray(temp);
 
-        model = new Game(lobby.getNumPlayers(), temp, ); // TODO: PASSARE I LISTENER O CREARLI DIRETTAMENTE PER OGNI PLAYER PER IL COSTRUTTORE DI GAME
+        model = new Game("Test Game", lobby.getNumPlayers(), temp, ); // TODO: PASSARE I LISTENER O CREARLI DIRETTAMENTE PER OGNI PLAYER PER IL COSTRUTTORE DI GAME
     }
 
     public void startGame(){

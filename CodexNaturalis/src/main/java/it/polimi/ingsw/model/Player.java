@@ -29,7 +29,7 @@ public class Player {
     /**
      * the game the player is participating
      */
-    public final Game game;
+    public Game game;
     /**
      * indicate when it's this player's turn
      */
