@@ -88,7 +88,7 @@ public class HandTest {
          Card[][] displayedCards = new Card[81][81];
 
         assertDoesNotThrow(() -> hand.playCard(cardtoplay, 10, 45)); // 10,45 as a possible position where a card can be positioned//
-        assertEquals(cardtoplay, displayedCards[10][45]);
+        assertEquals(cardtoplay, displayedCards[10][45]);t
 
     }
 
