@@ -15,7 +15,7 @@ public class Hand {
     /**
      * player's hand card
      */
-    private final PlayableCard[] HandCard;
+    private final PlayableCard[] HandCards;
     /**
      * player's played cards
      */
@@ -34,7 +34,7 @@ public class Hand {
      * @param player player that owns the class
      */
     public Hand(Player player){
-        HandCard= new PlayableCard[3];
+        HandCards = new PlayableCard[3];
         displayedCards=new Card[81][81];
         this.player=player;
     }
@@ -48,8 +48,8 @@ public class Hand {
      */
     public void DrawFromDeck(Deck deck) throws HandFullException, isEmptyException {
         for(int i=0; i< 3; i++){
-            if (HandCard[i]==null){
-                try{ HandCard[i] = (PlayableCard) deck.draw();}
+            if (HandCards[i]==null){
+                try{ HandCards[i] = (PlayableCard) deck.draw();}
                 catch (isEmptyException e){
                     player.game.endGame(deck instanceof GoldDeck? 5 : 6);
                     throw new isEmptyException(deck);
@@ -73,8 +73,8 @@ public class Hand {
             return;
         boolean done=false;
         for(int i=0; i< 3; i++){
-            if (HandCard[i]==null){
-                HandCard[i] = card;
+            if (HandCards[i]==null){
+                HandCards[i] = card;
                 done=true;
                 break;
             }
@@ -93,9 +93,11 @@ public class Hand {
      * @param pos the position that describes the card in the hand we want to get
      * @return the card in tha hand at the pos position
      */
-    public PlayableCard getHandCard(int pos){
-        return HandCard[pos];
+    protected PlayableCard getHandCard(int pos){
+        return HandCards[pos];
     }
+
+    protected PlayableCard[] getHandCards(){return HandCards;}
 
     /**
      * check that play is valid following the game rules:
@@ -115,7 +117,7 @@ public class Hand {
         boolean found=false;
         int i=-1;
         if (!(card instanceof StartingCard)){
-            for (Card c: HandCard){
+            for (Card c: HandCards){
                 //save the position of the card in the hand
                 i++;
                 if (c.equals(card)) {
@@ -230,7 +232,7 @@ public class Hand {
         displayedCards[x][y] = card;
         //card is removed from the hand, not in case of starting card
         if (found) {
-            HandCard[i] = null;
+            HandCards[i] = null;
         }
         // update current resources
         player.getCurrentResources().update(card, overlaps);

@@ -8,9 +8,10 @@ import java.util.ArrayList;
 //              and players will be created after the game.
 
 public class Lobby {
-
+    private int numPlayers;
     private ArrayList<String> players;
     private final Object lock_players = new Object();
+    //non capisco a cosa serva: il controller non è su thread
 
     public Lobby() {
         this.players = new ArrayList<String>();
@@ -18,16 +19,15 @@ public class Lobby {
 
     protected boolean addPlayer(String nickname){
         synchronized (lock_players){
-            if(players.size() < 4){
+            if(players.size() < numPlayers){
                 return players.add(nickname);
             }
-
             return false;
         }
-        // notify listeners
     }
 
     public void disconnect(String nickname) throws PlayerNotFoundException {
+        //capire cosa si vuole fare con questo metodo
         boolean isRemoved = false;
 
         synchronized (lock_players){
@@ -52,6 +52,10 @@ public class Lobby {
     }
 
     public int getNumPlayers(){
-        return players.size();
+        return numPlayers;
+    }
+
+    public void setNumPlayers(int numPlayers){
+        this.numPlayers = numPlayers;
     }
 }

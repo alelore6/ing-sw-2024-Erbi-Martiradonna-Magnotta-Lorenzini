@@ -1,5 +1,9 @@
 package it.polimi.ingsw.Controller;
 
+import it.polimi.ingsw.Events.ErrorJoinLobby;
+import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Events.StartGame;
+import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
@@ -8,7 +12,7 @@ public class Controller {
     private final ServerImpl server;
     private final Lobby lobby;
     private Game model;
-
+    private ModelViewListener[] mvListeners;
     public Controller(ServerImpl server){
         this.server = server;
         lobby = new Lobby();
@@ -16,13 +20,12 @@ public class Controller {
     }
 
     protected void createGame(){
-        String[] temp = new String[lobby.getPlayers().size()];
-        temp = lobby.getPlayers().toArray(temp);
+        String[] nicknames = new String[lobby.getPlayers().size()];
+        nicknames = lobby.getPlayers().toArray(nicknames);
+        model = new Game(lobby.getNumPlayers(), nicknames, mvListeners);
 
-        model = new Game("Test Game", lobby.getNumPlayers(), temp, ); // TODO: PASSARE I LISTENER O CREARLI DIRETTAMENTE PER OGNI PLAYER PER IL COSTRUTTORE DI GAME
-    }
+        //TODO notify all listener on startGame event
 
-    public void startGame(){
         getGame().startGame();
     }
 
@@ -32,12 +35,24 @@ public class Controller {
         getGame().endGame(occasion);
     }
 
-    public boolean addPlayerToLobby(String nickname){
-        return lobby.addPlayer(nickname);
+    public void addPlayerToLobby(String nickname){
+        boolean ok=false;
+        //TODO creare listener
+        //check game hasn't started
+        if(model==null) {
+            //TODO se la lobby è vuota evento SetNumPlayer
+            ok = lobby.addPlayer(nickname);
+        }
+        else {
+            //notify listener : ErrorJoinLobby
+        }
+        //TODO notify listener: joinLobby or ErrorJoinLobby event based on ok
     }
 
     public Game getGame(){
         return this.model;
     }
-
+    public void updateModel(GenericEvent event, String nickname){
+        //TODO agire sul model in base al tipo di evento
+    }
 }
