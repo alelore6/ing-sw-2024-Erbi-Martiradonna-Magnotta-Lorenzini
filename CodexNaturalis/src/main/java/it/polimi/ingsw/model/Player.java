@@ -82,7 +82,6 @@ public class Player {
      * @throws WrongPlayException is the play is not valid
      */
     public void placeStartingCard(StartingCard StartCard) throws WrongPlayException {
-        //TODO Card can be rotated from the player
         Hand.playCard(StartCard,40,40);
     }
 
@@ -114,7 +113,13 @@ public class Player {
      * Setter for player's token after choosing the color
      * @param token the chosen token
      */
-    protected void setToken(Token token) {
-        this.token = token;
+    protected boolean setToken(TokenColor color) {
+        boolean ok;
+        synchronized (game.availableTokens) {
+            //non so se serve veramente visto che il controller è unico e non su thread
+            this.token = new Token(color,game.tablecenter.getScoretrack(),this);
+            ok = game.availableTokens.remove(color);
+        }
+        return ok;
     }
 }

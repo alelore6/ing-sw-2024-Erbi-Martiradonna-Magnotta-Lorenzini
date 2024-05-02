@@ -2,10 +2,12 @@ package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.model.TokenColor;
 
-public class SetTokenColorRequest extends GenericEvent{
-    public final TokenColor[] availableColors;
+import java.util.ArrayList;
 
-    public SetTokenColorRequest(String nickname, TokenColor[] availableColors) {
+public class SetTokenColorRequest extends GenericEvent{
+    public final ArrayList<TokenColor> availableColors;
+
+    public SetTokenColorRequest(String nickname, ArrayList<TokenColor> availableColors) {
         super("Choose token color:", nickname);
         this.availableColors = availableColors;
     }

@@ -28,7 +28,7 @@ public class Token {
      * @param scoretrack scoretrack on which the token is set
      * @param player player that will own this token
      */
-    public Token(TokenColor color, Scoretrack scoretrack, Player player) { //TODO capire da dove è chiamato!
+    public Token(TokenColor color, Scoretrack scoretrack, Player player) {
         this.color = color;
         this.scoreTrackPos = 0;
         this.scoretrack = scoretrack;
