@@ -9,8 +9,4 @@ public class SetTokenColorResponse extends GenericEvent {
         super("Token color set.", nickname);
         this.tokenColor = tokenColor;
     }
-
-    public String msgOutput() {
-        return message;
-    }
 }

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Events.CardInfoRequest;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 
@@ -43,10 +44,18 @@ public class TUI extends UI {
         }
     }
 
-    private int choose(){
-        int c = 0;
+    private void getCardInfo(int ID){
 
-        while(c != 1 && c != 2){
+        CardInfoRequest ev = new CardInfoRequest(ID, this.nickname);
+
+        // notify Controller
+    }
+
+    private int choose(int n){
+        int c = 0;
+        boolean b = true;
+
+        while(b){
 
             try{
                 c = in.nextInt();
@@ -58,7 +67,8 @@ public class TUI extends UI {
                 continue;
             }
 
-            if(c != 1 && c != 2)    out.println("Wrong number inserted. Try again:");
+            if(c > 0 && c <= n)     b = false;
+            if(b)                   out.println("Wrong number inserted. Try again:");
         }
 
         return c;

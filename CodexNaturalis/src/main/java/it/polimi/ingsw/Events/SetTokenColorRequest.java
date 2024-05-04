@@ -8,11 +8,7 @@ public class SetTokenColorRequest extends GenericEvent{
     public final ArrayList<TokenColor> availableColors;
 
     public SetTokenColorRequest(String nickname, ArrayList<TokenColor> availableColors) {
-        super("Choose token color:", nickname);
+        super("Choose token color:\n" + availableColors.toString(), nickname);
         this.availableColors = availableColors;
-    }
-
-    public String msgOutput(){
-        return message + "\n" + availableColors.toString();
     }
 }
