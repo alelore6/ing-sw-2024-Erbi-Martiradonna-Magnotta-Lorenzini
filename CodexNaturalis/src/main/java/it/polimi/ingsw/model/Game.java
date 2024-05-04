@@ -142,11 +142,11 @@ public class Game {
         for(Player p: players){
 
             SetTokenColorRequest setTokenColor=new SetTokenColorRequest(p.getNickname(),availableTokens);
-            mvListeners[pos].addEvent(setTokenColor);
+            mvListeners.get(pos).addEvent(setTokenColor);
 
             //every player gets to choose between 2 objective cards
             ChooseObjectiveRequest chooseObjective=new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw(),p.getNickname());
-            mvListeners[pos].addEvent(chooseObjective);
+            mvListeners.get(pos).addEvent(chooseObjective);
 
             try {
                 p.placeStartingCard(StartingDeck.draw());
@@ -185,7 +185,7 @@ public class Game {
         //notify all players on turn order
         for(int i=0;i<numPlayers;i++){
             TurnOrder turnOrder=new TurnOrder(players[i].getNickname(),order);
-            mvListeners[i].addEvent(turnOrder);
+            mvListeners.get(i).addEvent(turnOrder);
         }
 
         curPlayerPosition = firstPlayerPos;
@@ -210,7 +210,7 @@ public class Game {
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
                     EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname());
-                    mvListeners[i].addEvent(event);
+                    mvListeners.get(i).addEvent(event);
                 }
             //both decks are found empty simultaneously
             case 4:
@@ -220,7 +220,7 @@ public class Game {
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
                     EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
-                    mvListeners[i].addEvent(event);
+                    mvListeners.get(i).addEvent(event);
                 }
             //gold deck is found empty
             case 5:
@@ -235,7 +235,7 @@ public class Game {
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
                         EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
-                        mvListeners[i].addEvent(event);
+                        mvListeners.get(i).addEvent(event);
                     }
                 }
             //resource deck is found empty
@@ -249,7 +249,7 @@ public class Game {
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
                         EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
-                        mvListeners[i].addEvent(event);
+                        mvListeners.get(i).addEvent(event);
                     }
                 }
         }
@@ -321,7 +321,7 @@ public class Game {
         //send FinalRankings event to everyone
         for(int i=0;i<numPlayers;i++){
             FinalRankings event=new FinalRankings(players[i].getNickname(),rankings);
-            mvListeners[i].addEvent(event);
+            mvListeners.get(i).addEvent(event);
         }
     }
 
@@ -345,12 +345,12 @@ public class Game {
         //send YourTurn event
         for(int i=0;i<numPlayers;i++){
             YourTurn event=new YourTurn(players[i].getNickname(),getCurrentPlayer());
-            mvListeners[i].addEvent(event);
+            mvListeners.get(i).addEvent(event);
         }
 
         // send play card request event
-        PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards());
-        mvListeners[curPlayerPosition].addEvent(playCard);
+        PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards(),players[curPlayerPosition].getHand().getDisplayedCards());
+        mvListeners.get(curPlayerPosition).addEvent(playCard);
 
         //check there are still card on table center
         boolean empty=true;
@@ -363,7 +363,7 @@ public class Game {
         //if both deck are not empty and !empty, a draw will be requested
         if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty){
             DrawCardRequest drawCard=new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards(),tablecenter.getGoldDeck().AckEmpty ,tablecenter.getResDeck().AckEmpty);
-            mvListeners[curPlayerPosition].addEvent(drawCard);
+            mvListeners.get(curPlayerPosition).addEvent(drawCard);
         }
 
         turnCounter++;

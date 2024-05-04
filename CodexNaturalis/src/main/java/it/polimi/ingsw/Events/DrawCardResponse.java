@@ -3,6 +3,7 @@ package it.polimi.ingsw.Events;
 import it.polimi.ingsw.model.PlayableCard;
 
 public class DrawCardResponse extends GenericEvent{
+
     public final int position;
     //coded position to draw from (see DrawCardRequest)
 

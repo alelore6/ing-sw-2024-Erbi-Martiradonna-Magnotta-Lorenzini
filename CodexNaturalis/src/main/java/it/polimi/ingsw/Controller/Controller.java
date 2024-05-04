@@ -13,12 +13,10 @@ public class Controller {
     private final Lobby lobby;
     private Game model;
     private ArrayList<ModelViewListener> mvListeners;
-    private int numPlayers;
+
     public Controller(ServerImpl server){
         this.server = server;
         lobby = new Lobby();
-
-
     }
 
     protected void createGame(){
@@ -44,30 +42,26 @@ public class Controller {
     public void addPlayerToLobby(String nickname){
         boolean ok=false;
 
+        // creo listener
+        if(lobby.getNumPlayers()==0 || mvListeners.size() < lobby.getNumPlayers()) {
+            ModelViewListener mvListener = new ModelViewListener(server);
+            mvListeners.add(mvListener);
 
-
-        //check game hasn't started
-        if(model==null) {
-            //se la lobby è vuota evento SetNumPlayer
-            if(lobby.getPlayers().size() == 0){
-                ok = lobby.addPlayer(nickname);
-
+            //check game hasn't started
+            if (model == null) {
+                if (lobby.getNumPlayers()==0) {
+                    // se la lobby è vuota evento SetNumPlayer
+                    NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
+                    mvListener.addEvent(numPlayersRequest);
+                }
+                if(!lobby.addPlayer(nickname))
+                    mvListener.addEvent(new ErrorJoinLobby(nickname));
+            }
+            else{
+                mvListener.addEvent(new ErrorJoinLobby(nickname));
             }
 
-            if(mvListeners.size() < lobby.getNumPlayers()){
-                mvListeners.add(new ModelViewListener(server));
-            }
-
-            if(lobby.getPlayers().size() == 1) {
-                NumPlayersRequest event = new NumPlayersRequest(nickname);
-                mvListeners.getFirst().addEvent(event);
-            }
         }
-        else {
-            //notify listener : ErrorJoinLobby
-            //how do I notify listener if the player didn't correctly enter the lobby?
-        }
-        //TODO notify listener: joinLobby or ErrorJoinLobby event based on ok
     }
 
     public Game getGame(){
@@ -75,5 +69,9 @@ public class Controller {
     }
     public void updateModel(GenericEvent event, String nickname){
         //TODO agire sul model in base al tipo di evento
+        if (event instanceof NumPlayersResponse){
+            lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
+        }
+        //e cosi via agendo sul model
     }
 }

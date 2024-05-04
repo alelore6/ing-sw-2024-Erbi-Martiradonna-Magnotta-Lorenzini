@@ -14,8 +14,8 @@ public class Lobby {
     //non capisco a cosa serva: il controller non è su thread
 
     public Lobby() {
-
         this.players = new ArrayList<String>();
+        numPlayers = 0;
     }
 
     protected boolean addPlayer(String nickname){
@@ -28,7 +28,6 @@ public class Lobby {
     }
 
     public void disconnect(String nickname) throws PlayerNotFoundException {
-        //capire cosa si vuole fare con questo metodo
         boolean isRemoved = false;
 
         synchronized (lock_players){
