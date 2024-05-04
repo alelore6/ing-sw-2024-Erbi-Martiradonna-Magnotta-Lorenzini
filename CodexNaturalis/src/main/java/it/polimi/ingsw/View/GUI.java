@@ -1,6 +1,7 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Listeners.ViewControllerListener;
 
 import java.rmi.RemoteException;
 
@@ -11,17 +12,17 @@ public class GUI extends UI{
     }
 
     @Override
-    public void handleModelMessage(GenericEvent msg) {
-
-    }
-
-    @Override
-    public void update(View view, GenericEvent e) throws RemoteException {
+    public void update(GenericEvent e) throws RemoteException {
 
     }
 
     @Override
     public void notifyAll(GenericEvent e) {
+
+    }
+
+    @Override
+    public void addListener(ViewControllerListener listener) {
 
     }
 

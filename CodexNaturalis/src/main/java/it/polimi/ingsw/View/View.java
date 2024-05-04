@@ -7,9 +7,9 @@ import java.rmi.RemoteException;
 
 public interface View extends Runnable {
 
-    void update(View view, GenericEvent e) throws RemoteException;
+    void update(GenericEvent e) throws RemoteException;
 
-   // void notifyAll(GenericEvent e); a cosa serve precisamente?
+    void notifyAll(GenericEvent e);
 
     void addListener(ViewControllerListener listener);
 

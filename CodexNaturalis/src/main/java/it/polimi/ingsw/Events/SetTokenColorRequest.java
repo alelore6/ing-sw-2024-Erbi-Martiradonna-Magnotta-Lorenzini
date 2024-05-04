@@ -11,4 +11,8 @@ public class SetTokenColorRequest extends GenericEvent{
         super("Choose token color:", nickname);
         this.availableColors = availableColors;
     }
+
+    public String msgOutput(){
+        return message + "\n" + availableColors.toString();
+    }
 }
