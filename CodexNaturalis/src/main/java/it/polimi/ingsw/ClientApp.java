@@ -10,6 +10,9 @@ import java.rmi.registry.Registry;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
+import it.polimi.ingsw.View.GUI;
+import it.polimi.ingsw.View.TUI;
+import it.polimi.ingsw.View.UI;
 
 import java.rmi.RemoteException;
 import java.util.Scanner;
@@ -17,12 +20,22 @@ import java.util.Scanner;
 public class ClientApp {
     public static void main( String[] args ) throws RemoteException, NotBoundException {
 
+        @Deprecated
         Scanner input = new Scanner(System.in);
+
         int networkType = -1;
         int typeView = -1;
 
-        System.out.print("Enter your nickname: ");
-        String nickname = input.next();
+        UI userInterface = new TUI("fetus");
+
+        System.out.print("\nChoose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
+
+        userInterface.choose(2);
+
+        // set nickname
+
+                if(typeView == 1)   userInterface = new TUI(nickname);
+        else    if(typeView == 2)   userInterface = new GUI(nickname);
 
         System.out.print("\nChoose if you want a RMI or Socket client: 0 for RMI and 1 for Socket:");
         while(networkType != 0 && networkType != 1){
@@ -33,17 +46,6 @@ public class ClientApp {
             }
             if(networkType != 0 && networkType != 1)
                 System.out.print("Enter 0 for RMI or 1 for Socket: \n");
-        }
-
-        System.out.print("\nChoose if you wanna play from CLI or GUI: 0 for CLI and 1 for GUI:");
-        while(typeView != 0 && typeView != 1){
-            try{
-                typeView = Integer.parseInt(input.next());
-            } catch (NumberFormatException e) {
-                System.out.println("\nNot a valid number");
-            }
-            if(typeView != 0 && typeView != 1)
-                System.out.print("\nEnter 0 for CLI or 1 for GUI:");
         }
 
         if(networkType ==0) {

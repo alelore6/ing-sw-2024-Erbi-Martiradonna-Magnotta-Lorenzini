@@ -20,7 +20,7 @@ public class ViewControllerListener extends Listener {
     public void handleEvent() throws RemoteException {
 
         while (!getEventQueue().isEmpty()) {
-            GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
+            GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
             client.update(((ClientImpl) client).getView(), currentEvent);
             //TODO è possibile che non vadano a buon fine gli eventi?

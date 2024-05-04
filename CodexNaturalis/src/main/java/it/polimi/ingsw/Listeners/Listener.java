@@ -12,7 +12,7 @@ public abstract class Listener {
         return eventQueue;
     }
 
-    private Queue<GenericEvent> eventQueue = new LinkedList<GenericEvent>();
+    private final Queue<GenericEvent> eventQueue = new LinkedList<GenericEvent>();
 
     public void handleEvent() throws RemoteException {
     }

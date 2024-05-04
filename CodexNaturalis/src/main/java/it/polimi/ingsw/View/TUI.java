@@ -1,6 +1,5 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Events.CardInfoRequest;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 
@@ -43,40 +42,42 @@ public class TUI extends UI {
             return this.inputMessages.poll();
         }
     }
+    // This method allows to receive the user's choice between n distinct and ordered options.
+    // It runs until a proper answer isn't given.
+    // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
+    //                                                  (e.g. let the user know the mapping between 1:n and choices)
+    public int choose(int n){
+        int     choice  = 0;
+        boolean isValid = false;
 
-    private void getCardInfo(int ID){
-
-        CardInfoRequest ev = new CardInfoRequest(ID, this.nickname);
-
-        // notify Controller
-    }
-
-    private int choose(int n){
-        int c = 0;
-        boolean b = true;
-
-        while(b){
-
+        while(!isValid){
             try{
-                c = in.nextInt();
+                choice = in.nextInt();
             } catch (InputMismatchException e) {
                 // to skip the wrong input and try with the next one.
+
                 in.nextLine();
                 out.println("Input error. Try again:");
 
                 continue;
             }
 
-            if(c > 0 && c <= n)     b = false;
-            if(b)                   out.println("Wrong number inserted. Try again:");
+            if(choice > 0 && choice <= n)   isValid = true;
+            if(!isValid)                    out.println("Wrong number inserted. Try again:");
         }
 
-        return c;
+        return choice;
+    }
+
+    public void notifyListener(ViewControllerListener listener, GenericEvent e) {
+        listener.addEvent(e);
     }
 
     @Override
     public void notifyAll(GenericEvent e) {
-
+        for (ViewControllerListener l : listeners) {
+            notifyListener(l,e);
+        }
     }
 
     private boolean isMessagesQueueEmpty(){
@@ -85,18 +86,71 @@ public class TUI extends UI {
         }
     }
 
-    @Override
-    public void addListener(ViewControllerListener listener) {
+    public final static void clearConsole(){
+        try{
+            final String os = System.getProperty("os.name");
 
+            if (os.contains("Windows"))
+            {
+                Runtime.getRuntime().exec("cls");
+            }
+            else
+            {
+                Runtime.getRuntime().exec("clear");
+            }
+        }
+        catch (Exception ignored){
+
+        }
     }
 
+    @Override
+    public void addListener(ViewControllerListener listener) {
+        listeners.add(listener);
+    }
 
-    public void notifyListeners(View view, GenericEvent e) {
+    private final boolean chooseConnection(){
 
+        out.println("Choose between Socket (1) or RMI (2) connection type");
+
+        int connectionType = choose(2);
+
+        if(connectionType == 1){
+
+            out.println("Setup RMI...");
+            try{
+                this.setUpRMIClient(ip);
+            }catch (RemoteException | NotBoundException | InvalidIPAddress ex ){
+                out.println("Cannot connect with RMI. Make sure the IP provided is valid and try again later...");
+                return false;
+            }
+        }else{
+
+            out.println("Connecting with socket...");
+            try{
+                this.setUpSocketClient(ip);
+            }catch (RemoteException | InvalidIPAddress ex ){
+                out.println("Cannot connect with socket. Make sure the IP provided is valid and try again later...");
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
     public void run() {
         //keep view displaying? maybe useless in TUI
+
+        // wait until the connection type has been chosen
+
+        // login
+
+        new Thread(){
+
+        }.start();
+
+
+
+        // ...
     }
 }
