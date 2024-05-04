@@ -5,7 +5,9 @@ import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.Listener;
+import it.polimi.ingsw.Listeners.ModelViewListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -47,7 +49,7 @@ public class Game {
      */
     public TableCenter tablecenter;
 
-    private final Listener[] mvListeners;
+    private final ArrayList<ModelViewListener> mvListeners;
 
     protected ArrayList<TokenColor> availableTokens;
 
@@ -58,7 +60,7 @@ public class Game {
      * @param numPlayers number of players in the current game
      * @param nicknames  array of nicknames passed by user, used to create the players classes
      */
-    public Game(int numPlayers, String[] nicknames, Listener[] mvListeners) {
+    public Game(int numPlayers, String[] nicknames, ArrayList<ModelViewListener> mvListeners) {
         this.mvListeners =  mvListeners;
         this.numPlayers = numPlayers;
         this.turnCounter = 0;

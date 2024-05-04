@@ -7,21 +7,25 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
+import java.util.ArrayList;
+
 public class Controller {
 
     private final ServerImpl server;
     private final Lobby lobby;
     private Game model;
-    private ModelViewListener[] mvListeners;
+    private ArrayList<ModelViewListener> mvListeners;
+    private int numPlayers;
     public Controller(ServerImpl server){
         this.server = server;
-        lobby = new Lobby();
+        lobby = new Lobby(numPlayers);
+
 
     }
 
     protected void createGame(){
-        String[] nicknames = new String[lobby.getPlayers().size()];
-        nicknames = lobby.getPlayers().toArray(nicknames);
+        String[] nicknames = new String[lobby.getPlayers().size()]; //crea l'array di nicknames dei player
+        nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
         model = new Game(lobby.getNumPlayers(), nicknames, mvListeners);
 
         //TODO notify all listener on startGame event
@@ -38,6 +42,9 @@ public class Controller {
     public void addPlayerToLobby(String nickname){
         boolean ok=false;
         //TODO creare listener
+
+        if(mvListeners.size() < lobby.getNumPlayers())
+
         //check game hasn't started
         if(model==null) {
             //TODO se la lobby è vuota evento SetNumPlayer

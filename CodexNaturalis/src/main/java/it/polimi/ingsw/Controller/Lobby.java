@@ -5,7 +5,7 @@ import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
 import java.util.ArrayList;
 
 // WATCH OUT!   The lobby exists w/o the actual players. Only nicknames are used in this class
-//              and players will be created after the game.
+//              and players will be created after the game creates.
 
 public class Lobby {
     private int numPlayers;
@@ -13,8 +13,10 @@ public class Lobby {
     private final Object lock_players = new Object();
     //non capisco a cosa serva: il controller non è su thread
 
-    public Lobby() {
+    public Lobby(int numPlayers) {
+
         this.players = new ArrayList<String>();
+        this.numPlayers = numPlayers;
     }
 
     protected boolean addPlayer(String nickname){
@@ -55,7 +57,4 @@ public class Lobby {
         return numPlayers;
     }
 
-    public void setNumPlayers(int numPlayers){
-        this.numPlayers = numPlayers;
-    }
 }

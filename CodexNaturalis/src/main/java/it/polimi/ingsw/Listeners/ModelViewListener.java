@@ -5,6 +5,7 @@ import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.awt.*;
+import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
 
@@ -15,7 +16,7 @@ public class ModelViewListener extends Listener {
     }
 
     @Override
-    public void handleEvent() {
+    public void handleEvent() throws RemoteException {
         GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
         //handles the message passing it to the Server which will transfer it to the Client
