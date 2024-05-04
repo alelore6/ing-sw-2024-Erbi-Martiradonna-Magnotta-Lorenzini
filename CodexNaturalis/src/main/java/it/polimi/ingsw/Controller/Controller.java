@@ -1,8 +1,6 @@
 package it.polimi.ingsw.Controller;
 
-import it.polimi.ingsw.Events.ErrorJoinLobby;
-import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.StartGame;
+import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
@@ -18,7 +16,7 @@ public class Controller {
     private int numPlayers;
     public Controller(ServerImpl server){
         this.server = server;
-        lobby = new Lobby(numPlayers);
+        lobby = new Lobby();
 
 
     }
@@ -28,7 +26,11 @@ public class Controller {
         nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
         model = new Game(lobby.getNumPlayers(), nicknames, mvListeners);
 
-        //TODO notify all listener on startGame event
+
+        for(int i = 0; i < mvListeners.size(); i++){
+            //NOTIFY ALL LISTENERS OF STARTGAME EVENT
+            mvListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i)));
+        }
 
         getGame().startGame();
     }
@@ -41,17 +43,29 @@ public class Controller {
 
     public void addPlayerToLobby(String nickname){
         boolean ok=false;
-        //TODO creare listener
 
-        if(mvListeners.size() < lobby.getNumPlayers())
+
 
         //check game hasn't started
         if(model==null) {
-            //TODO se la lobby è vuota evento SetNumPlayer
-            ok = lobby.addPlayer(nickname);
+            //se la lobby è vuota evento SetNumPlayer
+            if(lobby.getPlayers().size() == 0){
+                ok = lobby.addPlayer(nickname);
+
+            }
+
+            if(mvListeners.size() < lobby.getNumPlayers()){
+                mvListeners.add(new ModelViewListener(server));
+            }
+
+            if(lobby.getPlayers().size() == 1) {
+                NumPlayersRequest event = new NumPlayersRequest(nickname);
+                mvListeners.getFirst().addEvent(event);
+            }
         }
         else {
             //notify listener : ErrorJoinLobby
+            //how do I notify listener if the player didn't correctly enter the lobby?
         }
         //TODO notify listener: joinLobby or ErrorJoinLobby event based on ok
     }

@@ -13,10 +13,9 @@ public class Lobby {
     private final Object lock_players = new Object();
     //non capisco a cosa serva: il controller non è su thread
 
-    public Lobby(int numPlayers) {
+    public Lobby() {
 
         this.players = new ArrayList<String>();
-        this.numPlayers = numPlayers;
     }
 
     protected boolean addPlayer(String nickname){
@@ -57,4 +56,7 @@ public class Lobby {
         return numPlayers;
     }
 
+    public void setNumPlayers(int numPlayers){
+        this.numPlayers = numPlayers;
+    }
 }
