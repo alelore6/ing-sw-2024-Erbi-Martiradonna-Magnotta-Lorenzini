@@ -28,9 +28,9 @@ public class ClientSkeleton implements Client{
     }
 
     @Override
-    public void update(View v, GenericEvent e) throws RemoteException {
+    public void update(Client client,GenericEvent e) throws RemoteException {
         try {
-            out.writeObject(v);
+            out.writeObject(client);
             out.writeObject(e);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");

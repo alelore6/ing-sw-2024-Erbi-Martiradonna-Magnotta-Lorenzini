@@ -9,9 +9,9 @@ import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
 
-    private Server server;
+    private ServerImpl server;
 
-    public ModelViewListener(Server server) {
+    public ModelViewListener(ServerImpl server) {
         this.server = server;
     }
 
@@ -20,7 +20,7 @@ public class ModelViewListener extends Listener {
         GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
         //handles the message passing it to the Server which will transfer it to the Client
-        server.update(((ServerImpl)server).findClient(currentEvent.nickname), currentEvent);
+        server.sendEvent(currentEvent);
         //TODO è possibile che non vadano a buon fine gli eventi?
         // Necessaria l'introduzione di un ack prima di rimuovere effettivamente l'elemento dalla coda?
     }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.Distributed;
 
 
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 import it.polimi.ingsw.View.View;
@@ -13,8 +14,6 @@ import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
-
-
 
     private UI view;
     private String nickname;
@@ -28,7 +27,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
 
         if(viewType == 1){
             // TODO GUI:
-            // view = new GUI(nickname);
+             view = new GUI(nickname);
         }
         else if(viewType == 0){
             view = new TUI(nickname);
@@ -42,7 +41,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         initialize(server);
 
         if(viewType == 1){
-            // view = new GUI(nickname);
+            view = new GUI(nickname);
         }
         else if(viewType == 0){
             view = new TUI(nickname);
@@ -53,23 +52,16 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         super(port, csf, ssf);
         initialize(server);
         this.nickname=nickname;
+        if(viewType == 1){
+            view = new GUI(nickname);
+        }
+        else if(viewType == 0){
+            view = new TUI(nickname);
+        }
     }
 
     private void initialize(Server server) throws RemoteException {
         server.register(this);
-        /*JoinServer ev = new JoinServer();
-
-        view.addListener((v,e)-> {
-            try{
-                server.update(this, ev);
-            }catch(RemoteException e1){
-                System.err.println("Error while updating: "+ e1.getMessage() + ". Skipping update..");
-            }
-        });
-
-
-        // game.addListener(nickname);*/
-
     }
 
     public String getNickname() {
@@ -86,7 +78,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     @Override
-    public void update(View v, GenericEvent e) throws RemoteException {
+    public void update(Client client, GenericEvent e) throws RemoteException {
         view.update(e);
     }
 

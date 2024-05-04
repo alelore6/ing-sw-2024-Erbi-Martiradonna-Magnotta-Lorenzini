@@ -9,5 +9,5 @@ import java.rmi.RemoteException;
 public interface Client extends Remote {
 
 
-    void update(View view, GenericEvent e) throws RemoteException;
+    void update(Client client,GenericEvent e) throws RemoteException;
 }

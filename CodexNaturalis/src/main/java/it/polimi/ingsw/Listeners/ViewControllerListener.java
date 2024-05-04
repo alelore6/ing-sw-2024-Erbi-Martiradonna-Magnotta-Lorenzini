@@ -22,7 +22,7 @@ public class ViewControllerListener extends Listener {
         while (!getEventQueue().isEmpty()) {
             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
-            client.update(((ClientImpl) client).getView(), currentEvent);
+            client.update(client, currentEvent);
             //TODO è possibile che non vadano a buon fine gli eventi?
             // Necessaria l'introduzione di un ack prima di rimuovere effettivamente l'elemento dalla coda?
         }

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
+import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.View;
@@ -57,9 +58,9 @@ public class ServerStub implements Server {
 
     public void receive(Client client) throws RemoteException {
         //socket: receive from client skeleton update()
-        View view;
+        Client c;
         try{
-            view = (View)in.readObject();
+            c = (Client)in.readObject();
         }catch(IOException e){
             throw new RemoteException("Can't get model view from client", e);
         }catch (ClassNotFoundException e){
@@ -74,8 +75,11 @@ public class ServerStub implements Server {
         }catch(ClassNotFoundException e){
             throw new RemoteException("Can't deserialize event from client", e);
         }
+        //check it's the right receiver
+        if(((ClientImpl) c).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname()))
+            client.update(c,ev);
         //call view update
-        client.update(view, ev);
+
     }
 
     public void close() throws RemoteException{
