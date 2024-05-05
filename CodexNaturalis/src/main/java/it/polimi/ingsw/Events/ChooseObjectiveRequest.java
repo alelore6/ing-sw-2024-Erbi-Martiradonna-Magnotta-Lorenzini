@@ -2,9 +2,25 @@ package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.model.ObjectiveCard;
 
+/**
+ * event that represent the model request to choose between 2 objective card.
+ */
 public class ChooseObjectiveRequest extends GenericEvent {
+    /**
+     * the first objective card
+     */
     public final ObjectiveCard objCard1;
+    /**
+     * the second objective card
+     */
     public final ObjectiveCard objCard2;
+
+    /**
+     * Constructor
+     * @param objCard1 the first objective card
+     * @param objCard2 the second objective card
+     * @param nickname the receiver of the event
+     */
     public ChooseObjectiveRequest(ObjectiveCard objCard1, ObjectiveCard objCard2, String nickname){
         super("Choose your secret objective card from these two:\n"
                 + "insert (1) for card number " + objCard1.getID()
