@@ -147,8 +147,6 @@ public class TUI extends UI {
     public void run() {
         //keep view displaying? maybe useless in TUI
 
-        // wait until the connection type has been chosen
-
         // login
 
         new Thread(){

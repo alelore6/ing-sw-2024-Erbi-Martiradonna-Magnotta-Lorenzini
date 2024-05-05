@@ -20,31 +20,22 @@ import java.util.Scanner;
 public class ClientApp {
     public static void main( String[] args ) throws RemoteException, NotBoundException {
 
-        @Deprecated
         Scanner input = new Scanner(System.in);
 
         int networkType = -1;
         int typeView = -1;
 
         TUI startingUI = new TUI("fetus");
-         UI userInterface;
 
         typeView    = startingUI.chooseView();
         networkType = startingUI.chooseConnection();
 
-        // The else statement is equivalent to the condition that typeView == 2
-        // because typeView is either 1 or 2 after the chooseView() call.
-        // In this way there is no warning about userInterface initialization.
-        if(typeView == 1)   userInterface = new TUI(startingUI.chooseNickname());
-        else                userInterface = new GUI(startingUI.chooseNickname());
-
-
-        if(networkType == 1) {
+        if(networkType == 1){
             //RMI
             Registry registry = LocateRegistry.getRegistry();
             Server server = (Server) registry.lookup("server");
 
-            ClientImpl client = new ClientImpl(typeView, server, userInterface.getNickname());
+            ClientImpl client = new ClientImpl(server, typeView, startingUI.chooseNickname());
             client.run();
         }
         else{
@@ -57,7 +48,7 @@ public class ClientApp {
 
 
             ServerStub serverStub = new ServerStub(ip, port);
-            ClientImpl client = new ClientImpl(typeView, serverStub, userInterface.getNickname());
+            ClientImpl client = new ClientImpl(serverStub, typeView, startingUI.chooseNickname());
             new Thread(){
                 @Override
                 public void run() {

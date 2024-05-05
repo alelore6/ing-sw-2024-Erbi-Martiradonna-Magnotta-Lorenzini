@@ -5,7 +5,6 @@ import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
-import it.polimi.ingsw.View.View;
 
 
 import java.rmi.RemoteException;
@@ -15,49 +14,38 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
 
-    private UI view;
+    private UI userInterface;
     private String nickname;
-    private int viewType; //1 if GUI, 0 if CLI
-    private int networkType; // 0 rmi, 1 socket
+    private final int viewType; //1 if TUI, 2 if GUI
+    private final int networkType; // 1 RMI, 2 Socket
 
-    public ClientImpl(Server server, String nickname) throws RemoteException {
+    public ClientImpl(Server server, int viewType, String nickname) throws RemoteException {
         super();
         this.nickname = nickname;
+        this.viewType = viewType;
+
         initialize(server);
 
+        // The else statement is equivalent to the condition that typeView == 2
+        // because typeView is either 1 or 2 after the chooseView() call.
+        // In this way there is no warning about userInterface initialization.
         if(viewType == 1){
-            // TODO GUI:
-             view = new GUI(nickname);
+            userInterface = new TUI(nickname);
         }
-        else if(viewType == 0){
-            view = new TUI(nickname);
+        else{
+            // TODO GUI:
+            userInterface = new GUI(nickname);
         }
     }
     //other constructors needed for overloading
-    public ClientImpl(int port, Server server, String nickname) throws RemoteException {
+    public ClientImpl(int port, Server server) throws RemoteException {
         super(port);
-
-        this.nickname=nickname;
         initialize(server);
-
-        if(viewType == 1){
-            view = new GUI(nickname);
-        }
-        else if(viewType == 0){
-            view = new TUI(nickname);
-        }
     }
 
-    public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server, String nickname) throws RemoteException {
+    public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server) throws RemoteException {
         super(port, csf, ssf);
         initialize(server);
-        this.nickname=nickname;
-        if(viewType == 1){
-            view = new GUI(nickname);
-        }
-        else if(viewType == 0){
-            view = new TUI(nickname);
-        }
     }
 
     private void initialize(Server server) throws RemoteException {
@@ -74,15 +62,15 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
 
     @Override
     public void run() {
-        view.run();
+        userInterface.run();
     }
 
     @Override
     public void update(Client client, GenericEvent e) throws RemoteException {
-        view.update(e);
+        userInterface.update(e);
     }
 
-    public UI getView() {
-        return view;
+    public UI getUserInterface() {
+        return userInterface;
     }
 }
