@@ -12,11 +12,6 @@ public class GUI extends UI{
     }
 
     @Override
-    public int choose(int n) {
-        return 0;
-    }
-
-    @Override
     public void update(GenericEvent e) throws RemoteException {
 
     }

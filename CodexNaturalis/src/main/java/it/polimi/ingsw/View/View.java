@@ -7,7 +7,6 @@ import java.rmi.RemoteException;
 
 public interface View extends Runnable {
 
-    int choose(int n);
     void update(GenericEvent e) throws RemoteException;
 
     void notifyAll(GenericEvent e);

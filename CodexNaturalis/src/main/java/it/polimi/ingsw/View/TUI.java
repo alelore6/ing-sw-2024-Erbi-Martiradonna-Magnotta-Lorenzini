@@ -28,7 +28,7 @@ public class TUI extends UI {
         queueLock = new Object();
     }
 
-    public void update(GenericEvent e) throws RemoteException {
+    public final void update(GenericEvent e) throws RemoteException {
 
         synchronized (queueLock){
             this.inputMessages.add(e);
@@ -37,7 +37,7 @@ public class TUI extends UI {
         // Should Listeners be notified that the message has been received?
     }
 
-    private GenericEvent pollMsg(){
+    private final GenericEvent pollMsg(){
         synchronized (queueLock){
             return this.inputMessages.poll();
         }
@@ -46,7 +46,7 @@ public class TUI extends UI {
     // It runs until a proper answer isn't given.
     // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
     //                                                  (e.g. let the user know the mapping between 1:n and choices)
-    public int choose(int n){
+    private final int choose(int n){
         int     choice  = 0;
         boolean isValid = false;
 
@@ -69,18 +69,18 @@ public class TUI extends UI {
         return choice;
     }
 
-    public void notifyListener(ViewControllerListener listener, GenericEvent e) {
+    public final void notifyListener(ViewControllerListener listener, GenericEvent e) {
         listener.addEvent(e);
     }
 
     @Override
-    public void notifyAll(GenericEvent e) {
+    public final void notifyAll(GenericEvent e) {
         for (ViewControllerListener l : listeners) {
             notifyListener(l,e);
         }
     }
 
-    private boolean isMessagesQueueEmpty(){
+    private final boolean isMessagesQueueEmpty(){
         synchronized (queueLock){
             return this.inputMessages.isEmpty();
         }
@@ -88,9 +88,9 @@ public class TUI extends UI {
 
     public final static void clearConsole(){
         try{
-            final String os = System.getProperty("os.name");
+            final String so = System.getProperty("os.name");
 
-            if (os.contains("Windows"))
+            if (so.contains("Windows"))
             {
                 Runtime.getRuntime().exec("cls");
             }
@@ -105,36 +105,42 @@ public class TUI extends UI {
     }
 
     @Override
-    public void addListener(ViewControllerListener listener) {
+    public final void addListener(ViewControllerListener listener) {
         listeners.add(listener);
     }
 
-    private final boolean chooseConnection(){
+    public final int chooseView(){
+        out.println("Choose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
 
-        out.println("Choose between Socket (1) or RMI (2) connection type");
+        return choose(2);
+    }
 
-        int connectionType = choose(2);
+    public final String chooseNickname(){
+        // TODO: capire se alcuni caratteri non sono permessi (tipo ' ')
+        //       e aggiornare di conseguenza
+        boolean isValid = false;
+        String tempNickname = null;
 
-        if(connectionType == 1){
+        out.println("Insert your nickname:");
 
-            out.println("Setup RMI...");
-            try{
-                this.setUpRMIClient(ip);
-            }catch (RemoteException | NotBoundException | InvalidIPAddress ex ){
-                out.println("Cannot connect with RMI. Make sure the IP provided is valid and try again later...");
-                return false;
-            }
-        }else{
+        while(!isValid){
+            tempNickname = in.nextLine();
 
-            out.println("Connecting with socket...");
-            try{
-                this.setUpSocketClient(ip);
-            }catch (RemoteException | InvalidIPAddress ex ){
-                out.println("Cannot connect with socket. Make sure the IP provided is valid and try again later...");
-                return false;
-            }
+            // Here we can put controls con the characters of the string inserted
+            if(true) // se tutto ok allora
+                isValid = true;
         }
-        return true;
+
+        return tempNickname;
+    }
+
+    public final int chooseConnection(){
+
+        out.println("Choose between RMI (1) or Socket (2) connection type");
+
+        int networkType = choose(2);
+
+        return networkType;
     }
 
     @Override

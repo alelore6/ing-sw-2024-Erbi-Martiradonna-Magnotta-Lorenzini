@@ -26,34 +26,25 @@ public class ClientApp {
         int networkType = -1;
         int typeView = -1;
 
-        UI userInterface = new TUI("fetus");
+        TUI startingUI = new TUI("fetus");
+         UI userInterface;
 
-        System.out.print("\nChoose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
+        typeView    = startingUI.chooseView();
+        networkType = startingUI.chooseConnection();
 
-        userInterface.choose(2);
+        // The else statement is equivalent to the condition that typeView == 2
+        // because typeView is either 1 or 2 after the chooseView() call.
+        // In this way there is no warning about userInterface initialization.
+        if(typeView == 1)   userInterface = new TUI(startingUI.chooseNickname());
+        else                userInterface = new GUI(startingUI.chooseNickname());
 
-        // set nickname
 
-                if(typeView == 1)   userInterface = new TUI(nickname);
-        else    if(typeView == 2)   userInterface = new GUI(nickname);
-
-        System.out.print("\nChoose if you want a RMI or Socket client: 0 for RMI and 1 for Socket:");
-        while(networkType != 0 && networkType != 1){
-            try{
-                networkType = Integer.parseInt(input.next());
-            } catch (NumberFormatException e) {
-                System.out.println("It is not a valid number!!\n");
-            }
-            if(networkType != 0 && networkType != 1)
-                System.out.print("Enter 0 for RMI or 1 for Socket: \n");
-        }
-
-        if(networkType ==0) {
+        if(networkType == 1) {
             //RMI
             Registry registry = LocateRegistry.getRegistry();
             Server server = (Server) registry.lookup("server");
 
-            ClientImpl client = new ClientImpl(typeView, server, nickname);
+            ClientImpl client = new ClientImpl(typeView, server, userInterface.getNickname());
             client.run();
         }
         else{
@@ -66,7 +57,7 @@ public class ClientApp {
 
 
             ServerStub serverStub = new ServerStub(ip, port);
-            ClientImpl client = new ClientImpl(typeView, serverStub, nickname);
+            ClientImpl client = new ClientImpl(typeView, serverStub, userInterface.getNickname());
             new Thread(){
                 @Override
                 public void run() {

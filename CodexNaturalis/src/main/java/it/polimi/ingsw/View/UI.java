@@ -16,4 +16,8 @@ public abstract class UI implements View{
         this.nickname = nickname;
         this.listeners = new ArrayList<ViewControllerListener>();
     }
+
+    public String getNickname(){
+        return this.nickname;
+    }
 }
