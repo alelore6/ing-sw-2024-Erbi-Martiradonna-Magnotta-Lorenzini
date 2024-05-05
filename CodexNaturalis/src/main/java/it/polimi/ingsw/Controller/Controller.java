@@ -8,18 +8,40 @@ import it.polimi.ingsw.model.Player;
 
 import java.util.ArrayList;
 
+/**
+ * Class that represent the controller in the MVC pattern.
+ * It handles the action of the players on the model.
+ */
 public class Controller {
-
+    /**
+     * the server that handles the connections
+     */
     private final ServerImpl server;
+    /**
+     * the waiting lobby before the game starts
+     */
     private final Lobby lobby;
+    /**
+     * the actual game, represent the model in the MVC pattern.
+     */
     private Game model;
+    /**
+     * the listeners that allow the exchange of information between the MVC pattern.
+     */
     private ArrayList<ModelViewListener> mvListeners;
 
+    /**
+     * Constructor
+     * @param server the server that handles the connections
+     */
     public Controller(ServerImpl server){
         this.server = server;
         lobby = new Lobby();
     }
 
+    /**
+     * Creates and starts the actual game
+     */
     protected void createGame(){
         String[] nicknames = new String[lobby.getPlayers().size()]; //crea l'array di nicknames dei player
         nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
@@ -37,9 +59,18 @@ public class Controller {
     public void endGame(int occasion){
         //( finchè non spostiamo)endGame viene gestito all'interno del model
         // al di fuori arriva solo la notifica che è stato triggerato
+        //forse si può utilizzare quando viene conclusa del tutto la partita
+        // dopo checkWinner per chiudere del tutto la partita e dare la possibilità di una nuova.
         getGame().endGame(occasion);
     }
 
+    /**
+     * Create the listener for the client that is trying to connect
+     * if lobby is empty the number of players for the game must be set
+     * Calls lobby.addPlayer() if lobby isn't full
+     * communicate the result of the action to the client through his listener
+     * @param nickname
+     */
     public void addPlayerToLobby(String nickname){
         boolean ok=false;
 
@@ -57,6 +88,7 @@ public class Controller {
                 }
                 if(!lobby.addPlayer(nickname))
                     mvListener.addEvent(new ErrorJoinLobby(nickname));
+                else mvListener.addEvent(new JoinLobby(nickname));
             }
             else{
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
@@ -65,15 +97,20 @@ public class Controller {
         }
     }
 
+    /**
+     * Getter for the game
+     * @return the game
+     */
     public Game getGame(){
         return this.model;
     }
 
+    /**
+     * Receive an event from the client and act on the model
+     * @param event the event sent from the client
+     * @param nickname the player that sent the event
+     */
     public void updateModel(GenericEvent event, String nickname){
-        //TODO agire sul model in base al tipo di evento
-
-            //couldn't do switch case because it supports only primitive types and Strings. (That I know of)
-            //besides the code efficiency here is not valued as important as its functionality
 
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
@@ -107,14 +144,19 @@ public class Controller {
     }
 
 
-
+    /**
+     * Getter for a specific player in the game
+     * @param nickname the player's nickname
+     * @return the player
+     */
     //method to get player by nickname not to repeat the same code over and over again
-    Player getPlayerByNickname(String nickname){
+    private Player getPlayerByNickname(String nickname){
         for (int i = 0; i < model.getNumPlayers(); i++) {
             if (model.getPlayers()[i].getNickname() == nickname) {
                 return model.getPlayers()[i];
             }
         }
+        //TODO meglio eccezione di ritornare null
         return null;
     }
 }

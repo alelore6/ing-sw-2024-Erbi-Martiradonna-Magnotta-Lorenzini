@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Distributed;
 
 
+import it.polimi.ingsw.Distributed.Middleware.ServerStub;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.View.TUI;
@@ -18,12 +19,12 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     private String nickname;
     private final int viewType; //1 if TUI, 2 if GUI
     private final int networkType; // 1 RMI, 2 Socket
+    private ServerStub serverStub;
 
     public ClientImpl(Server server, int viewType, String nickname) throws RemoteException {
         super();
         this.nickname = nickname;
         this.viewType = viewType;
-
         initialize(server);
 
         // The else statement is equivalent to the condition that typeView == 2
@@ -49,6 +50,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     private void initialize(Server server) throws RemoteException {
+        serverStub=(ServerStub) server;
         server.register(this);
     }
 
@@ -68,6 +70,10 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     @Override
     public void update(Client client, GenericEvent e) throws RemoteException {
         userInterface.update(e);
+    }
+
+    public void sendEvent(GenericEvent e) throws RemoteException {
+        serverStub.update(this,e);
     }
 
     public UI getUserInterface() {

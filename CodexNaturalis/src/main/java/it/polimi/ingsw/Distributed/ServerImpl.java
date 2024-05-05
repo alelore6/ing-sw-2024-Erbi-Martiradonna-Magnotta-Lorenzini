@@ -70,5 +70,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void sendEvent(GenericEvent event) throws RemoteException {
         if (clientSkeleton!=null)
             clientSkeleton.update(findClient(event.nickname),event);
+        else throw new RemoteException("Cannot send event: clientSkeleton not found.\n");
     }
 }
