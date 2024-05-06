@@ -9,6 +9,8 @@ public interface View extends Runnable {
 
     void update(GenericEvent e) throws RemoteException;
 
+    void notifyListener(ViewControllerListener listener, GenericEvent e);
+
     void notifyAll(GenericEvent e);
 
     void addListener(ViewControllerListener listener);

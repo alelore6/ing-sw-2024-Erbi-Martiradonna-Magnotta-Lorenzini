@@ -1,20 +1,20 @@
 package it.polimi.ingsw.View;
 
-import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Distributed.PrivateSocket;
+import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
-import java.util.InputMismatchException;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.util.*;
 
 public class TUI extends UI {
 
     private final Scanner in;
     private final PrintStream out;
+    private final PrintStream outErr;
     private Queue<GenericEvent> inputMessages;
+    private volatile boolean isActive;
 
     private final Object queueLock;
 
@@ -23,9 +23,10 @@ public class TUI extends UI {
 
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
+        outErr = new PrintStream(System.err, true);
         inputMessages = new LinkedList<>();
-
         queueLock = new Object();
+        isActive = true;
     }
 
     public final void update(GenericEvent e) throws RemoteException {
@@ -42,11 +43,11 @@ public class TUI extends UI {
             return this.inputMessages.poll();
         }
     }
-    // This method allows to receive the user's choice between n distinct and ordered options.
+    // This method allows to receive the user's choice between min and max included.
     // It runs until a proper answer isn't given.
     // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
-    //                                                  (e.g. let the user know the mapping between 1:n and choices)
-    private final int choose(int n){
+    //                                                  (e.g. let the user know the mapping between min:max and choices)
+    private final int chooseInt(int min, int max){
         int     choice  = 0;
         boolean isValid = false;
 
@@ -62,8 +63,8 @@ public class TUI extends UI {
                 continue;
             }
 
-            if(choice > 0 && choice <= n)   isValid = true;
-            if(!isValid)                    out.println("Wrong number inserted. Try again:");
+            if(choice >= min && choice <= max)  isValid = true;
+            if(!isValid)                        out.println("Wrong number inserted. Try again:");
         }
 
         return choice;
@@ -112,7 +113,7 @@ public class TUI extends UI {
     public final int chooseView(){
         out.println("Choose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
 
-        return choose(2);
+        return chooseInt(1,2);
     }
 
     public final String chooseNickname(){
@@ -136,25 +137,80 @@ public class TUI extends UI {
 
     public final int chooseConnection(){
 
-        out.println("Choose between RMI (1) or Socket (2) connection type");
+        out.println("Choose between RMI (1) or PrivateSocket (2) connection type");
 
-        int networkType = choose(2);
+        int networkType = chooseInt(1,2);
 
         return networkType;
     }
 
+    public final PrivateSocket setupSocket(){
+
+        int PORT_MAX = 65536;
+
+        out.println("Enter server IP address: ");
+
+        // Do we suppose that this input is always correct?
+        String ip = in.nextLine();
+
+        out.println("Enter server port number (between 0 and 65536 included): ");
+
+        int port = chooseInt(0, PORT_MAX);
+
+        return new PrivateSocket(ip, port);
+    }
+
+    public final void printSomething(String s){
+        out.println(s);
+    }
+
+    public final void printErr(String err){
+        outErr.println(err);
+    }
+
+    public void login(){
+
+    }
+
+    public void stop(){
+        isActive = false;
+
+        // Do the listeners have to be notified?
+    }
+
     @Override
     public void run() {
-        //keep view displaying? maybe useless in TUI
+        while(isActive){
+            if(inputMessages == null)   continue;
 
-        // login
+            GenericEvent ev = inputMessages.poll();
 
-        new Thread(){
+            printSomething(ev.msgOutput());
 
-        }.start();
-
-
-
-        // ...
+            switch(ev){
+                case DrawCardRequest e :
+                    chooseInt(1,2);
+                    break;
+                case ChooseObjectiveRequest e :
+                    chooseInt(1,2);
+                    break;
+                case ChooseObjectiveResponse e :
+                    chooseInt(2,4);
+                    break;
+                case PlayCardRequest e :
+                    chooseInt(0, 80);
+                    chooseInt(0, 80);
+                    break;
+                case SetTokenColorRequest e :
+                    int n = -1;
+                    do{
+                        if(n != -1) printSomething("Incorrect choice. Please, try again: ");
+                        n = chooseInt(1,4);
+                    }while(!e.choiceIsValid(n));
+                    break;
+                default :
+                    break;
+            }
+        }
     }
 }

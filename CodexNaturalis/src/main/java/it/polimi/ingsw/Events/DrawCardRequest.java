@@ -35,4 +35,8 @@ public class DrawCardRequest extends GenericEvent{
         this.resDeckEmpty = resDeckEmpty;
     }
 
+    @Override
+    public String msgOutput() {
+        return super.msgOutput() + "(1) for RESOURCE or (2) for GOLD: ";
+    }
 }

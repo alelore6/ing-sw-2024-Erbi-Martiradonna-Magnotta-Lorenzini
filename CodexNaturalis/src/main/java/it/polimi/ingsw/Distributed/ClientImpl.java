@@ -17,8 +17,8 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
 
     private UI userInterface;
     private String nickname;
-    private final int viewType; //1 if TUI, 2 if GUI
-    private final int networkType; // 1 RMI, 2 Socket
+    private int viewType; //1 if TUI, 2 if GUI
+    private int networkType; // 1 RMI, 2 PrivateSocket
     private ServerStub serverStub;
 
     public ClientImpl(Server server, int viewType, String nickname) throws RemoteException {

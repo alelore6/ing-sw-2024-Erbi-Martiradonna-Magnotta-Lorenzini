@@ -19,7 +19,19 @@ public class SetTokenColorRequest extends GenericEvent{
      * @param availableColors the list of available colors
      */
     public SetTokenColorRequest(String nickname, ArrayList<TokenColor> availableColors) {
-        super("Choose token color:\n" + availableColors.toString(), nickname);
+        super("Choose token color from these:\n", nickname);
         this.availableColors = availableColors;
+    }
+
+    @Override
+    public String msgOutput() {
+
+        return super.msgOutput() + availableColors.toString() + "\nColor: ";
+    }
+
+    public boolean choiceIsValid(int n){
+        if(n <= availableColors.size()) return true;
+
+        return false;
     }
 }

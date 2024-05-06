@@ -22,7 +22,7 @@ public class ServerApp {
         final int portSocket;
 
         port = 0;
-        System.out.print("Insert Server Socket port number - 4 digit only: \n");
+        System.out.print("Insert Server PrivateSocket port number - 4 digit only: \n");
         while (port.toString().length() != 4){
             try {
                 port = Integer.parseInt(terminal.next());
@@ -86,7 +86,7 @@ public class ServerApp {
                         clientSkeleton.receive(server);
                     }
                 } catch (IOException e) {
-                    System.err.println("Socket failed: " + e.getMessage() );
+                    System.err.println("PrivateSocket failed: " + e.getMessage() );
                 }
             }
         } catch (IOException e) {

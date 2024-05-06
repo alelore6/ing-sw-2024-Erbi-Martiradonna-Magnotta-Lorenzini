@@ -24,8 +24,13 @@ public class PlayCardRequest extends GenericEvent {
      * @param displayedCards the cards already played by the player
      */
     public  PlayCardRequest(String nickname, PlayableCard[] handCards, Card[][] displayedCards){
-        super("Now it's time to play a card: Choose a card from your hand and a position where the card will be played",nickname);
+        super("Now it's time to play a card. Choose a card from your hand and a position where the card will be played.\n",nickname);
         this.handCards = handCards;
         this.displayedCards = displayedCards;
+    }
+
+    @Override
+    public String msgOutput() {
+        return super.msgOutput() + "Enter two numbers between 0 and 80:\n";
     }
 }
