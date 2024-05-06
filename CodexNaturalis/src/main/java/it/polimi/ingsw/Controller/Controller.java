@@ -79,7 +79,7 @@ public class Controller {
         // creo listener
         if(lobby.getNumPlayers()==0 || mvListeners.size() < lobby.getNumPlayers()) {
             ModelViewListener mvListener = new ModelViewListener(server);
-            mvListeners.add(mvListener);
+
 
             //check game hasn't started
             if (model == null) {
@@ -90,7 +90,9 @@ public class Controller {
                 }
                 if(!lobby.addPlayer(nickname))
                     mvListener.addEvent(new ErrorJoinLobby(nickname));
-                else mvListener.addEvent(new JoinLobby(nickname));
+                else {mvListener.addEvent(new JoinLobby(nickname));
+                    mvListeners.add(mvListener);
+                }
             }
             else{
                 mvListener.addEvent(new ErrorJoinLobby(nickname));

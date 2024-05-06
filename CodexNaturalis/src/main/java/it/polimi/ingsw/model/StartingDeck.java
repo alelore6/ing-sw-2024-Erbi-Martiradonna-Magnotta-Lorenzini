@@ -24,7 +24,7 @@ public class StartingDeck extends Deck{
         cards = (StartingCard[]) shuffle(cards);
     }
 
-    public StartingCard draw() throws isEmptyException {        //TODO: FIXARE ERRORI
+    public StartingCard draw() throws isEmptyException {
         if (NCards == 0) {
             throw new isEmptyException(this);
         } else {

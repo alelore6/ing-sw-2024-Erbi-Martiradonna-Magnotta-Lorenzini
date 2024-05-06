@@ -1,37 +1,10 @@
-TODO per il 7/5
-1. funzionamento listener:
-    intermediari che contengono una coda di messaggi da scambiare
-
-    ModelViewListener: (uno per ogni player: li creo nella lobby e devono essere passati al costruttore di game)
-    model -> listener -> server -> rete -> client
-
-    ViewControllerListener: (uno per ogni view )
-    view -> listener -> client -> rete -> server -> controller (-> model)
-
-    la view a ogni azione dell'utente crea un evento e lo manda al listener
-    view.update prende gli eventi e li gestisce in base al tipo
-
-2. Eventi : problemi serializzazzione
-    togliere eventi non necessari
-
-    non immutabili -> dovrebbe essercene uno per la richiesta e un'altro per la risposta (tranne per quelli solo messaggio)
-
-    instance of negli update di client e server per i diversi casi di evento
-
-3. come gestire client connessi a partita piena o già iniziata? --> evento numMaxExceeded comprende questo caso
-
-4. CLI come far vedere le possibilità di scelta (tipo le carte)? --> stampare brutalmente attributi
-
-5. aggiungere setNumPlayer alla lobby
 
 
+- come gestire evento andato male? -> con ackResponse nel listener che aspetta questo evento
 
-Domande per il 7/5
+- consiglio su GUI
 
-- come gestire evento andato male? -> con ackResponse ma dove interviene?
-
--In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
-
+- In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
 -Canali di comunicazione tra client e server: 4 canali diversi per ogni client che convergono in uno unico per il server?  è diramato oppure una cosa unica?
 
                                                            SERVER

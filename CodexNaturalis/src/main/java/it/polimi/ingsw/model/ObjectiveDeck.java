@@ -26,7 +26,6 @@ public class ObjectiveDeck{
             // This is only for debugging: it'll be removed later.
             System.out.println("FILE non trovato!");
 
-            // TODO: add the catch action
         }
 
         List<ObjectiveCard> cardList = Arrays.asList(cards);

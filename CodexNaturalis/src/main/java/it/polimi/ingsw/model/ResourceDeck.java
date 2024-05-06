@@ -24,7 +24,6 @@ public class ResourceDeck extends Deck{
             // This is only for debugging: it'll be removed later.
             System.out.println("FILE non trovato!");
 
-            // TODO: add the catch action
         }
 
         cards = (ResourceCard[]) shuffle(cards);
