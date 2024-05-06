@@ -23,6 +23,8 @@ public abstract class Listener {
      */
     public Queue<GenericEvent> getEventQueue() {
         return eventQueue;
+        eventQueue.
+
     }
 
 

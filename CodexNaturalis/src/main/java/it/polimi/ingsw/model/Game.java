@@ -264,7 +264,7 @@ public class Game {
      * @return winning player or players
      */
     public void checkWinner(){
-        //TODO ritornare un array di 4 player ordinati in ordine di punti
+
         //sarebbe ancora meglio mappa di nickname e punti
         // e non sarebbe da ritornare perchè l'evento viene chiamato da dentro il metodo
         HashMap<String,Integer> rankings= new HashMap<>();
