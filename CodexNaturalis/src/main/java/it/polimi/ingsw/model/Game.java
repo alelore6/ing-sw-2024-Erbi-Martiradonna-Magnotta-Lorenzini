@@ -264,9 +264,6 @@ public class Game {
      * @return winning player or players
      */
     public void checkWinner(){
-        // possibilità di ritornare più player, array con dimensione generata dinamicamente
-        // a seconda di quanti player hanno lo score più alto e uguale
-
         //TODO ritornare un array di 4 player ordinati in ordine di punti
         //sarebbe ancora meglio mappa di nickname e punti
         // e non sarebbe da ritornare perchè l'evento viene chiamato da dentro il metodo
@@ -288,36 +285,40 @@ public class Game {
             punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[1], i);
             punteggi[i] += checkObjectivePoints(players[i].getObjective(), i);
 
-            }
-
-
-        int maxpoints = 0;
-        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
-        {
-            if(punteggi[i] >= maxpoints){
-                maxpoints = punteggi[i];
-            }
-
         }
-        int pareggi = 0;
 
-        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo il numero di pareggi
-        {
-            if(punteggi[i] == maxpoints){
-                pareggi++;
-            }
-
-        }
-        Player[] winners = new Player[pareggi];
-
-        int j = 0;
         for(int i = 0; i < numPlayers; i++){
-
-            if(punteggi[i]==maxpoints){
-                winners[j] = players[i];
-                j++;
-            }
+            rankings.put(players[i].getNickname(), punteggi[i]);  //fill the rankings hashmap
         }
+
+//        int maxpoints = 0;
+//        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
+//        {
+//            if(punteggi[i] >= maxpoints){
+//                maxpoints = punteggi[i];
+//            }
+//
+//        }
+//        int pareggi = 0;
+//
+//        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo il numero di pareggi
+//        {
+//            if(punteggi[i] == maxpoints){
+//                pareggi++;
+//            }
+//
+//        }
+//        Player[] winners = new Player[pareggi];
+//
+//        int j = 0;
+//        for(int i = 0; i < numPlayers; i++){
+//
+//            if(punteggi[i]==maxpoints){
+//                winners[j] = players[i];
+//                j++;
+//            }
+//        }
+
         //send FinalRankings event to everyone
         for(int i=0;i<numPlayers;i++){
             FinalRankings event=new FinalRankings(players[i].getNickname(),rankings);

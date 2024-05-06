@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
@@ -151,12 +152,18 @@ public class Controller {
      */
     //method to get player by nickname not to repeat the same code over and over again
     private Player getPlayerByNickname(String nickname){
-        for (int i = 0; i < model.getNumPlayers(); i++) {
-            if (model.getPlayers()[i].getNickname() == nickname) {
-                return model.getPlayers()[i];
+
+        try {
+            for (int i = 0; i < model.getNumPlayers(); i++) {
+                if (model.getPlayers()[i].getNickname() == nickname) {
+                    return model.getPlayers()[i];
+                }
             }
+            throw new PlayerNotFoundException(nickname);
+        } catch (PlayerNotFoundException e) {
+            System.out.println("Player " + nickname + " not found");
+            return null;
         }
-        //TODO meglio eccezione di ritornare null
-        return null;
+
     }
 }

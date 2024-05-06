@@ -66,14 +66,11 @@ public class Player {
 
     /**
      * Setter for player's secret objective card, the player must choose one between obj1 and obj2
-     * @param obj1 the random objective card the player can choose
-     * @param obj2 the random objective card the player can choose
+     * @param objCard the objective card the player has chosen
      */
     public void chooseObjective(ObjectiveCard objCard){
         this.objective=objCard;
     }
-
-    //TODO: in RMI connection methods always throw RemoteException perché sto bastardo non ti avvisa
 
     /**
      * Play the starting card in the central position,
@@ -111,7 +108,7 @@ public class Player {
 
     /**
      * Setter for player's token after choosing the color
-     * @param token the chosen token
+     * @param color the token's color that the player has chosen
      */
     protected boolean setToken(TokenColor color) {
         boolean ok;
