@@ -5,19 +5,19 @@ import it.polimi.ingsw.model.PlayableCard;
 /**
  * Event that represent the return of the drawn card after a draw response
  */
-public class ReturnDrawnCard extends GenericEvent{
+public class ReturnDrawCard extends GenericEvent{
     /**
-     * the drawn card
+     * the new hand with the drawn card
      */
-    private final PlayableCard card;
+    private final PlayableCard[] handCards;
 
     /**
      * Constructor
-     * @param card the drawn card
+     * @param handCards the new hand with the drawn card
      * @param nickname the player that made the draw
      */
-    public ReturnDrawnCard(PlayableCard card, String nickname) {
+    public ReturnDrawCard(PlayableCard handCards[], String nickname) {
         super("Here is the card drawn",nickname);
-        this.card = card;
+        this.handCards = handCards;
     }
 }

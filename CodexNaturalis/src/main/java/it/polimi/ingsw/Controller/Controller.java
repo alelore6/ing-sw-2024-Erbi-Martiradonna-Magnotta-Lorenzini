@@ -11,6 +11,7 @@ import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.model.Player;
 import org.springframework.ui.Model;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -77,32 +78,28 @@ public class Controller {
      * communicate the result of the action to the client through his listener
      * @param nickname
      */
-    public void addPlayerToLobby(String nickname){
+    public void addPlayerToLobby(String nickname) throws RemoteException {
         boolean ok=false;
 
         // creo listener
-        if(lobby.getNumPlayers()==0 || mvListeners.size() < lobby.getNumPlayers()) {
-            ModelViewListener mvListener = new ModelViewListener(server);
+        ModelViewListener mvListener = new ModelViewListener(server);
+        mvListener.handleEvent();
 
-
-            //check game hasn't started
-            if (model == null) {
-                if (lobby.getNumPlayers()==0) {
-                    // se la lobby è vuota evento SetNumPlayer
-                    NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
-                    mvListener.addEvent(numPlayersRequest);
-                }
-                if(!lobby.addPlayer(nickname))
-                    mvListener.addEvent(new ErrorJoinLobby(nickname));
-                else {mvListener.addEvent(new JoinLobby(nickname));
-                    mvListeners.add(mvListener);
-                }
+        //check game hasn't started
+        if (model == null) {
+            if (lobby.getNumPlayers()==0) {
+                // se la lobby è vuota evento SetNumPlayer
+                NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
+                mvListener.addEvent(numPlayersRequest);
             }
-            else{
+            if(!lobby.addPlayer(nickname))
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
+            else {
+                mvListener.addEvent(new JoinLobby(nickname));
+                mvListeners.add(mvListener);
             }
-
         }
+        else mvListener.addEvent(new ErrorJoinLobby(nickname));
     }
 
     /**
@@ -120,6 +117,8 @@ public class Controller {
      */
     public void updateModel(GenericEvent event, String nickname){
             //TODO ackresponse necessario anche dove non lancio eccezioni (tipo qua)? Non credo
+            // qui anche no perchè non dovrebbe mai dare errore
+            // ma in settokencolor si perchè può avere errori (setToken() ritorna un booleano -> usa quello)
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }
@@ -129,13 +128,19 @@ public class Controller {
             }
 
             else if(event instanceof DrawCardResponse){
+                //TODO mandare evento returnDrawCard solo al giocatore che compie l'azione quando esito positivo
                 int chosenPosition = ((DrawCardResponse)event).position;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
                     try {
+                        //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
-
+                        // send ack
+                        for(int i = 0; i < mvListeners.size(); i++){
+                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        }
+                        //send updated handcards
+                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
@@ -149,6 +154,8 @@ public class Controller {
                         for(int i = 0; i < mvListeners.size(); i++){
                             mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                         }
+                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
+
                     } catch (HandFullException | isEmptyException e) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
@@ -159,6 +166,8 @@ public class Controller {
                         for(int i = 0; i < mvListeners.size(); i++){
                             mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                         }
+                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
+
                     } catch (HandFullException | isEmptyException e ) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
@@ -171,13 +180,22 @@ public class Controller {
                     for(int i = 0; i < mvListeners.size(); i++){
                         mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                     }
+                    getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                 }
             }
 
             else if(event instanceof SetTokenColorResponse){
-               getPlayerByNickname(nickname).getToken().setColor(((SetTokenColorResponse)event).tokenColor);
+               getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
+            }
+            else if(event instanceof PlaceStartingCard){
+                try {
+                    getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
+                } catch (WrongPlayException e) {
+                    //non penso serva ackResponse perchè non dovrebbe mai dare errore
+                    throw new RuntimeException(e);
+                }
             }
     }
 

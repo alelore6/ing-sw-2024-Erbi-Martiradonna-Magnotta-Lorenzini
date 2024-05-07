@@ -4,10 +4,8 @@ import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
-import it.polimi.ingsw.Listeners.Listener;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -148,11 +146,13 @@ public class Game {
             ChooseObjectiveRequest chooseObjective=new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw(),p.getNickname());
             mvListeners.get(pos).addEvent(chooseObjective);
 
+            //every place gets to place his starting card
+            StartingCard startingCard= null;
             try {
-                p.placeStartingCard(StartingDeck.draw());
-            } catch (WrongPlayException e) {
-                throw new RuntimeException(e);
+                startingCard = StartingDeck.draw();
+                mvListeners.get(pos).addEvent(new PlaceStartingCard(startingCard,p.getNickname()));
             } catch (isEmptyException e) {
+                //shouldn't happen
                 throw new RuntimeException(e);
             }
 
@@ -343,14 +343,14 @@ public class Game {
 
         curPlayerPosition = nextPlayerIndex;
 
-        //send YourTurn event
+        //send StartTurn event
         for(int i=0;i<numPlayers;i++){
-            YourTurn event=new YourTurn(players[i].getNickname(),getCurrentPlayer());
+            StartTurn event=new StartTurn(players[i].getNickname(),getCurrentPlayer());
             mvListeners.get(i).addEvent(event);
         }
 
         // send play card request event
-        PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards(),players[curPlayerPosition].getHand().getDisplayedCards());
+        PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards().clone(),players[curPlayerPosition].getHand().getDisplayedCards().clone(),players[curPlayerPosition].getCurrentResources());
         mvListeners.get(curPlayerPosition).addEvent(playCard);
 
         //check there are still card on table center
@@ -363,7 +363,7 @@ public class Game {
         }
         //if both deck are not empty and !empty, a draw will be requested
         if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty){
-            DrawCardRequest drawCard=new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards(),tablecenter.getGoldDeck().AckEmpty ,tablecenter.getResDeck().AckEmpty);
+            DrawCardRequest drawCard=new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards().clone(),tablecenter.getGoldDeck().AckEmpty ,tablecenter.getResDeck().AckEmpty);
             mvListeners.get(curPlayerPosition).addEvent(drawCard);
         }
 

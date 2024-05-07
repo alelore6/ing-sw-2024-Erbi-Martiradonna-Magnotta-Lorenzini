@@ -94,7 +94,7 @@ public class Player {
      * Getter for player's current resources
      * @return player's current resources object
      */
-    protected CurrentResources getCurrentResources() {
+    public CurrentResources getCurrentResources() {
         return currentResources;
     }
 
@@ -110,13 +110,14 @@ public class Player {
      * Setter for player's token after choosing the color
      * @param color the token's color that the player has chosen
      */
-    protected boolean setToken(TokenColor color) {
-        boolean ok;
+    public boolean setToken(TokenColor color) {
         synchronized (game.availableTokens) {
             //non so se serve veramente visto che il controller è unico e non su thread
-            this.token = new Token(color,game.tablecenter.getScoretrack(),this);
-            ok = game.availableTokens.remove(color);
+            if(game.availableTokens.remove(color)){
+                this.token = new Token(color,game.tablecenter.getScoretrack(),this);
+                return true;
+            }
         }
-        return ok;
+        return false;
     }
 }

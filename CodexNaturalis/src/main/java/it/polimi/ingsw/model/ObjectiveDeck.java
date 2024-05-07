@@ -9,7 +9,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class ObjectiveDeck{
-
+    //TODO la classe è da sistemare!
+    // --> perchè non implementa deck?
+    // --> il metodo draw far si che rimuova le carte pescate + eccezione isEmpty
     private int NCards;
     private ObjectiveCard[] cards;
 
@@ -24,7 +26,7 @@ public class ObjectiveDeck{
 
         } catch (IOException e) {
             // This is only for debugging: it'll be removed later.
-            System.out.println("FILE non trovato!");
+            System.out.println("FILE not found!");
 
         }
 
@@ -37,7 +39,6 @@ public class ObjectiveDeck{
     }
 
     public ObjectiveCard draw(){
-
         NCards--;
 
         // I supposed the drawn card is the one available with the highest index.
