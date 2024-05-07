@@ -29,8 +29,24 @@ public class PlayCardRequest extends GenericEvent {
         this.displayedCards = displayedCards;
     }
 
+    public boolean choiceIsValid(int n){
+        if(n <= handCards.length) return true;
+
+        return false;
+    }
+
     @Override
-    public String msgOutput() {
-        return super.msgOutput() + "Enter two numbers between 0 and 80:\n";
+    public String msgOutput(){
+        String s = super.msgOutput() + "Enter the chosen card's number:\n";
+
+        for(int i = 0; i < handCards.length; i++){
+            s = s + String.valueOf(i+1) + ": " + String.valueOf(handCards[i].getID()) + "\n";
+        }
+
+        return s;
+    }
+
+    public String msgOutput2(){
+        return "Now enter the two coordinates where the card will be placed (0 to 80 included):\n";
     }
 }
