@@ -18,7 +18,7 @@ public class ObjectiveDeck{
 
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/data/resource_card.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/assets/data/objective_cards.json")) {
 
             cards = gson.fromJson(reader, ObjectiveCard[].class);
 

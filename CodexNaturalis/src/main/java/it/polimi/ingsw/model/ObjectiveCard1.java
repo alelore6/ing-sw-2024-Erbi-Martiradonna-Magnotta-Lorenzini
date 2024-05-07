@@ -16,7 +16,7 @@ public class ObjectiveCard1 extends ObjectiveCard{
         Gson gson = new Gson();
 
         try{
-            FileReader reader = new FileReader("src/main/resources/assets/data/objective_card.json");
+            FileReader reader = new FileReader("src/main/resources/assets/data/objective_cards.json");
             ObjectiveCard1[] oCards = gson.fromJson(reader, ObjectiveCard1[].class); //
         } catch(IOException e) {
             System.out.println("Error, not found.");
