@@ -165,6 +165,15 @@ public class TUI extends UI {
         return "Input not allowed. Please try again";
     }
 
+    private String setPassword(){
+
+        String psw = null;
+
+        // ...
+
+        return psw;
+    }
+
     public final void update(GenericEvent e) throws RemoteException {
         inputMessages.add(e);
     }
@@ -212,6 +221,9 @@ public class TUI extends UI {
                                 if(n != -1) printOut("Incorrect choice. Please, try again: ");
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
+                            break;
+                        case JoinLobby e :
+                            listener.addEvent(new SetPassword(nickname, setPassword()));
                             break;
                         case AckResponse ack :
                             if(!ack.ok){
