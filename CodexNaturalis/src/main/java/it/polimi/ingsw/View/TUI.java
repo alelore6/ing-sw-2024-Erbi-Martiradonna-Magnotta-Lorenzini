@@ -1,24 +1,37 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
-import it.polimi.ingsw.model.Position;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.Deque;
+import java.util.InputMismatchException;
+import java.util.LinkedList;
+import java.util.Scanner;
 
 public class TUI extends UI {
 
     private final Scanner in;
     private final PrintStream out;
     private final PrintStream outErr;
-    private Queue<GenericEvent> inputMessages;
+    private Deque<GenericEvent> inputMessages;
     private volatile boolean isActive;
 
     public TUI(String nickname) {
         super(nickname);
+
+        in = new Scanner(System.in);
+        out = new PrintStream(System.out, true);
+        outErr = new PrintStream(System.err, true);
+        inputMessages = new LinkedList<>();
+        isActive = true;
+    }
+
+    public TUI(ClientImpl client) {
+        super(client);
 
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
@@ -46,13 +59,13 @@ public class TUI extends UI {
                 // to skip the wrong input and try with the next one.
 
                 in.nextLine();
-                out.println(inputError());
+                printOut(inputError());
 
                 continue;
             }
 
             if(choice >= min && choice <= max)  isValid = true;
-            if(!isValid)                        out.println(inputError());
+            if(!isValid)                        printOut(inputError());
         }
 
         return choice;
@@ -85,7 +98,7 @@ public class TUI extends UI {
     }
 
     public final int chooseView(){
-        out.println("Choose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
+        printOut("Choose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
 
         return chooseInt(1,2);
     }
@@ -96,7 +109,7 @@ public class TUI extends UI {
         boolean isValid = false;
         String tempNickname = null;
 
-        out.println("Insert your nickname:");
+        printOut("Insert your nickname:");
 
         while(!isValid){
             tempNickname = in.nextLine();
@@ -111,7 +124,7 @@ public class TUI extends UI {
 
     public final int chooseConnection(){
 
-        out.println("Choose between RMI (1) or PrivateSocket (2) connection type");
+        printOut("Choose between RMI (1) or PrivateSocket (2) connection type");
 
         int networkType = chooseInt(1,2);
 
@@ -122,19 +135,19 @@ public class TUI extends UI {
 
         int PORT_MAX = 65536;
 
-        out.println("Enter server IP address: ");
+        printOut("Enter server IP address: ");
 
         // Do we suppose that this input is always correct?
         String ip = in.nextLine();
 
-        out.println("Enter server port number (between 0 and " + String.valueOf(PORT_MAX) + " included): ");
+        printOut("Enter server port number (between 0 and " + String.valueOf(PORT_MAX) + " included): ");
 
         int port = chooseInt(0, PORT_MAX);
 
         return new PrivateSocket(ip, port);
     }
 
-    public final void printSomething(String s){
+    public final void printOut(String s){
         out.println(s);
     }
 
@@ -153,10 +166,7 @@ public class TUI extends UI {
     }
 
     public final void update(GenericEvent e) throws RemoteException {
-
         inputMessages.add(e);
-
-        // Should listeners be notified that the message has been received?
     }
 
     @Override
@@ -172,7 +182,7 @@ public class TUI extends UI {
 
                     GenericEvent ev = inputMessages.poll();
 
-                    printSomething(ev.msgOutput());
+                    printOut(ev.msgOutput());
 
                     int n = -1;
 
@@ -189,19 +199,24 @@ public class TUI extends UI {
                         case PlayCardRequest e :
                             n = -1;
                             do{
-                                if(n != -1) printSomething(inputError());
+                                if(n != -1) printOut(inputError());
                                 n = chooseInt(1,80); // 80 is a secure upper bound for this choice (lower would be dangerous).
                             }while(!e.choiceIsValid(n));
 
-                            printSomething(e.msgOutput2());
+                            printOut(e.msgOutput2());
                             listener.addEvent(new PlayCardResponse(nickname, e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
                             break;
                         case SetTokenColorRequest e :
                             n = -1;
                             do{
-                                if(n != -1) printSomething("Incorrect choice. Please, try again: ");
+                                if(n != -1) printOut("Incorrect choice. Please, try again: ");
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
+                            break;
+                        case AckResponse ack :
+                            if(!ack.ok){
+                                inputMessages.addFirst(ack.event);
+                            }
                             break;
                         default :
                             break;
