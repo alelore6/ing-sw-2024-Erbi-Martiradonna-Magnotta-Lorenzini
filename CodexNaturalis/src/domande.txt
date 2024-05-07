@@ -1,18 +1,21 @@
 
-. oggetti che passo al client tramite gli eventi devono essere cloni?
+. oggetti che passo al client tramite gli eventi devono essere cloni? Cloni mutabili.
 
 - come gestire risposta evento lato server? -> con ackResponse nel listener che avrebbe la priorità sulla coda?
-  Poi lato client si aspetta l'ackResponse per ripetere o passare al prossimo
+  Poi lato client si aspetta l'ackResponse per ripetere o passare al prossimo OK
 
-- test su tutto o solo classi più importanti?
+- test su tutto.
 
-- per individuare disconnessioni: thread con server che pinga client ogni tot
+- per individuare disconnessioni: thread con server che pinga client ogni tot OK
 
-- parametro riconnessione client: nickname, ip, token?
+- parametro riconnessione client: nickname, token (password)
 
 - per persistenza in caso di crash del server: sarebbe da salvare ogni tot tutto lo stato del gioco in un file ? file Json o altro?
+    -dump dello stato di gioco
+        -oppure serializzare in Json (oppure binario, xml..) il model e fare un costruttore che ricarica le classi di Json
+            -check transient attributes (non devono essere serializzate perché cambiano, in caso di crash)
 
-- consiglio su GUI
+- consiglio su GUI (swing)
 
 - per GUI: servono eventi per passare oggetti grafici o si avranno a disposizione sul client?
 
