@@ -1,23 +1,25 @@
 package it.polimi.ingsw.View;
 
+import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 
 import java.util.ArrayList;
 
 public abstract class UI implements View{
 
-    protected final String nickname;
+    public final String nickname;
 
-    protected final ArrayList<ViewControllerListener> listeners;
+    protected final ViewControllerListener listener;
 
-    // WATCH OUT! Player not created yet. This class will refer only on the nickname.
-    // For more info, see a comment on Lobby class
+    // WATCH OUT! This constructor allows the creation of a TUI w/o having created the actual player
+    // The nickname here is not the player's but a test one.
     public UI(String nickname) {
         this.nickname = nickname;
-        this.listeners = new ArrayList<ViewControllerListener>();
+        this.listener = null;
     }
 
-    public String getNickname(){
-        return this.nickname;
+    public UI(ClientImpl client) {
+        this.nickname = client.getNickname();
+        this.listener = new ViewControllerListener(client);
     }
 }

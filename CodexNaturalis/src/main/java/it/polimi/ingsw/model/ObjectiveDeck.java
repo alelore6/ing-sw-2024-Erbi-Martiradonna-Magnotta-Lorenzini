@@ -18,7 +18,7 @@ public class ObjectiveDeck{
 
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/assets/data/objective_cards.json")) {
 
             cards = gson.fromJson(reader, ObjectiveCard[].class);
 
@@ -26,7 +26,6 @@ public class ObjectiveDeck{
             // This is only for debugging: it'll be removed later.
             System.out.println("FILE non trovato!");
 
-            // TODO: add the catch action
         }
 
         List<ObjectiveCard> cardList = Arrays.asList(cards);

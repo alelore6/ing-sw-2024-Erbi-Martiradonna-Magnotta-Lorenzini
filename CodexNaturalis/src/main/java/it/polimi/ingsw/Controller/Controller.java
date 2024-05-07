@@ -8,6 +8,7 @@ import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.model.Player;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Class that represent the controller in the MVC pattern.
@@ -78,7 +79,7 @@ public class Controller {
         // creo listener
         if(lobby.getNumPlayers()==0 || mvListeners.size() < lobby.getNumPlayers()) {
             ModelViewListener mvListener = new ModelViewListener(server);
-            mvListeners.add(mvListener);
+
 
             //check game hasn't started
             if (model == null) {
@@ -89,7 +90,9 @@ public class Controller {
                 }
                 if(!lobby.addPlayer(nickname))
                     mvListener.addEvent(new ErrorJoinLobby(nickname));
-                else mvListener.addEvent(new JoinLobby(nickname));
+                else {mvListener.addEvent(new JoinLobby(nickname));
+                    mvListeners.add(mvListener);
+                }
             }
             else{
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
@@ -122,7 +125,8 @@ public class Controller {
             }
 
             else if(event instanceof DrawCardResponse){
-                //TODO exception from DrawFromDeck and DrawPositionedCard is not to be dealt here (i think)
+                //TODO exception TO BE DEALT HERE devo mandare direttamente qui al model view listener l'ack response
+                //TODO con un try catch. dopo la chiamata del metodo mando ackresponse OK, se catcha l'exception invece ack response NOT OK
                 int chosenPosition = ((DrawCardResponse)event).position;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
@@ -135,7 +139,6 @@ public class Controller {
             }
 
             else if(event instanceof PlayCardResponse){
-               //TODO exception must not be dealt here I think!
                getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
             }
 
@@ -155,7 +158,7 @@ public class Controller {
 
         try {
             for (int i = 0; i < model.getNumPlayers(); i++) {
-                if (model.getPlayers()[i].getNickname() == nickname) {
+                if (Objects.equals(model.getPlayers()[i].getNickname(), nickname)) {
                     return model.getPlayers()[i];
                 }
             }

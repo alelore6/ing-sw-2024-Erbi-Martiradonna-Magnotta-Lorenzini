@@ -32,4 +32,10 @@ public class ChooseObjectiveRequest extends GenericEvent {
         return super.msgOutput() + "insert (1) for card number " + objCard1.getID()
                                  + "or insert (2) for card number " + objCard2.getID() + ": ";
     }
+
+    public ObjectiveCard getChosenCard(int n){
+        if(n == 1)  return objCard1;
+        if(n == 2)  return objCard2;
+        else        return     null;
+    }
 }

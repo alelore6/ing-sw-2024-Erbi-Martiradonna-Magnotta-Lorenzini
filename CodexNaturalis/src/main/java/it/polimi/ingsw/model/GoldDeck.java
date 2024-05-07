@@ -16,7 +16,7 @@ public class GoldDeck extends Deck{
 
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/assets/data/gold_cards.json")) {
 
             cards = gson.fromJson(reader, GoldCard[].class);
 
@@ -24,7 +24,6 @@ public class GoldDeck extends Deck{
             // This is only for debugging: it'll be removed later.
             System.out.println("FILE non trovato!");
 
-            // TODO: add the catch action
         }
 
         cards = (GoldCard[]) shuffle(cards);

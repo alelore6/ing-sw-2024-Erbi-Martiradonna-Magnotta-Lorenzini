@@ -3,6 +3,7 @@ package it.polimi.ingsw.View;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
+import it.polimi.ingsw.model.Position;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
@@ -16,8 +17,6 @@ public class TUI extends UI {
     private Queue<GenericEvent> inputMessages;
     private volatile boolean isActive;
 
-    private final Object queueLock;
-
     public TUI(String nickname) {
         super(nickname);
 
@@ -25,24 +24,13 @@ public class TUI extends UI {
         out = new PrintStream(System.out, true);
         outErr = new PrintStream(System.err, true);
         inputMessages = new LinkedList<>();
-        queueLock = new Object();
         isActive = true;
     }
 
-    public final void update(GenericEvent e) throws RemoteException {
-
-        synchronized (queueLock){
-            this.inputMessages.add(e);
-        }
-
-        // Should Listeners be notified that the message has been received?
-    }
-
     private final GenericEvent pollMsg(){
-        synchronized (queueLock){
-            return this.inputMessages.poll();
-        }
+        return this.inputMessages.poll();
     }
+
     // This method allows to receive the user's choice between min and max included.
     // It runs until a proper answer isn't given.
     // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
@@ -58,33 +46,24 @@ public class TUI extends UI {
                 // to skip the wrong input and try with the next one.
 
                 in.nextLine();
-                out.println("Input error. Try again:");
+                out.println(inputError());
 
                 continue;
             }
 
             if(choice >= min && choice <= max)  isValid = true;
-            if(!isValid)                        out.println("Wrong number inserted. Try again:");
+            if(!isValid)                        out.println(inputError());
         }
 
         return choice;
     }
 
-    public final void notifyListener(ViewControllerListener listener, GenericEvent e) {
+    public final void notifyListeners(ViewControllerListener listener, GenericEvent e) {
         listener.addEvent(e);
     }
 
-    @Override
-    public final void notifyAll(GenericEvent e) {
-        for (ViewControllerListener l : listeners) {
-            notifyListener(l,e);
-        }
-    }
-
     private final boolean isMessagesQueueEmpty(){
-        synchronized (queueLock){
-            return this.inputMessages.isEmpty();
-        }
+        return this.inputMessages.isEmpty();
     }
 
     public final static void clearConsole(){
@@ -103,11 +82,6 @@ public class TUI extends UI {
         catch (Exception ignored){
 
         }
-    }
-
-    @Override
-    public final void addListener(ViewControllerListener listener) {
-        listeners.add(listener);
     }
 
     public final int chooseView(){
@@ -153,7 +127,7 @@ public class TUI extends UI {
         // Do we suppose that this input is always correct?
         String ip = in.nextLine();
 
-        out.println("Enter server port number (between 0 and 65536 included): ");
+        out.println("Enter server port number (between 0 and " + String.valueOf(PORT_MAX) + " included): ");
 
         int port = chooseInt(0, PORT_MAX);
 
@@ -168,49 +142,72 @@ public class TUI extends UI {
         outErr.println(err);
     }
 
-    public void login(){
-
-    }
-
     public void stop(){
         isActive = false;
 
         // Do the listeners have to be notified?
     }
 
+    private static String inputError(){
+        return "Input not allowed. Please try again";
+    }
+
+    public final void update(GenericEvent e) throws RemoteException {
+
+        inputMessages.add(e);
+
+        // Should listeners be notified that the message has been received?
+    }
+
     @Override
     public void run() {
-        while(isActive){
-            if(inputMessages == null)   continue;
 
-            GenericEvent ev = inputMessages.poll();
+        clearConsole();
 
-            printSomething(ev.msgOutput());
+        new Thread(){
+            @Override
+            public void run() {
+                while(isActive){
+                    if(inputMessages == null)   continue;
 
-            switch(ev){
-                case DrawCardRequest e :
-                    chooseInt(1,2);
-                    break;
-                case ChooseObjectiveRequest e :
-                    chooseInt(1,2);
-                    break;
-                case ChooseObjectiveResponse e :
-                    chooseInt(2,4);
-                    break;
-                case PlayCardRequest e :
-                    chooseInt(0, 80);
-                    chooseInt(0, 80);
-                    break;
-                case SetTokenColorRequest e :
+                    GenericEvent ev = inputMessages.poll();
+
+                    printSomething(ev.msgOutput());
+
                     int n = -1;
-                    do{
-                        if(n != -1) printSomething("Incorrect choice. Please, try again: ");
-                        n = chooseInt(1,4);
-                    }while(!e.choiceIsValid(n));
-                    break;
-                default :
-                    break;
+
+                    switch(ev){
+                        case DrawCardRequest e :
+                            listener.addEvent(new DrawCardResponse(chooseInt(1,2),nickname));
+                            break;
+                        case ChooseObjectiveRequest e :
+                            listener.addEvent(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), nickname));
+                            break;
+                        case NumPlayersRequest e :
+                            listener.addEvent(new NumPlayersResponse(chooseInt(2,4), nickname));
+                            break;
+                        case PlayCardRequest e :
+                            n = -1;
+                            do{
+                                if(n != -1) printSomething(inputError());
+                                n = chooseInt(1,80); // 80 is a secure upper bound for this choice (lower would be dangerous).
+                            }while(!e.choiceIsValid(n));
+
+                            printSomething(e.msgOutput2());
+                            listener.addEvent(new PlayCardResponse(nickname, e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+                            break;
+                        case SetTokenColorRequest e :
+                            n = -1;
+                            do{
+                                if(n != -1) printSomething("Incorrect choice. Please, try again: ");
+                                n = chooseInt(1,4);
+                            }while(!e.choiceIsValid(n));
+                            break;
+                        default :
+                            break;
+                    }
+                }
             }
-        }
+        }.start();
     }
 }

@@ -13,7 +13,7 @@ public abstract class GenericEvent implements Serializable {
     /**
      * the player that receives or sends the event
      */
-    private final String nickname;
+    public final String nickname;
 
     /**
      * Constructor
