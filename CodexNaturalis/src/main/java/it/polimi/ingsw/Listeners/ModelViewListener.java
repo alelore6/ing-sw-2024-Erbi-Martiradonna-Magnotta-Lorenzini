@@ -1,13 +1,17 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
+import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.awt.*;
 import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
+
+    private AckResponse ack;
 
     /**
      * the server bound to this specific listener.
@@ -33,11 +37,30 @@ public class ModelViewListener extends Listener {
      */
     @Override
     public void handleEvent() throws RemoteException {
-        GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
+        new  Thread(){
+            @Override
+            public void run() {
 
-        //handles the message passing it to the Server which will transfer it to the Client
-        server.sendEvent(currentEvent);
-        //TODO è possibile che non vadano a buon fine gli eventi?
-        // Necessaria l'introduzione di un ack prima di rimuovere effettivamente l'elemento dalla coda?
+                while(true) {
+                    if(ack == null && !getEventQueue().isEmpty()) {
+                        GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+
+                        try {
+                            ((ServerImpl) server).sendEvent(currentEvent);
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                    else if (!getEventQueue().isEmpty()) { //ack is not null
+                        try {
+                            ((ServerImpl)server).sendEvent(ack);
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                        ack = null;
+                    }
+                }
+            }
+        };
     }
 }

@@ -19,7 +19,7 @@ public class Hand {
     /**
      * player's played cards
      */
-    public final Card[][] displayedCards;
+    private final Card[][] displayedCards;
 
     /**
      * getter for displayed cards
@@ -97,7 +97,7 @@ public class Hand {
         return HandCards[pos];
     }
 
-    protected PlayableCard[] getHandCards(){return HandCards;}
+    public PlayableCard[] getHandCards(){return HandCards;}
 
     /**
      * check that play is valid following the game rules:

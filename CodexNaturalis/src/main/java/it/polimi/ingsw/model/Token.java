@@ -92,12 +92,5 @@ public class Token {
 
     }
 
-    /**
-     * token setter
-     * @param color the color of the token to set
-     */
-    public void setColor(TokenColor color) {
-        this.color = color;
-    }
 }
 

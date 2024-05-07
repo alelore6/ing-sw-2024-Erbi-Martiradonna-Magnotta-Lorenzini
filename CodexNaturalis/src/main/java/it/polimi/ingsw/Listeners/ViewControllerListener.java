@@ -4,12 +4,14 @@ import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
+import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
 
 public class ViewControllerListener extends Listener {
 
+    private AckResponse ack;
 
     /**
      * attribute representing the client bound to this listener.
@@ -38,12 +40,23 @@ public class ViewControllerListener extends Listener {
     @Override
     public void handleEvent() throws RemoteException {
 
-        while (!getEventQueue().isEmpty()) {
-            GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+        new  Thread(){
+            @Override
+            public void run() {
 
-            ((ClientImpl)client).sendEvent(currentEvent);
-            //TODO è possibile che non vadano a buon fine gli eventi?
-            // Necessaria l'introduzione di un ack prima di rimuovere effettivamente l'elemento dalla coda?
-        }
+                while(true) {
+                    if(!getEventQueue().isEmpty()) {
+                        GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+
+                        try {
+                            ((ClientImpl) client).sendEvent(currentEvent);
+                        } catch (RemoteException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                }
+            }
+        };
     }
 }

@@ -34,6 +34,8 @@ public class ServerApp {
         }
         portSocket = port;
 
+        // TODO: creare un thread per il ping ogni tot
+
         // creo server RMI
         Thread rmiThread = new Thread(() -> {
             try {
