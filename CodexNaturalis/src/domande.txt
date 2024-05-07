@@ -1,8 +1,20 @@
 
+. oggetti che passo al client tramite gli eventi devono essere cloni?
 
-- come gestire evento andato male? -> con ackResponse nel listener che aspetta questo evento
+- come gestire risposta evento lato server? -> con ackResponse nel listener che avrebbe la priorità sulla coda?
+  Poi lato client si aspetta l'ackResponse per ripetere o passare al prossimo
+
+- test su tutto o solo classi più importanti?
+
+- per individuare disconnessioni: thread con server che pinga client ogni tot
+
+- parametro riconnessione client: nickname, ip, token?
+
+- per persistenza in caso di crash del server: sarebbe da salvare ogni tot tutto lo stato del gioco in un file ? file Json o altro?
 
 - consiglio su GUI
+
+- per GUI: servono eventi per passare oggetti grafici o si avranno a disposizione sul client?
 
 - In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
 -Canali di comunicazione tra client e server: 4 canali diversi per ogni client che convergono in uno unico per il server?  è diramato oppure una cosa unica?
@@ -18,3 +30,8 @@
                                                        /   /| |\   \
                                                       /   / | | \   \
                                                      CL_1  CL_2   CL_3
+
+
+
+
+//TODO aggiungere eventi mancanti , passare oggetti come cloni
