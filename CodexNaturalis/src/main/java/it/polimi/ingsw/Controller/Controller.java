@@ -1,11 +1,14 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
+import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.model.Player;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -130,7 +133,13 @@ public class Controller {
                 int chosenPosition = ((DrawCardResponse)event).position;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
-                    getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
+                    try {
+                        getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event)); //TODO metodo a parte per ackresponse
+
+                    } catch (HandFullException | isEmptyException e) {
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                    }
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
                 //wants to draw either from the ResourceDeck or the GoldDeck
@@ -164,7 +173,24 @@ public class Controller {
             }
             throw new PlayerNotFoundException(nickname);
         } catch (PlayerNotFoundException e) {
-            System.out.println("Player " + nickname + " not found");
+            System.out.println("Player " + nickname + " not found\n");
+            return null;
+        }
+
+
+
+    }
+
+    private ModelViewListener getMVListenerByNickname(String nickname){
+        try {
+            for(int i = 0; i < getGame().getPlayers().length; i++){
+                if(getGame().getPlayers()[i].getNickname().equals(nickname)){
+                    return mvListeners.get(i);
+                }
+            }
+            throw new RuntimeException();
+        } catch (Exception e) {        //SHOULDN'T HAPPEN
+            System.out.println("MVListener not found\n");
             return null;
         }
 
