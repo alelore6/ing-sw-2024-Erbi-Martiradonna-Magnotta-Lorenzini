@@ -15,7 +15,7 @@ public class StartingDeck extends Deck{
 
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/cards/starting_card.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/assets/data/starting_card.json")) {
             cards = gson.fromJson(reader, StartingCard[].class);
         } catch (IOException e) {
             System.out.println("Error, not found.");
