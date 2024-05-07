@@ -119,7 +119,7 @@ public class Controller {
      * @param nickname the player that sent the event
      */
     public void updateModel(GenericEvent event, String nickname){
-
+            //TODO ackresponse necessario anche dove non lancio eccezioni (tipo qua)? Non credo
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }
@@ -134,7 +134,7 @@ public class Controller {
                 if(chosenPosition <= 3){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event)); //TODO metodo a parte per ackresponse
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
 
                     } catch (HandFullException | isEmptyException e) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
@@ -146,7 +146,9 @@ public class Controller {
                 else if(chosenPosition == 4){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                        for(int i = 0; i < mvListeners.size(); i++){
+                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        }
                     } catch (HandFullException | isEmptyException e) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
@@ -154,7 +156,9 @@ public class Controller {
                 else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                        for(int i = 0; i < mvListeners.size(); i++){
+                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        }
                     } catch (HandFullException | isEmptyException e ) {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
@@ -164,7 +168,9 @@ public class Controller {
             else if(event instanceof PlayCardResponse){
                 try {
                     getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                    for(int i = 0; i < mvListeners.size(); i++){
+                        mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                    }
                 } catch (WrongPlayException e) {
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                 }
@@ -208,7 +214,7 @@ public class Controller {
                 }
             }
             throw new RuntimeException();
-        } catch (Exception e) {        //SHOULDN'T HAPPEN
+        } catch (Exception e) { //SHOULDN'T HAPPEN
             System.out.println("MVListener not found\n");
             return null;
         }
