@@ -3,6 +3,7 @@ package it.polimi.ingsw.Controller;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
+import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.model.Game;
@@ -128,8 +129,6 @@ public class Controller {
             }
 
             else if(event instanceof DrawCardResponse){
-                //TODO exception TO BE DEALT HERE devo mandare direttamente qui al model view listener l'ack response
-                //TODO con un try catch. dopo la chiamata del metodo mando ackresponse OK, se catcha l'exception invece ack response NOT OK
                 int chosenPosition = ((DrawCardResponse)event).position;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
@@ -143,12 +142,32 @@ public class Controller {
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
                 //wants to draw either from the ResourceDeck or the GoldDeck
-                else if(chosenPosition == 4){getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());}
-                else if(chosenPosition == 5){getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());}
+
+                else if(chosenPosition == 4){
+                    try {
+                        getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                    } catch (HandFullException | isEmptyException e) {
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                    }
+                }
+                else if(chosenPosition == 5){
+                    try {
+                        getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                    } catch (HandFullException | isEmptyException e ) {
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                    }
+                }
             }
 
             else if(event instanceof PlayCardResponse){
-               getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
+                try {
+                    getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event));
+                } catch (WrongPlayException e) {
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                }
             }
 
             else if(event instanceof SetTokenColorResponse){
