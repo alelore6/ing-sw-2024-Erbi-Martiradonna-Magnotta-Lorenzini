@@ -7,14 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
-// dovrei creare il file Maven pom.xml per inserire le seguenti dipendenze
-// <dependency>
-//    <groupId>org.mockito</groupId>
-//    <artifactId>mockito-core</artifactId>
-//    <version>3.12.4</version>
-//    <scope>test</scope>
-//</dependency>
-// per poter importare Mockito e sfruttare i mock.
+
 public class DeckTest {
 
     @Before
@@ -27,7 +20,8 @@ public class DeckTest {
 
     @Test
     public void draw() {
-        Card testcard = mock(testcard.Card);
+        Card testcard;
+        testcard = mock(testcard.Card);
         Deck deck = new Deck()
         try{
             Card drawnCard = deck.draw();
