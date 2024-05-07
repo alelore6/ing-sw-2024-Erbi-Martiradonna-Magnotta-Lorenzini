@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import java.io.FileReader;
 import java.io.IOException;
 
-public class StartingCard extends Card{
+public abstract class StartingCard extends Card{
 
     public Resource[] resource;
 
@@ -15,7 +15,7 @@ public class StartingCard extends Card{
     public void flip(){
         isFacedown = !isFacedown;
     }
-    public StartingCard getCard(){
+    public StartingCard getStartingCard(){
         return this;
     }
 }

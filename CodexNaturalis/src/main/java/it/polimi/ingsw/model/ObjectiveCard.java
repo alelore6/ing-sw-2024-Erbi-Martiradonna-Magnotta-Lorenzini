@@ -12,4 +12,7 @@ public abstract class ObjectiveCard {
     public int getID(){
         return this.ID;
     }
+    public ObjectiveCard getObjectiveCard(){
+        return this;
+    }
 }

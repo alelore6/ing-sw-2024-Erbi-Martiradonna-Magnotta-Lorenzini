@@ -53,6 +53,7 @@ public class Game {
 
     protected ArrayList<TokenColor> availableTokens;
 
+
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -78,7 +79,9 @@ public class Game {
         }
     }
 
-
+    public void setPlayers(Player[] players) {
+        this.players = players;
+    }
     /**
      * Getter for tablecenter instance
      * @return Tablecenter instance
