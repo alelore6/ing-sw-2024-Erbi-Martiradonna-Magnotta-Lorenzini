@@ -16,7 +16,7 @@ public class GoldDeck extends Deck{
 
         Gson gson = new Gson();
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/cards/resource_card.json")) {
+        try (FileReader reader = new FileReader("src/main/resources/assets/data/gold_cards.json")) {
 
             cards = gson.fromJson(reader, GoldCard[].class);
 
