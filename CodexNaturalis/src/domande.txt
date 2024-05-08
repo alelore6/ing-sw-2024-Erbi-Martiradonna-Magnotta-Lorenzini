@@ -54,3 +54,7 @@
 - vedere se riusciamo a far funzionare qualcosa per la prossima volta
 - finire test su model, incominciare test controller?
 - incominciare gui?
+
+
+Domande
+- model e controller devono girare su thread separati? e il server invece si può accoppiare con uno dei due?

@@ -41,7 +41,7 @@ public class Game {
     /**
      * The dynamic array containing the players of this current game
      */
-    public final Player[] players;
+    public Player[] players;
     /**
      * The tablecenter attribute containing the two decks (resource and gold) and the cards on it (2 res, 2 gold, 2 obj)
      */
@@ -372,8 +372,16 @@ public class Game {
 
         turnCounter++;
         remainingTurns--;
+
         if(remainingTurns == 0) checkWinner();
-        else nextPlayer(players[nextPlayerIndex]);
+        else {
+            //end turn event
+            for(int i=0;i<numPlayers;i++){
+                EndTurn endTurn=new EndTurn(getCurrentPlayer(),players[i].getNickname(),tablecenter.getScoretrack().getRankings());
+                mvListeners.get(i).addEvent(endTurn);
+            }
+            nextPlayer(players[nextPlayerIndex]);
+        }
     }
 
     protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
