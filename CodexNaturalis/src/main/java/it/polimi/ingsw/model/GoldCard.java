@@ -18,8 +18,6 @@ public class GoldCard extends PlayableCard{
             // Those that aren't requested are set to 0
             req.put(k,0);
         }
-
-        isFacedown = false;
     }
 
     public void flip(){

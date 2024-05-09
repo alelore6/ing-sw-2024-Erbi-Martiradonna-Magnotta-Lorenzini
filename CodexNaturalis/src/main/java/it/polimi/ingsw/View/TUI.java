@@ -107,13 +107,14 @@ public class TUI extends UI {
         return chooseInt(1,2);
     }
 
-    public final String chooseNickname(){
+    public final String chooseString(String s){
         // TODO: capire se alcuni caratteri non sono permessi (tipo ' ')
         //       e aggiornare di conseguenza
+
         boolean isValid = false;
         String tempNickname = null;
 
-        printOut("Insert your nickname:");
+        printOut("Insert " + s + ": ");
 
         while(!isValid){
             tempNickname = in.nextLine();
@@ -169,15 +170,6 @@ public class TUI extends UI {
         return "Input not allowed. Please try again";
     }
 
-    private String setPassword(){
-
-        String psw = null;
-
-        // ...
-
-        return psw;
-    }
-
     public final void update(GenericEvent e) throws RemoteException {
         inputMessages.add(e);
     }
@@ -226,6 +218,9 @@ public class TUI extends UI {
                             }while(!e.choiceIsValid(n));
 
                             printOut(e.msgOutput2());
+                            if(chooseInt(1,2) == 2) e.handCards[n-1].isFacedown = true;
+
+                            printOut(e.msgOutput3());
                             listener.addEvent(new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
                             break;
                         case SetTokenColorRequest e :
@@ -236,7 +231,7 @@ public class TUI extends UI {
                             }while(!e.choiceIsValid(n));
                             break;
                         case JoinLobby e :
-                            listener.addEvent(new SetPassword(client.getNickname(), setPassword()));
+                            listener.addEvent(new SetPassword(client.getNickname(), chooseString("password")));
                             break;
                         case AckResponse ack :
                             if(!ack.ok){

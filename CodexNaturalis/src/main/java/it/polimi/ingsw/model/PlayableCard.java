@@ -4,6 +4,7 @@ import static it.polimi.ingsw.model.Color.*;
 import static it.polimi.ingsw.model.Position.*;
 
 public abstract class PlayableCard extends Card{
+
     protected int points;
     protected Color color;
 

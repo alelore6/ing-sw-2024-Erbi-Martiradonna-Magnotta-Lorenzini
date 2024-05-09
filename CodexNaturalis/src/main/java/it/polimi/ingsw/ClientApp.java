@@ -34,7 +34,7 @@ public class ClientApp {
             Registry registry = LocateRegistry.getRegistry();
             Server server = (Server) registry.lookup("server");
 
-            ClientImpl client = new ClientImpl(server, typeView, startingTUI.chooseNickname());
+            ClientImpl client = new ClientImpl(server, typeView, startingTUI.chooseString("nickname"));
             client.run();
         }
         else{   //socket
@@ -42,7 +42,7 @@ public class ClientApp {
             PrivateSocket socket = startingTUI.setupSocket();
 
             ServerStub serverStub = new ServerStub(socket);
-            ClientImpl client = new ClientImpl(serverStub, typeView, startingTUI.chooseNickname());
+            ClientImpl client = new ClientImpl(serverStub, typeView, startingTUI.chooseString("nickname"));
             new Thread(){
                 @Override
                 public void run() {

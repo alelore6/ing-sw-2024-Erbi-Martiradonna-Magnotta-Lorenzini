@@ -4,17 +4,14 @@ public abstract class Card {
      protected int ID;
 
     // Everything about the back of the card is based on this boolean:
-     protected boolean isFacedown;
+     public boolean isFacedown;
      protected Corner[] corners;
 
      protected Card(int ID) {
         this.ID = ID;
+        isFacedown = false;
     }
 
-;
-
-    // Everything is stored and the game uses a side of the card based ONLY on this
-     public abstract void flip();
      public abstract Card getCard();
      public int getID(){
           return this.ID;

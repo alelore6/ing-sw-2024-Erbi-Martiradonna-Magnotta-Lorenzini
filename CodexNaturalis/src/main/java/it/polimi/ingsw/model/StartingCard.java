@@ -12,9 +12,6 @@ public abstract class StartingCard extends Card{
     public StartingCard(int ID){
         super(ID);
     }
-    public void flip(){
-        isFacedown = !isFacedown;
-    }
     public StartingCard getStartingCard(){
         return this;
     }
