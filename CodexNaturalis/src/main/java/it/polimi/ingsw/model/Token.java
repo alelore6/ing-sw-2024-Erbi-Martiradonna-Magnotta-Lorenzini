@@ -33,7 +33,7 @@ public class Token {
         this.scoreTrackPos = 0;
         this.scoretrack = scoretrack;
         this.player = player;
-
+        scoretrack.addToken(this);
     }
 
     /**
@@ -75,16 +75,16 @@ public class Token {
      */
     public void move(int points){
         if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //if currentpos is 29 or goes over 29 sets position at 29
-            getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
-            getScoretrack().getTokenPos()[29] += 1;
+            scoretrack.getTokenPos()[scoreTrackPos] -= 1;
+            scoretrack.getTokenPos()[29] += 1;
             scoreTrackPos = 29; //update attribute
         }
         else if((scoreTrackPos + points) <= 29) {  //if new move does not go all the way to 29, sets new position
-            getScoretrack().getTokenPos()[scoreTrackPos] -= 0;
-            getScoretrack().getTokenPos()[scoreTrackPos + points] += 1;
+            scoretrack.getTokenPos()[scoreTrackPos] -= 1;
+            scoretrack.getTokenPos()[scoreTrackPos + points] += 1;
             scoreTrackPos = scoreTrackPos + points;
         }
-
+        scoretrack.move(this,scoreTrackPos);
         if(getScoretrack().getTokenPos()[scoreTrackPos] >=20){ //endgame if 20 points are reached
             player.game.endGame(player.position);
         }
@@ -92,12 +92,5 @@ public class Token {
 
     }
 
-    /**
-     * token setter
-     * @param color the color of the token to set
-     */
-    public void setColor(TokenColor color) {
-        this.color = color;
-    }
 }
 

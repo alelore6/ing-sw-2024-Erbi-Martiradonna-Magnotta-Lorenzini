@@ -38,13 +38,23 @@
 
 
 //TODO
-- aggiungere eventi mancanti: tabellone ogni fine turno, situazione iniziale alla fine di start game, cambiare returnDrawnCard, cambiato nickname
-- passare oggetti come cloni negli eventi
+- aggiungere eventi mancanti: EndTurn per tabellone ogni fine turno, StartGame per situazione iniziale,place starting card, return play card
+- cambiare eventi :returnDrawnCard, play card request aggiunte current resources ✅
+- passare oggetti come cloni negli eventi ✅
 - sistemare handle event con  un thread per mandare ackresponse✅
 - ackresponse se positiva viene mandata a tutti✅
 - gestione ackresponse in tui ✅
 - password associata a ogni nickname per riconnessione
+- modificare il set del nickname: aggiungere il numero progressivo in fondo al nickname a tutti
+  -> bisogna mostrare quindi il vero nickname ai giocatori
+- comando per ruotare carta in tui per eventi play card e place starting card
+- objective deck da sistemare!
 
+- logica per riconnessione
 - vedere se riusciamo a far funzionare qualcosa per la prossima volta
 - finire test su model, incominciare test controller?
 - incominciare gui?
+
+
+Domande
+- model e controller devono girare su thread separati? e il server invece si può accoppiare con uno dei due?
