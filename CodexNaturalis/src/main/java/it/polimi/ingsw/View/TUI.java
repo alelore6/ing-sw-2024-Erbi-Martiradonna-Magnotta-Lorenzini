@@ -4,6 +4,9 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
+import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.model.PlayableCard;
+import it.polimi.ingsw.model.StartingCard;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
@@ -179,6 +182,15 @@ public class TUI extends UI {
         inputMessages.add(e);
     }
 
+    protected void printCard(Card card){
+        if(card instanceof PlayableCard){
+
+        }
+        else if(card instanceof StartingCard){
+
+        }
+    }
+
     @Override
     public void run() {
 
@@ -194,17 +206,17 @@ public class TUI extends UI {
 
                     printOut(ev.msgOutput());
 
-                    int n = -1;
+                    int n;
 
                     switch(ev){
                         case DrawCardRequest e :
-                            listener.addEvent(new DrawCardResponse(chooseInt(1,2),nickname));
+                            listener.addEvent(new DrawCardResponse(chooseInt(1,2),client.getNickname()));
                             break;
                         case ChooseObjectiveRequest e :
-                            listener.addEvent(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), nickname));
+                            listener.addEvent(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
                             break;
                         case NumPlayersRequest e :
-                            listener.addEvent(new NumPlayersResponse(chooseInt(2,4), nickname));
+                            listener.addEvent(new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
                             break;
                         case PlayCardRequest e :
                             n = -1;
@@ -214,17 +226,17 @@ public class TUI extends UI {
                             }while(!e.choiceIsValid(n));
 
                             printOut(e.msgOutput2());
-                            listener.addEvent(new PlayCardResponse(nickname, e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+                            listener.addEvent(new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
                             break;
                         case SetTokenColorRequest e :
                             n = -1;
                             do{
-                                if(n != -1) printOut("Incorrect choice. Please, try again: ");
+                                if(n != -1) printOut(inputError());
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
                             break;
                         case JoinLobby e :
-                            listener.addEvent(new SetPassword(nickname, setPassword()));
+                            listener.addEvent(new SetPassword(client.getNickname(), setPassword()));
                             break;
                         case AckResponse ack :
                             if(!ack.ok){
