@@ -117,7 +117,7 @@ public class TUI extends UI {
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempNickname = in.nextLine();
+            tempNickname = in.next();
 
             // Here we can put controls con the characters of the string inserted
             if(true) // se tutto ok allora
@@ -143,7 +143,7 @@ public class TUI extends UI {
         printOut("Enter server IP address: ");
 
         // Do we suppose that this input is always correct?
-        String ip = in.nextLine();
+        String ip = in.next();
 
         printOut("Enter server port number (between 0 and " + String.valueOf(PORT_MAX) + " included): ");
 
