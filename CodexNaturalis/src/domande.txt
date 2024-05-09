@@ -47,7 +47,7 @@
 - password associata a ogni nickname per riconnessione 🔜
 - modificare il set del nickname: aggiungere il numero progressivo in fondo al nickname a tutti ✅
   -> bisogna mostrare quindi il vero nickname ai giocatori
-- comando per ruotare carta in tui per eventi play card e place starting card
+- comando per ruotare carta in tui per eventi play card e place starting card ✅
 - objective deck da sistemare!
 
 - logica per riconnessione

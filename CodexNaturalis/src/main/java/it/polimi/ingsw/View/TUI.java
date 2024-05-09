@@ -233,6 +233,11 @@ public class TUI extends UI {
                         case JoinLobby e :
                             listener.addEvent(new SetPassword(client.getNickname(), chooseString("password")));
                             break;
+                        case PlaceStartingCard e :
+                            printOut(e.msgOutput2());
+                            if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
+                            listener.addEvent(new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40));
+                            break;
                         case AckResponse ack :
                             if(!ack.ok){
                                 inputMessages.addFirst(ack.event);
