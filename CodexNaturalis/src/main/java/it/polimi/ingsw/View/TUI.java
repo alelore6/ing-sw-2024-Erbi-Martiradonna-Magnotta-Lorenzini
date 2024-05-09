@@ -192,7 +192,7 @@ public class TUI extends UI {
             @Override
             public void run() {
                 while(isActive){
-                    if(inputMessages == null)   continue;
+                    if(inputMessages.size() == 0)   continue;
 
                     GenericEvent ev = inputMessages.poll();
 

@@ -38,7 +38,7 @@ public class ServerApp {
         // TODO: creare un thread per il ping ogni tot
 
         // creo server RMI
-        Thread rmiThread = new Thread(() -> {
+        /*Thread rmiThread = new Thread(() -> {
             try {
                 startRMI();
             } catch (RemoteException e) {
@@ -46,7 +46,7 @@ public class ServerApp {
                 e.printStackTrace();
             }
         });
-        rmiThread.start();
+        rmiThread.start();*/
 
         // creo server socket
         Thread socketThread = new Thread(() -> {
