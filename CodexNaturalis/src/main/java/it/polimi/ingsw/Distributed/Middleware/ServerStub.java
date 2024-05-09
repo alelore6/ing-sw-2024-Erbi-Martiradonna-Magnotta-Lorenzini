@@ -41,10 +41,11 @@ public class ServerStub implements Server {
             }catch(IOException e) {
                 throw new RemoteException("Error in creating input stream", e);
             }
-
         }catch(IOException e) {
             throw new RemoteException("Can't connect to the server", e);
         }
+
+        System.out.println("Connected!");
     }
 
     @Override

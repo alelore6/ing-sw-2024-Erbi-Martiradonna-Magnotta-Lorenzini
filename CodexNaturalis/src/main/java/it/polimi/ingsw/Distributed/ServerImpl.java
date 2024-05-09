@@ -40,8 +40,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             numClient++;
             controller.addPlayerToLobby(((ClientImpl) client).getNickname());
         }
-        else clientSkeleton= (ClientSkeleton) client;
-
+        else clientSkeleton = (ClientSkeleton) client;
     }
 
     public ClientImpl findClient(String nickname){

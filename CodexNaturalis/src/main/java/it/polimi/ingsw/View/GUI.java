@@ -23,7 +23,7 @@ public class GUI extends UI{
     }
 
     @Override
-    public void notifyListeners(ViewControllerListener listener, GenericEvent e) {
+    public void notifyListener(ViewControllerListener listener, GenericEvent e) {
 
     }
 

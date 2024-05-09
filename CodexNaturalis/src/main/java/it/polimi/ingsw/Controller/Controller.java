@@ -32,7 +32,7 @@ public class Controller {
     /**
      * the actual game, represent the model in the MVC pattern.
      */
-    private Game model;
+    private Game model = null;
     /**
      * the listeners that allow the exchange of information between the MVC pattern.
      */
@@ -80,7 +80,7 @@ public class Controller {
      * @param nickname
      */
     public void addPlayerToLobby(String nickname) throws RemoteException {
-        boolean ok=false;
+        boolean ok = false;
 
         // creo listener
         ModelViewListener mvListener = new ModelViewListener(server);
@@ -88,7 +88,7 @@ public class Controller {
 
         //check game hasn't started
         if (model == null) {
-            if (lobby.getNumPlayers()==0) {
+            if (lobby.getNumPlayers() == 0) {
                 // se la lobby è vuota evento SetNumPlayer
                 NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
                 mvListener.addEvent(numPlayersRequest);

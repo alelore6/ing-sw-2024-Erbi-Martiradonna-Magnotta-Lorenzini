@@ -75,12 +75,8 @@ public class TUI extends UI {
         return choice;
     }
 
-    public final void notifyListeners(ViewControllerListener listener, GenericEvent e) {
+    public final void notifyListener(ViewControllerListener listener, GenericEvent e) {
         listener.addEvent(e);
-    }
-
-    private final boolean isMessagesQueueEmpty(){
-        return this.inputMessages.isEmpty();
     }
 
     public final static void clearConsole(){
@@ -129,7 +125,7 @@ public class TUI extends UI {
 
     public final int chooseConnection(){
 
-        printOut("Choose between RMI (1) or PrivateSocket (2) connection type");
+        printOut("Choose between RMI (1) or Socket (2) connection type: ");
 
         int networkType = chooseInt(1,2);
 
@@ -138,7 +134,7 @@ public class TUI extends UI {
 
     public final PrivateSocket setupSocket(){
 
-        int PORT_MAX = 65536;
+        int PORT_MAX = 65535;
 
         printOut("Enter server IP address: ");
 
@@ -192,7 +188,7 @@ public class TUI extends UI {
             @Override
             public void run() {
                 while(isActive){
-                    if(inputMessages.size() == 0)   continue;
+                    if(inputMessages.isEmpty())   continue;
 
                     GenericEvent ev = inputMessages.poll();
 
@@ -202,14 +198,17 @@ public class TUI extends UI {
 
                     switch(ev){
                         case DrawCardRequest e :
-                            listener.addEvent(new DrawCardResponse(chooseInt(1,2),client.getNickname()));
+                            notifyListener(listener, new DrawCardResponse(chooseInt(1,2),client.getNickname()));
                             break;
+
                         case ChooseObjectiveRequest e :
-                            listener.addEvent(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
+                            notifyListener(listener, new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
                             break;
+
                         case NumPlayersRequest e :
-                            listener.addEvent(new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
+                            notifyListener(listener, new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
                             break;
+
                         case PlayCardRequest e :
                             n = -1;
                             do{
@@ -221,7 +220,8 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            listener.addEvent(new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+                            notifyListener(listener, new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+
                             break;
                         case SetTokenColorRequest e :
                             n = -1;
@@ -229,21 +229,26 @@ public class TUI extends UI {
                                 if(n != -1) printOut(inputError());
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
+
                             break;
                         case JoinLobby e :
-                            listener.addEvent(new SetPassword(client.getNickname(), chooseString("password")));
+                            notifyListener(listener, new SetPassword(client.getNickname(), chooseString("password")));
+
                             break;
                         case PlaceStartingCard e :
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
-                            listener.addEvent(new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40));
+                            notifyListener(listener, new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40));
+
                             break;
                         case AckResponse ack :
                             if(!ack.ok){
                                 inputMessages.addFirst(ack.event);
                             }
+
                             break;
                         default :
+
                             break;
                     }
                 }

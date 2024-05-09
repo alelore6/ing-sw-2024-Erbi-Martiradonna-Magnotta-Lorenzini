@@ -9,7 +9,7 @@ public interface View extends Runnable {
 
     void update(GenericEvent e) throws RemoteException;
 
-    void notifyListeners(ViewControllerListener listener, GenericEvent e);
+    void notifyListener(ViewControllerListener listener, GenericEvent e);
 
     void run();
 }

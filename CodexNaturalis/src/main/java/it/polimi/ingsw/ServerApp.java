@@ -22,7 +22,7 @@ public class ServerApp {
         final int portSocket;
 
         port = 0;
-        System.out.print("Insert Server PrivateSocket port number - 4 digit only: \n");
+        System.out.print("Enter server port number (between 0 and 65535 included): ");
         while (port.toString().length() != 4){
             try {
                 port = Integer.parseInt(terminal.next());
@@ -36,6 +36,8 @@ public class ServerApp {
 
 
         // TODO: creare un thread per il ping ogni tot
+
+        // NON FUNZIONA!
 
         // creo server RMI
         /*Thread rmiThread = new Thread(() -> {
@@ -66,6 +68,7 @@ public class ServerApp {
             System.err.println("No connection available.");
         }*/
 
+        System.out.println("Active on port " + port + "!");
     }
 
 
@@ -88,7 +91,7 @@ public class ServerApp {
                         clientSkeleton.receive(server);
                     }
                 } catch (IOException e) {
-                    System.err.println("PrivateSocket failed: " + e.getMessage() );
+                    System.err.println("Socket failed: " + e.getMessage() );
                 }
             }
         } catch (IOException e) {

@@ -396,7 +396,7 @@ public class Game {
 
     protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
-
+        // credo sia al contrario
         if (objectiveCard instanceof ObjectiveCard2) {
             int minPoints = 1000;
             //calcolo punti a seconda del tipo di obj card
