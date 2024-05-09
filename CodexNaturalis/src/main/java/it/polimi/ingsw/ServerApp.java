@@ -43,6 +43,7 @@ public class ServerApp {
                 startRMI();
             } catch (RemoteException e) {
                 System.err.println("Cannot start RMI.\n");
+                e.printStackTrace();
             }
         });
         rmiThread.start();
@@ -70,12 +71,10 @@ public class ServerApp {
 
     private static void startRMI () throws RemoteException{
         Server server = new ServerImpl();
-
         //Getting the registry
         Registry registry = LocateRegistry.getRegistry();
         //Binding the server to the RMI registry so that the client can look up
         registry.rebind("server", server);
-
     }
 
     private static void startSocket(int port) throws RemoteException {
