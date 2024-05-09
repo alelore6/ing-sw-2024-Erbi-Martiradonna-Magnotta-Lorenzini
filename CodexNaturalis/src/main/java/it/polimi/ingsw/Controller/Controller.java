@@ -19,6 +19,7 @@ import java.util.Objects;
  * It handles the action of the players on the model.
  */
 public class Controller {
+    private String[] playerPasswords;
     /**
      * the server that handles the connections
      */
@@ -178,6 +179,9 @@ public class Controller {
 
             else if(event instanceof SetTokenColorResponse){
                getPlayerByNickname(nickname).getToken().setColor(((SetTokenColorResponse)event).tokenColor);
+            }
+            else if(event instanceof SetPassword){
+                //riempio playerpasswords
             }
     }
 
