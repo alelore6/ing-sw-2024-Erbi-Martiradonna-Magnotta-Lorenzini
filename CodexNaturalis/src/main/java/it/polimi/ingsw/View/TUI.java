@@ -20,6 +20,7 @@ public class TUI extends UI {
     private Deque<GenericEvent> inputMessages;
     private volatile boolean isActive;
 
+
     public TUI(String nickname) {
         super(nickname);
 
