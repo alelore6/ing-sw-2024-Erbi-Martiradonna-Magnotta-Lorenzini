@@ -22,7 +22,7 @@ public class DeckTest {
     public void draw() {
         Card testcard;
         testcard = mock(testcard.Card);
-        Deck deck = new Deck()
+        Deck deck = new Deck();
         try{
             Card drawnCard = deck.draw();
             assertEquals(testcard, drawnCard);
