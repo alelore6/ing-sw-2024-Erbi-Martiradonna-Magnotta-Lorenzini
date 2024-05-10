@@ -72,7 +72,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     @Override
-    public void update(Client client, GenericEvent e) throws RemoteException {
+    public void update(GenericEvent e) throws RemoteException {
         userInterface.update(e);
     }
 

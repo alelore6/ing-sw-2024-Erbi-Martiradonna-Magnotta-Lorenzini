@@ -33,7 +33,7 @@ public class ServerStub implements Server {
             this.socket = new Socket(ip, port);
             try{
                 this.out = new ObjectOutputStream(socket.getOutputStream());
-                }catch(IOException e) {
+            }catch(IOException e) {
                 throw new RemoteException("Error in creating output stream", e);
             }
             try {
@@ -52,8 +52,6 @@ public class ServerStub implements Server {
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {
             out.writeObject(event);
-            out.writeObject(client);
-
         } catch (IOException e) {
             throw new RemoteException("Cannot send event", e);
         }
@@ -81,7 +79,7 @@ public class ServerStub implements Server {
         }
         //check it's the right receiver
         if(((ClientImpl) c).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname()))
-            client.update(c,ev);
+            client.update(ev);
         //call view update
 
     }

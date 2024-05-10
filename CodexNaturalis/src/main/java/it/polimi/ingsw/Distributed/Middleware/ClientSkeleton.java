@@ -9,12 +9,12 @@ import java.io.*;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
-public class ClientSkeleton implements Client{
+public class ClientSkeleton implements Client {
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ClientSkeleton(Socket socket)throws RemoteException {
+    public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -28,9 +28,8 @@ public class ClientSkeleton implements Client{
     }
 
     @Override
-    public void update(Client client,GenericEvent e) throws RemoteException {
+    public void update(GenericEvent e) throws RemoteException {
         try {
-            out.writeObject(client);
             out.writeObject(e);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");
@@ -45,11 +44,8 @@ public class ClientSkeleton implements Client{
         System.out.println("SONO NELLA RECEIVE");
         GenericEvent event;
         try {
-            GenericEvent temp = null;
-            while(temp == null){
-                temp = (GenericEvent) in.readObject();
-            }
             event = (GenericEvent) in.readObject();
+
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);
         } catch (ClassNotFoundException e) {
