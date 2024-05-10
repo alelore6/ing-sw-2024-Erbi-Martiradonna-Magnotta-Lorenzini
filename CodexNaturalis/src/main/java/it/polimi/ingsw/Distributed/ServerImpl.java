@@ -29,6 +29,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     @Override
     public void register(Client client) throws RemoteException{
         if(client instanceof ClientImpl){
+            System.out.println("CIAO1234");
             try{
                 // check nickname
                 findClient(((ClientImpl) client).getNickname());
