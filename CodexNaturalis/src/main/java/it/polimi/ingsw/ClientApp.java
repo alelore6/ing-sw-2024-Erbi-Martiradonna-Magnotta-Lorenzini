@@ -24,7 +24,7 @@ public class ClientApp {
         int networkType = -1;
         int typeView = -1;
 
-        TUI startingTUI = new TUI("");
+        TUI startingTUI = new TUI();
 
         typeView    = startingTUI.chooseView();
         networkType = startingTUI.chooseConnection();

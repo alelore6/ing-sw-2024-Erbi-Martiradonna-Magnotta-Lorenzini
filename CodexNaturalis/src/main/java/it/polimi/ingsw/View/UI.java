@@ -13,15 +13,15 @@ public abstract class UI implements View{
 
     // WATCH OUT! This constructor allows the creation of a TUI w/o having created the actual player
     // The nickname here is not the player's but a test one.
-    public UI(String nickname) {
+    public UI() {
         this.client = null;
         this.listener = null;
     }
-
-    protected abstract void printCard(Card card);
 
     public UI(ClientImpl client) {
         this.client = client;
         this.listener = new ViewControllerListener(client);
     }
+
+    protected abstract void printCard(Card card);
 }

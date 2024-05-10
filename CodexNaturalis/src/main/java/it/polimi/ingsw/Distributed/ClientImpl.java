@@ -25,17 +25,18 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         super();
         this.nickname = nickname;
         this.viewType = viewType;
+
         initialize(server);
 
         // The else statement is equivalent to the condition that typeView == 2
         // because typeView is either 1 or 2 after the chooseView() call.
         // In this way there is no warning about userInterface initialization.
         if(viewType == 1){
-            userInterface = new TUI(nickname);
+            userInterface = new TUI(this);
         }
         else{
             // TODO GUI:
-            userInterface = new GUI(nickname);
+            userInterface = new GUI(this);
         }
     }
     //other constructors needed for overloading
@@ -50,8 +51,10 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     }
 
     private void initialize(Server server) throws RemoteException {
-        serverStub = (ServerStub) server;
-        server.register(this);
+        if(server instanceof ServerStub){
+            serverStub = (ServerStub) server;
+            server.register(this);
+        }
     }
 
     public String getNickname() {

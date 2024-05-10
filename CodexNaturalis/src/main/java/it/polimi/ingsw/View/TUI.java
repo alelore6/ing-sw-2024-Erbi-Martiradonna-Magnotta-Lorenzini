@@ -24,9 +24,8 @@ public class TUI extends UI {
     private volatile boolean isActive;
 
 
-    public TUI(String nickname) {
-        super(nickname);
-
+    public TUI() {
+        super();
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
         outErr = new PrintStream(System.err, true);
@@ -36,7 +35,6 @@ public class TUI extends UI {
 
     public TUI(ClientImpl client) {
         super(client);
-
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
         outErr = new PrintStream(System.err, true);
