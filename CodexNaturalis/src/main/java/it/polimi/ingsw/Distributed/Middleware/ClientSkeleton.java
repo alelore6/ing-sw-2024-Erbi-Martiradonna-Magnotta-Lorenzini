@@ -42,8 +42,13 @@ public class ClientSkeleton implements Client{
     public void receive(ServerImpl server) throws RemoteException {
         //socket: receive from server stub update()
         //not sure of the type
+        System.out.println("SONO NELLA RECEIVE");
         GenericEvent event;
         try {
+            GenericEvent temp = null;
+            while(temp == null){
+                temp = (GenericEvent) in.readObject();
+            }
             event = (GenericEvent) in.readObject();
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);

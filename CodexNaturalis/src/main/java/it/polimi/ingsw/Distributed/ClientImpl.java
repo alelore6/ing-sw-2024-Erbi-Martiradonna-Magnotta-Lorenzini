@@ -2,6 +2,7 @@ package it.polimi.ingsw.Distributed;
 
 
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
+import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.View.TUI;
@@ -26,8 +27,6 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         this.nickname = nickname;
         this.viewType = viewType;
 
-        initialize(server);
-
         // The else statement is equivalent to the condition that typeView == 2
         // because typeView is either 1 or 2 after the chooseView() call.
         // In this way there is no warning about userInterface initialization.
@@ -38,6 +37,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
             // TODO GUI:
             userInterface = new GUI(this);
         }
+        initialize(server);
     }
     //other constructors needed for overloading
     public ClientImpl(int port, Server server) throws RemoteException {
@@ -54,6 +54,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         if(server instanceof ServerStub){
             serverStub = (ServerStub) server;
             serverStub.register(this);
+            userInterface.notifyListener(userInterface.getListener(), new ClientRegister(this));
         }
     }
 

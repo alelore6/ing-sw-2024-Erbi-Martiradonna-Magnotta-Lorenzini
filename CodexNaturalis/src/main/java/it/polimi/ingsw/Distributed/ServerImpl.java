@@ -2,6 +2,7 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
+import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
@@ -52,9 +53,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         throw new RuntimeException("client "+nickname+" not found");
     }
 
-
     @Override
-    public void update(Client client, GenericEvent event) throws RemoteException {
+    public void update(Client client, GenericEvent event) throws RemoteException{
+        if(event instanceof ClientRegister){
+            controller.updateModel(event, ((ClientImpl)client).getNickname());
+        }else
         //client has responded to a request to modify the model
         if(CLIENT_IMPL_LIST.contains(((ClientImpl) client))){
             //check it is client's turn

@@ -51,8 +51,9 @@ public class ServerStub implements Server {
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {
-            out.writeObject(client);
             out.writeObject(event);
+            out.writeObject(client);
+
         } catch (IOException e) {
             throw new RemoteException("Cannot send event", e);
         }

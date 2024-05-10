@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 public abstract class UI implements View{
 
+
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
 
@@ -24,4 +25,8 @@ public abstract class UI implements View{
     }
 
     protected abstract void printCard(Card card);
+
+    public ViewControllerListener getListener() {
+        return listener;
+    }
 }
