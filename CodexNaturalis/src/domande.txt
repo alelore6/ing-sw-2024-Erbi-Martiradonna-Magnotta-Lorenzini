@@ -58,3 +58,9 @@
 
 Domande
 - model e controller devono girare su thread separati? e il server invece si può accoppiare con uno dei due?
+
+DEBUG 10/05:
+    11/05 00:42 Siamo morti, distrutti...non ce la facciamo più. I problemi sono:
+        Server non riesce a mandare gli eventi ma il client sì (boh) (in socket)
+        mvListener sembra essere null con l'instanziazione due righe sopra (booh)
+        Continuare a debuggare da Controller.addPlayerToLobby
