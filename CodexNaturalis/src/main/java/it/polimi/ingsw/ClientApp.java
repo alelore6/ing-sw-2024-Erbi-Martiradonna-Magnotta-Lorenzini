@@ -31,7 +31,7 @@ public class ClientApp {
 
         if(networkType == 1){   //RMI
 
-            Registry registry = LocateRegistry.getRegistry();
+            Registry registry = LocateRegistry.getRegistry(45656);
             Server server = (Server) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(server, typeView, startingTUI.chooseString("nickname"));

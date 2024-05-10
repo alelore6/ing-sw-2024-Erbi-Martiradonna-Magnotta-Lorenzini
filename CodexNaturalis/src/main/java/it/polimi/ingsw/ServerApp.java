@@ -7,6 +7,7 @@ import it.polimi.ingsw.Distributed.ServerImpl;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.util.Scanner;
@@ -40,15 +41,15 @@ public class ServerApp {
         // NON FUNZIONA!
 
         // creo server RMI
-        /*Thread rmiThread = new Thread(() -> {
+        Thread rmiThread = new Thread(() -> {
             try {
                 startRMI();
-            } catch (RemoteException e) {
+            } catch (RemoteException | AlreadyBoundException e) {
                 System.err.println("Cannot start RMI.\n");
                 e.printStackTrace();
             }
         });
-        rmiThread.start();*/
+        rmiThread.start();
 
         // creo server socket
         Thread socketThread = new Thread(() -> {
@@ -72,10 +73,11 @@ public class ServerApp {
     }
 
 
-    private static void startRMI () throws RemoteException{
+    private static void startRMI () throws RemoteException, AlreadyBoundException {
+
         Server server = new ServerImpl();
         //Getting the registry
-        Registry registry = LocateRegistry.getRegistry();
+        Registry registry = LocateRegistry.createRegistry(45656);
         //Binding the server to the RMI registry so that the client can look up
         registry.rebind("server", server);
     }
