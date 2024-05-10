@@ -53,7 +53,7 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
     private void initialize(Server server) throws RemoteException {
         if(server instanceof ServerStub){
             serverStub = (ServerStub) server;
-            server.register(this);
+            serverStub.register(this);
         }
     }
 

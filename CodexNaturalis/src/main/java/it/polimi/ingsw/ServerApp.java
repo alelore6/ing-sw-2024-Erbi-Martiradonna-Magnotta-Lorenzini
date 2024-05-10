@@ -18,27 +18,24 @@ public class ServerApp {
     public static void main(String[] args) throws RemoteException {
 
         Scanner terminal = new Scanner(System.in);
-        Integer port = 0;
+        Integer port = -1;
 
         final int portSocket;
 
-        port = 0;
-        System.out.print("Enter server port number (between 0 and 65535 included): ");
-        while (port.toString().length() != 4){
+        port = -1;
+
+        while (port < 0 || port > 65535){
+            System.out.print("Enter server port number (between 0 and 65535 included): ");
             try {
                 port = Integer.parseInt(terminal.next());
             } catch (NumberFormatException e) {
                 System.out.println("It is not a valid number!!");
             }
-            if (port.toString().length() != 4)
-                System.out.print("Enter a 4 digit number only: ");
         }
         portSocket = port;
 
 
         // TODO: creare un thread per il ping ogni tot
-
-        // NON FUNZIONA!
 
         // creo server RMI
         Thread rmiThread = new Thread(() -> {
@@ -74,7 +71,6 @@ public class ServerApp {
 
 
     private static void startRMI () throws RemoteException, AlreadyBoundException {
-
         Server server = new ServerImpl();
         //Getting the registry
         Registry registry = LocateRegistry.createRegistry(45656);
