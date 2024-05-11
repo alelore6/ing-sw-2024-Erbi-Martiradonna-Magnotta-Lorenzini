@@ -26,12 +26,22 @@ public class SetTokenColorRequest extends GenericEvent{
     @Override
     public String msgOutput() {
 
+        int NUM_COLOR = 3;
+        String s = null;
+
+        if(availableColors.contains(TokenColor.RED))        s = s + "(1) for RED";
+        if(availableColors.contains(TokenColor.YELLOW))     s = s + "(2) for YELLOW";
+        if(availableColors.contains(TokenColor.GREEN))      s = s + "(3) for GREEN";
+        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE";
+
         return super.msgOutput() + availableColors.toString() + "\nColor: ";
     }
 
     public boolean choiceIsValid(int n){
-        if(n <= availableColors.size()) return true;
-
-        return false;
+        if(n == 1 && availableColors.contains(TokenColor.RED))      return true;
+        if(n == 2 && availableColors.contains(TokenColor.YELLOW))   return true;
+        if(n == 3 && availableColors.contains(TokenColor.GREEN))    return true;
+        if(n == 4 && availableColors.contains(TokenColor.BLUE))     return true;
+        else                                                        return false;
     }
 }

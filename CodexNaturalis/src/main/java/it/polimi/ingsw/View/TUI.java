@@ -213,18 +213,25 @@ public class TUI extends UI {
                     printOut(ev.msgOutput());
 
                     int n;
+                    GenericEvent newEvent;
 
                     switch(ev){
                         case DrawCardRequest e :
-                            notifyListener(listener, new DrawCardResponse(chooseInt(1,2),client.getNickname()));
+                            newEvent = new DrawCardResponse(chooseInt(1,2),client.getNickname());
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
                             break;
 
                         case ChooseObjectiveRequest e :
-                            notifyListener(listener, new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
+                            newEvent = new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname());
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
                             break;
 
                         case NumPlayersRequest e :
-                            notifyListener(listener, new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
+                            newEvent = new NumPlayersResponse(chooseInt(2,4), client.getNickname());
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
                             break;
 
                         case PlayCardRequest e :
@@ -238,7 +245,9 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            notifyListener(listener, new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+                            newEvent = new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80));
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
 
                             break;
                         case SetTokenColorRequest e :
@@ -248,15 +257,24 @@ public class TUI extends UI {
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
 
+                            newEvent = new SetTokenColorResponse(chooseInt(1,4), client.getNickname());
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
+
                             break;
                         case JoinLobby e :
-                            notifyListener(listener, new SetPassword(client.getNickname(), chooseString("password")));
+                            newEvent = new SetPassword(client.getNickname(), chooseString("password"));
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
 
                             break;
                         case PlaceStartingCard e :
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
-                            notifyListener(listener, new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40));
+
+                            newEvent = new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40);
+                            notifyListener(listener, newEvent);
+                            printOut(newEvent.msgOutput());
 
                             break;
                         case AckResponse ack :
