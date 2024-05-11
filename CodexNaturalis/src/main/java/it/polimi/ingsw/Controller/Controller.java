@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Objects;
  * It handles the action of the players on the model.
  */
 public class Controller {
-    private String[] playerPasswords;
+    private HashMap<String, String> passwords = new HashMap<String, String>();
     /**
      * the server that handles the connections
      */
@@ -200,7 +201,9 @@ public class Controller {
                 }
             }
             else if(event instanceof SetPassword){
-                //riempio playerpasswords
+                passwords.put(event.nickname, ((SetPassword) event).getPassword());
+                String p = passwords.get(event.nickname);
+                System.out.println(p);
             }
             else if(event instanceof ClientRegister){
                 server.register(new ClientImpl(((ClientRegister) event).getNickname()));

@@ -58,16 +58,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void update(Client client, GenericEvent event) throws RemoteException{
         if(event instanceof ClientRegister){
             controller.updateModel(event, event.nickname);
-        }else
-        //client has responded to a request to modify the model
-        if(CLIENT_IMPL_LIST.contains(((ClientImpl) client))){
-            //check it is client's turn
-            if(((ClientImpl) client).getNickname().equalsIgnoreCase( controller.getGame().getCurrentPlayer())) {
-                controller.updateModel(event,((ClientImpl) client).getNickname());
+        }else {
+            //client has responded to a request to modify the model
+            for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
+                if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname())) {
+                    controller.updateModel(event, CLIENT_IMPL_LIST.get(i).getNickname());
+                }
             }
-            else throw new RemoteException("It is not "+((ClientImpl)client).getNickname() +" turn to play");
-        } else throw new RemoteException("Client sending the event isn't registered to the server");
-
+        }
+//        if(CLIENT_IMPL_LIST.contains(Clien)){
+//            //check it is client's turn
+//            if(((ClientImpl) client).getNickname().equalsIgnoreCase( controller.getGame().getCurrentPlayer())) {
+//                controller.updateModel(event,((ClientImpl) client).getNickname());
+//            }
+//            else throw new RemoteException("It is not "+((ClientImpl)client).getNickname() +" turn to play");
+//        } else throw new RemoteException("Client sending the event isn't registered to the server");
     }
 
     public void sendEvent(GenericEvent event) throws RemoteException {
