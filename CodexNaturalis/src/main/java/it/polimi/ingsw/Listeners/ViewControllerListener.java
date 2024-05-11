@@ -39,14 +39,14 @@ public class ViewControllerListener extends Listener {
      */
     @Override
     public void handleEvent() throws RemoteException {
-
-        new  Thread(){
+        System.out.println("CIAO34212");
+        new Thread() {
             @Override
             public void run() {
-
+                System.out.println("CIAO3542435");
                 while(true) {
                     if(!getEventQueue().isEmpty()) {
-                        GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+                        GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
                         try {
                             ((ClientImpl) client).sendEvent(currentEvent);
@@ -54,9 +54,8 @@ public class ViewControllerListener extends Listener {
                             throw new RuntimeException(e);
                         }
                     }
-
                 }
             }
-        };
+        }.start();
     }
 }

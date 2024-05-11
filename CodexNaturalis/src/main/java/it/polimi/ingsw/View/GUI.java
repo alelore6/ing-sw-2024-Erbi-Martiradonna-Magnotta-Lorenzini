@@ -19,7 +19,7 @@ public class GUI extends UI{
     }
 
     @Override
-    public void update(GenericEvent e) throws RemoteException {
+    public void update(GenericEvent e){
 
     }
 

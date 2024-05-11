@@ -16,4 +16,7 @@ public abstract class Card {
      public int getID(){
           return this.ID;
      }
+     public Corner[] getCorners(){
+         return this.corners;
+     }
 }

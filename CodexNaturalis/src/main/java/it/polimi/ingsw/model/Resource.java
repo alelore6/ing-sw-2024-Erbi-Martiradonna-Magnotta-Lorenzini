@@ -7,5 +7,12 @@ public enum Resource {
     ANIMAL,
     QUILL,
     INKWELL,
-    MANUSCRIPT
+    MANUSCRIPT;
+
+    /*  Here we can override toString if necessary
+    @Override
+    public String toString(){
+
+    }
+    */
 }

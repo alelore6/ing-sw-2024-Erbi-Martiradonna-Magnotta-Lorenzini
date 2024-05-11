@@ -4,16 +4,11 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.model.PlayableCard;
-import it.polimi.ingsw.model.StartingCard;
+import it.polimi.ingsw.model.*;
 
 import java.io.PrintStream;
 import java.rmi.RemoteException;
-import java.util.Deque;
-import java.util.InputMismatchException;
-import java.util.LinkedList;
-import java.util.Scanner;
+import java.util.*;
 
 public class TUI extends UI {
 
@@ -96,7 +91,7 @@ public class TUI extends UI {
     }
 
     public final int chooseView(){
-        printOut("Choose if you wanna play from CLI or GUI: 1 for CLI and 2 for GUI:");
+        printOut("Choose if you wanna play from CLI or GUI.\n(1) for CLI and (2) for GUI:");
 
         return chooseInt(1,2);
     }
@@ -164,13 +159,38 @@ public class TUI extends UI {
         return "Input not allowed. Please try again";
     }
 
-    public final void update(GenericEvent e) throws RemoteException {
+    public final void update(GenericEvent e){
         inputMessages.add(e);
     }
 
     protected void printCard(Card card){
+        printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
         if(card instanceof PlayableCard){
+            printOut("Color: " + ((PlayableCard) card).getColor() +
+                        "Visible corners: ");
+            Arrays.stream(card.getCorners()).forEach(c -> printOut(
+                    c.getPosition() + ": " + c.getResource() != null ? c.getResource().toString() : "empty"));
 
+            if(card instanceof GoldCard){
+                // the number of total distinct resources
+                int NUM_RES = 7;
+
+                printOut("Requirements:");
+                for(Resource res : ((GoldCard) card).getReq().keySet()){
+                    if(((GoldCard) card).getReq().get(res) > 0)
+                        printOut(((GoldCard) card).getReq().get(res) + res.toString());
+                }
+            }
+
+            if(((PlayableCard) card).getPoints() == 0)  return;
+
+            if(((PlayableCard) card).getPoints() > 0){
+                printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + "points");
+                if(card instanceof GoldCard){
+                    printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
+                }
+            }
+            printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
 

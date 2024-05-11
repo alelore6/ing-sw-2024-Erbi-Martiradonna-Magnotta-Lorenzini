@@ -37,7 +37,7 @@ public class Controller {
     /**
      * the listeners that allow the exchange of information between the MVC pattern.
      */
-    private ArrayList<ModelViewListener> mvListeners;
+    private ArrayList<ModelViewListener> mvListeners = new ArrayList<ModelViewListener>();
 
     /**
      * Constructor
@@ -89,7 +89,7 @@ public class Controller {
 
         //check game hasn't started
         if (model == null) {
-            if (lobby.getNumPlayers() == 0) {
+            if (lobby.getNumPlayers() == 1) {
                 // se la lobby è vuota evento SetNumPlayer
                 NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
                 mvListener.addEvent(numPlayersRequest);
@@ -203,11 +203,9 @@ public class Controller {
                 //riempio playerpasswords
             }
             else if(event instanceof ClientRegister){
-                System.out.println("SIAMO ARRIVATI!!!");
-                server.register(((ClientRegister) event).getClient());
+                server.register(new ClientImpl(((ClientRegister) event).getNickname()));
             }
     }
-
 
     /**
      * Getter for a specific player in the game
@@ -238,7 +236,7 @@ public class Controller {
             for(int i = 0; i < getGame().getPlayers().length; i++){
                 if(getGame().getPlayers()[i].getNickname().equals(nickname)){
                     return mvListeners.get(i);
-                }
+               }
             }
             throw new RuntimeException();
         } catch (Exception e) { //SHOULDN'T HAPPEN

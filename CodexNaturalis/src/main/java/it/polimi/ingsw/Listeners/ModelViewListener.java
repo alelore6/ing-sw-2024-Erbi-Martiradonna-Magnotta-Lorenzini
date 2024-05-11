@@ -37,23 +37,23 @@ public class ModelViewListener extends Listener {
      */
     @Override
     public void handleEvent() throws RemoteException {
-        new  Thread(){
+        new Thread(){
             @Override
             public void run() {
 
                 while(true) {
                     if(ack == null && !getEventQueue().isEmpty()) {
-                        GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+                        GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
                         try {
-                            ((ServerImpl) server).sendEvent(currentEvent);
+                            server.sendEvent(currentEvent);
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
                     }
                     else if (!getEventQueue().isEmpty()) { //ack is not null
                         try {
-                            ((ServerImpl)server).sendEvent(ack);
+                            server.sendEvent(ack);
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
@@ -61,6 +61,6 @@ public class ModelViewListener extends Listener {
                     }
                 }
             }
-        };
+        }.start();
     }
 }

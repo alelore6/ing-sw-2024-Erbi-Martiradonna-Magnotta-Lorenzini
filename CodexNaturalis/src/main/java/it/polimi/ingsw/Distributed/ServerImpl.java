@@ -29,11 +29,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     @Override
     public void register(Client client) throws RemoteException{
-        if(client instanceof ClientImpl){
+        if(client instanceof ClientImpl){ // if MALEDETTO
             try{
                 // check nickname
                 findClient(((ClientImpl) client).getNickname());
             }catch (RuntimeException e){
+                // TODO: crea evento che setta il nuovo nick all'user
+
                 //add a sequential number at the end of the nickname if already present
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
             }
@@ -44,19 +46,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         else clientSkeleton = (ClientSkeleton) client;
     }
 
-    public ClientImpl findClient(String nickname){
+    public void findClient(String nickname){
         for (ClientImpl c : CLIENT_IMPL_LIST){
             if (c.getNickname().equalsIgnoreCase(nickname))
-                return c;
+                // client not found
+                throw new RuntimeException("client " + nickname + " not found");
         }
-        // client not found
-        throw new RuntimeException("client "+nickname+" not found");
     }
 
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
         if(event instanceof ClientRegister){
-            controller.updateModel(event, ((ClientImpl)client).getNickname());
+            controller.updateModel(event, event.nickname);
         }else
         //client has responded to a request to modify the model
         if(CLIENT_IMPL_LIST.contains(((ClientImpl) client))){

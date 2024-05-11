@@ -30,8 +30,7 @@ public abstract class Listener {
      * abstract method to be implemented by listener subclasses to handle events
      * @throws RemoteException remote exception for RMI connections
      */
-    public void handleEvent() throws RemoteException {
-    }
+    public abstract void handleEvent() throws RemoteException;
 
     /**
      * method to add an event to the queue of events

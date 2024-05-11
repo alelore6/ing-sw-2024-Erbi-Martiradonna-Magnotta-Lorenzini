@@ -25,7 +25,7 @@ public class Lobby {
      */
     public Lobby() {
         this.players = new ArrayList<String>();
-        numPlayers = 0;
+        numPlayers = 1;
     }
 
     /**

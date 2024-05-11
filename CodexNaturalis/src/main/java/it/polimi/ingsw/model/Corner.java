@@ -11,4 +11,5 @@ public class Corner {
     public Resource getResource(){
         return resource;
     }
+    public Position getPosition(){return pos;}
 }

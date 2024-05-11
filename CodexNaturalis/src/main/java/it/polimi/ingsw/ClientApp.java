@@ -4,6 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Distributed.Server;
 
+import java.awt.geom.GeneralPath;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -11,6 +12,7 @@ import java.rmi.registry.Registry;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.GUI;
 import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
@@ -47,8 +49,9 @@ public class ClientApp {
                 @Override
                 public void run() {
                     while (true) {
+                        GenericEvent receivedEvent = null;
                         try {
-                            serverStub.receive(client);
+                            receivedEvent = serverStub.receive(client);
                         } catch (RemoteException e) {
                             startingTUI.printErr("Cannot receive from server.");
 
@@ -59,6 +62,10 @@ public class ClientApp {
                             }
 
                             System.exit(1);
+                        }finally {
+                            if(receivedEvent != null) {
+                                client.getUserInterface().update(receivedEvent);
+                            }
                         }
                     }
                 }

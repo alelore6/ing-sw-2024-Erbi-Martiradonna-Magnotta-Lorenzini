@@ -8,6 +8,7 @@ public class GoldCard extends PlayableCard{
     private Resource RPoints;
 
     private boolean RPointsCorner;
+
     protected HashMap<Resource,Integer> req = new HashMap<>();
 
     public GoldCard(int ID){
@@ -29,6 +30,10 @@ public class GoldCard extends PlayableCard{
 
     public Resource getRPoints() {
         return RPoints;
+    }
+
+    public HashMap<Resource, Integer> getReq() {
+        return req;
     }
 
     public boolean isRPointsCorner() {

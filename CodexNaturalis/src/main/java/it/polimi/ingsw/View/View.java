@@ -7,7 +7,7 @@ import java.rmi.RemoteException;
 
 public interface View extends Runnable {
 
-    void update(GenericEvent e) throws RemoteException;
+    void update(GenericEvent e);
 
     void notifyListener(ViewControllerListener listener, GenericEvent e);
 

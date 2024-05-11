@@ -1,18 +1,20 @@
 package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.View.UI;
 
-public class ClientRegister extends GenericEvent{
+import java.io.Serializable;
 
-    private ClientImpl client;
+public class ClientRegister extends GenericEvent {
+    private String nickname;
 
     public ClientRegister(ClientImpl client) {
         super("connessione..", client.getNickname());
-        this.client = client;
+        this.nickname = client.getNickname();
         System.out.println("SIAMO QUI!");
     }
 
-    public ClientImpl getClient() {
-        return client;
+    public String getNickname() {
+        return this.nickname;
     }
 }

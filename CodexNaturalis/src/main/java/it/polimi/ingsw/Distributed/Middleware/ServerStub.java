@@ -10,10 +10,11 @@ import it.polimi.ingsw.View.View;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
-public class ServerStub implements Server {
+public class ServerStub implements Server, Serializable {
 
     private String ip;
     private int port;
@@ -58,18 +59,10 @@ public class ServerStub implements Server {
         //socket: client skeleton is always reading
     }
 
-    public void receive(Client client) throws RemoteException {
+    public GenericEvent receive(Client client) throws RemoteException {
         //socket: receive from client skeleton update()
-        Client c;
-        try{
-            c = (Client)in.readObject();
-        }catch(IOException e){
-            throw new RemoteException("Can't get model view from client", e);
-        }catch (ClassNotFoundException e){
-            throw new RemoteException("Can't deserialize model view from the client", e);
-        }
 
-        GenericEvent ev;
+        GenericEvent ev = null;
         try{
             ev = (GenericEvent) in.readObject();
         }catch(IOException e){
@@ -77,11 +70,8 @@ public class ServerStub implements Server {
         }catch(ClassNotFoundException e){
             throw new RemoteException("Can't deserialize event from client", e);
         }
-        //check it's the right receiver
-        if(((ClientImpl) c).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname()))
-            client.update(ev);
-        //call view update
 
+        return ev;
     }
 
     public void close() throws RemoteException{

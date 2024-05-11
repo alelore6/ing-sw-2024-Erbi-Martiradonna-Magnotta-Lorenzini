@@ -9,12 +9,13 @@ import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client{
+public class ClientImpl extends UnicastRemoteObject implements Runnable, Client, Serializable{
 
     private UI userInterface;
     private String nickname;
@@ -50,11 +51,17 @@ public class ClientImpl  extends UnicastRemoteObject implements Runnable, Client
         initialize(server);
     }
 
+    public ClientImpl(String nickname) throws RemoteException {
+        super();
+        this.nickname = nickname;
+    }
+
     private void initialize(Server server) throws RemoteException {
         if(server instanceof ServerStub){
             serverStub = (ServerStub) server;
             serverStub.register(this);
             userInterface.notifyListener(userInterface.getListener(), new ClientRegister(this));
+            userInterface.getListener().handleEvent();
         }
     }
 
