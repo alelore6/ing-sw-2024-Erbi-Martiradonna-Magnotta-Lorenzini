@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Listeners;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.AckResponse;
@@ -46,14 +47,14 @@ public class ModelViewListener extends Listener {
                         GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
                         try {
-                            server.sendEvent(currentEvent);
+                            server.sendEventToAll(currentEvent);
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }
                     }
                     else if (!getEventQueue().isEmpty()) { //ack is not null
                         try {
-                            server.sendEvent(ack);
+                            server.sendEventToAll(ack);
                         } catch (RemoteException e) {
                             throw new RuntimeException(e);
                         }

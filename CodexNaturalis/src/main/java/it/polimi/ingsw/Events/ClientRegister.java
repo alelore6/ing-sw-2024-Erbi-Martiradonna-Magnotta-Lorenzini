@@ -9,9 +9,8 @@ public class ClientRegister extends GenericEvent {
     private String nickname;
 
     public ClientRegister(ClientImpl client) {
-        super("connessione..", client.getNickname());
+        super("Connessione...", client.getNickname());
         this.nickname = client.getNickname();
-        System.out.println("SIAMO QUI!");
     }
 
     public String getNickname() {

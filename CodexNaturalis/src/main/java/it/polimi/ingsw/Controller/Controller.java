@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
@@ -46,7 +47,7 @@ public class Controller {
      */
     public Controller(ServerImpl server){
         this.server = server;
-        lobby = new Lobby();
+        this.lobby  = new Lobby();
     }
 
     /**
@@ -90,7 +91,7 @@ public class Controller {
 
         //check game hasn't started
         if (model == null) {
-            if (lobby.getNumPlayers() == 1) {
+            if (lobby.getNumPlayers() == 0) {
                 // se la lobby è vuota evento SetNumPlayer
                 NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
                 mvListener.addEvent(numPlayersRequest);
@@ -118,7 +119,7 @@ public class Controller {
      * @param event the event sent from the client
      * @param nickname the player that sent the event
      */
-    public void updateModel(GenericEvent event, String nickname) throws RemoteException {
+    public void updateModel(GenericEvent event, ClientSkeleton client, String nickname) throws RemoteException {
             //TODO ackresponse necessario anche dove non lancio eccezioni (tipo qua)? Non credo
             // qui anche no perchè non dovrebbe mai dare errore
             // ma in settokencolor si perchè può avere errori (setToken() ritorna un booleano -> usa quello)

@@ -23,9 +23,9 @@ public class Lobby {
     /**
      * Constructor: numPlayers is set to 0.
      */
-    public Lobby() {
+    public Lobby(){
         this.players = new ArrayList<String>();
-        numPlayers = 1;
+        this.numPlayers = 0;
     }
 
     /**
@@ -35,7 +35,7 @@ public class Lobby {
      */
     protected boolean addPlayer(String nickname){
         synchronized (lock_players){
-            if(players.size() < numPlayers){
+            if(players.size() == 0 || players.size() < numPlayers){
                 return players.add(nickname);
             }
             return false;
@@ -55,6 +55,7 @@ public class Lobby {
                 if(players.get(i).equals(nickname)){
                     players.remove(i);
                     isRemoved = true;
+                    numPlayers--;
 
                     break;
                 }
@@ -80,7 +81,7 @@ public class Lobby {
      * @return the number of  players for the game
      */
     public int getNumPlayers(){
-        return numPlayers;
+        return players.size();
     }
 
     /**

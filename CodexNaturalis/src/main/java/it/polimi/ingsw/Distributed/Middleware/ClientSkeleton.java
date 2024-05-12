@@ -14,6 +14,8 @@ public class ClientSkeleton implements Client {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    public String nickname;
+
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
             this.out = new ObjectOutputStream(socket.getOutputStream());
@@ -41,7 +43,6 @@ public class ClientSkeleton implements Client {
     public void receive(ServerImpl server) throws RemoteException {
         //socket: receive from server stub update()
         //not sure of the type
-        System.out.println("SONO NELLA RECEIVE");
         GenericEvent event;
         try {
             event = (GenericEvent) in.readObject();
@@ -52,5 +53,9 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot deserialize from client", e);
         }
         server.update(this, event);
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }

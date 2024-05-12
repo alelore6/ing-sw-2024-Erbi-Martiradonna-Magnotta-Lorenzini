@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Events;
 
+import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
+
 /**
  * Generic event that represents the success or failure of the action.
  * if it's negative the action will be redone.

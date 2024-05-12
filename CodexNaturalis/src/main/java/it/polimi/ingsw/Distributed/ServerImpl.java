@@ -14,7 +14,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public Controller controller = new Controller(this);
     private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
     private static int numClient = 0;
-    private ClientSkeleton clientSkeleton;
+    private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -26,13 +26,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         super(port);
     }
 
-
     @Override
     public void register(Client client) throws RemoteException{
         if(client instanceof ClientImpl){ // if MALEDETTO
             try{
                 // check nickname
-                findClient(((ClientImpl) client).getNickname());
+                findClientImpl(((ClientImpl) client).getNickname());
             }catch (RuntimeException e){
                 // TODO: crea evento che setta il nuovo nick all'user
 
@@ -43,10 +42,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             numClient++;
             controller.addPlayerToLobby(((ClientImpl) client).getNickname());
         }
-        else clientSkeleton = (ClientSkeleton) client;
+        else{
+            clientSkeletons.add((ClientSkeleton) client);
+        }
     }
 
-    public void findClient(String nickname){
+    public void findClientImpl(String nickname){
         for (ClientImpl c : CLIENT_IMPL_LIST){
             if (c.getNickname().equalsIgnoreCase(nickname))
                 // client not found
@@ -57,12 +58,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
         if(event instanceof ClientRegister){
-            controller.updateModel(event, event.nickname);
+            controller.updateModel(event, (ClientSkeleton) client, event.nickname);
         }else {
             //client has responded to a request to modify the model
             for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
                 if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname())) {
-                    controller.updateModel(event, CLIENT_IMPL_LIST.get(i).getNickname());
+                    controller.updateModel(event, (ClientSkeleton) client, CLIENT_IMPL_LIST.get(i).getNickname());
                 }
             }
         }
@@ -75,9 +76,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 //        } else throw new RemoteException("Client sending the event isn't registered to the server");
     }
 
-    public void sendEvent(GenericEvent event) throws RemoteException {
-        if (clientSkeleton!=null)
-            clientSkeleton.update(event);
+
+    public void sendEventToAll(GenericEvent event) throws RemoteException {
+        for(ClientSkeleton client : clientSkeletons)    sendEvent(client, event);
+    }
+
+    public void sendEvent(ClientSkeleton client, GenericEvent event) throws RemoteException {
+        if (client != null)
+            client.update(event);
         else throw new RemoteException("Cannot send event: clientSkeleton not found.\n");
     }
 }

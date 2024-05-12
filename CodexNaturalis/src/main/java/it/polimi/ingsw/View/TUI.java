@@ -127,7 +127,7 @@ public class TUI extends UI {
 
     public final PrivateSocket setupSocket(){
 
-        int PORT_MAX = 65535;
+        int PORT_MAX = 65532;
 
         printOut("Enter server IP address: ");
 
@@ -209,6 +209,9 @@ public class TUI extends UI {
                     if(inputMessages.isEmpty())   continue;
 
                     GenericEvent ev = inputMessages.poll();
+
+                    // Ignore all other player's events
+                    if(!ev.nickname.equals(client.getNickname())) continue;
 
                     printOut(ev.msgOutput());
 
