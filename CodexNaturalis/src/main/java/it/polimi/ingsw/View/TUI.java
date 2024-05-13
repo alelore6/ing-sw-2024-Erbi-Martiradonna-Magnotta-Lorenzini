@@ -15,7 +15,6 @@ public class TUI extends UI {
     private final Scanner in;
     private final PrintStream out;
     private final PrintStream outErr;
-    private Deque<GenericEvent> inputMessages;
     private volatile boolean isActive;
 
 

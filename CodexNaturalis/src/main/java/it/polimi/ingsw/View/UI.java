@@ -1,14 +1,16 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.model.Card;
 
 import java.util.ArrayList;
+import java.util.Deque;
 
 public abstract class UI implements View{
 
-
+    protected Deque<GenericEvent> inputMessages;
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
 
