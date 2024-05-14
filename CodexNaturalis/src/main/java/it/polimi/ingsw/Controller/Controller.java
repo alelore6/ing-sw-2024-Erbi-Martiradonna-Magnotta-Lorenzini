@@ -8,10 +8,9 @@ import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
-import it.polimi.ingsw.model.Game;
+import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
-import it.polimi.ingsw.model.Player;
-import org.springframework.ui.Model;
+import it.polimi.ingsw.Model.Player;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;

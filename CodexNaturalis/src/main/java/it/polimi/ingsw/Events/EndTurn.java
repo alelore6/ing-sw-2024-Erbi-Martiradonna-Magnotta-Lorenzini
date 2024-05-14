@@ -1,8 +1,5 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.Scoretrack;
-import it.polimi.ingsw.model.Token;
-
 import java.util.HashMap;
 
 /**

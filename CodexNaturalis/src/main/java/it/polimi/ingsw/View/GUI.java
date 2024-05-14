@@ -2,22 +2,17 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
-import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.Model.Card;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.rmi.RemoteException;
 
 import static java.lang.String.valueOf;
 
 public class GUI extends UI{
 
-    private static CustomFrame f;
+    private static MainFrame f;
     public GUI(ClientImpl client) {
         super(client);
     }
@@ -63,7 +58,7 @@ public class GUI extends UI{
                 new Thread(){
                     @Override
                     public void run() {
-                        f = new CustomFrame("CodexNaturalis");
+                        f = new MainFrame("CodexNaturalis");
                         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         f.setSize(1280,720);
                         f.setVisible(true);

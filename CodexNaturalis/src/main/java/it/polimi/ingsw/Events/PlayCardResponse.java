@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.Model.Card;
 
 /**
  * Event that represent the response to a request to play a card

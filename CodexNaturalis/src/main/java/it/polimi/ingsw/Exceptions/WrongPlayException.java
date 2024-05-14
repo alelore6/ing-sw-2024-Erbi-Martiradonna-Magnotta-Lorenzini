@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Exceptions;
 
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.model.Player;
+import it.polimi.ingsw.Model.Card;
+import it.polimi.ingsw.Model.Player;
 
 /**
  * Exception that is thrown if the play is not valid

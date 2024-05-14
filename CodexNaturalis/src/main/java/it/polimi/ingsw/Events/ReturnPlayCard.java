@@ -1,7 +1,7 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.model.CurrentResources;
+import it.polimi.ingsw.Model.Card;
+import it.polimi.ingsw.Model.CurrentResources;
 
 /**
  * Event that represent the updated current resource and displayed cards after a play

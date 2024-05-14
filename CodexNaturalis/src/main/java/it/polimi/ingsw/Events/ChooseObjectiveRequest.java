@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.ObjectiveCard;
+import it.polimi.ingsw.Model.ObjectiveCard;
 
 /**
  * event that represent the model request to choose between 2 objective card.

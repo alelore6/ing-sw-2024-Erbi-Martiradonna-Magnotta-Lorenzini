@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.PlayableCard;
+import it.polimi.ingsw.Model.PlayableCard;
 
 /**
  * Event that represent the model request for a source for the draw of a card.

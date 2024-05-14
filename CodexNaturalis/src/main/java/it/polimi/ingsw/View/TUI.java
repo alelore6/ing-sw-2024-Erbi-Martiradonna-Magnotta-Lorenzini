@@ -4,10 +4,9 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
-import it.polimi.ingsw.model.*;
+import it.polimi.ingsw.Model.*;
 
 import java.io.PrintStream;
-import java.rmi.RemoteException;
 import java.util.*;
 
 public class TUI extends UI {

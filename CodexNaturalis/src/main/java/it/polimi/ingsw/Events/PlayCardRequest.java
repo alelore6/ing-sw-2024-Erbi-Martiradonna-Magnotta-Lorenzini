@@ -1,8 +1,8 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.Card;
-import it.polimi.ingsw.model.CurrentResources;
-import it.polimi.ingsw.model.PlayableCard;
+import it.polimi.ingsw.Model.Card;
+import it.polimi.ingsw.Model.CurrentResources;
+import it.polimi.ingsw.Model.PlayableCard;
 
 /**
  * Event that represent the model request to play a card to a player

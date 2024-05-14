@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.TokenColor;
+import it.polimi.ingsw.Model.TokenColor;
 
 import java.util.ArrayList;
 

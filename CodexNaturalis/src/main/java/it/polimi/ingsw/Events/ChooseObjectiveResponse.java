@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.ObjectiveCard;
+import it.polimi.ingsw.Model.ObjectiveCard;
 
 /**
  * Event that represent the response of the client to a choose objective request.

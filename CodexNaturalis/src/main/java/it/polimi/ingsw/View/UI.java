@@ -3,9 +3,8 @@ package it.polimi.ingsw.View;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
-import it.polimi.ingsw.model.Card;
+import it.polimi.ingsw.Model.Card;
 
-import java.util.ArrayList;
 import java.util.Deque;
 
 public abstract class UI implements View{

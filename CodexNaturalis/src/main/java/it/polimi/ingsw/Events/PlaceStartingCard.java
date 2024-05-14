@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.StartingCard;
+import it.polimi.ingsw.Model.StartingCard;
 
 /**
  * Events that represent the action of placing the starting card

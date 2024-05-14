@@ -1,7 +1,5 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.model.PlayableCard;
-
 /**
  * Event that represent the client response to a draw card request
  */
