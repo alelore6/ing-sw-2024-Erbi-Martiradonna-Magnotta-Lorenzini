@@ -9,27 +9,37 @@ import java.io.InputStream;
 
 public class CustomFrame extends JFrame {
 
+    int x;
+    int y;
+    double scale;
+    private String fileToPrintPath = null;
+
     public CustomFrame(String s) {
         super(s);
     }
 
     public void paint(Graphics g) {
         //TODO paint method is called automatically when the frame is istantiated
-        // we have to understand how and when to call it correctly, for instance:
-        // to print a specific card and when to print it. There is the "repaint()" method
+        // we have to understand how and when to call it correctly. There is the "repaint()" method
         // that will be used to "refresh" the GUI accordingly, recalling the paint() method.
 
+        printRectangle(g);
+        printCard(g);
+    }
+
+    private void printRectangle(Graphics g){
         g.drawString("Hello", 200, 50);
-        int x = 200;
-        int y = 100;
+        int X = 200;
+        int Y = 100;
         int rectwidth = 50;
         int rectheight = 100;
         g.setColor(Color.red);
-        g.drawRect(x, y, rectwidth, rectheight);
+        g.drawRect(X, Y, rectwidth, rectheight);
+    }
 
-        //PLACEHOLDER TEST
+    private void printCard(Graphics g){
         ClassLoader cl = this.getClass().getClassLoader();
-        InputStream url = cl.getResourceAsStream("assets/images/cards/front/012.png"); //PLACEHOLDER TEST
+        InputStream url = cl.getResourceAsStream(fileToPrintPath);
         BufferedImage img= null;
         try {
             img = ImageIO.read(url);
@@ -37,10 +47,18 @@ public class CustomFrame extends JFrame {
             e.printStackTrace();
             return;
         }
-        double scale = 0.10;
-        int widthCard = (int) (993*scale);
-        int heightCard = (widthCard*2)/3;
-        g.drawImage(img, 30,30, widthCard,heightCard, null);
-        //PLACEHOLDER TEST
+
+        int width = (int) (993*scale);
+        int height = (int) (width /1.5); // 1.5 is the aspect ratio of a card
+        g.drawImage(img, 30,30, width, height, null);
+    }
+    public void setPrintPath(String s){
+        this.fileToPrintPath = s;
+    }
+
+    public void setCoord(int x, int y, double scale){
+        this.x = x;
+        this.y = y;
+        this.scale = scale;
     }
 }

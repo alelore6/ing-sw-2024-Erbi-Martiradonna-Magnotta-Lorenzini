@@ -64,3 +64,27 @@ DEBUG 10/05:
         Server non riesce a mandare gli eventi ma il client sì (boh) (in socket)
         mvListener sembra essere null con l'instanziazione due righe sopra (booh)
         Continuare a debuggare da Controller.addPlayerToLobby
+
+        paint() e repaint()
+        passare un argomento a paint
+
+        esame
+
+        socket accettazione connessione
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

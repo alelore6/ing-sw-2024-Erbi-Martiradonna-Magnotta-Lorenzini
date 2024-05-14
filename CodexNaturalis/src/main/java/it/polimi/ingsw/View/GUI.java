@@ -17,7 +17,7 @@ import static java.lang.String.valueOf;
 
 public class GUI extends UI{
 
-    private static JFrame f;
+    private static CustomFrame f;
     public GUI(ClientImpl client) {
         super(client);
     }
@@ -27,34 +27,22 @@ public class GUI extends UI{
 
     }
 
-
-    protected void printCard(int id, boolean isFacedown) { //TEST, DON'T KNOW IF IT MUST BE HERE
-        //boolean side = card.isFacedown;
-       // int id = card.getID();
+    protected void printCard(int id, boolean isFacedown, int x, int y, double scale) {
         String idString;
         if(id < 100){
             idString = valueOf(id);
-            idString = "0"+idString;
+            idString = "0" + idString;
+
             if(id<10){
-                idString = "0"+idString;
+                idString = "0" + idString;
             }
         }
         else{
             idString = valueOf(id);
         }
 
-        ClassLoader cl = this.getClass().getClassLoader();
-        InputStream url = cl.getResourceAsStream("assets/images/cards/" +(isFacedown ? "back" : "front") + "/" + idString +".png");
-        BufferedImage img = null;
-
-        try{
-            img = ImageIO.read(url);
-        }catch(IOException e){
-            e.printStackTrace();
-            return;
-        }
-
-
+        f.setPrintPath("assets/images/cards/" + (isFacedown ? "back" : "front") + "/" + idString + ".png");
+        f.setCoord(x, y, scale);
     }
 
     @Override
@@ -79,9 +67,10 @@ public class GUI extends UI{
                         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                         f.setSize(1280,720);
                         f.setVisible(true);
+                        printCard(102,false,100,100,0.6);
 
 //                        while(true){
-//                            //gestione eventi continuo
+//                            //gestione eventi continuo come nella TUI
 //                        }
                     }
                 }.start();
