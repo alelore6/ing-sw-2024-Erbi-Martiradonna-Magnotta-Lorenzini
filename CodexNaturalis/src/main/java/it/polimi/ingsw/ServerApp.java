@@ -123,6 +123,8 @@ public class ServerApp {
             while (true) {
                 try{
                     Socket socket = serverSocket.accept();
+
+                    //Nuovo threaad
                     ports[port - portSocket] = true;
 
                     ClientSkeleton clientSkeleton = new ClientSkeleton(socket);

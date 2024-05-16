@@ -50,7 +50,7 @@ public class MainFrame extends JFrame {
 
         int width = (int) (993*scale);
         int height = (int) (width /1.5); // 1.5 is the aspect ratio of a card
-        g.drawImage(img, 30,30, width, height, null);
+        g.drawImage(img, x, y, width, height, null);
     }
     public void setPrintPath(String s){
         this.fileToPrintPath = s;

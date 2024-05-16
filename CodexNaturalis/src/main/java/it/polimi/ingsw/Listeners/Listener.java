@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
@@ -9,6 +10,7 @@ import java.util.Queue;
 public abstract class Listener {
 
 
+    protected AckResponse ack = null;
 
 
     /**
@@ -37,6 +39,7 @@ public abstract class Listener {
      * @param event event to be added to the queue
      */
     public void addEvent(GenericEvent event){
-        eventQueue.add(event);
+        if(event instanceof AckResponse)    ack = (AckResponse) event;
+        else                                eventQueue.add(event);
     }
 }
