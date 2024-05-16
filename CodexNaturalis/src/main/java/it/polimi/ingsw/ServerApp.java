@@ -25,27 +25,16 @@ public class ServerApp {
         }
     }
 
-    private static int portSocket = 0;
+    private static final int portSocket = 2002;
+
+    // ????
+    //private static final int portRMI = 2003;
+
     // TODO: gestire la disconnessione di un client con socket
-    private static boolean[] ports = new boolean[4];
 
     public static void main(String[] args) throws RemoteException {
 
         Scanner terminal = new Scanner(System.in);
-        Integer port = -1;
-        for(boolean p : ports)   p = false;
-
-        port = -1;
-
-        while (port < 0 || port > 65532){
-            System.out.print("Enter server port number (between 0 and 65532 included): ");
-            try {
-                port = Integer.parseInt(terminal.next());
-            } catch (NumberFormatException e) {
-                System.out.println("It is not a valid number!!");
-            }
-        }
-        portSocket = port;
 
         // TODO: creare un thread per il ping ogni tot
 
@@ -61,41 +50,14 @@ public class ServerApp {
         rmiThread.start();
 
         // creo server socket
-        Thread socketThread1 = new Thread(() -> {
+        Thread socketThread = new Thread(() -> {
             try {
-                startSocket(portSocket + 0);
+                startSocket(portSocket);
             } catch (RemoteException e) {
                 System.err.println("Cannot start socket.\n");
             }
         });
-        socketThread1.start();
-
-        Thread socketThread2 = new Thread(() -> {
-            try {
-                startSocket(portSocket + 1);
-            } catch (RemoteException e) {
-                System.err.println("Cannot start socket.\n");
-            }
-        });
-        socketThread2.start();
-
-        Thread socketThread3 = new Thread(() -> {
-            try {
-                startSocket(portSocket + 2);
-            } catch (RemoteException e) {
-                System.err.println("Cannot start socket.\n");
-            }
-        });
-        socketThread3.start();
-
-        Thread socketThread4 = new Thread(() -> {
-            try {
-                startSocket(portSocket + 3);
-            } catch (RemoteException e) {
-                System.err.println("Cannot start socket.\n");
-            }
-        });
-        socketThread4.start();
+        socketThread.start();
 
         /*try {
             rmiThread.join();
@@ -104,7 +66,7 @@ public class ServerApp {
             System.err.println("No connection available.");
         }*/
 
-        System.out.println("Active on port " + port + "!");
+        System.out.println("Socket active on port " + portSocket + "!");
     }
 
 
@@ -124,18 +86,28 @@ public class ServerApp {
                 try{
                     Socket socket = serverSocket.accept();
 
-                    //Nuovo threaad
-                    ports[port - portSocket] = true;
+                    System.out.println("A client (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
-                    ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
+                    new Thread(){
+                        public void run(){
+                            try{
+                                ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
+                                server.register(clientSkeleton);
 
-                    server.register(clientSkeleton);
+                                while (true)    clientSkeleton.receive(server);
 
-                    System.out.println("A client is connected on port " + port + ".");
-
-                    while (true) {
-                        clientSkeleton.receive(server);
-                    }
+                            }catch(RemoteException e){
+                                System.err.println("Cannot receive client.");
+                            }finally {
+                                System.out.println("Closing connection.");
+                                try {
+                                    socket.close();
+                                } catch (IOException e){
+                                    System.err.println("Cannot close socket.");
+                                }
+                            }
+                        }
+                    }.start();
                 } catch (IOException e) {
                     System.err.println("Socket failed: " + e.getMessage() );
                 }
