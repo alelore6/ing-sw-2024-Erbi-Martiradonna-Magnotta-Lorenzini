@@ -73,7 +73,7 @@ DEBUG 10/05:
         socket accettazione connessione
 
 DEBUG E LAVORO (Alessandro e Gianluca):
-    -Modificare accept e receive (al posto del while true mettere un thread in modo che l'accept    (Ale)
+    ✅ Modificare accept e receive (al posto del while true mettere un thread in modo che l'accept    (Ale)
                                                     possa essere chiamata anche per altri client)
 
     -Fixare ack (Gianlu)

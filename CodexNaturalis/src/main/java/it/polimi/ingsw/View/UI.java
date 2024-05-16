@@ -30,4 +30,9 @@ public abstract class UI implements View{
     public ViewControllerListener getListener() {
         return listener;
     }
+
+    public abstract String setNickname();
+
+    public abstract void printErr(String s);
+    public abstract void printOut(String s);
 }

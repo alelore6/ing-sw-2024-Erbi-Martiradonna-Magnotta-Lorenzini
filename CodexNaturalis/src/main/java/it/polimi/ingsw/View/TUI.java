@@ -87,48 +87,28 @@ public class TUI extends UI {
         }
     }
 
-    public final int chooseView(){
-        printOut("Choose if you wanna play from CLI or GUI.\n(1) for CLI and (2) for GUI:");
-
-        return chooseInt(1,2);
+    public String setNickname() {
+        return setString("nickname");
     }
 
-    public final String chooseString(String s){
+    private final String setString(String s){
         // TODO: capire se alcuni caratteri non sono permessi (tipo ' ')
         //       e aggiornare di conseguenza
 
         boolean isValid = false;
-        String tempNickname = null;
+        String tempPassword = null;
 
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempNickname = in.next();
+            tempPassword = in.next();
 
             // Here we can put controls con the characters of the string inserted
             if(true) // se tutto ok allora
                 isValid = true;
         }
 
-        return tempNickname;
-    }
-
-    public final int chooseConnection(){
-
-        printOut("Choose between RMI (1) or Socket (2) connection type: ");
-
-        int networkType = chooseInt(1,2);
-
-        return networkType;
-    }
-
-    public final String setSocketIP(){
-
-        printOut("Enter server IP address: ");
-
-        String ip = in.next();
-
-        return ip;
+        return tempPassword;
     }
 
     public final void printOut(String s){
@@ -256,7 +236,7 @@ public class TUI extends UI {
 
                             break;
                         case JoinLobby e :
-                            newEvent = new SetPassword(client.getNickname(), chooseString("password"));
+                            newEvent = new SetPassword(client.getNickname(), setString("password"));
                             notifyListener(listener, newEvent);
                             printOut(newEvent.msgOutput());
 

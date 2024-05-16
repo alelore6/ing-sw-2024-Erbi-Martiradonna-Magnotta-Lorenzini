@@ -22,6 +22,20 @@ public class GUI extends UI{
 
     }
 
+    public String setNickname() {
+        return "";
+    }
+
+    @Override
+    public void printErr(String s) {
+
+    }
+
+    @Override
+    public void printOut(String s) {
+
+    }
+
     protected void printCard(int id, boolean isFacedown, int x, int y, double scale) {
         String idString;
         if(id < 100){

@@ -7,34 +7,38 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Scanner;
 
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
+import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.TUI;
 
 public class ClientApp {
-    public static void main( String[] args ) throws RemoteException, NotBoundException {
+    public static void main(String[] args) throws RemoteException, NotBoundException {
 
+        List<String> args_list = Arrays.stream(args).toList();
+
+        final Scanner in = new Scanner(System.in);
         final int SOCKET_PORT = ServerApp.SOCKET_PORT;
-        int networkType = -1;
-        int typeView = -1;
+        boolean isRMI = (args_list.contains("-rmi") ? true : false);
+        boolean isTUI = (args_list.contains("-tui") ? true : false);
 
-        TUI startingTUI = new TUI();
-
-        typeView    = startingTUI.chooseView();
-        networkType = startingTUI.chooseConnection();
-
-        if(networkType == 1){   //RMI
+        if(isRMI){   //RMI
 
             Registry registry = LocateRegistry.getRegistry(45656);
             Server server = (Server) registry.lookup("server");
 
-            ClientImpl client = new ClientImpl(server, typeView, startingTUI.chooseString("nickname"));
+            ClientImpl client = new ClientImpl(server, isTUI);
             client.run();
         }
         else{   //socket
-            ServerStub serverStub = new ServerStub(startingTUI.setSocketIP(), SOCKET_PORT);
-            ClientImpl client = new ClientImpl(serverStub, typeView, startingTUI.chooseString("nickname"));
+            System.out.println("Enter server IP address: ");
+            String ip = in.next();
+            ServerStub serverStub = new ServerStub(ip, SOCKET_PORT);
+            ClientImpl client = new ClientImpl(serverStub, isTUI);
             new Thread(){
                 @Override
                 public void run() {
@@ -43,12 +47,12 @@ public class ClientApp {
                         try {
                             receivedEvent = serverStub.receive(client);
                         } catch (RemoteException e) {
-                            startingTUI.printErr("Cannot receive from server.");
+                            client.getUserInterface().printErr("Cannot receive from server.");
 
                             try {
                                 serverStub.close();
                             } catch (RemoteException ex) {
-                                startingTUI.printErr("Cannot close connection with server.");
+                                client.getUserInterface().printErr("Cannot close connection with server.");
                             }
 
                             System.exit(1);
