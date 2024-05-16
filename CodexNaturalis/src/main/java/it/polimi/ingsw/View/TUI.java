@@ -1,7 +1,6 @@
 package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
-import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.Model.*;
@@ -123,20 +122,13 @@ public class TUI extends UI {
         return networkType;
     }
 
-    public final PrivateSocket setupSocket(){
-
-        int PORT_MAX = 65532;
+    public final String setSocketIP(){
 
         printOut("Enter server IP address: ");
 
-        // Do we suppose that this input is always correct?
         String ip = in.next();
 
-        printOut("Enter server port number (between 0 and " + String.valueOf(PORT_MAX) + " included): ");
-
-        int port = chooseInt(0, PORT_MAX);
-
-        return new PrivateSocket(ip, port);
+        return ip;
     }
 
     public final void printOut(String s){

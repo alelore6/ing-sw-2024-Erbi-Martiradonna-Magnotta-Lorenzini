@@ -25,7 +25,7 @@ public class ServerApp {
         }
     }
 
-    private static final int portSocket = 2002;
+    public static final int SOCKET_PORT = 2002;
 
     // ????
     //private static final int portRMI = 2003;
@@ -52,7 +52,7 @@ public class ServerApp {
         // creo server socket
         Thread socketThread = new Thread(() -> {
             try {
-                startSocket(portSocket);
+                startSocket(SOCKET_PORT);
             } catch (RemoteException e) {
                 System.err.println("Cannot start socket.\n");
             }
@@ -66,7 +66,7 @@ public class ServerApp {
             System.err.println("No connection available.");
         }*/
 
-        System.out.println("Socket active on port " + portSocket + "!");
+        System.out.println("Socket active on port " + SOCKET_PORT + "!");
     }
 
 

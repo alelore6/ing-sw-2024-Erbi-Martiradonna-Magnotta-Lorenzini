@@ -2,7 +2,6 @@ package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ClientImpl;
-import it.polimi.ingsw.Distributed.PrivateSocket;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.View;
@@ -23,9 +22,9 @@ public class ServerStub implements Server, Serializable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ServerStub(PrivateSocket pSocket) {
-        this.ip = pSocket.ip;
-        this.port = pSocket.port;
+    public ServerStub(String ip, int port) {
+        this.ip = ip;
+        this.port = port;
     }
 
     @Override
