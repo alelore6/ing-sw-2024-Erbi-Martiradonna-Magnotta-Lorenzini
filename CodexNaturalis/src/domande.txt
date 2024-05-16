@@ -65,25 +65,25 @@ DEBUG 10/05:
         mvListener sembra essere null con l'instanziazione due righe sopra (booh)
         Continuare a debuggare da Controller.addPlayerToLobby
 
-        paint() e repaint()
-        passare un argomento a paint
+paint() e repaint()
+passare un argomento a paint
 
-        esame
+esame
 
-        socket accettazione connessione
+socket accettazione connessione
 
 DEBUG E LAVORO (Alessandro e Gianluca):
-    ✅ Modificare accept e receive (al posto del while true mettere un thread in modo che l'accept    (Ale)
+
+    ✅ Modificare accept e receive (al posto del while true mettere un thread in modo che l'accept
                                                     possa essere chiamata anche per altri client)
 
-    -Fixare ack (Gianlu)
+    ✅ Fixare ack (Revisione)
 
-    -Per avviare il client e il server devo creare il file jar eseguibile in cui ci mettiamo i comandi per far partire il main,
-        (in main c'è String args[] che sono gli argomenti messi da jar)
+    ✅ Per avviare il client ora possiamo mettere dei parametri: -tui, -rmi
 
-    -Togliere la TUI di starting    (Ale)
+    ✅ Togliere la TUI di starting
 
-    -Fixare numplayer che resta a zero   (Gianlu)
+    🔜 Fixare numplayer che resta a zero   (Gianlu)
 
 
 
