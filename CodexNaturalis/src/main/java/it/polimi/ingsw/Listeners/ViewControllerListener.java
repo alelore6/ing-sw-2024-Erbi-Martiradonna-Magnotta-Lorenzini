@@ -11,8 +11,6 @@ import java.rmi.RemoteException;
 
 public class ViewControllerListener extends Listener {
 
-    private AckResponse ack;
-
     /**
      * attribute representing the client bound to this listener.
      * Every view has a different client and so, a specific listener.
