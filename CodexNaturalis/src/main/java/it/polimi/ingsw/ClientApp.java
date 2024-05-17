@@ -25,6 +25,7 @@ public class ClientApp {
         final int SOCKET_PORT = ServerApp.SOCKET_PORT;
         boolean isRMI = (args_list.contains("-rmi") ? true : false);
         boolean isTUI = (args_list.contains("-tui") ? true : false);
+        boolean isLocal = (args_list.contains("-local") ? true : false);
 
         if(isRMI){   //RMI
 
@@ -35,8 +36,15 @@ public class ClientApp {
             client.run();
         }
         else{   //socket
-            System.out.println("Enter server IP address: ");
-            String ip = in.next();
+            String ip;
+            if(isLocal){
+                ip = "localhost";
+            }
+            else{
+                System.out.println("Enter server IP address: ");
+                ip = in.next();
+            }
+
             ServerStub serverStub = new ServerStub(ip, SOCKET_PORT);
             ClientImpl client = new ClientImpl(serverStub, isTUI);
             new Thread(){
