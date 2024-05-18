@@ -1,13 +1,15 @@
 package it.polimi.ingsw.Model;
 
-public abstract class StartingCard extends Card{
+public class StartingCard extends Card{
 
     public Resource[] resource;
 
     public StartingCard(int ID){
         super(ID);
     }
-    public StartingCard getStartingCard(){
+
+    @Override
+    public Card getCard() {
         return this;
     }
 }
