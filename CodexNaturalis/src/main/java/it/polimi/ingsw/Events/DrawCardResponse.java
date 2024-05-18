@@ -4,7 +4,6 @@ package it.polimi.ingsw.Events;
  * Event that represent the client response to a draw card request
  */
 public class DrawCardResponse extends GenericEvent{
-    private static final long serialVersionUID = 7L;
     /**
      * number that represent the chosen source of the draw:
      * 0,1,2,3 represent the respective card in the table center

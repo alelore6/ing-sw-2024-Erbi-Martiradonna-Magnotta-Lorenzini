@@ -6,7 +6,6 @@ import java.util.HashMap;
  * Event that represent the end of a player's turn
  */
 public class EndTurn extends GenericEvent{
-    private static final long serialVersionUID = 9L;
     /**
      * current rankings
      */

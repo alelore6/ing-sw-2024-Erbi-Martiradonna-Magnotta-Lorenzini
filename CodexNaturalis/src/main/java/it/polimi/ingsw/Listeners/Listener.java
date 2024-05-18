@@ -39,9 +39,7 @@ public abstract class Listener {
      * @param event event to be added to the queue
      */
     public void addEvent(GenericEvent event){
-        if(event instanceof AckResponse){
-            ack = (AckResponse) event;
-        }
-        else  { eventQueue.add(event);}
+        if(event instanceof AckResponse)    ack = (AckResponse) event;
+        else                                eventQueue.add(event);
     }
 }

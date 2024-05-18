@@ -6,7 +6,6 @@ import java.util.HashMap;
  * Event that represent the end of the game and its final rankings
  */
 public class FinalRankings extends GenericEvent{
-    private static final long serialVersionUID = 11L;
     /**
      * represent a map between every player and his points
      */

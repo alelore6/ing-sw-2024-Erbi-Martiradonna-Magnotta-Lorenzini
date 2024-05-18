@@ -8,7 +8,6 @@ import java.util.ArrayList;
  * Event that represent the model request to choose the color of the token of the player
  */
 public class SetTokenColorRequest extends GenericEvent{
-    private static final long serialVersionUID = 21L;
     /**
      * the list of available colors
      */

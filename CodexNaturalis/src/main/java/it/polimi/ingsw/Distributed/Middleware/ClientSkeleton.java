@@ -32,10 +32,7 @@ public class ClientSkeleton implements Client {
     @Override
     public void update(GenericEvent e) throws RemoteException {
         try {
-            System.out.println("Sending  "+e.msgOutput()+"  to client");
             out.writeObject(e);
-            out.flush();
-            System.out.println("Event "+e.msgOutput()+"  sent to client");
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");
         }
@@ -53,9 +50,7 @@ public class ClientSkeleton implements Client {
         //not sure of the type
         GenericEvent event;
         try {
-            System.out.println("Waiting to receive event from client...");
             event = (GenericEvent) in.readObject();
-            System.out.println("Received event from client.");
 
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);

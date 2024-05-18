@@ -4,7 +4,6 @@ package it.polimi.ingsw.Events;
  * Event that represent the notification that it's the turn of a player
  */
 public class StartTurn extends GenericEvent{
-    private static final long serialVersionUID = 24L;
     /**
      * Constructor
      * @param nickname the receiver of the event
