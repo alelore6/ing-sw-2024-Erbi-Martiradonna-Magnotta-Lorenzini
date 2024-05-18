@@ -59,9 +59,9 @@ public class Controller {
 
 
         for(int i = 0; i < mvListeners.size(); i++){
-            //TODO clonare il model
+            //TODO clonare il model ??
             //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-            mvListeners.get(i).addEvent(new StartGame(model.clone(),lobby.getPlayers().get(i)));
+            mvListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i), model));
         }
 
         getGame().startGame();
