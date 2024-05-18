@@ -2,10 +2,8 @@ package it.polimi.ingsw.Model;
 
 import com.google.gson.Gson;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,17 +20,22 @@ public class ObjectiveDeck {
     public ObjectiveDeck() {
         NCards = 16;
 
-        Gson gson = new Gson();
+        try {
+            InputStream inputStream1 = getClass().getClassLoader().getResourceAsStream("assets/data/objective_cards_1.json");
+            InputStream inputStream2 = getClass().getClassLoader().getResourceAsStream("assets/data/objective_cards_2.json");
+            if (inputStream1 == null || inputStream2 == null) {
+                throw new FileNotFoundException("File not found!");
+            }
+            Reader reader1 = new InputStreamReader(inputStream1);
+            Reader reader2 = new InputStreamReader(inputStream2);
 
-        try{
-            FileReader reader1 = new FileReader("src/main/resources/assets/data/objective_cards_1.json");
-            FileReader reader2 = new FileReader("src/main/resources/assets/data/objective_cards_2.json");
+            Gson gson = new Gson();
 
             temp_deck1 = gson.fromJson(reader1, ObjectiveCard1[].class);
             temp_deck2 = gson.fromJson(reader2, ObjectiveCard2[].class);
+
         } catch (IOException e) {
-            // This is only for debugging: it'll be removed later.
-            System.out.println("FILE not found!");
+            System.out.println("Error with JSON.");
         }
 
         assert temp_deck1 != null;

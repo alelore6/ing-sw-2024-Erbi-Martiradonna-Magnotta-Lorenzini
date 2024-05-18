@@ -24,9 +24,6 @@ public class GoldCard extends PlayableCard{
     public void flip(){
         isFacedown = !isFacedown;
     }
-    public GoldCard getCard(){
-        return this;
-    }
 
     public Resource getRPoints() {
         return RPoints;

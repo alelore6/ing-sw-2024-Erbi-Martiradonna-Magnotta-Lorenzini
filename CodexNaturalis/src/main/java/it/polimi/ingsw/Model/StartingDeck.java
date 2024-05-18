@@ -3,8 +3,7 @@ package it.polimi.ingsw.Model;
 import com.google.gson.Gson;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 public class StartingDeck extends Deck{
 
@@ -13,12 +12,19 @@ public class StartingDeck extends Deck{
 
     public StartingDeck() {
 
-        Gson gson = new Gson();
+        try {
+            InputStream inputStream = getClass().getClassLoader().getResourceAsStream("assets/data/starting_cards.json");
+            if (inputStream == null) {
+                throw new FileNotFoundException("File not found!");
+            }
+            Reader reader = new InputStreamReader(inputStream);
 
-        try (FileReader reader = new FileReader("src/main/resources/assets/data/starting_cards.json")) {
+            Gson gson = new Gson();
+
             cards = gson.fromJson(reader, StartingCard[].class);
+
         } catch (IOException e) {
-            System.out.println("Error, not found.");
+            System.out.println("Error with JSON.");
         }
 
         cards = (StartingCard[]) shuffle(cards);

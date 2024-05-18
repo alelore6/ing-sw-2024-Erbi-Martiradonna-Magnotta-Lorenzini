@@ -7,9 +7,4 @@ public class StartingCard extends Card{
     public StartingCard(int ID){
         super(ID);
     }
-
-    @Override
-    public Card getCard() {
-        return this;
-    }
 }
