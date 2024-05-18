@@ -15,17 +15,19 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl extends UnicastRemoteObject implements Runnable, Client, Serializable{
+public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
 
     protected UI userInterface;
     private String nickname;
     private ServerStub serverStub;
+    final boolean clientFasullo;
 
     public ClientImpl(Server server, boolean isTUI) throws RemoteException {
         super();
 
         userInterface = (isTUI ? new TUI(this) : new GUI(this));
         this.nickname = userInterface.setNickname();
+        this.clientFasullo = false;
 
         initialize(server);
     }
@@ -33,11 +35,13 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
     public ClientImpl(int port, Server server) throws RemoteException {
         super(port);
         initialize(server);
+        this.clientFasullo = false;
     }
 
     public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server) throws RemoteException {
         super(port, csf, ssf);
         initialize(server);
+        this.clientFasullo = false;
     }
 
     // This constructor is called only on the server to create a pseudo ClientImpl
@@ -45,6 +49,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
     public ClientImpl(String nickname) throws RemoteException {
         super();
         this.nickname = nickname;
+        this.clientFasullo = true;
     }
 
     private void initialize(Server server) throws RemoteException {
@@ -54,10 +59,6 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
             userInterface.notifyListener(userInterface.getListener(), new ClientRegister(this));
             userInterface.getListener().handleEvent();
         }
-    }
-
-    public String getNickname() {
-        return nickname;
     }
 
     protected void setNickname(String nickname) {
@@ -81,4 +82,21 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
     public UI getUserInterface() {
         return userInterface;
     }
+
+
+
+//    @Override
+//    public void sendObject(GenericEvent obj) throws RemoteException {
+//
+//    }
+//
+//    @Override
+//    public GenericEvent receiveObject() throws RemoteException {
+//        return null;
+//    }
+    @Override
+    public String getNickname() {
+        return nickname;
+    }
 }
+

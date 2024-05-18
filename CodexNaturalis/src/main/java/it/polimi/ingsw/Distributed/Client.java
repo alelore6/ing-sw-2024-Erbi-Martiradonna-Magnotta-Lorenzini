@@ -11,4 +11,6 @@ public interface Client extends Remote{
 
 
     void update(GenericEvent e) throws RemoteException;
+
+    public String getNickname() throws RemoteException;
 }

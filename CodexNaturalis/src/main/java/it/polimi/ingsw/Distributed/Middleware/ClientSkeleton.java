@@ -14,7 +14,7 @@ public class ClientSkeleton implements Client {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public String nickname;
+    public String nickname = null;
 
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {
@@ -42,6 +42,11 @@ public class ClientSkeleton implements Client {
         //socket: server stub is always reading (same as receive() here)
     }
 
+    @Override
+    public String getNickname() {
+        return nickname;
+    }
+
 
     public void receive(ServerImpl server) throws RemoteException {
         //socket: receive from server stub update()
@@ -63,4 +68,6 @@ public class ClientSkeleton implements Client {
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
+
+
 }

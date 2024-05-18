@@ -2,6 +2,7 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
+import it.polimi.ingsw.Events.ChooseObjectiveRequest;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
 
@@ -15,6 +16,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
+    int clientSkeletonIndex = 0; //keeps track  of clientskeletons without nickname
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -22,7 +24,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     //server implementation with a certain RMI port
-    protected ServerImpl(int port) throws RemoteException {
+    public ServerImpl(int port) throws RemoteException {
         super(port);
     }
 
@@ -38,6 +40,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 //add a sequential number at the end of the nickname if already present
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
             }
+            clientSkeletons.get(clientSkeletonIndex).setNickname(((ClientImpl)client).getNickname());
             CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
             controller.addPlayerToLobby(((ClientImpl) client).getNickname());
@@ -62,7 +65,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         }else {
             //client has responded to a request to modify the model
             for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
-                if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname())) {
+                if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(client.getNickname())) {
                     controller.updateModel(event, (ClientSkeleton) client, CLIENT_IMPL_LIST.get(i).getNickname());
                 }
             }
@@ -79,11 +82,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         for(ClientSkeleton client : clientSkeletons)    sendEvent(client, event);
+        for(ClientImpl client : CLIENT_IMPL_LIST){
+            if(!client.clientFasullo){
+                client.sendEvent(event);
+            }
+        }
     }
 
-    public void sendEvent(ClientSkeleton client, GenericEvent event) throws RemoteException {
-        if (client != null)
-            client.update(event);
-        else throw new RemoteException("Cannot send event: clientSkeleton not found.\n");
+    public void sendEvent(Client client, GenericEvent event) throws RemoteException {
+        client.update(event);
     }
+
 }
