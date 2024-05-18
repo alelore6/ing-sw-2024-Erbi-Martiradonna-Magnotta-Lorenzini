@@ -22,13 +22,6 @@ public class ObjectiveCard2 extends ObjectiveCard {
         for (Resource k : Resource.values()) {
             objectivecard2Map.put(k, 0);
         }
-
-        Gson gson = new Gson();
-        try (FileReader reader = new FileReader("src/main/resources/assets/data/objective_cards.json")) {
-            ObjectiveCard2[] oCards = gson.fromJson(reader, ObjectiveCard2[].class); //
-        } catch (IOException e) {
-           System.out.println("Error, not found.");
-        }
     }
     public int getpoints() {
         return points;

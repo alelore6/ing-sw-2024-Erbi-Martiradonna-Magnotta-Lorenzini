@@ -13,14 +13,6 @@ public class ObjectiveCard1 extends ObjectiveCard{
     private Color[] cardColors; //Colore 1, 2 e 3
     public ObjectiveCard1(int ID) throws FileNotFoundException {
         super(ID);
-        Gson gson = new Gson();
-
-        try{
-            FileReader reader = new FileReader("src/main/resources/assets/data/objective_cards.json");
-            ObjectiveCard1[] oCards = gson.fromJson(reader, ObjectiveCard1[].class); //
-        } catch(IOException e) {
-            System.out.println("Error, not found.");
-        }
     }
 
     public int getpoints() {
