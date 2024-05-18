@@ -55,7 +55,7 @@ public class Lobby {
                 if(players.get(i).equals(nickname)){
                     players.remove(i);
                     isRemoved = true;
-                    numPlayers--;
+
 
                     break;
                 }
@@ -81,7 +81,7 @@ public class Lobby {
      * @return the number of  players for the game
      */
     public int getNumPlayers(){
-        return players.size();
+        return numPlayers;
     }
 
     /**

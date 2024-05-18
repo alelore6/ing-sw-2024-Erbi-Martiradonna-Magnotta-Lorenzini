@@ -41,22 +41,23 @@ public class ModelViewListener extends Listener {
             public void run() {
 
                 while(true) {
-                    if(ack == null && !getEventQueue().isEmpty()) {
-                        GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
+                    synchronized (lock_queue) {
+                        if (ack == null && !getEventQueue().isEmpty()) {
+                            GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
-                        try {
-                            server.sendEventToAll(currentEvent);
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                            try {
+                                server.sendEventToAll(currentEvent);
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
+                        } else if (!getEventQueue().isEmpty()) { //ack is not null
+                            try {
+                                server.sendEventToAll(ack);
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
+                            ack = null;
                         }
-                    }
-                    else if (!getEventQueue().isEmpty()) { //ack is not null
-                        try {
-                            server.sendEventToAll(ack);
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
-                        }
-                        ack = null;
                     }
                 }
             }
