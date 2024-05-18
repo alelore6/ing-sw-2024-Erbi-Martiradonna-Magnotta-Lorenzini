@@ -86,6 +86,8 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     🔜 Fixare numplayer che resta a zero   (Gianlu)
 
 
+    - se il server non è appena stato avviato non vengono inviati gli eventi???
+
 
 
 

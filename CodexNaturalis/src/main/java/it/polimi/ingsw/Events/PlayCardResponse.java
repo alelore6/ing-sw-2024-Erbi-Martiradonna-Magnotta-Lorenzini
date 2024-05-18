@@ -6,7 +6,6 @@ import it.polimi.ingsw.Model.Card;
  * Event that represent the response to a request to play a card
  */
 public class PlayCardResponse extends GenericEvent{
-    private static final long serialVersionUID = 17L;
     /**
      * the card chosen that will be played
      */

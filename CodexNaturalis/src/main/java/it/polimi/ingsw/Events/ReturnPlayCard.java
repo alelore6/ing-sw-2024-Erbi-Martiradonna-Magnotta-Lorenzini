@@ -7,7 +7,6 @@ import it.polimi.ingsw.Model.CurrentResources;
  * Event that represent the updated current resource and displayed cards after a play
  */
 public class ReturnPlayCard extends GenericEvent{
-    private static final long serialVersionUID = 18L;
     /**
      * the displayed cards updated
      */

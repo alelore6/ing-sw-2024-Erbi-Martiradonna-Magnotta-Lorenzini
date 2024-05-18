@@ -8,7 +8,6 @@ import it.polimi.ingsw.Model.PlayableCard;
  * Event that represent the model request to play a card to a player
  */
 public class PlayCardRequest extends GenericEvent {
-    private static final long serialVersionUID = 16L;
     /**
      * the cards in the hand of the player that can be played
      */

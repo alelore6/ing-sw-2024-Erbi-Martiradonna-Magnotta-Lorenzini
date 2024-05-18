@@ -6,7 +6,6 @@ import java.io.Serializable;
  * Generic event that represent an action that it's used in the client-server communication
  */
 public abstract class GenericEvent implements Serializable {
-    private static final long serialVersionUID = 1L;
     /**
      * message that describe the event
      */
