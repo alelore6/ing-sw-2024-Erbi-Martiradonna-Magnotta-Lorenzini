@@ -41,15 +41,18 @@ public class ViewControllerListener extends Listener {
             @Override
             public void run() {
                 while(true) {
-                    if(!getEventQueue().isEmpty()) {
-                        GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
-
-                        try {
-                            ((ClientImpl) client).sendEvent(currentEvent);
-                        } catch (RemoteException e) {
-                            throw new RuntimeException(e);
+                    synchronized(lock_queue){
+                        if(!getEventQueue().isEmpty()) {
+                            GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
+                            System.out.println("PRESO EVENTO: " + currentEvent.msgOutput());
+                            try {
+                                ((ClientImpl) client).sendEvent(currentEvent);
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
+
                 }
             }
         }.start();

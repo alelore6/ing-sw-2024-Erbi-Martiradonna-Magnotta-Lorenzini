@@ -9,16 +9,9 @@ import java.util.Deque;
 
 public abstract class UI implements View{
 
-    protected Deque<GenericEvent> inputMessages;
+    protected Deque<GenericEvent> inputEvents;
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
-
-    // WATCH OUT! This constructor allows the creation of a TUI w/o having created the actual player
-    // The nickname here is not the player's but a test one.
-    public UI() {
-        this.client = null;
-        this.listener = null;
-    }
 
     public UI(ClientImpl client) {
         this.client = client;

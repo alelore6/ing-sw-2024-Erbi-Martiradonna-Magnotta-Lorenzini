@@ -9,6 +9,7 @@ import java.util.Queue;
 
 public abstract class Listener {
 
+    protected Object lock_queue = new Object();
 
     protected AckResponse ack = null;
 
@@ -40,6 +41,10 @@ public abstract class Listener {
      */
     public void addEvent(GenericEvent event){
         if(event instanceof AckResponse)    ack = (AckResponse) event;
-        else                                eventQueue.add(event);
+        else{
+            synchronized(lock_queue){
+                eventQueue.add(event);
+            }
+        }
     }
 }

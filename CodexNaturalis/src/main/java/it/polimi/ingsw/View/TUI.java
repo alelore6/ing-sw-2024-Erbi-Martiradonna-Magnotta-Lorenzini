@@ -2,7 +2,6 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
-import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.Model.*;
 
 import java.io.PrintStream;
@@ -14,28 +13,15 @@ public class TUI extends UI {
     private final PrintStream out;
     private final PrintStream outErr;
     private volatile boolean isActive;
-
-
-    public TUI() {
-        super();
-        in = new Scanner(System.in);
-        out = new PrintStream(System.out, true);
-        outErr = new PrintStream(System.err, true);
-        inputMessages = new LinkedList<>();
-        isActive = true;
-    }
+    private Object lock_events = new Object();
 
     public TUI(ClientImpl client) {
         super(client);
         in = new Scanner(System.in);
         out = new PrintStream(System.out, true);
         outErr = new PrintStream(System.err, true);
-        inputMessages = new LinkedList<>();
+        inputEvents = new LinkedList<>();
         isActive = true;
-    }
-
-    private final GenericEvent pollMsg(){
-        return this.inputMessages.poll();
     }
 
     // This method allows to receive the user's choice between min and max included.
@@ -130,7 +116,9 @@ public class TUI extends UI {
     }
 
     public final void update(GenericEvent e){
-        inputMessages.add(e);
+        synchronized(lock_events){
+            inputEvents.add(e);
+        }
     }
 
     protected void printCard(Card card){
@@ -176,9 +164,13 @@ public class TUI extends UI {
             @Override
             public void run() {
                 while(isActive){
-                    if(inputMessages.isEmpty())   continue;
+                    GenericEvent ev = null;
 
-                    GenericEvent ev = inputMessages.poll();
+                    synchronized(lock_events){
+                        if(inputEvents.isEmpty())   continue;
+
+                        ev = inputEvents.poll();
+                    }
 
                     // Ignore all other player's events
                     if(!ev.nickname.equals(client.getNickname())) continue;
@@ -252,7 +244,9 @@ public class TUI extends UI {
                             break;
                         case AckResponse ack :
                             if(!ack.ok){
-                                inputMessages.addFirst(ack.event);
+                                synchronized(lock_events){
+                                    inputEvents.addFirst(ack.event);
+                                }
                             }
 
                             break;

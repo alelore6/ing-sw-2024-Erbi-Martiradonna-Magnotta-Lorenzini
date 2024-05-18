@@ -3,7 +3,6 @@ package it.polimi.ingsw.View;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Graphical.MainFrame;
-import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.Model.Card;
 
 import javax.swing.*;
@@ -18,7 +17,7 @@ public class GUI extends UI{
 
     public GUI(ClientImpl client) {
         super(client);
-        inputMessages = new LinkedList<>();
+        inputEvents = new LinkedList<>();
         f = new MainFrame("CodexNaturalis");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(1280,720);
@@ -68,7 +67,7 @@ public class GUI extends UI{
 
     @Override
     public void update(GenericEvent e){
-        inputMessages.add(e);
+        inputEvents.add(e);
     }
 
     @Override
@@ -82,8 +81,8 @@ public class GUI extends UI{
             public void run() {
 
                 while(true){
-                    if(inputMessages.isEmpty())   continue;
-                    GenericEvent ev = inputMessages.poll();
+                    if(inputEvents.isEmpty())   continue;
+                    GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
                     if(!ev.nickname.equals(client.getNickname())) continue;
 

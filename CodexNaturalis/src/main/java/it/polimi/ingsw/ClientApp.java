@@ -54,7 +54,7 @@ public class ClientApp {
                     while (true) {
                         GenericEvent receivedEvent = null;
                         try {
-                            serverStub.receive(client);
+                            receivedEvent = serverStub.receive(client);
                         } catch (RemoteException e) {
                             client.getUserInterface().printErr("Cannot receive from server.");
 
