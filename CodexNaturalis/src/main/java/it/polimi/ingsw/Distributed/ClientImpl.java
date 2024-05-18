@@ -61,7 +61,8 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         }
     }
 
-    protected void setNickname(String nickname) {
+    @Override
+    public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 

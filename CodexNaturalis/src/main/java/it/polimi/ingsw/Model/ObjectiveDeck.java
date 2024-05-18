@@ -21,6 +21,7 @@ public class ObjectiveDeck {
 
     public ObjectiveDeck() {
         NCards = 16;
+
         Gson gson = new Gson();
 
         try{

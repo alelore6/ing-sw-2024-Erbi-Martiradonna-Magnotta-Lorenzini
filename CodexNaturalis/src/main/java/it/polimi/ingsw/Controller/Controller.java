@@ -38,7 +38,7 @@ public class Controller {
     /**
      * the listeners that allow the exchange of information between the MVC pattern.
      */
-    private ArrayList<ModelViewListener> mvListeners = new ArrayList<ModelViewListener>();
+    private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
 
     /**
      * Constructor
@@ -55,13 +55,13 @@ public class Controller {
     protected void createGame(){
         String[] nicknames = new String[lobby.getPlayers().size()]; //crea l'array di nicknames dei player
         nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
-        model = new Game(lobby.getNumPlayers(), nicknames, mvListeners);
+        model = new Game(lobby.getNumPlayers(), nicknames, MVListeners);
 
 
-        for(int i = 0; i < mvListeners.size(); i++){
+        for(int i = 0; i < MVListeners.size(); i++){
             //TODO clonare il model ??
             //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-            mvListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i), model));
+            MVListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i), model));
         }
 
         getGame().startGame();
@@ -86,8 +86,6 @@ public class Controller {
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener) throws RemoteException {
         boolean ok = false;
 
-        mvListener.handleEvent();
-
         //check game hasn't started
         if (model == null) {
             if (lobby.getNumPlayers() == 0) {
@@ -99,7 +97,7 @@ public class Controller {
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
             else {
                 mvListener.addEvent(new JoinLobby(nickname));
-                mvListeners.add(mvListener);
+                // MVListeners.add(mvListener);
                 if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                     createGame();
                 }
@@ -139,8 +137,8 @@ public class Controller {
                         //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack
-                        for(int i = 0; i < mvListeners.size(); i++){
-                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        for(int i = 0; i < MVListeners.size(); i++){
+                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                         }
                         //send updated handcards
                         getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
@@ -154,8 +152,8 @@ public class Controller {
                 else if(chosenPosition == 4){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        for(int i = 0; i < mvListeners.size(); i++){
-                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        for(int i = 0; i < MVListeners.size(); i++){
+                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                         }
                         getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
@@ -166,8 +164,8 @@ public class Controller {
                 else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        for(int i = 0; i < mvListeners.size(); i++){
-                            mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                        for(int i = 0; i < MVListeners.size(); i++){
+                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                         }
                         getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
@@ -180,8 +178,8 @@ public class Controller {
             else if(event instanceof PlayCardResponse){
                 try {
                     getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                    for(int i = 0; i < mvListeners.size(); i++){
-                        mvListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                    for(int i = 0; i < MVListeners.size(); i++){
+                        MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
                     }
                     getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
@@ -237,9 +235,9 @@ public class Controller {
 
     public ModelViewListener getMVListenerByNickname(String nickname){
         try {
-            for(int i = 0; i < getGame().getPlayers().length; i++){
-                if(getGame().getPlayers()[i].getNickname().equals(nickname)){
-                    return mvListeners.get(i);
+            for(int i = 0; i < MVListeners.size(); i++){
+                if(MVListeners.get(i).client.getNickname().equals(nickname)){
+                    return MVListeners.get(i);
                }
             }
             throw new RuntimeException();
@@ -250,7 +248,12 @@ public class Controller {
 
     }
 
-    public ArrayList<ModelViewListener> getMvListeners() {
-        return mvListeners;
+    public ArrayList<ModelViewListener> getMVListeners() {
+        return MVListeners;
+    }
+
+    public void addMVListener(ModelViewListener listener) throws RemoteException {
+        MVListeners.add(listener);
+        listener.handleEvent();
     }
 }

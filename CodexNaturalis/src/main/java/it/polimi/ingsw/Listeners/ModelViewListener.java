@@ -13,7 +13,7 @@ import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
 
-    private final Client client;
+    public final Client client;
     /**
      * the server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client

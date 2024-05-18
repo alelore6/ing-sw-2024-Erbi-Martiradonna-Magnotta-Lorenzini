@@ -2,7 +2,6 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Events.ChooseObjectiveRequest;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ModelViewListener;
@@ -41,18 +40,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 //add a sequential number at the end of the nickname if already present
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
             }
-            clientSkeletons.get(clientSkeletonIndex).setNickname(((ClientImpl)client).getNickname());
             CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
-            if (!((ClientImpl)client).clientFasullo) {
-                controller.getMvListeners().add(new ModelViewListener(this, (client)));
+            if (!((ClientImpl) client).clientFasullo) {
+                controller.getMVListeners().add(new ModelViewListener(this, client));
             }
             controller.addPlayerToLobby(((ClientImpl) client).getNickname(), controller.getMVListenerByNickname(((ClientImpl) client).getNickname()));
 
         }
         else{
             clientSkeletons.add((ClientSkeleton) client);
-            controller.getMvListeners().add(new ModelViewListener(this, (client)));
         }
     }
 
@@ -67,6 +64,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
         if(event instanceof ClientRegister){
+            client.setNickname(event.nickname);
+            controller.addMVListener(new ModelViewListener(this, client));
             controller.updateModel(event, (ClientSkeleton) client, event.nickname);
         }else {
             //client has responded to a request to modify the model
