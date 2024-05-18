@@ -59,8 +59,9 @@ public class Controller {
 
 
         for(int i = 0; i < mvListeners.size(); i++){
+            //TODO clonare il model
             //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-            mvListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i)));
+            mvListeners.get(i).addEvent(new StartGame(model.clone(),lobby.getPlayers().get(i)));
         }
 
         getGame().startGame();
@@ -122,9 +123,6 @@ public class Controller {
      * @param nickname the player that sent the event
      */
     public void updateModel(GenericEvent event, ClientSkeleton client, String nickname) throws RemoteException {
-            //TODO ackresponse necessario anche dove non lancio eccezioni (tipo qua)? Non credo
-            // qui anche no perchè non dovrebbe mai dare errore
-            // ma in settokencolor si perchè può avere errori (setToken() ritorna un booleano -> usa quello)
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }
@@ -194,6 +192,7 @@ public class Controller {
 
             else if(event instanceof SetTokenColorResponse){
                getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
+               //TODO serve ackResponse
             }
             else if(event instanceof PlaceStartingCard){
                 try {

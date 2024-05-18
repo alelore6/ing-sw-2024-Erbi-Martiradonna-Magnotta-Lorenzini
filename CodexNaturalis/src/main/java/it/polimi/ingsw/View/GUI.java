@@ -21,9 +21,8 @@ public class GUI extends UI{
         f = new MainFrame("CodexNaturalis");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(1280,720);
-        f.pack();
         f.setVisible(true);
-        //TODO aggiungere sfondo e levare print card
+        //TODO sistemare mainframe: aggiungere sfondo e levare print card
         printCard(102,false,100,100,0.6);
     }
 
@@ -34,6 +33,12 @@ public class GUI extends UI{
     }
 
     public String setNickname() {
+        /*
+        String s=null;
+        while(s==null) {
+            s = (String) JOptionPane.showInputDialog(f, "Choose your nickname:", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
+        }
+        return s;*/
         return "test";
     }
 
@@ -74,7 +79,8 @@ public class GUI extends UI{
     public void notifyListener(GenericEvent e) {
         listener.addEvent(e);
     }
-
+    //nickname settato in setNickname dal costruttore di clientimpl
+    //password risposta a join lobby
     @Override
     public void run() {
         SwingUtilities.invokeLater(new Runnable() {
@@ -91,14 +97,17 @@ public class GUI extends UI{
                     int n;
                     GenericEvent newEvent;
                     switch(ev){
-                        /*
+
                         case NumPlayersRequest e :
-                            // usare showOptionDialog per input
-
-                            //newEvent = new NumPlayersResponse( , client.getNickname());
-                            //notifyListener(listener, newEvent);
+                            Object[] possibilities = {"2", "3", "4"};
+                            String s=null;
+                            while(s==null) {
+                                s = (String) JOptionPane.showInputDialog(f, ev.msgOutput(), "Set num players", JOptionPane.PLAIN_MESSAGE, null, possibilities, "4");
+                            }
+                            newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
+                            notifyListener(newEvent);
                             break;
-
+                        /*
                         case ChooseObjectiveRequest e :
                             //mostrare dati evento aggionando il frame
                             //quando decisione presa mando evento risposta
@@ -117,10 +126,13 @@ public class GUI extends UI{
                             break;
 
                         case JoinLobby e :
+                            //rispondere con password
                             break;
 
                         case PlaceStartingCard e :
                             break;
+
+                        case
                         */
                         default:
                             //solo messaggio da mostrare
