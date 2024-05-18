@@ -7,6 +7,7 @@ import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
  * if it's negative the action will be redone.
  */
 public class AckResponse extends GenericEvent{
+    private static final long serialVersionUID = 2L;
     /**
      * the result of the action
      */

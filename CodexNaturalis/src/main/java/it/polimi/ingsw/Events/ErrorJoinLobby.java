@@ -4,6 +4,7 @@ package it.polimi.ingsw.Events;
  * Event that represent an error in joining the pre-game lobby
  */
 public class ErrorJoinLobby extends GenericEvent {
+    private static final long serialVersionUID = 10L;
     /**
      * Constructor
      * @param nickname the player that receives the event

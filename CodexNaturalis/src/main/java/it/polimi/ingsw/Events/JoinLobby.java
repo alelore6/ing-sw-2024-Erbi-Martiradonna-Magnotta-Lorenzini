@@ -4,6 +4,7 @@ package it.polimi.ingsw.Events;
  * Event that represent the successful join of the pre-game lobby of a player
  */
 public class JoinLobby extends GenericEvent{
+    private static final long serialVersionUID = 12L;
     /**
      * Constructor
      * @param nickname the player that has joined the lobby

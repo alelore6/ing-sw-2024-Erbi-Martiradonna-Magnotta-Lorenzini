@@ -9,7 +9,7 @@ public interface View extends Runnable {
 
     void update(GenericEvent e);
 
-    void notifyListener(GenericEvent e);
+    void notifyListener(ViewControllerListener listener, GenericEvent e);
 
     void run();
 }

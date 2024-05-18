@@ -51,7 +51,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
         if(server instanceof ServerStub){
             serverStub = (ServerStub) server;
             serverStub.register(this);
-            userInterface.notifyListener(new ClientRegister(this));
+            userInterface.notifyListener(userInterface.getListener(), new ClientRegister(this));
             userInterface.getListener().handleEvent();
         }
     }
