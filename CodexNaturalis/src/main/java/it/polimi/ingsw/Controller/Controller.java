@@ -129,7 +129,6 @@ public class Controller {
             }
 
             else if(event instanceof DrawCardResponse){
-                //TODO mandare evento returnDrawCard solo al giocatore che compie l'azione quando esito positivo
                 int chosenPosition = ((DrawCardResponse)event).position;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
@@ -173,6 +172,7 @@ public class Controller {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
                     }
                 }
+
             }
 
             else if(event instanceof PlayCardResponse){
@@ -188,16 +188,23 @@ public class Controller {
             }
 
             else if(event instanceof SetTokenColorResponse){
-               getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
-               //TODO serve ackResponse
+               boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
+                if (ok){
+                    for(int i = 0; i < MVListeners.size(); i++){
+                        MVListeners.get(i).addEvent(new AckResponse(ok, nickname, event));
+                    }
+                }
+                else getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
                     getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
+                    for(int i = 0; i < MVListeners.size(); i++){
+                        MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
+                    }
                 } catch (WrongPlayException e) {
-                    //non penso serva ackResponse perchè non dovrebbe mai dare errore
-                    throw new RuntimeException(e);
-                }
+                    //shouldn't happen
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));                }
             }
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());

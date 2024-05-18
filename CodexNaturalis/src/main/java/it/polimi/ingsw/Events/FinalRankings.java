@@ -9,7 +9,7 @@ public class FinalRankings extends GenericEvent{
     /**
      * represent a map between every player and his points
      */
-    private final HashMap<String,Integer> Rankings;
+    public final HashMap<String,Integer> Rankings;
 
     /**
      * Constructor
@@ -20,4 +20,6 @@ public class FinalRankings extends GenericEvent{
         super("The final rankings are: ",nickname);
         Rankings = rankings;
     }
+
+
 }

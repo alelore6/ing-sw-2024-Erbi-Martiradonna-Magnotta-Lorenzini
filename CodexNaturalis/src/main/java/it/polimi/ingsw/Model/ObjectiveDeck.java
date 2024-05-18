@@ -9,7 +9,7 @@ import java.util.List;
 
 public class ObjectiveDeck {
     //Non implenta deck perché il metodo draw() di deck ritorna una Card, ObjectiveCard però non estende Card.
-    //TODO dovrebbe essere sistemata
+
 
     private int NCards;
     private ObjectiveCard[] cards;
