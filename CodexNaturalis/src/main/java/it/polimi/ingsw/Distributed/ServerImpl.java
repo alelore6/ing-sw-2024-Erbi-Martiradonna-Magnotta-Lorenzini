@@ -11,10 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
+
     public Controller controller = new Controller(this);
     private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
+    private ArrayList<ClientImpl> clientRMIs = new ArrayList<ClientImpl>();
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -22,7 +24,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     //server implementation with a certain RMI port
-    protected ServerImpl(int port) throws RemoteException {
+    public ServerImpl(int port) throws RemoteException {
         super(port);
     }
 
