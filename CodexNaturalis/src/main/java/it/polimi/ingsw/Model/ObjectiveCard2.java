@@ -8,7 +8,6 @@ import java.util.Map;
 import com.google.gson.Gson;
 
 public class ObjectiveCard2 extends ObjectiveCard {
-    private int points;
 
     public Map<Resource, Integer> getObjectivecard2Map() {
         return objectivecard2Map;
@@ -22,8 +21,5 @@ public class ObjectiveCard2 extends ObjectiveCard {
         for (Resource k : Resource.values()) {
             objectivecard2Map.put(k, 0);
         }
-    }
-    public int getpoints() {
-        return points;
     }
 }

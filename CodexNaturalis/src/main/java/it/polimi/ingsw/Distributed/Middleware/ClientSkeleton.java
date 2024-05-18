@@ -65,9 +65,8 @@ public class ClientSkeleton implements Client {
         server.update(this, event);
     }
 
+    @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
-
-
 }

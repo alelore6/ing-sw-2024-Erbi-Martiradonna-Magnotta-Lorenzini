@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Distributed.Server;
@@ -12,6 +13,7 @@ import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
 
+    public final Client client;
     /**
      * the server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client
@@ -24,8 +26,10 @@ public class ModelViewListener extends Listener {
      * This listener will receive updates from the model and will pass them to the specific view, which will be updated aswell.
      * @param server the server that will receive the updates from this listener
      */
-    public ModelViewListener(ServerImpl server) {
+    public ModelViewListener(ServerImpl server, Client client) {
+
         this.server = server;
+        this.client = client;
     }
 
     /**
@@ -46,7 +50,14 @@ public class ModelViewListener extends Listener {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
 
                             try {
-                                server.sendEventToAll(currentEvent);
+
+                                if (currentEvent.mustBeSentToAll) {
+                                    server.sendEventToAll(currentEvent);
+                                }
+                                else
+                                {
+                                    server.sendEvent(client, currentEvent);
+                                }
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }
