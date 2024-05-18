@@ -59,7 +59,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void update(Client client, GenericEvent event) throws RemoteException{
         if(event instanceof ClientRegister){
             controller.updateModel(event, (ClientSkeleton) client, event.nickname);
-        }else {
+        }else if(client instanceof ClientImpl){
             //client has responded to a request to modify the model
             for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
                 if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(((ClientImpl) client).getNickname())) {

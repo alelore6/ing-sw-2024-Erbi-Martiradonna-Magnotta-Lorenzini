@@ -59,19 +59,11 @@ public class ServerApp {
         });
         socketThread.start();
 
-        /*try {
-            rmiThread.join();
-            socketThread.join();
-        } catch (InterruptedException e) {
-            System.err.println("No connection available.");
-        }*/
-
         System.out.println("Socket active on port " + SOCKET_PORT + "!");
     }
 
 
     private static void startRMI () throws RemoteException, AlreadyBoundException {
-        Server server = new ServerImpl();
         //Getting the registry
         Registry registry = LocateRegistry.createRegistry(45656);
         //Binding the server to the RMI registry so that the client can look up

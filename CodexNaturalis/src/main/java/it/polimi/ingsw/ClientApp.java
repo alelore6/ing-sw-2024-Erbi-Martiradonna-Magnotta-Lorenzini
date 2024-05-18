@@ -26,24 +26,25 @@ public class ClientApp {
         boolean isRMI = (args_list.contains("-rmi") ? true : false);
         boolean isTUI = (args_list.contains("-tui") ? true : false);
         boolean isLocal = (args_list.contains("-local") ? true : false);
+        String ip;
+
+        if(isLocal){
+            ip = "localhost";
+        }
+        else{
+            System.out.println("Enter server IP address: ");
+            ip = in.next();
+        }
 
         if(isRMI){   //RMI
 
-            Registry registry = LocateRegistry.getRegistry(45656);
+            Registry registry = LocateRegistry.getRegistry(ip,45656);
             Server server = (Server) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(server, isTUI);
             client.run();
         }
         else{   //socket
-            String ip;
-            if(isLocal){
-                ip = "localhost";
-            }
-            else{
-                System.out.println("Enter server IP address: ");
-                ip = in.next();
-            }
 
             ServerStub serverStub = new ServerStub(ip, SOCKET_PORT);
             ClientImpl client = new ClientImpl(serverStub, isTUI);
@@ -53,7 +54,7 @@ public class ClientApp {
                     while (true) {
                         GenericEvent receivedEvent = null;
                         try {
-                            receivedEvent = serverStub.receive(client);
+                            serverStub.receive(client);
                         } catch (RemoteException e) {
                             client.getUserInterface().printErr("Cannot receive from server.");
 
