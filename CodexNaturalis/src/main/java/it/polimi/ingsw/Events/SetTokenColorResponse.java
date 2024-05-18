@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.TokenColor;
  * Event that represent the response to a request to choose the token color
  */
 public class SetTokenColorResponse extends GenericEvent {
+    private static final long serialVersionUID = 22L;
     /**
      * the chosen color
      */

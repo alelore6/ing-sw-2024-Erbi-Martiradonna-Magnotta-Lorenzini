@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.PlayableCard;
  * Event that represent the return of the drawn card after a draw response
  */
 public class ReturnDrawCard extends GenericEvent{
+    private static final long serialVersionUID = 19L;
     /**
      * the new hand with the drawn card
      */

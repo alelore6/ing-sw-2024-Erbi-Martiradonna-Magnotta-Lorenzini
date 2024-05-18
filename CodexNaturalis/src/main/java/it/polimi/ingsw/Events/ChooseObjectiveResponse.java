@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.ObjectiveCard;
  * Event that represent the response of the client to a choose objective request.
  */
 public class ChooseObjectiveResponse extends GenericEvent{
+    private static final long serialVersionUID = 4L;
     /**
      * the objective card chosen
      */

@@ -2,7 +2,7 @@ package it.polimi.ingsw.Events;
 
 public class SetPassword extends GenericEvent{
 
-
+    private static final long serialVersionUID = 20L;
 
     private final String password;
 

@@ -44,7 +44,9 @@ public class ViewControllerListener extends Listener {
             public void run() {
                 while(true) {
                     if(!getEventQueue().isEmpty()) {
+
                         GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
+                        System.out.println("PRESO EVENTO: " + currentEvent.msgOutput());
 
                         try {
                             ((ClientImpl) client).sendEvent(currentEvent);

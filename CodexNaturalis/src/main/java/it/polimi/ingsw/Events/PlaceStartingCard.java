@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.StartingCard;
  * Events that represent the action of placing the starting card
  */
 public class PlaceStartingCard extends GenericEvent {
+    private static final long serialVersionUID = 15L;
     /**
      * the starting card
      */

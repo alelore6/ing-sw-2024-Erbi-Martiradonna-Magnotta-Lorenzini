@@ -6,6 +6,7 @@ import it.polimi.ingsw.View.UI;
 import java.io.Serializable;
 
 public class ClientRegister extends GenericEvent {
+    private static final long serialVersionUID = 5L;
     private String nickname;
 
     public ClientRegister(ClientImpl client) {
