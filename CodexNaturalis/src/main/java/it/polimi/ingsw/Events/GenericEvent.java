@@ -15,6 +15,7 @@ public abstract class GenericEvent implements Serializable {
      */
     public final String nickname;
 
+    public boolean mustBeSentToAll = false;
     /**
      * Constructor
      * @param message message describing the event

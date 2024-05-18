@@ -5,6 +5,7 @@ import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.ChooseObjectiveRequest;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Listeners.ModelViewListener;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -43,10 +44,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             clientSkeletons.get(clientSkeletonIndex).setNickname(((ClientImpl)client).getNickname());
             CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
-            controller.addPlayerToLobby(((ClientImpl) client).getNickname());
+            if (!((ClientImpl)client).clientFasullo) {
+                controller.getMvListeners().add(new ModelViewListener(this, (client)));
+            }
+            controller.addPlayerToLobby(((ClientImpl) client).getNickname(), controller.getMVListenerByNickname(((ClientImpl) client).getNickname()));
+
         }
         else{
             clientSkeletons.add((ClientSkeleton) client);
+            controller.getMvListeners().add(new ModelViewListener(this, (client)));
         }
     }
 

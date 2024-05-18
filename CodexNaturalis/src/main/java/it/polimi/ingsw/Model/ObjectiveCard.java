@@ -8,7 +8,7 @@ public abstract class ObjectiveCard {
     public ObjectiveCard(int ID) {
         this.ID = ID;
     }
-    public abstract int getpoints();
+    public int getPoints(){return points;}
     public int getID(){
         return this.ID;
     }

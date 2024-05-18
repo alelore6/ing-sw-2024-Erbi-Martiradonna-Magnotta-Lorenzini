@@ -75,6 +75,7 @@ public class Controller {
         getGame().endGame(occasion);
     }
 
+
     /**
      * Create the listener for the client that is trying to connect
      * if lobby is empty the number of players for the game must be set
@@ -82,11 +83,9 @@ public class Controller {
      * communicate the result of the action to the client through his listener
      * @param nickname
      */
-    public void addPlayerToLobby(String nickname) throws RemoteException {
+    public void addPlayerToLobby(String nickname, ModelViewListener mvListener) throws RemoteException {
         boolean ok = false;
 
-        // creo listener
-        ModelViewListener mvListener = new ModelViewListener(server);
         mvListener.handleEvent();
 
         //check game hasn't started
@@ -236,7 +235,7 @@ public class Controller {
 
     }
 
-    private ModelViewListener getMVListenerByNickname(String nickname){
+    public ModelViewListener getMVListenerByNickname(String nickname){
         try {
             for(int i = 0; i < getGame().getPlayers().length; i++){
                 if(getGame().getPlayers()[i].getNickname().equals(nickname)){
@@ -249,5 +248,9 @@ public class Controller {
             return null;
         }
 
+    }
+
+    public ArrayList<ModelViewListener> getMvListeners() {
+        return mvListeners;
     }
 }
