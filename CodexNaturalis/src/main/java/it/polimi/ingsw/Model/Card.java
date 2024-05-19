@@ -12,7 +12,9 @@ public abstract class Card {
         isFacedown = false;
     }
 
-     public abstract Card getCard();
+     public Card getCard(){
+         return this;
+     }
      public int getID(){
           return this.ID;
      }

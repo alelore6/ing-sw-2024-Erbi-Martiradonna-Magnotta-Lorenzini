@@ -227,7 +227,7 @@ public class Game {
                 }
             //gold deck is found empty
             case 5:
-                // if i already had this information do nothing
+                // if I already had this information do nothing
                 if(tablecenter.getGoldDeck().AckEmpty)
                     break;
                 //else set AckEmpty to true

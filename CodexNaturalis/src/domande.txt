@@ -15,9 +15,6 @@
         -oppure serializzare in Json (oppure binario, xml..) il model e fare un costruttore che ricarica le classi di Json
             -check transient attributes (non devono essere serializzate perché cambiano, in caso di crash)
 
-- consiglio su GUI (swing)
-
-- per GUI: servono eventi per passare oggetti grafici o si avranno a disposizione sul client?
 
 - In serverstub e clientskeleton quando fai update devi passare anche il Client?? è necessario sapere a chi devo passare gli update!!
 -Canali di comunicazione tra client e server: 4 canali diversi per ogni client che convergono in uno unico per il server?  è diramato oppure una cosa unica?
@@ -86,8 +83,14 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     🔜 Fixare numplayer che resta a zero   (Gianlu)
 
 
-    - se il server non è appena stato avviato non vengono inviati gli eventi???
 
+
+
+    - perchè si è messo mustBeSentToAll negli eventi? era già fatto che lo si mandava a tutti manualmente.
+        -> nel caso uniformare a questa scelta
+
+
+    - usare trim() quando si prendono stringhe da utente per levare spazi inutili
 
 
 
