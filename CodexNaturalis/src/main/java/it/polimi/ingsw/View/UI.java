@@ -6,12 +6,14 @@ import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.Model.Card;
 
 import java.util.Deque;
+import java.util.LinkedList;
 
 public abstract class UI implements View{
 
-    protected Deque<GenericEvent> inputEvents;
+    protected Deque<GenericEvent> inputEvents = new LinkedList<>();
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
+    protected volatile boolean isActive = true;
 
     public UI(ClientImpl client) {
         this.client = client;
@@ -24,7 +26,7 @@ public abstract class UI implements View{
         return listener;
     }
 
-    public abstract String setNickname();
+    public abstract String chooseNickname();
 
     public abstract void printErr(String s);
     public abstract void printOut(String s);

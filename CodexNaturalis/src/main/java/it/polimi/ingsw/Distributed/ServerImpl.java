@@ -31,21 +31,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     @Override
     public void register(Client client) throws RemoteException{
         if(client instanceof ClientImpl){ // if MALEDETTO
+            String newNickname = null;
             try{
                 // check nickname
                 findClientImpl(((ClientImpl) client).getNickname());
             }catch (RuntimeException e){
-                // TODO: crea evento che setta il nuovo nick all'user
-
                 //add a sequential number at the end of the nickname if already present
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
+                newNickname = ((ClientImpl) client).getNickname();
             }
             CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
             if (!((ClientImpl) client).clientFasullo) {
                 controller.getMVListeners().add(new ModelViewListener(this, client));
             }
-            controller.addPlayerToLobby(((ClientImpl) client).getNickname(), controller.getMVListenerByNickname(((ClientImpl) client).getNickname()));
+            controller.addPlayerToLobby(((ClientImpl) client).getNickname(), controller.getMVListenerByNickname(((ClientImpl) client).getNickname()), newNickname);
 
         }
         else{

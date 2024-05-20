@@ -25,7 +25,7 @@ public class ResourceDeck extends Deck{
             cards = gson.fromJson(reader, ResourceCard[].class);
 
         } catch (IOException e) {
-            System.out.println("Error with JSON.");
+            System.err.println("Error with JSON.");
         }
 
         cards = (ResourceCard[]) shuffle(cards);
@@ -37,8 +37,14 @@ public class ResourceDeck extends Deck{
         }
         else {
             NCards--;
-            return cards[NCards];
+
+            ResourceCard temp = cards[NCards];
+
+            // the resize of the array is an overkill
+            cards[NCards] = null;
+
+            // I supposed the drawn card is the one available with the highest index.
+            return temp;
         }
-        // WARNING! We don't delete the card from the array doing this.
     }
 }

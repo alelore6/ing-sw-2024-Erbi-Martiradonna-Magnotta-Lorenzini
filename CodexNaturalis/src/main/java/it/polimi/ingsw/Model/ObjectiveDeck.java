@@ -35,7 +35,7 @@ public class ObjectiveDeck {
             temp_deck2 = gson.fromJson(reader2, ObjectiveCard2[].class);
 
         } catch (IOException e) {
-            System.out.println("Error with JSON.");
+            System.err.println("Error with JSON.");
         }
 
         assert temp_deck1 != null;
@@ -59,13 +59,14 @@ public class ObjectiveDeck {
         }
         else{
             NCards--;
+
+            ObjectiveCard temp = cards[NCards];
+
+            // the resize of the array is an overkill
+            cards[NCards] = null;
+
             // I supposed the drawn card is the one available with the highest index.
-            return cards[NCards];
+            return temp;
         }
-
-        // I supposed the drawn card is the one available with the highest index.
-
-
-        // WARNING! We don't delete the card from the array doing this.
     }
 }

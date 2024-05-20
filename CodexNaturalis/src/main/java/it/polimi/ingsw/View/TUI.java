@@ -9,19 +9,13 @@ import java.util.*;
 
 public class TUI extends UI {
 
-    private final Scanner in;
-    private final PrintStream out;
-    private final PrintStream outErr;
-    private volatile boolean isActive;
+    private final Scanner in = new Scanner(System.in);;
+    private final PrintStream out = new PrintStream(System.out, true);
+    private final PrintStream outErr = new PrintStream(System.err, true);
     private Object lock_events = new Object();
 
     public TUI(ClientImpl client) {
         super(client);
-        in = new Scanner(System.in);
-        out = new PrintStream(System.out, true);
-        outErr = new PrintStream(System.err, true);
-        inputEvents = new LinkedList<>();
-        isActive = true;
     }
 
     // This method allows to receive the user's choice between min and max included.
@@ -73,28 +67,28 @@ public class TUI extends UI {
         }
     }
 
-    public String setNickname() {
-        return setString("nickname");
+    public String chooseNickname() {
+        return chooseString("nickname");
     }
 
-    private final String setString(String s){
+    private final String chooseString(String s){
         // TODO: capire se alcuni caratteri non sono permessi (tipo ' ')
         //       e aggiornare di conseguenza
 
         boolean isValid = false;
-        String tempPassword = null;
+        String tempString = null;
 
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempPassword = in.next();
+            tempString = in.next();
 
             // Here we can put controls con the characters of the string inserted
             if(true) // se tutto ok allora
                 isValid = true;
         }
 
-        return tempPassword;
+        return tempString;
     }
 
     public final void printOut(String s){
@@ -213,8 +207,8 @@ public class TUI extends UI {
                             newEvent = new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80));
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
-
                             break;
+
                         case SetTokenColorRequest e :
                             n = -1;
                             do{
@@ -225,14 +219,16 @@ public class TUI extends UI {
                             newEvent = new SetTokenColorResponse(chooseInt(1,4), client.getNickname());
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
-
                             break;
+
                         case JoinLobby e :
-                            newEvent = new SetPassword(client.getNickname(), setString("password"));
+                            if(e.getNewNickname() != null)  client.setNickname(e.getNewNickname());
+
+                            newEvent = new SetPassword(client.getNickname(), chooseString("password"));
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
-
                             break;
+
                         case PlaceStartingCard e :
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
@@ -240,18 +236,18 @@ public class TUI extends UI {
                             newEvent = new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40);
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
-
                             break;
+
                         case AckResponse ack :
                             if(!ack.ok){
                                 synchronized(lock_events){
                                     inputEvents.addFirst(ack.event);
                                 }
                             }
-
                             break;
-                        default :
 
+                        default :
+                            printErr("\n\nNOT HANDLED EVENT!\n\n");
                             break;
                     }
                 }

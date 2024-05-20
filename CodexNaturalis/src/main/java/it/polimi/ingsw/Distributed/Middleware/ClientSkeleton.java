@@ -42,12 +42,6 @@ public class ClientSkeleton implements Client {
         //socket: server stub is always reading (same as receive() here)
     }
 
-    @Override
-    public String getNickname() {
-        return nickname;
-    }
-
-
     public void receive(ServerImpl server) throws RemoteException {
         //socket: receive from server stub update()
         //not sure of the type
@@ -68,5 +62,10 @@ public class ClientSkeleton implements Client {
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    @Override
+    public String getNickname() {
+        return nickname;
     }
 }

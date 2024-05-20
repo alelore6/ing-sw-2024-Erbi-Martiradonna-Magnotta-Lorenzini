@@ -83,7 +83,7 @@ public class Controller {
      * communicate the result of the action to the client through his listener
      * @param nickname
      */
-    public void addPlayerToLobby(String nickname, ModelViewListener mvListener) throws RemoteException {
+    public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String newNickname) throws RemoteException {
         boolean ok = false;
 
         //check game hasn't started
@@ -96,7 +96,7 @@ public class Controller {
             if(!lobby.addPlayer(nickname))
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
             else {
-                mvListener.addEvent(new JoinLobby(nickname));
+                mvListener.addEvent(new JoinLobby(nickname, newNickname));
                 // MVListeners.add(mvListener);
                 if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                     createGame();

@@ -34,7 +34,7 @@ public class GUI extends UI{
 
     }
 
-    public String setNickname() {
+    public String chooseNickname() {
         String s=null;
         while(s==null) {
             s = (String) JOptionPane.showInputDialog(f, "Choose your nickname:", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);

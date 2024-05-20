@@ -9,7 +9,6 @@ import it.polimi.ingsw.View.TUI;
 import it.polimi.ingsw.View.UI;
 
 
-import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
@@ -26,7 +25,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         super();
 
         userInterface = (isTUI ? new TUI(this) : new GUI(this));
-        this.nickname = userInterface.setNickname();
+        this.nickname = userInterface.chooseNickname();
         this.clientFasullo = false;
 
         initialize(server);

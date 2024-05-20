@@ -51,10 +51,10 @@ public class ServerStub implements Server, Serializable {
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {
-            System.out.println("Sending " + event.msgOutput() + " to server");
+            // System.out.println("Sending " + event.msgOutput() + " to server");
             out.writeObject(event);
             out.flush();
-            System.out.println("Event: " + event.msgOutput() + " sent to server");
+            // System.out.println("Event: " + event.msgOutput() + " sent to server");
         } catch (IOException e) {
             throw new RemoteException("Cannot send event", e);
         }
@@ -66,9 +66,9 @@ public class ServerStub implements Server, Serializable {
 
         GenericEvent ev = null;
         try{
-            System.out.println("Waiting to receive event from server...");
+            // System.out.println("Waiting to receive event from server...");
             ev = (GenericEvent) in.readObject();
-            System.out.println("Received: " + ev.msgOutput() + " from server");
+            // System.out.println("Received: " + ev.msgOutput() + " from server");
         }catch(IOException e){
             throw new RemoteException("Can't receive event from client", e);
         }catch(ClassNotFoundException e){
