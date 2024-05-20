@@ -11,7 +11,6 @@ import java.io.InputStream;
 
 public class MainFrame extends JFrame {
 
-    private final Graphics g;
     int x;
     int y;
     double scale;
@@ -91,14 +90,18 @@ public class MainFrame extends JFrame {
         this.y = y;
         this.scale = scale;
     }
-public void GenerationPanels(){
-    mainPanel = new JPanel(new BorderLayout));
-
-   tableCenterPanel= new JPanel();
-   handPanel = new JPanel();
-   positionedCardPanel = new JPanel();
 
 
+    /* !!! PART FULL OF ERROR: DON'T COMMIT IF THERE'S SO MANY OF THEM !!!
+           If so, the program cannot be run or debugged.
+
+
+    public void GenerationPanels(){
+    mainPanel = new JPanel(new BorderLayout());
+
+    tableCenterPanel= new JPanel();
+    handPanel = new JPanel();
+    positionedCardPanel = new JPanel();
 
        menuBar = new JMenuBar;
        JMenu tableCenterMenu = new JMenu("Table Center");
@@ -133,6 +136,7 @@ public void GenerationPanels(){
       setVisible(true);
 
    }
+   */
    private void switchPanel(JPanel panel) {
         mainPanel.removeAll();
         mainPanel.add(panel, BorderLayout.CENTER);
