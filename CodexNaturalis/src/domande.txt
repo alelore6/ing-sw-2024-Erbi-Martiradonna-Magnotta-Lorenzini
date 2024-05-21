@@ -92,6 +92,10 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 
     - usare trim() quando si prendono stringhe da utente per levare spazi inutili
 
+    - se si chiude la finestra di gui è una disconnessione?
+
+    - la password deve essere nascosta?
+
 
 
 

@@ -5,10 +5,17 @@ import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.ObjectiveCard;
+import it.polimi.ingsw.Model.PlayableCard;
 import it.polimi.ingsw.Model.TokenColor;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static java.lang.String.valueOf;
@@ -16,6 +23,7 @@ import static java.lang.String.valueOf;
 public class GUI extends UI{
 
     private static MainFrame f;
+    private final ImageIcon icon;
 
     public GUI(ClientImpl client) {
         super(client);
@@ -24,8 +32,11 @@ public class GUI extends UI{
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setSize(1280,720);
         f.setVisible(true);
-        //TODO sistemare mainframe: aggiungere sfondo e levare print card
         printCard(102,false,100,100,0.6);
+        ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
+        Image imgResized = icon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
+        this.icon=new ImageIcon(imgResized);
+        //TODO sistemare mainframe: aggiungere sfondo e levare print card
     }
 
 
@@ -36,8 +47,8 @@ public class GUI extends UI{
 
     public String chooseNickname() {
         String s=null;
-        while(s==null) {
-            s = (String) JOptionPane.showInputDialog(f, "Choose your nickname:", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
+        while(s==null || s.length()<4 || s.contains(" ")) {
+            s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, icon, null, null);
         }
         return s.trim();
     }
@@ -70,9 +81,28 @@ public class GUI extends UI{
         f.setCoord(x, y, scale);
     }
 
-    @Override
+    protected String getCardPath(int id, boolean isFacedown) {
+        String idString;
+        if (id < 100) {
+            idString = valueOf(id);
+            idString = "0" + idString;
+
+            if (id < 10) {
+                idString = "0" + idString;
+            }
+        } else {
+            idString = valueOf(id);
+        }
+        return "assets/images/cards/" + (isFacedown ? "back" : "front") + "/" + idString + ".png";
+
+    }
+
+        @Override
     public void update(GenericEvent e){
-        inputEvents.add(e);
+        synchronized (inputEvents) {
+            inputEvents.add(e);
+            System.out.println("Event received");
+        }
     }
 
     @Override
@@ -87,34 +117,71 @@ public class GUI extends UI{
             public void run() {
 
                 while(true){
-                    if(inputEvents.isEmpty())   continue;
+                    synchronized (inputEvents) {
+                    if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
                     if(!ev.nickname.equals(client.getNickname())) continue;
 
-                    //debug
-                    //printOut(ev.msgOutput());
                     int n=0;
                     GenericEvent newEvent=null;
                     String s=null;
                     Object[] possibilities=null;
                     String message= ev.msgOutput();
+
+
                     switch(ev){
                         //TODO per eventi di gioco devo anche aggiornare il frame
                         case NumPlayersRequest e :
                             possibilities = new Object[]{"2", "3", "4"};
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Number of players", JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Number of players", JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
                             }
                             newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case ChooseObjectiveRequest e :
-                            //mostrare dati evento aggionando il frame
+                            /*
+                            JSplitPane dataPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+                            dataPane.setResizeWeight(0.5);
+                            ObjectiveCard obj1 = ((ChooseObjectiveRequest) ev).objCard1;
+                            ObjectiveCard obj2 = ((ChooseObjectiveRequest) ev).objCard2;
+                            String path=null;
+                            for(int i=0; i<2; i++) {
+                                if(i==0) path = getCardPath(obj1.getID(), false);
+                                else path = getCardPath(obj2.getID(), false);
+                                BufferedImage img=null;
+                                try {
+                                    img = ImageIO.read(this.getClass().getClassLoader().getResource(path));
+                                } catch (IOException exception) {
+                                    exception.printStackTrace();
+                                    return;
+                                }
+                                dataPane.add("Objective card "+i, new JLabel(new ImageIcon(img)));
+                            }
+
+                            JDialog dialog = new JDialog(f, "Choose objective",true);
+                            dialog.getContentPane().add(dataPane);
+
+                            JButton b1 = new JButton("Choose 1", null);
+                            b1.setVerticalTextPosition(AbstractButton.BOTTOM);
+                            b1.setHorizontalTextPosition(AbstractButton.CENTER);
+                            b1.setActionCommand("Confirm");
+                            JButton b2 = new JButton("Choose 2", null);
+                            b2.setVerticalTextPosition(AbstractButton.BOTTOM);
+                            b2.setHorizontalTextPosition(AbstractButton.CENTER);
+                            b2.setActionCommand("Confirm");
+                            //Listen for actions on buttons
+                            //b1.addActionListener();
+                            //b2.addActionListener();
+                            dialog.getContentPane().add(b1);
+                            dialog.getContentPane().add(b2);
+                            */
+                            //mostrare dati evento
                             possibilities = new Object[]{"Objective card 1", "Objective card 2"};
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Choose objective", JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Choose objective", JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
                             }
                             ObjectiveCard choice= s.equals("Objective card 1")?((ChooseObjectiveRequest) ev).objCard1 : ((ChooseObjectiveRequest) ev).objCard2;
                             newEvent = new ChooseObjectiveResponse( choice, client.getNickname());
@@ -122,10 +189,18 @@ public class GUI extends UI{
                             break;
 
                         case DrawCardRequest e :
-                            //TODO sarebbero da togliere delle possibilità di scelta in base alle info dell'evento
-                            possibilities = new Object[]{"Resource deck","Gold deck","card 1", "card 2", "card 3", "card 4"};
+                            //tolgo delle possibilità di scelta in base alle info dell'evento
+                            ArrayList<Object> p = new ArrayList<Object>();
+                            if(!((DrawCardRequest) ev).goldDeckEmpty)    p.add("Gold deck");
+                            if(!((DrawCardRequest) ev).resDeckEmpty)    p.add("Resource deck");
+                            n=1;
+                            for (PlayableCard c : ((DrawCardRequest) ev).tableCards){
+                                if(c!=null) p.add("Card "+n);
+                                n++;
+                            }
+
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Draw a card", JOptionPane.PLAIN_MESSAGE, null, possibilities, null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Draw a card", JOptionPane.PLAIN_MESSAGE, icon, p.toArray(), null);
                             }
                             if (s.contains("deck")){
                                 if (s.contains("Resource")) n=4;
@@ -142,15 +217,15 @@ public class GUI extends UI{
 
                         case SetTokenColorRequest e :
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, null,((SetTokenColorRequest)ev).availableColors.toArray(), null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon,((SetTokenColorRequest)ev).availableColors.toArray(), null);
                             }
                             newEvent = new SetTokenColorResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case JoinLobby e :
-                            while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Set password", JOptionPane.PLAIN_MESSAGE, null, null, null);
+                            while(s==null || s.length()<4 || s.contains(" ")) {
+                                s = (String) JOptionPane.showInputDialog(f, message, "Set password", JOptionPane.PLAIN_MESSAGE, icon, null, null);
                             }
                             newEvent = new SetPassword(s.trim() , client.getNickname());
                             notifyListener(newEvent);
@@ -186,7 +261,7 @@ public class GUI extends UI{
                             //show message + rankings
                             n=1;
                             for (String player : ((FinalRankings) ev).Rankings.keySet()){
-                                message.concat("\n"+n+". "+player +": " + ((FinalRankings) ev).Rankings.get(player)+ " points");
+                                message.concat("\n"+n+". "+player +" : " + ((FinalRankings) ev).Rankings.get(player)+ " points");
                                 n++;
                             }
                             JOptionPane.showMessageDialog(f, message);

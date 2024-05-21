@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
         initialPanel = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponents(g);
-                ImageIcon photo = new ImageIcon("/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/CodexNaturalis/src/main/resources/assets/immage/rulebook/01.png");
+                ImageIcon photo = new ImageIcon("assets/image/rulebook/01.png");
                 Image image = photo.getImage();
                 g.drawImage(image, x, y, getWidth(), getHeight(), this);
             }
@@ -56,8 +56,8 @@ public class MainFrame extends JFrame {
     }
 
     private void printRectangle(Graphics g) {
-        g.drawString("Hello", 200, 50);
-        int X = 200;
+        g.drawString("Hello", 900, 50);
+        int X = 800;
         int Y = 100;
         int rectwidth = 50;
         int rectheight = 100;
