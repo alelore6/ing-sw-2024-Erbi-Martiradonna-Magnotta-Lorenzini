@@ -1,18 +1,19 @@
 package it.polimi.ingsw;
 
-import it.polimi.ingsw.Distributed.ClientImpl;
-import it.polimi.ingsw.Distributed.Server;
+import it.polimi.ingsw.Distributed.*;
 
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
-import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.TUI;
 
@@ -38,10 +39,24 @@ public class ClientApp {
 
         if(isRMI){   //RMI
 
+
+
             Registry registry = LocateRegistry.getRegistry(ip,45656);
-            Server server = (Server) registry.lookup("server");
+
+            RemoteServerInterface server = (RemoteServerInterface) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(server, isTUI);
+
+            RemoteClientInterface clientStub = null;
+            try {
+                clientStub = (RemoteClientInterface) UnicastRemoteObject.exportObject(client, 0);
+            } catch (ExportException e) {
+                e.printStackTrace();
+                clientStub = (RemoteClientInterface)client;
+            }
+
+            server.processClient(clientStub, client.getNickname()); //con questo registro lo stub del client al server
+
             client.run();
         }
         else{   //socket

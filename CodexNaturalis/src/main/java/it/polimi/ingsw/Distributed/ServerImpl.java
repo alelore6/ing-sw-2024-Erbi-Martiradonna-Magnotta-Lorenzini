@@ -4,19 +4,23 @@ import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Events.TestEvent;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class ServerImpl extends UnicastRemoteObject implements Server{
+public class ServerImpl extends UnicastRemoteObject implements Server, RemoteServerInterface{
+
     public Controller controller = new Controller(this);
     private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
     int clientSkeletonIndex = 0; //keeps track of clientskeletons without nickname
+    private HashMap<RemoteClientInterface, String> RMIclients = new HashMap<>();
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -82,6 +86,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
+
         if(event instanceof ClientRegister){
             client.setNickname(event.nickname);
             controller.addMVListener(new ModelViewListener(this, client));
@@ -111,5 +116,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     public void sendEvent(Client client, GenericEvent event) throws RemoteException {
         client.update(event);
+    }
+
+    //method used by the client to SEND an event. then the event and the client are passed to the general update() method.
+    @Override
+    public void processEvent(GenericEvent event, Client client) throws RemoteException {
+        System.out.println("received"+ event.toString());
+        update(client, event);
+    }
+
+    //method used only 1 time to register the client stub to the server and the associated nickname
+    @Override
+    public void processClient(RemoteClientInterface remoteClient, String nickname) throws RemoteException {
+        RMIclients.put(remoteClient, nickname);
+        //RIGHE DI TEST
+        remoteClient.receiveObject(new TestEvent("SONO ARRIVATO AL CLIENT TRAMITE RMI", nickname));
     }
 }
