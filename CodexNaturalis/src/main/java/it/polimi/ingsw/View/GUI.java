@@ -227,7 +227,7 @@ public class GUI extends UI{
                             while(s==null || s.length()<4 || s.contains(" ")) {
                                 s = (String) JOptionPane.showInputDialog(f, message, "Set password", JOptionPane.PLAIN_MESSAGE, icon, null, null);
                             }
-                            newEvent = new SetPassword(s.trim() , client.getNickname());
+                            newEvent = new SetPassword( client.getNickname(),s.trim());
                             notifyListener(newEvent);
                             break;
 
@@ -240,6 +240,7 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
+                            f.reactstartGame((StartGame) ev);
                             break;
 
                         case ReturnDrawCard e:

@@ -72,9 +72,6 @@ public class TUI extends UI {
     }
 
     private final String chooseString(String s){
-        // TODO: capire se alcuni caratteri non sono permessi (tipo ' ')
-        //       e aggiornare di conseguenza
-
         boolean isValid = false;
         String tempString = null;
 
@@ -84,11 +81,11 @@ public class TUI extends UI {
             tempString = in.next();
 
             // Here we can put controls con the characters of the string inserted
-            if(true) // se tutto ok allora
+            if(!tempString.contains(" ") && tempString.length()>=4) // se tutto ok allora
                 isValid = true;
         }
 
-        return tempString;
+        return tempString.trim();
     }
 
     public final void printOut(String s){
