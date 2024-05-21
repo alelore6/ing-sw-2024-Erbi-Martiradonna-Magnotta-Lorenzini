@@ -14,7 +14,7 @@ public class ClientSkeleton implements Client {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public String nickname = null;
+    private String nickname = null;
 
     public ClientSkeleton(Socket socket) throws RemoteException {
         try {

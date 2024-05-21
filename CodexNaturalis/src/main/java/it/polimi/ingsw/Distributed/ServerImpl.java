@@ -16,7 +16,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
-    int clientSkeletonIndex = 0; //keeps track  of clientskeletons without nickname
+    int clientSkeletonIndex = 0; //keeps track of clientskeletons without nickname
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -36,9 +36,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 // check nickname
                 findClientImpl(((ClientImpl) client).getNickname());
             }catch (RuntimeException e){
-                //add a sequential number at the end of the nickname if already present
+                // An identical nickname has been found
+
+                ClientSkeleton temp = findCSbyNickname(client.getNickname());
+
+                //add a sequential number at the end of the nickname
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
+
+                // set the new name in ClientImpl
                 newNickname = ((ClientImpl) client).getNickname();
+
+                // set the new name in ClientSkeleton if present
+                if(temp != null){
+                    temp.setNickname(newNickname);
+                }
             }
             CLIENT_IMPL_LIST.add((ClientImpl) client);
             numClient++;
@@ -59,6 +70,14 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 // client not found
                 throw new RuntimeException("client " + nickname + " not found");
         }
+    }
+
+    public ClientSkeleton findCSbyNickname(String nickname){
+        for(ClientSkeleton c : clientSkeletons){
+            if(c.getNickname().equals(nickname))    return c;
+        }
+
+        return null;
     }
 
     @Override

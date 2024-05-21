@@ -97,7 +97,6 @@ public class Controller {
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
             else {
                 mvListener.addEvent(new JoinLobby(nickname, newNickname));
-                // MVListeners.add(mvListener);
                 if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                     createGame();
                 }
