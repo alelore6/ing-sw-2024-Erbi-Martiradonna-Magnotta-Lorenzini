@@ -9,6 +9,6 @@ public interface RemoteServerInterface extends Remote {
 
     public void processEvent(GenericEvent event, Client client) throws RemoteException;
 
-    public void processClient(ClientImpl remoteClient) throws RemoteException;
+    public void processClient(RemoteClientInterface remoteClient, String nickname) throws RemoteException;
 
 }

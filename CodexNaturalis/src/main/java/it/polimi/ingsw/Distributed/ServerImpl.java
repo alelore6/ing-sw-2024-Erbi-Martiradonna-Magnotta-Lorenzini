@@ -4,11 +4,13 @@ import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Events.TestEvent;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server, RemoteServerInterface{
@@ -18,7 +20,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
     int clientSkeletonIndex = 0; //keeps track of clientskeletons without nickname
-    private RemoteClientInterface remoteClient;
+    private HashMap<RemoteClientInterface, String> RMIclients = new HashMap<>();
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -123,9 +125,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
         update(client, event);
     }
 
-    //method used only 1 time to register the client stub to the server
+    //method used only 1 time to register the client stub to the server and the associated nickname
     @Override
-    public void processClient(ClientImpl remoteClient) throws RemoteException {
-        this.remoteClient = remoteClient;
+    public void processClient(RemoteClientInterface remoteClient, String nickname) throws RemoteException {
+        RMIclients.put(remoteClient, nickname);
+        //RIGHE DI TEST
+        remoteClient.receiveObject(new TestEvent("SONO ARRIVATO AL CLIENT TRAMITE RMI", nickname));
     }
 }

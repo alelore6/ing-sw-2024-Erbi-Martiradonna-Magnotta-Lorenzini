@@ -14,7 +14,7 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl extends UnicastRemoteObject implements Runnable, Client, RemoteClientInterface{
+public class ClientImpl implements Runnable, Client, RemoteClientInterface{
 
     protected UI userInterface;
     private String nickname;
@@ -39,18 +39,9 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
         this.clientFasullo = false;
         this.remoteServer = server;
     }
-    //other constructors needed for overloading
-    public ClientImpl(int port, Server server) throws RemoteException {
-        super(port);
-        initialize(server);
-        this.clientFasullo = false;
-    }
 
-    public ClientImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf, Server server) throws RemoteException {
-        super(port, csf, ssf);
-        initialize(server);
-        this.clientFasullo = false;
-    }
+
+
 
     // This constructor is called only on the server to create a pseudo ClientImpl
     // since this is not serializable
@@ -112,8 +103,8 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client,
     //method used by the server to SEND an event!!!
     @Override
     public void receiveObject(GenericEvent event) throws RemoteException {
-        System.out.println("evento ricevuto!! roba da matti!");
-        update(event);
+        System.out.println(event.msgOutput());
+        //update(event);
     }
 }
 

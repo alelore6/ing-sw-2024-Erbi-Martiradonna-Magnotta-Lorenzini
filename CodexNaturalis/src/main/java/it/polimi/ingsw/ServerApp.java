@@ -11,6 +11,7 @@ import java.net.Socket;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 import java.rmi.registry.Registry;
@@ -21,7 +22,7 @@ public class ServerApp {
 
     static {
         try {
-            server = new ServerImpl(45656);
+            server = new ServerImpl();
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -64,13 +65,10 @@ public class ServerApp {
         System.out.println("Socket active on port " + SOCKET_PORT + "!");
     }
 
-
+    //server start rmi
     private static void startRMI () throws RemoteException, AlreadyBoundException {
 
-        //stub = (RemoteServerInterface) UnicastRemoteObject.exportObject(server, 3989); FORSE VA USATA STA ROBA?
-
         Registry registry = LocateRegistry.createRegistry(45656);
-
         //Binding the server to the RMI registry so that the client can look up
         registry.rebind("server", server);
 

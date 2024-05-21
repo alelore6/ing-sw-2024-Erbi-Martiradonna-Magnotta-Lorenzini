@@ -3,9 +3,11 @@ package it.polimi.ingsw;
 import it.polimi.ingsw.Distributed.*;
 
 import java.rmi.NotBoundException;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +47,15 @@ public class ClientApp {
 
             ClientImpl client = new ClientImpl(server, isTUI);
 
-            server.processClient(client); //con questo registro lo stub del client al server
+            RemoteClientInterface clientStub = null;
+            try {
+                clientStub = (RemoteClientInterface) UnicastRemoteObject.exportObject(client, 0);
+            } catch (ExportException e) {
+                e.printStackTrace();
+                clientStub = (RemoteClientInterface)client;
+            }
+
+            server.processClient(clientStub, client.getNickname()); //con questo registro lo stub del client al server
 
             client.run();
         }
