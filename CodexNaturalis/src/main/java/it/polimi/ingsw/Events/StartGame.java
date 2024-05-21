@@ -7,7 +7,7 @@ import it.polimi.ingsw.Model.Game;
  */
 public class StartGame extends GenericEvent{
 
-    public final Game model;
+    public transient final Game model;
     /**
      * Constructor
      * @param nickname the player that receives the event

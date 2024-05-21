@@ -104,6 +104,15 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     -   Capire come rendere il model non transient (serializzabile) perché ad ora non riesce ad inviarlo
 
 
+//TODO (21/5)
+
+-Classe immutabile del model (serializzabile) da passare alla view  --> probabile causa di crash quando si starta il game
+
+-Sistemare eventi mandati a tutti (mustbesenttoAll)
+
+-RMI
+
+
 
 
 

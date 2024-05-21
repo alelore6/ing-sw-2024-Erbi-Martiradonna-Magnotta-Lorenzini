@@ -14,11 +14,12 @@ import java.rmi.server.RMIClientSocketFactory;
 import java.rmi.server.RMIServerSocketFactory;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
+public class ClientImpl extends UnicastRemoteObject implements Runnable, Client, RemoteClientInterface{
 
     protected UI userInterface;
     private String nickname;
     private ServerStub serverStub;
+    private RemoteServerInterface remoteServer;
     final boolean clientFasullo;
 
     public ClientImpl(Server server, boolean isTUI) throws RemoteException {
@@ -29,6 +30,14 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         this.clientFasullo = false;
 
         initialize(server);
+    }
+
+    public ClientImpl(RemoteServerInterface server, boolean isTUI) throws RemoteException {
+        super();
+        userInterface = (isTUI ? new TUI(this) : new GUI(this));
+        this.nickname = userInterface.chooseNickname();
+        this.clientFasullo = false;
+        this.remoteServer = server;
     }
     //other constructors needed for overloading
     public ClientImpl(int port, Server server) throws RemoteException {
@@ -79,6 +88,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         serverStub.update(this,e);
     }
 
+
     public UI getUserInterface() {
         return userInterface;
     }
@@ -97,6 +107,13 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
     @Override
     public String getNickname() {
         return nickname;
+    }
+
+    //method used by the server to SEND an event!!!
+    @Override
+    public void receiveObject(GenericEvent event) throws RemoteException {
+        System.out.println("evento ricevuto!! roba da matti!");
+        update(event);
     }
 }
 

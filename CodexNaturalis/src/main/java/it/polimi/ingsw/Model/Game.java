@@ -381,7 +381,8 @@ public class Game implements Serializable{
                 EndTurn endTurn=new EndTurn(getCurrentPlayer(),players[i].getNickname(),tablecenter.getScoretrack().getRankings());
                 mvListeners.get(i).addEvent(endTurn);
             }
-            nextPlayer(players[nextPlayerIndex]);
+            //nextPlayer(players[nextPlayerIndex]);
+
         }
     }
 

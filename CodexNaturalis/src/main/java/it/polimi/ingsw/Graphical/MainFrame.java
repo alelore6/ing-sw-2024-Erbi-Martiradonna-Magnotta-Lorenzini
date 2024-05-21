@@ -38,7 +38,8 @@ public class MainFrame extends JFrame {
                 super.paintComponents(g);
                 ImageIcon photo = new ImageIcon("assets/image/rulebook/01.png");
                 Image image = photo.getImage();
-                g.drawImage(image, x, y, getWidth(), getHeight(), this);
+                //g.drawImage(image, x, y, getWidth(), getHeight(), this);
+                this.add(new JLabel(new ImageIcon(image)));
             }
         };
 
