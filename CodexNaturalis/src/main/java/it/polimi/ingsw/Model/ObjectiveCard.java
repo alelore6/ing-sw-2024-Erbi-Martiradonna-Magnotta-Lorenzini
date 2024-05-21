@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Model;
 
-public abstract class ObjectiveCard {
+import java.io.Serializable;
+
+public abstract class ObjectiveCard implements Serializable {
 
     protected int ID;
     protected int points;

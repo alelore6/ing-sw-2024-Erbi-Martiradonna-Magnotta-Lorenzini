@@ -2,10 +2,12 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 
+import java.io.Serializable;
+
 /**
  * Class that contains player's information and game items
  */
-public class Player {
+public class Player implements Serializable {
     /**
      * player's nickname, acts as identifier for the player
      */

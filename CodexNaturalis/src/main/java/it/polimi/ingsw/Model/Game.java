@@ -6,13 +6,14 @@ import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Class that manages the game life cycle, from the start to end.
  */
-public class Game {
+public class Game implements Serializable{
     /**
      * number of players in the current game
      */
@@ -47,7 +48,7 @@ public class Game {
      */
     public TableCenter tablecenter;
 
-    private final ArrayList<ModelViewListener> mvListeners;
+    private transient final ArrayList<ModelViewListener> mvListeners;
 
     protected ArrayList<TokenColor> availableTokens;
 

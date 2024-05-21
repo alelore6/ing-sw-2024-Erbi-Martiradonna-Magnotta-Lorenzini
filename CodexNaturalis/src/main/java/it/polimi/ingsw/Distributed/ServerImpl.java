@@ -38,7 +38,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             }catch (RuntimeException e){
                 // An identical nickname has been found
 
-                ClientSkeleton temp = findCSbyNickname(client.getNickname());
+                ClientSkeleton temp = findLastCSbyNickname(client.getNickname());
 
                 //add a sequential number at the end of the nickname
                 ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
@@ -65,16 +65,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     public void findClientImpl(String nickname){
-        for (ClientImpl c : CLIENT_IMPL_LIST){
+        for(ClientImpl c : CLIENT_IMPL_LIST){
             if (c.getNickname().equalsIgnoreCase(nickname))
-                // client not found
-                throw new RuntimeException("client " + nickname + " not found");
+                // client found
+                throw new RuntimeException("client " + nickname + " found");
         }
     }
 
-    public ClientSkeleton findCSbyNickname(String nickname){
-        for(ClientSkeleton c : clientSkeletons){
-            if(c.getNickname().equals(nickname))    return c;
+    public ClientSkeleton findLastCSbyNickname(String nickname){
+        for(int i = clientSkeletons.size() - 1; i >= 0; i--){
+            if(clientSkeletons.get(i).getNickname().equals(nickname))    return clientSkeletons.get(i);
         }
 
         return null;
@@ -106,11 +106,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         for(ClientSkeleton client : clientSkeletons)    sendEvent(client, event);
-        for(ClientImpl client : CLIENT_IMPL_LIST){
-            if(!client.clientFasullo){
-                client.sendEvent(event);
-            }
-        }
+
     }
 
     public void sendEvent(Client client, GenericEvent event) throws RemoteException {

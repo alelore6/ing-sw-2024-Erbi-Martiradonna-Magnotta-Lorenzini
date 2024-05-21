@@ -167,7 +167,7 @@ public class TUI extends UI {
                     }
 
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     printOut(ev.msgOutput());
 
@@ -247,7 +247,6 @@ public class TUI extends UI {
                             break;
 
                         default :
-                            printErr("\n\nNOT HANDLED EVENT!\n\n");
                             break;
                     }
                 }

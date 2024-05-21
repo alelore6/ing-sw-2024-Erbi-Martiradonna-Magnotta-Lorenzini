@@ -1,11 +1,12 @@
 package it.polimi.ingsw.Model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Class that contains the information about the resources owned by the player
  */
-public class CurrentResources {
+public class CurrentResources implements Serializable {
     /**
      * the player that owns the class
      */

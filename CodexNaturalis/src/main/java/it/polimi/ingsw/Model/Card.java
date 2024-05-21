@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Model;
 
-public abstract class Card {
+import java.io.Serializable;
+
+public abstract class Card implements Serializable {
      protected int ID;
 
     // Everything about the back of the card is based on this boolean:

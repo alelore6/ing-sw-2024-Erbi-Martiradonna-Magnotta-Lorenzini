@@ -2,10 +2,12 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.isEmptyException;
 
+import java.io.Serializable;
+
 /**
  *  Class containing the table center of the game, holding the playing card decks aswell the cards layed common for everyone.
  */
-public class TableCenter {
+public class TableCenter implements Serializable {
     /**
      * Game instance linked to this table center
      */

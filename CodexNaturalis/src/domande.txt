@@ -98,6 +98,11 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 
 
 
+    -   Far scegliere un colore alla volta
+    -   Aspettare il login di tutti prima di inviare startGame
+    -   DEBUG: capire perché dà errore di invio al client (StackOverflowError)
+    -   Capire come rendere il model non transient (serializzabile) perché ad ora non riesce ad inviarlo
+
 
 
 

@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 public class ClientRegister extends GenericEvent {
 
-
     public ClientRegister(ClientImpl client) {
         super("Connessione...", client.getNickname());
     }

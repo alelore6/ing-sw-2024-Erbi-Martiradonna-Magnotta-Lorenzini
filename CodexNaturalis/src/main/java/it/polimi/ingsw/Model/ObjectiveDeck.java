@@ -12,7 +12,7 @@ public class ObjectiveDeck {
 
 
     private int NCards;
-    private ObjectiveCard[] cards;
+    private ObjectiveCard[] cards = new ObjectiveCard[16];
 
     private ObjectiveCard1[] temp_deck1;
     private ObjectiveCard2[] temp_deck2;
