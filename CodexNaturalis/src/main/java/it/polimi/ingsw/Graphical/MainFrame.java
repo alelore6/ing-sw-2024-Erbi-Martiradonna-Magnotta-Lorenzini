@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Graphical;
 
+import it.polimi.ingsw.Events.StartGame;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -15,7 +17,6 @@ public class MainFrame extends JFrame {
     int y;
     double scale;
     private String fileToPrintPath = null;
-   int numberOfPLayers;
     private ActionListener ActionEvent;
     private JLabel viewLabel;
     private JMenuBar menuBar;
@@ -33,43 +34,40 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(1280, 720); //16:9 proporzione
         setLayout(new BorderLayout());
+        ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
+        int width = 800;
+        int height = 720;
+        Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
+        ImageIcon centerImgIcon = new ImageIcon(imgResized);
+        this.add(new JLabel(img), BorderLayout.CENTER);
+
         initialPanel = new JPanel() {
             protected void paintComponent(Graphics g) {
-                super.paintComponents(g);
-                ImageIcon photo = new ImageIcon("assets/image/rulebook/01.png");
-                Image image = photo.getImage();
-                //g.drawImage(image, x, y, getWidth(), getHeight(), this);
-                this.add(new JLabel(new ImageIcon(image)));
-            }
+            super.paintComponents(g);
+
+                int x =( getWidth()-width)/2;
+                int y = (getHeight()-height)/2;
+            g.drawImage(imgResized, x, y, this);
+         }
         };
+        add(initialPanel, BorderLayout.CENTER);
+        setVisible(true);
+        initialPanel.revalidate();
+        initialPanel.repaint();
+
+        GenerationPanels(4);
+    }
 
 
-    }
-    public void Ui(){
-        numberOfPLayers=getNumberOfPLayers();
-        GenerationPanels();
-    }
-
-    public int getNumberOfPLayers() {
-        String input= JOptionPane.showInputDialog("Enter number of players: ", numberOfPLayers);
-        int players=0;
-        try {
-            players=Integer.parseInt(input);
-        }
-        catch (Exception e) {
-            JOptionPane.showMessageDialog(null, "Please enter a valid number between 1 and "+numberOfPLayers);
-        }
-        return numberOfPLayers;
-    }
 
     public void paint(Graphics g) {
         //TODO paint method is called automatically when the frame is istantiated
         // we have to understand how and when to call it correctly. There is the "repaint()" method
         // that will be used to "refresh" the GUI accordingly, recalling the paint() method.
 
-        printRectangle(g);
+       /* printRectangle(g);
         printCard(g);
-
+*/
     }
 
     private void printRectangle(Graphics g) {
@@ -109,60 +107,69 @@ public class MainFrame extends JFrame {
     }
 
 
+    public void GenerationPanels(int NumberOfPLayers){
 
-
-    public void GenerationPanels(){
-    /**
-        mainPanel = new JPanel(new BorderLayout());
+    mainPanel = new JPanel();
+    mainPanel.setLayout(null);
 
     tableCenterPanel= new JPanel();
+    tableCenterPanel.setBackground(Color.RED);
     handPanel = new JPanel();
+    handPanel.setBackground(Color.CYAN);
     positionedCardPanel = new JPanel();
+    positionedCardPanel.setBackground(Color.YELLOW);
 
        menuBar = new JMenuBar();
-       JMenu tableCenterMenu = new JMenu("Table Center");
-       JMenuItem tableCenter = new JMenuItem("Show Table Center");
-       tableCenterMenu.add(tableCenter);
-
-       JMenu positionedCardsMenu = new JMenu("Positioned Cards");
-       JMenuItem positionedCards = new JMenuItem("Positioned Cards");
-       for (int i = 0; i < numberOfPLayers + 2; i++) {
-           JMenuItem hand = new JMenuItem("Hand " + (i + 1));
-           menuBar.add(hand);
-       }
+       JMenuItem tableCenter = new JMenuItem("Table Center");
+       JMenuItem hand = new JMenuItem("Hand");
 
        menuBar.add(tableCenter);
-       menuBar.add(positionedCards);
+       menuBar.add(hand);
 
-       tableCenter.addActionListener( new ActionEvent) {
-          public void actionPerformed(ActionEvent ){
-        switchPanel(tableCenterPanel);
-         }
-       }
+       for (int i = 0; i < NumberOfPLayers; i++) {
+           JMenuItem positionedCards = new JMenuItem("Positioned Cards Player " + (i+1));
+           menuBar.add(positionedCards);
+            positionedCards.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    switchPanel(positionedCardPanel);
 
-       positionedCards.addActionListener(ActionEvent) {
-           public void actionPerformed(ActionEvent ){
-               switchPanel(positionedCardPanel);
-         }
+
+                }
+            });
        }
+       tableCenter.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e) {
+            switchPanel(tableCenterPanel);
+
+         }
+       });
+
+       hand.addActionListener(new ActionListener() {
+           public void actionPerformed(ActionEvent e ) {
+               switchPanel(handPanel);
+               }
+       });
+
        setJMenuBar(menuBar);
-
       setVisible(true);
-**/
    }
 
    private void switchPanel(JPanel panel) {
-        mainPanel.removeAll();
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
+
+      Container currentPanel = getContentPane();
+      mainPanel.remove(currentPanel.getComponent(0));
+      mainPanel.add(panel, BorderLayout.CENTER);
+      mainPanel.revalidate();
+      mainPanel.repaint();
    }
 
-public void reactstartGame(){
+public void reactstartGame(StartGame ev){
+        GenerationPanels(ev.model.getNumPlayers());
         remove (initialPanel);
+        add(mainPanel , BorderLayout.CENTER);
         setVisible(true);
-        revalidate();
-        repaint();
+        initialPanel.revalidate();
+        initialPanel.repaint();
 }
 
 }
