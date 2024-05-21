@@ -44,6 +44,22 @@ public class MainFrame extends JFrame {
 
 
     }
+    public void Ui(){
+        numberOfPLayers=getNumberOfPLayers();
+        GenerationPanels();
+    }
+
+    public int getNumberOfPLayers() {
+        String input= JOptionPane.showInputDialog("Enter number of players: ", numberOfPLayers);
+        int players=0;
+        try {
+            players=Integer.parseInt(input);
+        }
+        catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Please enter a valid number between 1 and "+numberOfPLayers);
+        }
+        return numberOfPLayers;
+    }
 
     public void paint(Graphics g) {
         //TODO paint method is called automatically when the frame is istantiated
@@ -92,23 +108,22 @@ public class MainFrame extends JFrame {
     }
 
 
-    /* !!! PART FULL OF ERROR: DON'T COMMIT IF THERE'S SO MANY OF THEM !!!
-           If so, the program cannot be run or debugged.
 
 
     public void GenerationPanels(){
-    mainPanel = new JPanel(new BorderLayout());
+    /**
+        mainPanel = new JPanel(new BorderLayout());
 
     tableCenterPanel= new JPanel();
     handPanel = new JPanel();
     positionedCardPanel = new JPanel();
 
-       menuBar = new JMenuBar;
+       menuBar = new JMenuBar();
        JMenu tableCenterMenu = new JMenu("Table Center");
        JMenuItem tableCenter = new JMenuItem("Show Table Center");
        tableCenterMenu.add(tableCenter);
 
-       JMenu positi
+       JMenu positionedCardsMenu = new JMenu("Positioned Cards");
        JMenuItem positionedCards = new JMenuItem("Positioned Cards");
        for (int i = 0; i < numberOfPLayers + 2; i++) {
            JMenuItem hand = new JMenuItem("Hand " + (i + 1));
@@ -127,16 +142,14 @@ public class MainFrame extends JFrame {
        positionedCards.addActionListener(ActionEvent) {
            public void actionPerformed(ActionEvent ){
                switchPanel(positionedCardPanel);
-        }
+         }
        }
-
-
        setJMenuBar(menuBar);
 
       setVisible(true);
-
+**/
    }
-   */
+
    private void switchPanel(JPanel panel) {
         mainPanel.removeAll();
         mainPanel.add(panel, BorderLayout.CENTER);
