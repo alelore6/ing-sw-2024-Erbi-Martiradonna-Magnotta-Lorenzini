@@ -58,22 +58,12 @@ public class Controller {
         model = new Game(lobby.getNumPlayers(), nicknames, MVListeners);
 
 
-        for(int i = 0; i < MVListeners.size(); i++){
-            //TODO clonare il model ??
-            //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-            MVListeners.get(i).addEvent(new StartGame(lobby.getPlayers().get(i), model));
-        }
+        //NOTIFY ALL LISTENERS OF STARTGAME EVENT
+        MVListeners.get(0).addEvent(new StartGame(lobby.getPlayers().get(0), model.clone()));
 
         getGame().startGame();
     }
 
-    public void endGame(int occasion){
-        //( finchè non spostiamo)endGame viene gestito all'interno del model
-        // al di fuori arriva solo la notifica che è stato triggerato
-        //forse si può utilizzare quando viene conclusa del tutto la partita
-        // dopo checkWinner per chiudere del tutto la partita e dare la possibilità di una nuova.
-        getGame().endGame(occasion);
-    }
 
 
     /**
@@ -118,7 +108,7 @@ public class Controller {
      * @param event the event sent from the client
      * @param nickname the player that sent the event
      */
-    public void updateModel(GenericEvent event, ClientSkeleton client, String nickname) throws RemoteException {
+    public void updateModel(GenericEvent event, String nickname) throws RemoteException {
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }
@@ -135,13 +125,11 @@ public class Controller {
                         //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack
-                        for(int i = 0; i < MVListeners.size(); i++){
-                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
-                        }
-                        //send updated handcards
-                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(true, nickname, event, model.clone()));
+                        model.turnPhase++;
+                        //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));
                     }
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
@@ -150,60 +138,52 @@ public class Controller {
                 else if(chosenPosition == 4){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        for(int i = 0; i < MVListeners.size(); i++){
-                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
-                        }
-                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
-
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(true, nickname, event, model.clone()));
+                        model.turnPhase++;
+                        //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));
                     }
                 }
                 else if(chosenPosition == 5){
                     try {
-                        getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        for(int i = 0; i < MVListeners.size(); i++){
-                            MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
-                        }
-                        getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
+                        getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(true, nickname, event, model.clone()));
+                        model.turnPhase++;
+                        //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
                     } catch (HandFullException | isEmptyException e ) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));
                     }
                 }
-
+            nextPlayer();
             }
 
             else if(event instanceof PlayCardResponse){
                 try {
                     getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                    for(int i = 0; i < MVListeners.size(); i++){
-                        MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
-                    }
-                    getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
+                    MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(true, nickname, event, model.clone()));
+                    model.turnPhase++;
+                    //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));
                 }
             }
 
             else if(event instanceof SetTokenColorResponse){
                boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
                 if (ok){
-                    for(int i = 0; i < MVListeners.size(); i++){
-                        MVListeners.get(i).addEvent(new AckResponse(ok, nickname, event));
-                    }
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event, model.clone()));
                 }
-                else getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event));
+                else getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event, model.clone()));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
                     getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
-                    for(int i = 0; i < MVListeners.size(); i++){
-                        MVListeners.get(i).addEvent(new AckResponse(true, nickname, event));
-                    }
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event, model.clone()));
                 } catch (WrongPlayException e) {
                     //shouldn't happen
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event));                }
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));                }
             }
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
@@ -251,7 +231,6 @@ public class Controller {
             System.out.println("MVListener not found\n");
             return null;
         }
-
     }
 
     public ArrayList<ModelViewListener> getMVListeners() {
@@ -261,5 +240,15 @@ public class Controller {
     public void addMVListener(ModelViewListener listener) throws RemoteException {
         MVListeners.add(listener);
         listener.handleEvent();
+    }
+
+    private void nextPlayer(){
+        if(model.turnPhase==3){
+            //end turn event
+            EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
+            MVListeners.get(model.getCurPlayerPosition()).addEvent(endTurn);
+            if(model.getRemainingTurns() == 0) model.checkWinner();
+            else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
+        }
     }
 }

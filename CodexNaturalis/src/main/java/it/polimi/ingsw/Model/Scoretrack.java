@@ -52,7 +52,7 @@ public class Scoretrack {
      * Create a map between players' nicknames and their points
      * @return a map between players' nicknames and their points
      */
-    protected HashMap<String,Integer> getRankings() {
+    public HashMap<String,Integer> getRankings() {
         HashMap<String,Integer> p = new HashMap<String,Integer>();
         for (Token token : points.keySet()) {
             p.put(token.getPlayer().getNickname(),points.get(token));

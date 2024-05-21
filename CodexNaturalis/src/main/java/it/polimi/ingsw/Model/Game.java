@@ -5,6 +5,7 @@ import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
+import it.polimi.ingsw.ModelView.GameView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import java.util.HashMap;
 /**
  * Class that manages the game life cycle, from the start to end.
  */
-public class Game implements Serializable{
+public class Game{
     /**
      * number of players in the current game
      */
@@ -30,10 +31,11 @@ public class Game implements Serializable{
      * attribute that keeps count of remaining turns when the ending stage of the game is triggered
      */
     private int remainingTurns;
+
     /**
      * integer representing the current player position in the array of players
      */
-    private int curPlayerPosition;
+     private int curPlayerPosition;
 
     /**
      * The starting cards deck
@@ -48,11 +50,11 @@ public class Game implements Serializable{
      */
     public TableCenter tablecenter;
 
-    private transient final ArrayList<ModelViewListener> mvListeners;
+    private final ArrayList<ModelViewListener> mvListeners;
 
     protected ArrayList<TokenColor> availableTokens;
 
-
+    public int turnPhase; //0: start turn, 1: play done, 2: draw done, 3: end turn
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -109,6 +111,10 @@ public class Game implements Serializable{
 
     public String getCurrentPlayer(){
         return players[curPlayerPosition].getNickname();
+    }
+
+    public int getCurPlayerPosition() {
+        return curPlayerPosition;
     }
 
     /**
@@ -187,10 +193,8 @@ public class Game implements Serializable{
         }
 
         //notify all players on turn order
-        for(int i=0;i<numPlayers;i++){
-            TurnOrder turnOrder=new TurnOrder(players[i].getNickname(),order);
-            mvListeners.get(i).addEvent(turnOrder);
-        }
+        TurnOrder turnOrder=new TurnOrder(players[0].getNickname(),order,this.clone());
+        mvListeners.get(0).addEvent(turnOrder);
 
         curPlayerPosition = firstPlayerPos;
         nextPlayer(players[firstPlayerPos]);
@@ -269,8 +273,6 @@ public class Game implements Serializable{
      */
     public void checkWinner(){
 
-        //sarebbe ancora meglio mappa di nickname e punti
-        // e non sarebbe da ritornare perchè l'evento viene chiamato da dentro il metodo
         HashMap<String,Integer> rankings= new HashMap<>();
 
         isFinished = true;
@@ -295,39 +297,9 @@ public class Game implements Serializable{
             rankings.put(players[i].getNickname(), punteggi[i]);  //fill the rankings hashmap
         }
 
-//        int maxpoints = 0;
-//        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo vincitore
-//        {
-//            if(punteggi[i] >= maxpoints){
-//                maxpoints = punteggi[i];
-//            }
-//
-//        }
-//        int pareggi = 0;
-//
-//        for(int i = 0; i < numPlayers; i++)  //ciclo e calcolo il numero di pareggi
-//        {
-//            if(punteggi[i] == maxpoints){
-//                pareggi++;
-//            }
-//
-//        }
-//        Player[] winners = new Player[pareggi];
-//
-//        int j = 0;
-//        for(int i = 0; i < numPlayers; i++){
-//
-//            if(punteggi[i]==maxpoints){
-//                winners[j] = players[i];
-//                j++;
-//            }
-//        }
-
         //send FinalRankings event to everyone
-        for(int i=0;i<numPlayers;i++){
-            FinalRankings event=new FinalRankings(players[i].getNickname(),rankings);
-            mvListeners.get(i).addEvent(event);
-        }
+        FinalRankings event=new FinalRankings(players[curPlayerPosition].getNickname(),rankings);
+        mvListeners.get(curPlayerPosition).addEvent(event);
     }
 
     /**
@@ -337,6 +309,8 @@ public class Game implements Serializable{
      * @param PreviousPlayer the instance of the player holding the previous turn
      */
     public void nextPlayer(Player PreviousPlayer){
+        if(turnPhase!=3) System.out.println("something went wrong with precedent player's turn");
+        turnPhase=0;
         //find next player index
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
@@ -348,10 +322,8 @@ public class Game implements Serializable{
         curPlayerPosition = nextPlayerIndex;
 
         //send StartTurn event
-        for(int i=0;i<numPlayers;i++){
-            StartTurn event=new StartTurn(players[i].getNickname(),getCurrentPlayer());
-            mvListeners.get(i).addEvent(event);
-        }
+        StartTurn event=new StartTurn(players[curPlayerPosition].getNickname(),getCurrentPlayer());
+        mvListeners.get(curPlayerPosition).addEvent(event);
 
         // send play card request event
         PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards().clone(),players[curPlayerPosition].getHand().getDisplayedCards().clone(),players[curPlayerPosition].getCurrentResources());
@@ -374,15 +346,6 @@ public class Game implements Serializable{
         turnCounter++;
         remainingTurns--;
 
-        if(remainingTurns == 0) checkWinner();
-        else {
-            //end turn event
-            for(int i=0;i<numPlayers;i++){
-                EndTurn endTurn=new EndTurn(getCurrentPlayer(),players[i].getNickname(),tablecenter.getScoretrack().getRankings());
-                mvListeners.get(i).addEvent(endTurn);
-            }
-            nextPlayer(players[nextPlayerIndex]);
-        }
     }
 
     protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
@@ -498,6 +461,11 @@ public class Game implements Serializable{
 
             return totalpoints;
         }
+    }
+
+    @Override
+    public GameView clone(){
+        return new GameView(this);
     }
 }
 

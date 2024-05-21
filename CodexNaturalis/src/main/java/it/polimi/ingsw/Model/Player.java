@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  * Class that contains player's information and game items
  */
-public class Player implements Serializable {
+public class Player {
     /**
      * player's nickname, acts as identifier for the player
      */

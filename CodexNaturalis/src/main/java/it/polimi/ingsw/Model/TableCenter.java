@@ -7,7 +7,7 @@ import java.io.Serializable;
 /**
  *  Class containing the table center of the game, holding the playing card decks aswell the cards layed common for everyone.
  */
-public class TableCenter implements Serializable {
+public class TableCenter {
     /**
      * Game instance linked to this table center
      */

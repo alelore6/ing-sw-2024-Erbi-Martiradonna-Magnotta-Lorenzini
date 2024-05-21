@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.CurrentResources;
 /**
  * Event that represent the updated current resource and displayed cards after a play
  */
+@Deprecated
 public class ReturnPlayCard extends GenericEvent{
     /**
      * the displayed cards updated

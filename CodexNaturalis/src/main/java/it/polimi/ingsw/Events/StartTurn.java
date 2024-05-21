@@ -11,5 +11,6 @@ public class StartTurn extends GenericEvent{
      */
     public StartTurn(String nickname, String turnPlayer){
         super("It's "+ turnPlayer+ "'s turn!",nickname);
+        mustBeSentToAll=true;
     }
 }

@@ -85,12 +85,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         if(event instanceof ClientRegister){
             client.setNickname(event.nickname);
             controller.addMVListener(new ModelViewListener(this, client));
-            controller.updateModel(event, (ClientSkeleton) client, event.nickname);
+            controller.updateModel(event, event.nickname);
         }else {
             //client has responded to a request to modify the model
             for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
                 if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(client.getNickname())) {
-                    controller.updateModel(event, (ClientSkeleton) client, CLIENT_IMPL_LIST.get(i).getNickname());
+                    controller.updateModel(event, CLIENT_IMPL_LIST.get(i).getNickname());
                 }
             }
         }

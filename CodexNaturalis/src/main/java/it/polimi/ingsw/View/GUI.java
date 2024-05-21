@@ -121,7 +121,7 @@ public class GUI extends UI{
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname())) continue;
+                    //if(!ev.nickname.equals(client.getNickname())) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -240,7 +240,6 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            f.reactstartGame((StartGame) ev);
                             break;
 
                         case ReturnDrawCard e:

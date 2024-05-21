@@ -19,6 +19,7 @@ public class FinalRankings extends GenericEvent{
     public FinalRankings(String nickname, HashMap<String,Integer> rankings){
         super("The final rankings are: ",nickname);
         Rankings = rankings;
+        mustBeSentToAll=true;
     }
 
 

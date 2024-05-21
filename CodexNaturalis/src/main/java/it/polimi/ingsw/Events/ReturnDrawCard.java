@@ -5,6 +5,7 @@ import it.polimi.ingsw.Model.PlayableCard;
 /**
  * Event that represent the return of the drawn card after a draw response
  */
+@Deprecated
 public class ReturnDrawCard extends GenericEvent{
     /**
      * the new hand with the drawn card

@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
+import it.polimi.ingsw.ModelView.GameView;
 
 /**
  * Generic event that represents the success or failure of the action.
@@ -16,15 +17,18 @@ public class AckResponse extends GenericEvent{
      */
     public final GenericEvent event;
 
+    public final GameView gameView;
     /**
      * Constructor
      * @param ok the result of the action
      * @param nickname the player that did the action
      * @param event the corresponding event
      */
-    public AckResponse(boolean ok, String nickname, GenericEvent event){
+    public AckResponse(boolean ok, String nickname, GenericEvent event, GameView gameView){
         super(ok ? "Event has gone successfully" : "Event has gone wrong. Please try again", nickname);
         this.ok = ok;
         this.event = event;
+        mustBeSentToAll=ok;
+        this.gameView = gameView;
     }
 }
