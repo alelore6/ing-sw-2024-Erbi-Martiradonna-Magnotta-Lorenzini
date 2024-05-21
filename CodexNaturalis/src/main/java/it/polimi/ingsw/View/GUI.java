@@ -240,6 +240,7 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
+                            f.reactstartGame((StartGame) ev);
                             break;
 
                         case ReturnDrawCard e:
