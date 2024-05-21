@@ -10,7 +10,13 @@ public class TokenView implements Serializable {
     public final int position;
 
     public TokenView(Token token) {
-        color = token.getColor();
-        position= token.getScoreTrackPos();
+        if (token != null) {
+            color = token.getColor();
+            position= token.getScoreTrackPos();
+        }
+        else {
+            color = null;
+            position = -1;
+        }
     }
 }

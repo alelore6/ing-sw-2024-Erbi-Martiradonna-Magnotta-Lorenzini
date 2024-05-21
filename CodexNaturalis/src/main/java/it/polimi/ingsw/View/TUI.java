@@ -78,11 +78,12 @@ public class TUI extends UI {
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempString = in.next();
+            tempString = in.nextLine();
 
             // Here we can put controls con the characters of the string inserted
-            if(!tempString.contains(" ") && tempString.length()>=4) // se tutto ok allora
+            if(tempString!=null && !tempString.contains(" ") && tempString.length()>=4) // se tutto ok allora
                 isValid = true;
+            else printOut("Invalid "+s+": must be at least 4 characters and cant contain spaces. Try again.");
         }
 
         return tempString.trim();

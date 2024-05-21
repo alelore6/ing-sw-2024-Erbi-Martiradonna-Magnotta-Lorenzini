@@ -72,6 +72,7 @@ public class Game{
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i]);
         }
+        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
         StartingDeck = new StartingDeck();
         availableTokens = new ArrayList<TokenColor>();
         //all tokens available
@@ -125,8 +126,6 @@ public class Game{
      * @throws WrongPlayException thrown by the method playStartingCard
      */
     public void startGame() throws RuntimeException{
-
-        tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
 
         for(int i = 0; i < 4; i++){  //Riempio le carte a terra per la prima volta dai deck
             if(i < 2){
