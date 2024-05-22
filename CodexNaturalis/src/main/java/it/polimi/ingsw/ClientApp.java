@@ -39,23 +39,22 @@ public class ClientApp {
 
         if(isRMI){   //RMI
 
-
-
             Registry registry = LocateRegistry.getRegistry(ip,45656);
 
-            RemoteServerInterface server = (RemoteServerInterface) registry.lookup("server");
+            Server  server = (Server) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(server, isTUI);
 
-            RemoteClientInterface clientStub = null;
+            Client clientStub = null;
             try {
-                clientStub = (RemoteClientInterface) UnicastRemoteObject.exportObject(client, 0);
+                clientStub = (Client) UnicastRemoteObject.exportObject(client, 0);
             } catch (ExportException e) {
                 e.printStackTrace();
                 clientStub = (RemoteClientInterface)client;
             }
 
-            server.processClient(clientStub, client.getNickname()); //con questo registro lo stub del client al server
+            //client registers itself on the server
+            server.register(clientStub); //con questo registro lo stub del client al server
 
             client.run();
         }

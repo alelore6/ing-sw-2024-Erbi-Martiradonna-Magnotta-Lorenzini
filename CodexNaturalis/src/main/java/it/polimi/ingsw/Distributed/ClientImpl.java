@@ -10,17 +10,14 @@ import it.polimi.ingsw.View.UI;
 
 
 import java.rmi.RemoteException;
-import java.rmi.server.RMIClientSocketFactory;
-import java.rmi.server.RMIServerSocketFactory;
-import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl implements Runnable, Client, RemoteClientInterface{
+public class ClientImpl implements Runnable, Client{
 
     protected UI userInterface;
     private String nickname;
-    private ServerStub serverStub;
-    private RemoteServerInterface remoteServer;
-    final boolean clientFasullo;
+    private Server server;
+    public final boolean clientFasullo;
+    public boolean isRMI = false;
 
     public ClientImpl(Server server, boolean isTUI) throws RemoteException {
         super();
@@ -32,16 +29,6 @@ public class ClientImpl implements Runnable, Client, RemoteClientInterface{
         initialize(server);
     }
 
-    public ClientImpl(RemoteServerInterface server, boolean isTUI) throws RemoteException {
-        super();
-        userInterface = (isTUI ? new TUI(this) : new GUI(this));
-        this.nickname = userInterface.chooseNickname();
-        this.clientFasullo = false;
-        this.remoteServer = server;
-    }
-
-
-
 
     // This constructor is called only on the server to create a pseudo ClientImpl
     // since this is not serializable
@@ -52,11 +39,18 @@ public class ClientImpl implements Runnable, Client, RemoteClientInterface{
     }
 
     private void initialize(Server server) throws RemoteException {
+
+        //SOCKET
         if(server instanceof ServerStub){
-            serverStub = (ServerStub) server;
-            serverStub.register(this);
+            this.server = (ServerStub) server;
+            this.server.register(this);
             userInterface.notifyListener(new ClientRegister(this));
             userInterface.getListener().handleEvent();
+        }
+        //RMI
+        else{
+            this.server = (Server)server;
+            isRMI = true;
         }
     }
 
@@ -70,13 +64,14 @@ public class ClientImpl implements Runnable, Client, RemoteClientInterface{
         userInterface.run();
     }
 
+
     @Override
     public void update(GenericEvent e) throws RemoteException {
         userInterface.update(e);
     }
 
     public void sendEvent(GenericEvent e) throws RemoteException {
-        serverStub.update(this,e);
+        server.update(this, e);
     }
 
 
@@ -84,27 +79,10 @@ public class ClientImpl implements Runnable, Client, RemoteClientInterface{
         return userInterface;
     }
 
-
-
-//    @Override
-//    public void sendObject(GenericEvent obj) throws RemoteException {
-//
-//    }
-//
-//    @Override
-//    public GenericEvent receiveObject() throws RemoteException {
-//        return null;
-//    }
     @Override
     public String getNickname() {
         return nickname;
     }
 
-    //method used by the server to SEND an event!!!
-    @Override
-    public void receiveObject(GenericEvent event) throws RemoteException {
-        System.out.println(event.msgOutput());
-        //update(event);
-    }
 }
 

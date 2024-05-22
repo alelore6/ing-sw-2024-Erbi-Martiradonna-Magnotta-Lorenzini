@@ -7,6 +7,7 @@ import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.TestEvent;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
     private static int numClient = 0;
     private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
     int clientSkeletonIndex = 0; //keeps track of clientskeletons without nickname
-    private HashMap<RemoteClientInterface, String> RMIclients = new HashMap<>();
+    private HashMap<String, RemoteClientInterface> RMIclients = new HashMap<>();
 
     //server constructor with the default rmi port
     public ServerImpl() throws RemoteException {
@@ -32,6 +33,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
         super(port);
     }
 
+
+
     @Override
     public void register(Client client) throws RemoteException{
         if(client instanceof ClientImpl){ // if MALEDETTO
@@ -39,7 +42,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
             try{
                 // check nickname
                 findClientImpl(((ClientImpl) client).getNickname());
-            }catch (RuntimeException e){
+            }catch (RuntimeException e){ //TODO guardare la catch se è giusta
                 // An identical nickname has been found
 
                 ClientSkeleton temp = findLastCSbyNickname(client.getNickname());
@@ -111,11 +114,18 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         for(ClientSkeleton client : clientSkeletons)    sendEvent(client, event);
+        for(String nickname : RMIclients.keySet()){
+            RMIclients.get(nickname).receiveObject(event);
+        }
 
     }
 
     public void sendEvent(Client client, GenericEvent event) throws RemoteException {
         client.update(event);
+    }
+
+    public void sendEvent(RemoteClientInterface remoteClient, GenericEvent event) throws RemoteException {
+        remoteClient.receiveObject(event);
     }
 
     //method used by the client to SEND an event. then the event and the client are passed to the general update() method.
@@ -128,8 +138,24 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
     //method used only 1 time to register the client stub to the server and the associated nickname
     @Override
     public void processClient(RemoteClientInterface remoteClient, String nickname) throws RemoteException {
-        RMIclients.put(remoteClient, nickname);
+        RMIclients.put(nickname, remoteClient);
+        System.out.println("SONO QUI!");
+
+        controller.addMVListener(new ModelViewListener(this, remoteClient));
+
         //RIGHE DI TEST
-        remoteClient.receiveObject(new TestEvent("SONO ARRIVATO AL CLIENT TRAMITE RMI", nickname));
+       // remoteClient.receiveObject(new TestEvent("SONO ARRIVATO AL CLIENT TRAMITE RMI", nickname));
+    }
+
+
+    public ClientImpl findClientImplByNickname(String nickname){
+        for(ClientImpl c : CLIENT_IMPL_LIST){
+            if (c.getNickname().equalsIgnoreCase(nickname)){return c;}
+        }
+        return null;
+    }
+
+    public HashMap<String, RemoteClientInterface> getRMIclients() {
+        return RMIclients;
     }
 }

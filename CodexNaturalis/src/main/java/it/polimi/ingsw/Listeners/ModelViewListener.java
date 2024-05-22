@@ -1,10 +1,7 @@
 package it.polimi.ingsw.Listeners;
 
-import it.polimi.ingsw.Distributed.Client;
-import it.polimi.ingsw.Distributed.ClientImpl;
+import it.polimi.ingsw.Distributed.*;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Distributed.Server;
-import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
@@ -56,7 +53,18 @@ public class ModelViewListener extends Listener {
                                 }
                                 else
                                 {
-                                    server.sendEvent(client, currentEvent);
+                                    if(server.findLastCSbyNickname(currentEvent.nickname)!=null){
+
+                                        ClientSkeleton clientSkeleton=  server.findLastCSbyNickname(currentEvent.nickname);
+                                        server.sendEvent(clientSkeleton, currentEvent);
+
+                                    }
+                                    else{ //it's an RMI client
+                                        if(server.getRMIclients().containsKey(currentEvent.nickname)){
+                                            server.sendEvent((RemoteClientInterface)server.getRMIclients().get(currentEvent.nickname), currentEvent);
+                                        }
+                                        //else the nickname is not present (shouldn't happen)
+                                    }
                                 }
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);

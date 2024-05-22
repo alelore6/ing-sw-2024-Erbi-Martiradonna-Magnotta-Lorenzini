@@ -2,7 +2,6 @@ package it.polimi.ingsw;
 
 import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Distributed.RemoteServerInterface;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
