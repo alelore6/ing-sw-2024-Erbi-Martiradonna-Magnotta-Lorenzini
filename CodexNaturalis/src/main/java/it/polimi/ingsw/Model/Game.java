@@ -308,8 +308,9 @@ public class Game{
      * @param PreviousPlayer the instance of the player holding the previous turn
      */
     public void nextPlayer(Player PreviousPlayer){
-        if(turnPhase!=3) System.out.println("something went wrong with precedent player's turn");
-        turnPhase=0;
+        //debug
+        if(turnPhase!=3) System.out.println("something went wrong with previous player's turn");
+
         //find next player index
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
@@ -320,31 +321,41 @@ public class Game{
 
         curPlayerPosition = nextPlayerIndex;
 
-        //send StartTurn event
-        StartTurn event=new StartTurn(players[curPlayerPosition].getNickname(),getCurrentPlayer());
-        mvListeners.get(curPlayerPosition).addEvent(event);
+        //if player isn't disconnected
+        if(!players[curPlayerPosition].disconnected) {
+            //turn is starting
+            turnPhase=0;
 
-        // send play card request event
-        PlayCardRequest playCard=new PlayCardRequest(getCurrentPlayer(),players[curPlayerPosition].getHand().getHandCards().clone(),players[curPlayerPosition].getHand().getDisplayedCards().clone(),players[curPlayerPosition].getCurrentResources());
-        mvListeners.get(curPlayerPosition).addEvent(playCard);
+            //send StartTurn event
+            StartTurn event = new StartTurn(players[curPlayerPosition].getNickname(), getCurrentPlayer());
+            mvListeners.get(curPlayerPosition).addEvent(event);
 
-        //check there are still card on table center
-        boolean empty=true;
-        for(int i=0;i<4;i++){
-            if(tablecenter.getCenterCards()[i]!=null){
-                empty=false;
-                break;
+            // send play card request event
+            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), players[curPlayerPosition].getHand().getHandCards().clone(), players[curPlayerPosition].getHand().getDisplayedCards().clone(), players[curPlayerPosition].getCurrentResources());
+            mvListeners.get(curPlayerPosition).addEvent(playCard);
+
+            //check there are still card on table center
+            boolean empty = true;
+            for (int i = 0; i < 4; i++) {
+                if (tablecenter.getCenterCards()[i] != null) {
+                    empty = false;
+                    break;
+                }
             }
+            //if both deck are not empty and !empty, a draw will be requested
+            if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty) {
+                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards().clone(), tablecenter.getGoldDeck().AckEmpty, tablecenter.getResDeck().AckEmpty);
+                mvListeners.get(curPlayerPosition).addEvent(drawCard);
+            }
+            turnCounter++;
+            remainingTurns--;
         }
-        //if both deck are not empty and !empty, a draw will be requested
-        if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty){
-            DrawCardRequest drawCard=new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards().clone(),tablecenter.getGoldDeck().AckEmpty ,tablecenter.getResDeck().AckEmpty);
-            mvListeners.get(curPlayerPosition).addEvent(drawCard);
+        else{
+            turnCounter++;
+            remainingTurns--;
+            if (remainingTurns==0 ) checkWinner();
+            else nextPlayer(players[curPlayerPosition]);
         }
-
-        turnCounter++;
-        remainingTurns--;
-
     }
 
     protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
@@ -466,6 +477,25 @@ public class Game{
     public GameView clone(){
         return new GameView(this);
     }
+
+    public void disconnectPlayer(Player p){
+        p.disconnected=true;
+        //TODO eliminare listener dopo disconnessione
+        int pos=-1, count=0;
+        for(Player x: players){
+            if(x.disconnected) {
+                //  position of a player still connected
+                pos=count;
+                // number of players still connected
+                count++;
+            }
+        }
+        mvListeners.get(pos).addEvent(new PlayerDisconnected(p.getNickname(),players[pos].getNickname(),count));
+        //if(count==1)
+        //TODO se un solo giocatore rimasto si deve interrompere la partita!
+    }
+
+
 }
 
 

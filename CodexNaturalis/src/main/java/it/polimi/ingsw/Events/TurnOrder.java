@@ -23,4 +23,15 @@ public class TurnOrder extends GenericEvent{
         this.gameView = gameView;
         mustBeSentToAll=true;
     }
+
+    @Override
+    public String msgOutput() {
+        String m=" ";
+        int count=1;
+        for (String key : order) {
+            m.concat("\t"+ count+". "+key+" \n");
+            count++;
+        }
+        return message.concat(m);
+    }
 }

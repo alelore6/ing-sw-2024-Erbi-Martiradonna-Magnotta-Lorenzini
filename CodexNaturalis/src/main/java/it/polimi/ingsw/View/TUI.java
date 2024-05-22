@@ -4,6 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 
+import javax.swing.*;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -242,7 +243,10 @@ public class TUI extends UI {
                                 }
                             }
                             break;
-
+                        case ReconnectionRequest e:
+                            newEvent = new ReconnectionResponse( client.getNickname(),chooseString("password"));
+                            notifyListener(newEvent);
+                            break;
                         default :
                             break;
                     }

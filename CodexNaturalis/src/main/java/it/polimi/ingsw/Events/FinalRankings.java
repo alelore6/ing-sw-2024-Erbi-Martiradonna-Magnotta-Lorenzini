@@ -17,10 +17,20 @@ public class FinalRankings extends GenericEvent{
      * @param rankings the final rankings
      */
     public FinalRankings(String nickname, HashMap<String,Integer> rankings){
-        super("The final rankings are: ",nickname);
+        super("The final rankings are:\n ",nickname);
         Rankings = rankings;
         mustBeSentToAll=true;
     }
 
-
+    @Override
+    public String msgOutput() {
+        String m=" ";
+        int count=1;
+        for (String key : Rankings.keySet()) {
+            //non sono sicuro siano già in ordine
+            m.concat("\t"+ count+". "+key+": "+Rankings.get(key)+"\n");
+            count++;
+        }
+        return message.concat(m);
+    }
 }

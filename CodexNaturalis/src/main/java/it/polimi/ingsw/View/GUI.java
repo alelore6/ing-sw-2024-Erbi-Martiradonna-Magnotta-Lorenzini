@@ -277,7 +277,13 @@ public class GUI extends UI{
                             }
                             JOptionPane.showMessageDialog(f, message);
                             break;
-
+                        case ReconnectionRequest e:
+                            while(s==null || s.length()<4 || s.contains(" ")) {
+                                s = (String) JOptionPane.showInputDialog(f, message, "Reconnection", JOptionPane.PLAIN_MESSAGE, icon, null, null);
+                            }
+                            newEvent = new ReconnectionResponse( client.getNickname(),s.trim());
+                            notifyListener(newEvent);
+                            break;
                         case AckResponse e:
                             //TODO in alcuni casi aggiorno view e negli altri nulla???
                             break;
@@ -285,6 +291,8 @@ public class GUI extends UI{
                             //show message
                             JOptionPane.showMessageDialog(f, message);
                     }
+
+                    //TODO per alcuni eventi bisognerebbe aspettare l'ack prima di andare avanti
                 }
             }
         });
