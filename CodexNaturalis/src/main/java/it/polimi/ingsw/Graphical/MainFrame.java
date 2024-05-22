@@ -55,7 +55,7 @@ public class MainFrame extends JFrame {
         initialPanel.revalidate();
         initialPanel.repaint();
 
-        GenerationPanels(4);
+        InitializeMenuBar(4);
     }
 
 
@@ -107,18 +107,19 @@ public class MainFrame extends JFrame {
     }
 
 
-    public void GenerationPanels(int NumberOfPLayers){
+    public void GenerationPanels() {
 
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
 
-        tableCenterPanel= new JPanel();
+        tableCenterPanel = new JPanel();
         tableCenterPanel.setBackground(Color.RED);
         handPanel = new JPanel();
         handPanel.setBackground(Color.CYAN);
         positionedCardPanel = new JPanel();
         positionedCardPanel.setBackground(Color.YELLOW);
-
+    }
+    public void InitializeMenuBar( int NumberOfPLayers) {
         menuBar = new JMenuBar();
         JMenuItem tableCenter = new JMenuItem("Table Center");
         JMenuItem hand = new JMenuItem("Hand");
@@ -127,7 +128,7 @@ public class MainFrame extends JFrame {
         menuBar.add(hand);
 
         for (int i = 0; i < NumberOfPLayers; i++) {
-            JMenuItem positionedCards = new JMenuItem("Positioned Cards Player " + (i+1));
+            JMenuItem positionedCards = new JMenuItem("Positioned Cards Player " + (i + 1));
             menuBar.add(positionedCards);
             positionedCards.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
@@ -145,7 +146,7 @@ public class MainFrame extends JFrame {
         });
 
         hand.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e ) {
+            public void actionPerformed(ActionEvent e) {
                 switchPanel(handPanel);
             }
         });
@@ -164,7 +165,7 @@ public class MainFrame extends JFrame {
     }
 
     public void reactstartGame(StartGame ev){
-        GenerationPanels(ev.model.numPlayers);
+        InitializeMenuBar(ev.model.numPlayers);
         remove (initialPanel);
         add(mainPanel , BorderLayout.CENTER);
         setVisible(true);
