@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Distributed.Middleware;
 
+import it.polimi.ingsw.Controller.Logger;
+import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.GenericEvent;
@@ -13,10 +15,12 @@ public class ClientSkeleton implements Client {
 
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private final Logger logger;
 
     private String nickname = null;
 
-    public ClientSkeleton(Socket socket) throws RemoteException {
+    public ClientSkeleton(Socket socket, Logger logger) throws RemoteException {
+        this.logger = logger;
         try {
             this.out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -32,10 +36,10 @@ public class ClientSkeleton implements Client {
     @Override
     public void update(GenericEvent e) throws RemoteException {
         try {
-            System.out.println("Sending " + e.msgOutput() + " to client");
+            logger.addLog(e, Severity.SENDING);
             out.writeObject(e);
             out.flush();
-            System.out.println("Event " + e.msgOutput() + "  sent to client");
+            logger.addLog(e, Severity.SENT);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send to client.");
         }
@@ -47,9 +51,9 @@ public class ClientSkeleton implements Client {
         //not sure of the type
         GenericEvent event;
         try {
-            System.out.println("Waiting to receive event from client...");
+            logger.addLog(null, Severity.RECEIVING);
             event = (GenericEvent) in.readObject();
-            System.out.println("Received event " + event.msgOutput() + " from client");
+            logger.addLog(event, Severity.RECEIVED);
 
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);

@@ -9,7 +9,7 @@ import java.util.*;
 
 public class TUI extends UI {
 
-    private final Scanner in = new Scanner(System.in);;
+    private final Scanner in = new Scanner(System.in);
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
     private Object lock_events = new Object();
@@ -78,12 +78,11 @@ public class TUI extends UI {
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempString = in.nextLine();
+            tempString = in.next();
 
-            // Here we can put controls con the characters of the string inserted
-            if(tempString!=null && !tempString.contains(" ") && tempString.length()>=4) // se tutto ok allora
+            if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
-            else printOut("Invalid "+s+": must be at least 4 characters and cant contain spaces. Try again.");
+            else printOut("Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:");
         }
 
         return tempString.trim();

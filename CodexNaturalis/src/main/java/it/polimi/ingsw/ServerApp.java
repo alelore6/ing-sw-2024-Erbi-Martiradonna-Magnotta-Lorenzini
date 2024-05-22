@@ -1,5 +1,6 @@
 package it.polimi.ingsw;
 
+import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Distributed.RemoteServerInterface;
 import it.polimi.ingsw.Distributed.Server;
@@ -19,6 +20,7 @@ import java.rmi.registry.Registry;
 public class ServerApp {
 
     private static final ServerImpl server;
+    private static final Logger logger = new Logger();
 
     static {
         try {
@@ -88,7 +90,7 @@ public class ServerApp {
                     new Thread(){
                         public void run(){
                             try{
-                                ClientSkeleton clientSkeleton = new ClientSkeleton(socket);
+                                ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
                                 server.register(clientSkeleton);
 
                                 while (true)    clientSkeleton.receive(server);
