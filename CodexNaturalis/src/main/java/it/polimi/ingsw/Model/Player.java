@@ -37,6 +37,8 @@ public class Player {
      */
     protected int position;
 
+    protected boolean disconnected;
+
     /**
      * Constructor:
      * Also calls the constructor for class Hand and currentResources
@@ -48,6 +50,7 @@ public class Player {
         this.game = game;
         currentResources= new CurrentResources(this);
         Hand = new Hand(this);
+        disconnected = false;
     }
 
     /**

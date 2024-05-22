@@ -26,7 +26,6 @@ public class SetTokenColorRequest extends GenericEvent{
     @Override
     public String msgOutput() {
 
-        int NUM_COLOR = 3;
         String s = null;
 
         if(availableColors.contains(TokenColor.RED))        s = s + "(1) for RED";

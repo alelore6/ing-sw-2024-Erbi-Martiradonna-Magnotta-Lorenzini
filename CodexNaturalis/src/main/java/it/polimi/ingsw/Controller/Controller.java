@@ -249,4 +249,8 @@ public class Controller {
             else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
         }
     }
+
+    public void disconnectPlayer(String nickname){
+        model.disconnectPlayer(getPlayerByNickname(nickname));
+    }
 }
