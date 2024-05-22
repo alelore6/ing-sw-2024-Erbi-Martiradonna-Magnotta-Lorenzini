@@ -6,27 +6,27 @@ package it.polimi.ingsw.Events;
 public class JoinLobby extends GenericEvent{
 
     private final String nickname;
-    private final String newNickname;
+    private final String oldNickname;
 
     /**
      * Constructor
      * @param nickname the player that has joined the lobby
      */
-    public JoinLobby(String nickname, String newNickname){
+    public JoinLobby(String nickname, String oldNickname){
         super("You have joined a lobby, waiting for other players to start the game." +
                 "\nSet a password so that you can reconnect to this game in case of disconnection:\n" +
                 "it must be at least 4 characters and no space allowed", nickname);
         this.nickname = nickname;
-        this.newNickname = newNickname;
+        this.oldNickname = oldNickname;
     }
 
     @Override
     public String msgOutput() {
-        return newNickname == null ? super.msgOutput() : "Since the nickname '" + nickname + "' is already taken," +
-                "your new one is " + newNickname + ".\n" + super.msgOutput();
+        return oldNickname.equals(nickname) ? super.msgOutput() : "Since the nickname '" + oldNickname + "' is already taken," +
+                "your new one is " + nickname + ".\n" + super.msgOutput();
     }
 
-    public String getNewNickname() {
-        return newNickname;
+    public String getNickname() {
+        return nickname;
     }
 }

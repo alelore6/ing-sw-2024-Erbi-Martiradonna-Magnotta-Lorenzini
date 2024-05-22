@@ -21,4 +21,8 @@ public class Logger{
             out.println("[" + s + "] " + event.nickname + "'s " + event.getClass());
         }
     }
+
+    public void addLog(String message, Severity s){
+        out.println("[" + s + "] " + message);
+    }
 }

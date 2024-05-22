@@ -41,20 +41,12 @@ public class ClientApp {
 
             Registry registry = LocateRegistry.getRegistry(ip,45656);
 
-            Server  server = (Server) registry.lookup("server");
+            Server server = (Server) registry.lookup("server");
 
             ClientImpl client = new ClientImpl(server, isTUI);
 
-            Client clientStub = null;
-            try {
-                clientStub = (Client) UnicastRemoteObject.exportObject(client, 0);
-            } catch (ExportException e) {
-                e.printStackTrace();
-                clientStub = (RemoteClientInterface)client;
-            }
-
             //client registers itself on the server
-            server.register(clientStub); //con questo registro lo stub del client al server
+            //server.register(client); //con questo registro lo stub del client al server
 
             client.run();
         }

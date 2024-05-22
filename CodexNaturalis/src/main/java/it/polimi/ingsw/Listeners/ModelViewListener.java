@@ -1,11 +1,10 @@
 package it.polimi.ingsw.Listeners;
 
+import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.*;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
-import java.awt.*;
 import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
@@ -43,39 +42,34 @@ public class ModelViewListener extends Listener {
 
                 while(true) {
                     synchronized (lock_queue) {
-                        if (ack == null && !getEventQueue().isEmpty()) {
-                            GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
-
-                            try {
-
-                                if (currentEvent.mustBeSentToAll) {
-                                    server.sendEventToAll(currentEvent);
-                                }
-                                else
-                                {
-                                    if(server.findLastCSbyNickname(currentEvent.nickname)!=null){
-
-                                        ClientSkeleton clientSkeleton=  server.findLastCSbyNickname(currentEvent.nickname);
-                                        server.sendEvent(clientSkeleton, currentEvent);
-
-                                    }
-                                    else{ //it's an RMI client
-                                        if(server.getRMIclients().containsKey(currentEvent.nickname)){
-                                            server.sendEvent((RemoteClientInterface)server.getRMIclients().get(currentEvent.nickname), currentEvent);
-                                        }
-                                        //else the nickname is not present (shouldn't happen)
-                                    }
-                                }
-                            } catch (RemoteException e) {
-                                throw new RuntimeException(e);
-                            }
-                        } else if (!getEventQueue().isEmpty()) { //ack is not null
+                        if(ack != null){
                             try {
                                 server.sendEventToAll(ack);
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }
                             ack = null;
+                        }
+                        else if(!getEventQueue().isEmpty()){
+                            GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
+
+                            try {
+                                if (currentEvent.mustBeSentToAll) {
+                                    server.sendEventToAll(currentEvent);
+                                }
+                                else{
+                                    Client c = server.findClientByNickname(currentEvent.nickname);
+                                    if(c == null)   server.logger.addLog("Can't send event: user not found.", Severity.FAILURE);
+
+                                    // the client is connected with socket
+                                    else if(c instanceof ClientSkeleton)    server.sendEvent(server.findCSbyNickname(currentEvent.nickname), currentEvent);
+
+                                    // the client is connected with RMI
+                                    else server.sendEvent(server.findCPByNickname(currentEvent.nickname), currentEvent);
+                                }
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
                 }

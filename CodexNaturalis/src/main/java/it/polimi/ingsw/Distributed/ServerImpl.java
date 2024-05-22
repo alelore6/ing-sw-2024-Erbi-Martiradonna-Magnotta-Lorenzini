@@ -1,87 +1,69 @@
 package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Controller.Controller;
+import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.TestEvent;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
-public class ServerImpl extends UnicastRemoteObject implements Server, RemoteServerInterface{
+public class ServerImpl extends UnicastRemoteObject implements Server{
 
-    public Controller controller = new Controller(this);
-    private static final List<ClientImpl> CLIENT_IMPL_LIST = new ArrayList<>();
-    private static int numClient = 0;
-    private ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
-    int clientSkeletonIndex = 0; //keeps track of clientskeletons without nickname
-    private HashMap<String, RemoteClientInterface> RMIclients = new HashMap<>();
+    public  final Controller controller = new Controller(this);
+
+    private final ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
+    private final ArrayList<Client> clientProxies = new ArrayList<>();
+
+    private int numClient = 0;
+    public final Logger logger;
 
     //server constructor with the default rmi port
-    public ServerImpl() throws RemoteException {
+    public ServerImpl(Logger logger) throws RemoteException {
         super();
+        this.logger = logger;
     }
 
     //server implementation with a certain RMI port
-    public ServerImpl(int port) throws RemoteException {
+    public ServerImpl(Logger logger, int port) throws RemoteException {
         super(port);
+        this.logger = logger;
     }
-
-
 
     @Override
     public void register(Client client) throws RemoteException{
-        if(client instanceof ClientImpl){ // if MALEDETTO
-            String newNickname = null;
-            try{
-                // check nickname
-                findClientImpl(((ClientImpl) client).getNickname());
-            }catch (RuntimeException e){ //TODO guardare la catch se è giusta
-                // An identical nickname has been found
+        numClient++;
+        controller.addMVListener(new ModelViewListener(this, client));
 
-                ClientSkeleton temp = findLastCSbyNickname(client.getNickname());
-
-                //add a sequential number at the end of the nickname
-                ((ClientImpl) client).setNickname(((ClientImpl) client).getNickname() + numClient);
-
-                // set the new name in ClientImpl
-                newNickname = ((ClientImpl) client).getNickname();
-
-                // set the new name in ClientSkeleton if present
-                if(temp != null){
-                    temp.setNickname(newNickname);
-                }
-            }
-            CLIENT_IMPL_LIST.add((ClientImpl) client);
-            numClient++;
-            if (!((ClientImpl) client).clientFasullo) {
-                controller.getMVListeners().add(new ModelViewListener(this, client));
-            }
-            controller.addPlayerToLobby(((ClientImpl) client).getNickname(), controller.getMVListenerByNickname(((ClientImpl) client).getNickname()), newNickname);
-
-        }
-        else{
-            clientSkeletons.add((ClientSkeleton) client);
-        }
+        // if MALEDETTO
+        if(client instanceof ClientSkeleton)    clientSkeletons.add((ClientSkeleton) client);
+        else                                    clientProxies.add(client);
     }
 
-    public void findClientImpl(String nickname){
-        for(ClientImpl c : CLIENT_IMPL_LIST){
-            if (c.getNickname().equalsIgnoreCase(nickname))
-                // client found
-                throw new RuntimeException("client " + nickname + " found");
-        }
+    public Client findClientByNickname(String nickname) throws RemoteException {
+        Client client = findCPByNickname(nickname);
+        if(client != null)  return client;
+        client = findCSbyNickname(nickname);
+        if(client != null)  return client;
+
+        return null;
     }
 
-    public ClientSkeleton findLastCSbyNickname(String nickname){
-        for(int i = clientSkeletons.size() - 1; i >= 0; i--){
-            if(clientSkeletons.get(i).getNickname().equals(nickname))    return clientSkeletons.get(i);
+    // TODO: this must be well synchronized.
+    public Client findCPByNickname(String nickname) throws RemoteException {
+        for(Client client : clientProxies){
+            if (client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))    return client;
+        }
+
+        return null;
+    }
+
+    public ClientSkeleton findCSbyNickname(String nickname){
+        for(ClientSkeleton client : clientSkeletons){
+            if(client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))     return client;
         }
 
         return null;
@@ -89,16 +71,20 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
 
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
-
         if(event instanceof ClientRegister){
-            client.setNickname(event.nickname);
-            controller.addMVListener(new ModelViewListener(this, client));
-            controller.updateModel(event, event.nickname);
-        }else {
+            register(client);
+            setClient(client, (ClientRegister) event);
+        }
+        else {
             //client has responded to a request to modify the model
-            for (int i = 0; i < CLIENT_IMPL_LIST.size(); i++) {
-                if (CLIENT_IMPL_LIST.get(i).getNickname().equalsIgnoreCase(client.getNickname())) {
-                    controller.updateModel(event, CLIENT_IMPL_LIST.get(i).getNickname());
+            for(Client c : clientProxies){
+                if (c.getNickname().equalsIgnoreCase(client.getNickname())) {
+                    controller.updateModel(event, c.getNickname());
+                }
+            }
+            for(ClientSkeleton c : clientSkeletons){
+                if(c.getNickname().equalsIgnoreCase(client.getNickname())){
+                    controller.updateModel(event, c.getNickname());
                 }
             }
         }
@@ -111,51 +97,27 @@ public class ServerImpl extends UnicastRemoteObject implements Server, RemoteSer
 //        } else throw new RemoteException("Client sending the event isn't registered to the server");
     }
 
+    private void setClient(Client client, ClientRegister event) throws RemoteException {
+        String oldNickname = event.getNickname();
+
+        Client temp = findClientByNickname(oldNickname);
+        // An identical nickname has been found and adds a sequential number at the end of the nickname.
+        if(temp != null && !temp.equals(client))    client.setNickname(oldNickname + numClient);
+        else                                        client.setNickname(oldNickname);
+
+        controller.addPlayerToLobby(client.getNickname(), controller.getMVListenerByNickname(client.getNickname()), oldNickname);
+    }
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
-        for(ClientSkeleton client : clientSkeletons)    sendEvent(client, event);
-        for(String nickname : RMIclients.keySet()){
-            RMIclients.get(nickname).receiveObject(event);
-        }
-
+        for(ClientSkeleton client : clientSkeletons) sendEvent(client, event);
+        for(Client         client : clientProxies)   sendEvent(client, event);
     }
 
     public void sendEvent(Client client, GenericEvent event) throws RemoteException {
         client.update(event);
     }
 
-    public void sendEvent(RemoteClientInterface remoteClient, GenericEvent event) throws RemoteException {
-        remoteClient.receiveObject(event);
-    }
-
-    //method used by the client to SEND an event. then the event and the client are passed to the general update() method.
-    @Override
-    public void processEvent(GenericEvent event, Client client) throws RemoteException {
-        System.out.println("received"+ event.toString());
-        update(client, event);
-    }
-
-    //method used only 1 time to register the client stub to the server and the associated nickname
-    @Override
-    public void processClient(RemoteClientInterface remoteClient, String nickname) throws RemoteException {
-        RMIclients.put(nickname, remoteClient);
-        System.out.println("SONO QUI!");
-
-        controller.addMVListener(new ModelViewListener(this, remoteClient));
-
-        //RIGHE DI TEST
-       // remoteClient.receiveObject(new TestEvent("SONO ARRIVATO AL CLIENT TRAMITE RMI", nickname));
-    }
-
-
-    public ClientImpl findClientImplByNickname(String nickname){
-        for(ClientImpl c : CLIENT_IMPL_LIST){
-            if (c.getNickname().equalsIgnoreCase(nickname)){return c;}
-        }
-        return null;
-    }
-
-    public HashMap<String, RemoteClientInterface> getRMIclients() {
-        return RMIclients;
+    public ArrayList<Client> getClientProxies() {
+        return clientProxies;
     }
 }

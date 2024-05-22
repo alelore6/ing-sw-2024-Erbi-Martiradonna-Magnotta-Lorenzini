@@ -10,47 +10,41 @@ import it.polimi.ingsw.View.UI;
 
 
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl implements Runnable, Client{
+public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
 
     protected UI userInterface;
     private String nickname;
     private Server server;
     public final boolean clientFasullo;
-    public boolean isRMI = false;
+    public final boolean isRMI;
 
     public ClientImpl(Server server, boolean isTUI) throws RemoteException {
         super();
 
-        userInterface = (isTUI ? new TUI(this) : new GUI(this));
-        this.nickname = userInterface.chooseNickname();
-        this.clientFasullo = false;
+        isRMI = server instanceof ServerStub ? false : true;
+        clientFasullo = false;
+        userInterface = isTUI ? new TUI(this) : new GUI(this);
+        nickname = userInterface.chooseNickname();
 
         initialize(server);
     }
 
-
-    // This constructor is called only on the server to create a pseudo ClientImpl
-    // since this is not serializable
-    public ClientImpl(String nickname) throws RemoteException {
-        super();
-        this.nickname = nickname;
-        this.clientFasullo = true;
-    }
-
     private void initialize(Server server) throws RemoteException {
-
-        //SOCKET
+        // Socket
         if(server instanceof ServerStub){
-            this.server = (ServerStub) server;
+            this.server = server;
             this.server.register(this);
             userInterface.notifyListener(new ClientRegister(this));
             userInterface.getListener().handleEvent();
         }
-        //RMI
+        // RMI
         else{
-            this.server = (Server)server;
-            isRMI = true;
+            this.server = server;
+            // The RMI registration is already implicitly happened
+            userInterface.notifyListener(new ClientRegister(this));
+            userInterface.getListener().handleEvent();
         }
     }
 
@@ -83,6 +77,5 @@ public class ClientImpl implements Runnable, Client{
     public String getNickname() {
         return nickname;
     }
-
 }
 

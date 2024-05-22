@@ -51,7 +51,7 @@ public class ClientSkeleton implements Client {
         //not sure of the type
         GenericEvent event;
         try {
-            logger.addLog(null, Severity.RECEIVING);
+            logger.addLog((GenericEvent) null, Severity.RECEIVING);
             event = (GenericEvent) in.readObject();
             logger.addLog(event, Severity.RECEIVED);
 

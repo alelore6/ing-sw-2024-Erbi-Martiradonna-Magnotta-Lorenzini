@@ -23,7 +23,7 @@ public class ServerApp {
 
     static {
         try {
-            server = new ServerImpl();
+            server = new ServerImpl(logger);
         } catch (RemoteException e) {
             throw new RuntimeException(e);
         }
@@ -90,6 +90,7 @@ public class ServerApp {
                         public void run(){
                             try{
                                 ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
+
                                 server.register(clientSkeleton);
 
                                 while (true)    clientSkeleton.receive(server);

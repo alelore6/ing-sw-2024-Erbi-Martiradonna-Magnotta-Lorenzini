@@ -219,7 +219,7 @@ public class TUI extends UI {
                             break;
 
                         case JoinLobby e :
-                            if(e.getNewNickname() != null)  client.setNickname(e.getNewNickname());
+                            if(e.getNickname() != null)  client.setNickname(e.getNickname());
 
                             newEvent = new SetPassword(client.getNickname(), chooseString("password"));
                             notifyListener(newEvent);

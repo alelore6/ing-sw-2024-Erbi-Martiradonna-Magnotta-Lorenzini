@@ -22,6 +22,7 @@ import java.util.Objects;
  * It handles the action of the players on the model.
  */
 public class Controller {
+
     private HashMap<String, String> passwords = new HashMap<String, String>();
     /**
      * the server that handles the connections
@@ -73,7 +74,7 @@ public class Controller {
      * communicate the result of the action to the client through his listener
      * @param nickname
      */
-    public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String newNickname) throws RemoteException {
+    public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
         boolean ok = false;
 
         //check game hasn't started
@@ -86,7 +87,7 @@ public class Controller {
             if(!lobby.addPlayer(nickname))
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
             else {
-                mvListener.addEvent(new JoinLobby(nickname, newNickname));
+                mvListener.addEvent(new JoinLobby(nickname, oldNickname));
                 if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                     createGame();
                 }
@@ -190,9 +191,6 @@ public class Controller {
                 String p = passwords.get(event.nickname);
                 System.out.println(p);
             }
-            else if(event instanceof ClientRegister){
-                server.register(new ClientImpl(((ClientRegister) event).getNickname()));
-            }
     }
 
     /**
@@ -221,14 +219,14 @@ public class Controller {
 
     public ModelViewListener getMVListenerByNickname(String nickname){
         try {
-            for(int i = 0; i < MVListeners.size(); i++){
-                if(MVListeners.get(i).client.getNickname().equals(nickname)){
-                    return MVListeners.get(i);
+            for(ModelViewListener listener : MVListeners){
+                if(listener.client.getNickname().equals(nickname)){
+                    return listener;
                }
             }
             throw new RuntimeException();
         } catch (Exception e) { //SHOULDN'T HAPPEN
-            System.out.println("MVListener not found\n");
+            server.logger.addLog("MVListener not found", Severity.FAILURE);
             return null;
         }
     }
