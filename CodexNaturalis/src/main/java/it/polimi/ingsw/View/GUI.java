@@ -6,15 +6,10 @@ import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.ObjectiveCard;
 import it.polimi.ingsw.Model.PlayableCard;
-import it.polimi.ingsw.Model.TokenColor;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -240,7 +235,7 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            f.reactstartGame((StartGame) ev);
+                            f.reactStartGame((StartGame) ev);
                             break;
 
                         case ReturnDrawCard e:

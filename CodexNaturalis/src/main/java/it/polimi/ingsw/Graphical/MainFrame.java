@@ -169,7 +169,7 @@ public class MainFrame extends JFrame {
         layout.show(mainPanel, panel);
     }
 
-    public void reactstartGame(StartGame ev){
+    public void reactStartGame(StartGame ev){
         InitializeMenuBar(ev.model.numPlayers);
         switchPanel("tableCenterPanel");
         /* In Theory this should show the two objective Cards to choose one of them, i put table CenterPanel as the first panel to be shown, i dont' know in which

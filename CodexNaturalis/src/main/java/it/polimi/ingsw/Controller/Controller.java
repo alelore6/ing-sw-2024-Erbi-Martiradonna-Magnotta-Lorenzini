@@ -55,18 +55,15 @@ public class Controller {
      * Creates and starts the actual game
      */
     protected void createGame() throws RemoteException {
-        String[] nicknames = new String[lobby.getPlayers().size()]; //crea l'array di nicknames dei player
-        nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
-        model = new Game(lobby.getNumPlayers(), nicknames, MVListeners);
+        String[] temp = new String[lobby.getNumPlayers()];
+        lobby.getPlayers().toArray(temp);
+        model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
-
-        //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        sendEventToAll(new StartGame(lobby.getPlayers().get(0), model.clone()));
+        // NOTIFY ALL LISTENERS OF STARTGAME EVENT
+        sendEventToAll(new StartGame(null, model.clone()));
 
         getGame().startGame();
     }
-
-
 
     /**
      * Create the listener for the client that is trying to connect
@@ -78,15 +75,14 @@ public class Controller {
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
         boolean ok = false;
 
-        //check game hasn't started
+        // Checks the game hasn't started yet.
         if (model == null) {
-            if (lobby.getNumPlayers() == 0) {
-                // se la lobby è vuota evento SetNumPlayer
-                NumPlayersRequest numPlayersRequest = new NumPlayersRequest(nickname);
-                mvListener.addEvent(numPlayersRequest);
-            }
-            if(!lobby.addPlayer(nickname))
+            // If the lobby is empty, the player decides its size.
+            if (lobby.getNumPlayers() == 0) mvListener.addEvent(new NumPlayersRequest(nickname));
+            if(!lobby.addPlayer(nickname)) {
+                server.logger.addLog("Can't add the player", Severity.WARNING);
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
+            }
             else {
                 mvListener.addEvent(new JoinLobby(nickname, oldNickname));
                 if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
@@ -94,7 +90,10 @@ public class Controller {
                 }
             }
         }
-        else mvListener.addEvent(new ErrorJoinLobby(nickname));
+        else{
+            server.logger.addLog("Can't add the player: the game has already started.", Severity.WARNING);
+            mvListener.addEvent(new ErrorJoinLobby(nickname));
+        }
     }
 
     /**
@@ -190,7 +189,6 @@ public class Controller {
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
                 String p = passwords.get(event.nickname);
-                System.out.println(p);
             }
     }
 
@@ -199,18 +197,17 @@ public class Controller {
      * @param nickname the player's nickname
      * @return the player
      */
-    //method to get player by nickname not to repeat the same code over and over again
     private Player getPlayerByNickname(String nickname){
 
         try {
-            for (int i = 0; i < model.getNumPlayers(); i++) {
-                if (Objects.equals(model.getPlayers()[i].getNickname(), nickname)) {
-                    return model.getPlayers()[i];
+            for (Player player : model.getPlayers()) {
+                if (player.getNickname().equals(nickname)) {
+                    return player;
                 }
             }
             throw new PlayerNotFoundException(nickname);
         } catch (PlayerNotFoundException e) {
-            System.out.println("Player " + nickname + " not found\n");
+            server.logger.addLog("Player " + nickname + " not found\n", Severity.WARNING);
             return null;
         }
     }
