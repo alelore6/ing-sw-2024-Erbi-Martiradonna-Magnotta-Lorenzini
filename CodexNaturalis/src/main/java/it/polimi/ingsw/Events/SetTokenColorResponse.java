@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.TokenColor;
 /**
  * Event that represent the response to a request to choose the token color
  */
-public class SetTokenColorResponse extends GenericEvent {
+public class SetTokenColorResponse extends GenericResponse {
     /**
      * the chosen color
      */

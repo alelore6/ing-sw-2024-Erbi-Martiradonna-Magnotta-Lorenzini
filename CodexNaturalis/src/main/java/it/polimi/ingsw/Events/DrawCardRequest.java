@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.PlayableCard;
 /**
  * Event that represent the model request for a source for the draw of a card.
  */
-public class DrawCardRequest extends GenericEvent{
+public class DrawCardRequest extends GenericRequest{
     /**
      * the card positioned in the table center
      */

@@ -10,7 +10,7 @@ import java.util.Queue;
 public abstract class Listener {
 
 
-    protected Object lock_queue = new Object();
+    public final Object lock_queue = new Object();
 
     protected AckResponse ack = null;
 

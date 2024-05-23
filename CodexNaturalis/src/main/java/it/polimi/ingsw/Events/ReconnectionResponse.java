@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-public class ReconnectionResponse extends GenericEvent{
+public class ReconnectionResponse extends GenericResponse{
     private final String password;
     /**
      * Constructor

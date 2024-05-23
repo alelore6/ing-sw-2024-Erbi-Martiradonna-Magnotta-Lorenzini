@@ -3,7 +3,7 @@ package it.polimi.ingsw.Events;
 /**
  * Event that represent the successful join of the pre-game lobby of a player
  */
-public class JoinLobby extends GenericEvent{
+public class JoinLobby extends GenericRequest{
 
     private final String nickname;
     private final String oldNickname;

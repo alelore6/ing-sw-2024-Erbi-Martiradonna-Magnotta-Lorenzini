@@ -7,7 +7,7 @@ import it.polimi.ingsw.Model.PlayableCard;
 /**
  * Event that represent the model request to play a card to a player
  */
-public class PlayCardRequest extends GenericEvent {
+public class PlayCardRequest extends GenericRequest {
     /**
      * the cards in the hand of the player that can be played
      */
