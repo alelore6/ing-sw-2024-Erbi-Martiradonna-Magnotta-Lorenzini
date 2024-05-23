@@ -51,8 +51,9 @@ public class ModelViewListener extends Listener {
                                 throw new RuntimeException(e);
                             }
                             ack = null;
+                            requestEventIndex--;
                         }
-                        else if(!getEventQueue().isEmpty()){
+                        else if(requestEventIndex == 0 && !getEventQueue().isEmpty()){
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
                             try{

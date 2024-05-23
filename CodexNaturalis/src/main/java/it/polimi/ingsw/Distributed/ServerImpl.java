@@ -87,7 +87,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         if(!(client instanceof ClientSkeleton)) logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){
             if(event instanceof ClientRegister){
-                register(client);
+                if(!(client instanceof ClientSkeleton)) register(client);
                 setClient(client, (ClientRegister) event);
             }
             else{

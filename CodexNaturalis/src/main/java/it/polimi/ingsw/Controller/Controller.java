@@ -60,7 +60,7 @@ public class Controller {
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
         // NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        sendEventToAll(new StartGame(null, model.clone()));
+        sendEventToAll(new StartGame("everyone", model.clone()));
 
         getGame().startGame();
     }
@@ -110,19 +110,14 @@ public class Controller {
      * @param nickname the player that sent the event
      */
     public void updateModel(GenericEvent event, String nickname) throws RemoteException {
-            if(event instanceof GenericResponse){
-                synchronized (getMVListenerByNickname(nickname).lock_queue){
-                    int tmp = getMVListenerByNickname(nickname).getRequestEventIndex();
-                    getMVListenerByNickname(nickname).setRequestEventIndex(tmp--);
-                }
-            }
-
 
             if(event instanceof NumPlayersResponse){
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event, null));
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }
 
             else if(event instanceof ChooseObjectiveResponse) {
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event, null));
                 getPlayerByNickname(nickname).chooseObjective(((ChooseObjectiveResponse) event).objectiveCard);
             }
 
@@ -196,6 +191,7 @@ public class Controller {
             }
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(true, nickname, event, null));
                 String p = passwords.get(event.nickname);
             }
     }

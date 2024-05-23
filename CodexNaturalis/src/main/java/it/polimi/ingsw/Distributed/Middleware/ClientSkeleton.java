@@ -41,7 +41,7 @@ public class ClientSkeleton implements Client {
             out.flush();
             logger.addLog(e, Severity.SENT);
         } catch (IOException ex) {
-            throw new RemoteException("Cannot send" +e.getClass() +  "to client");
+            throw new RemoteException("Cannot send " + e.getClass() +  " to client");
         }
         //socket: server stub is always reading (same as receive() here)
     }

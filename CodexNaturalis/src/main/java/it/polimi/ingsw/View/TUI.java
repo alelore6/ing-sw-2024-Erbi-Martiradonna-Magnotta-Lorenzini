@@ -165,7 +165,7 @@ public class TUI extends UI {
                     }
 
                     // Ignore all other player's events
-                    //if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     printOut(ev.msgOutput());
 
