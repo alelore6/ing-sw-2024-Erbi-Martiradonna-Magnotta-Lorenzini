@@ -24,11 +24,30 @@ public class AckResponse extends GenericResponse{
      * @param nickname the player that did the action
      * @param event the corresponding event
      */
-    public AckResponse(boolean ok, String nickname, GenericEvent event, GameView gameView){
-        super(ok ? "Event has gone successfully" : "Event has gone wrong. Please try again", nickname);
-        this.ok = ok;
+    public AckResponse(String nickname, GenericEvent event, GameView gameView){
+        //per esito positivo e per aggiornare view
+        super("Event has gone successfully", nickname);
+        this.ok = true;
         this.event = event;
-        mustBeSentToAll=ok;
+        mustBeSentToAll=true;
         this.gameView = gameView;
+    }
+
+    public AckResponse(String errorMessage, String nickname, GenericEvent event){
+        //solo per esito negativo
+        super(errorMessage, nickname);
+        this.ok = false;
+        this.event = event;
+        mustBeSentToAll=true;
+        this.gameView = null;
+    }
+    public AckResponse( String nickname, GenericEvent event){
+        //per esito positivo senza aggiornare view
+        //togliere il booleano da input e sistemare utilizzi
+        super("Event has gone successfully", nickname);
+        this.ok = true;
+        this.event = event;
+        mustBeSentToAll=true;
+        this.gameView = null;
     }
 }
