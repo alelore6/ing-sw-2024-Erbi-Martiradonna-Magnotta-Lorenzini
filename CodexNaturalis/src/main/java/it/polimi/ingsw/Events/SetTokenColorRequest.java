@@ -7,7 +7,7 @@ import java.util.ArrayList;
 /**
  * Event that represent the model request to choose the color of the token of the player
  */
-public class SetTokenColorRequest extends GenericEvent{
+public class SetTokenColorRequest extends GenericRequest{
     /**
      * the list of available colors
      */
@@ -28,12 +28,12 @@ public class SetTokenColorRequest extends GenericEvent{
 
         String s = null;
 
-        if(availableColors.contains(TokenColor.RED))        s = s + "(1) for RED";
-        if(availableColors.contains(TokenColor.YELLOW))     s = s + "(2) for YELLOW";
-        if(availableColors.contains(TokenColor.GREEN))      s = s + "(3) for GREEN";
-        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE";
+        if(availableColors.contains(TokenColor.RED))        s ="\n(1) for RED\n";
+        if(availableColors.contains(TokenColor.YELLOW))     s = s + "(2) for YELLOW\n";
+        if(availableColors.contains(TokenColor.GREEN))      s = s + "(3) for GREEN\n";
+        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE\n";
 
-        return super.msgOutput() + availableColors.toString() + "\nColor: ";
+        return super.msgOutput() + availableColors.toString() + "\nColor: " + s;
     }
 
     public boolean choiceIsValid(int n){

@@ -3,7 +3,7 @@ package it.polimi.ingsw.Events;
 /**
  * Event that represent the request to set the number of players for the game
  */
-public class NumPlayersRequest extends GenericEvent{
+public class NumPlayersRequest extends GenericRequest{
     /**
      * Constructor
      * @param nickname the player that receives the event

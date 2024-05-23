@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-public class SetPassword extends GenericEvent{
+public class SetPassword extends GenericResponse{
 
     private final String password;
 

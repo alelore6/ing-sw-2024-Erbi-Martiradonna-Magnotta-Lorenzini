@@ -3,12 +3,15 @@ package it.polimi.ingsw.Listeners;
 import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.*;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Events.GenericEvent;
+import it.polimi.ingsw.Events.*;
 
 import java.rmi.RemoteException;
 
 public class ModelViewListener extends Listener {
 
+
+
+    private int requestEventIndex = 0;
     public final Client client;
     /**
      * the server bound to this specific listener.
@@ -53,16 +56,33 @@ public class ModelViewListener extends Listener {
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
                             try{
-                                if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
-                                client.update(currentEvent);
-                                if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENT);
+
+                                if (requestEventIndex == 0 || currentEvent instanceof GenericRequest) {
+                                    if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
+                                    client.update(currentEvent);
+                                    if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENT);
+                                }
+                                else{
+                                    getEventQueue().offer(currentEvent);
+                                }
                             }catch(RemoteException e) {
                                 throw new RuntimeException(e);
+                            }
+                            if(currentEvent instanceof GenericRequest){
+                                requestEventIndex++;
                             }
                         }
                     }
                 }
             }
         }.start();
+    }
+
+    public int getRequestEventIndex() {
+        return requestEventIndex;
+    }
+
+    public void setRequestEventIndex(int requestEventIndex) {
+        this.requestEventIndex = requestEventIndex;
     }
 }

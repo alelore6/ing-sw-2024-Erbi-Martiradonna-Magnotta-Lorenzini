@@ -3,7 +3,7 @@ package it.polimi.ingsw.Events;
 /**
  * Event that represent the client response to a draw card request
  */
-public class DrawCardResponse extends GenericEvent{
+public class DrawCardResponse extends GenericResponse{
     /**
      * number that represent the chosen source of the draw:
      * 0,1,2,3 represent the respective card in the table center

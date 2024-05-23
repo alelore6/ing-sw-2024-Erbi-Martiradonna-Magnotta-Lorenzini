@@ -110,6 +110,14 @@ public class Controller {
      * @param nickname the player that sent the event
      */
     public void updateModel(GenericEvent event, String nickname) throws RemoteException {
+            if(event instanceof GenericResponse){
+                synchronized (getMVListenerByNickname(nickname).lock_queue){
+                    int tmp = getMVListenerByNickname(nickname).getRequestEventIndex();
+                    getMVListenerByNickname(nickname).setRequestEventIndex(tmp--);
+                }
+            }
+
+
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
             }

@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.ObjectiveCard;
 /**
  * event that represent the model request to choose between 2 objective card.
  */
-public class ChooseObjectiveRequest extends GenericEvent {
+public class ChooseObjectiveRequest extends GenericRequest {
     /**
      * the first objective card
      */

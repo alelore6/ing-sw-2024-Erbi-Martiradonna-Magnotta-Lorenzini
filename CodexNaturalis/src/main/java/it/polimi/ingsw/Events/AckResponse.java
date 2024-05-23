@@ -7,7 +7,7 @@ import it.polimi.ingsw.ModelView.GameView;
  * Generic event that represents the success or failure of the action.
  * if it's negative the action will be redone.
  */
-public class AckResponse extends GenericEvent{
+public class AckResponse extends GenericResponse{
     /**
      * the result of the action
      */

@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.Card;
 /**
  * Event that represent the response to a request to play a card
  */
-public class PlayCardResponse extends GenericEvent{
+public class PlayCardResponse extends GenericResponse{
     /**
      * the card chosen that will be played
      */

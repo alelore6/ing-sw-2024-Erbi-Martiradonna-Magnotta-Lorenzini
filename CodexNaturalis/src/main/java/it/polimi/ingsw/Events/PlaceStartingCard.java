@@ -5,7 +5,7 @@ import it.polimi.ingsw.Model.StartingCard;
 /**
  * Events that represent the action of placing the starting card
  */
-public class PlaceStartingCard extends GenericEvent {
+public class PlaceStartingCard extends GenericRequest {
     /**
      * the starting card
      */

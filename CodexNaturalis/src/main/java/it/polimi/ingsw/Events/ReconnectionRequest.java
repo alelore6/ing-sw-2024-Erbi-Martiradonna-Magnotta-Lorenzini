@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Events;
 
-public class ReconnectionRequest extends GenericEvent{
+public class ReconnectionRequest extends GenericRequest{
     /**
      * Constructor
      *
