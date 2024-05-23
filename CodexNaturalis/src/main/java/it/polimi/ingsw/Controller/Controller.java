@@ -54,14 +54,14 @@ public class Controller {
     /**
      * Creates and starts the actual game
      */
-    protected void createGame(){
+    protected void createGame() throws RemoteException {
         String[] nicknames = new String[lobby.getPlayers().size()]; //crea l'array di nicknames dei player
         nicknames = lobby.getPlayers().toArray(nicknames); //fills the nicknames array
         model = new Game(lobby.getNumPlayers(), nicknames, MVListeners);
 
 
         //NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        MVListeners.get(0).addEvent(new StartGame(lobby.getPlayers().get(0), model.clone()));
+        sendEventToAll(new StartGame(lobby.getPlayers().get(0), model.clone()));
 
         getGame().startGame();
     }
@@ -216,6 +216,7 @@ public class Controller {
     }
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
+        event.mustBeSentToAll = true;
         for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addEvent(event);
         for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addEvent(event);
     }

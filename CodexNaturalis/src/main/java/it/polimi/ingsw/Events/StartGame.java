@@ -16,6 +16,5 @@ public class StartGame extends GenericEvent{
     public StartGame(String nickname, GameView model){
         super("The game is starting", nickname);
         this.model = model;
-        mustBeSentToAll = true;
     }
 }
