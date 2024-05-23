@@ -23,7 +23,6 @@ public class ModelViewListener extends Listener {
      * @param server the server that will receive the updates from this listener
      */
     public ModelViewListener(ServerImpl server, Client client) {
-
         this.server = server;
         this.client = client;
     }
@@ -44,7 +43,7 @@ public class ModelViewListener extends Listener {
                     synchronized (lock_queue) {
                         if(ack != null){
                             try {
-                                server.sendEventToAll(ack);
+                                client.update(ack);
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }
@@ -53,21 +52,9 @@ public class ModelViewListener extends Listener {
                         else if(!getEventQueue().isEmpty()){
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
-                            try {
-                                if (currentEvent.mustBeSentToAll) {
-                                    server.sendEventToAll(currentEvent);
-                                }
-                                else{
-                                    Client c = server.findClientByNickname(currentEvent.nickname);
-                                    if(c == null)   server.logger.addLog("Can't send event: user not found.", Severity.FAILURE);
-
-                                    // the client is connected with socket
-                                    else if(c instanceof ClientSkeleton)    server.sendEvent(server.findCSbyNickname(currentEvent.nickname), currentEvent);
-
-                                    // the client is connected with RMI
-                                    else server.sendEvent(server.findCPByNickname(currentEvent.nickname), currentEvent);
-                                }
-                            } catch (RemoteException e) {
+                            try{
+                                client.update(currentEvent);
+                            }catch(RemoteException e) {
                                 throw new RuntimeException(e);
                             }
                         }

@@ -108,16 +108,11 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         controller.addPlayerToLobby(client.getNickname(), controller.getMVListenerByNickname(client.getNickname()), oldNickname);
     }
 
-    public void sendEventToAll(GenericEvent event) throws RemoteException {
-        for(ClientSkeleton client : clientSkeletons) sendEvent(client, event);
-        for(Client         client : clientProxies)   sendEvent(client, event);
-    }
-
-    public void sendEvent(Client client, GenericEvent event) throws RemoteException {
-        client.update(event);
-    }
-
-    public ArrayList<Client> getClientProxies() {
+    public ArrayList<Client> getClientProxies(){
         return clientProxies;
+    }
+
+    public ArrayList<ClientSkeleton> getClientSkeletons(){
+        return clientSkeletons;
     }
 }

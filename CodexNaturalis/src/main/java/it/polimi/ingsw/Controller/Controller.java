@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Controller;
 
+import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
@@ -212,9 +213,11 @@ public class Controller {
             System.out.println("Player " + nickname + " not found\n");
             return null;
         }
+    }
 
-
-
+    public void sendEventToAll(GenericEvent event) throws RemoteException {
+        for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addEvent(event);
+        for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addEvent(event);
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){

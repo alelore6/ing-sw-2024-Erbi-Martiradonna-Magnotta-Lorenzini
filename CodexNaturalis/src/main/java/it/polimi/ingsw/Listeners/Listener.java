@@ -14,7 +14,6 @@ public abstract class Listener {
 
     protected AckResponse ack = null;
 
-
     /**
      * attribute representing the queue of generic events
      * that will be handled by the listener
@@ -28,7 +27,6 @@ public abstract class Listener {
     public Queue<GenericEvent> getEventQueue() {
         return eventQueue;
     }
-
 
     /**
      * abstract method to be implemented by listener subclasses to handle events
