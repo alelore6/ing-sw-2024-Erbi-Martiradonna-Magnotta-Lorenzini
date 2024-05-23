@@ -11,15 +11,15 @@ public class PlayCardRequest extends GenericRequest {
     /**
      * the cards in the hand of the player that can be played
      */
-    public final PlayableCard[] handCards;
+    public  final PlayableCard[] handCards;
     /**
      * the already played cards of the player
      */
-    public final Card[][] displayedCards;
+    public  final Card[][] displayedCards;
     /**
      * the current resources of the player
      */
-    public final CurrentResources currentResources;
+    public  final CurrentResources currentResources;
 
     /**
      * Constructor

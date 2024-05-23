@@ -1,6 +1,8 @@
 package it.polimi.ingsw.Model;
 
-public class Corner {
+import java.io.Serializable;
+
+public class Corner implements Serializable {
     protected Position pos;
     protected Resource resource;
     public boolean isCovered;

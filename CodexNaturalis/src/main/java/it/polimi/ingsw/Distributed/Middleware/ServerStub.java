@@ -56,6 +56,7 @@ public class ServerStub implements Server, Serializable {
             out.flush();
             // System.out.println("Event: " + event.msgOutput() + " sent to server");
         } catch (IOException e) {
+            System.out.println("Error in updating "+ event.getClass());
             throw new RemoteException("Cannot send event", e);
         }
         //socket: client skeleton is always reading

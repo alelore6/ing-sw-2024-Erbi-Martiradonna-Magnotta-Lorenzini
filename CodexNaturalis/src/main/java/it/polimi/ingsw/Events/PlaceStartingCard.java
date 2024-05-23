@@ -2,14 +2,16 @@ package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.Model.StartingCard;
 
+import java.io.Serializable;
+
 /**
  * Events that represent the action of placing the starting card
  */
-public class PlaceStartingCard extends GenericRequest {
+public class PlaceStartingCard extends GenericRequest{
     /**
      * the starting card
      */
-    public final StartingCard startingCard;
+    public  final StartingCard startingCard;
 
     /**
      * Constructor

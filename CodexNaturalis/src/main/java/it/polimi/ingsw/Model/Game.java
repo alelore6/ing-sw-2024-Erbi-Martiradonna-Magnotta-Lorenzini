@@ -460,7 +460,6 @@ public class Game{
                             totalpoints += objectiveCard.points;
 
                         }
-
                     }
                 }
             for(int rowz = 0; rowz < 81; rowz++){
@@ -468,7 +467,6 @@ public class Game{
                     ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
                 }
             }
-
             return totalpoints;
         }
     }

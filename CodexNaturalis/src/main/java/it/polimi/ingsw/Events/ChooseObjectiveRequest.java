@@ -9,11 +9,11 @@ public class ChooseObjectiveRequest extends GenericRequest {
     /**
      * the first objective card
      */
-    public final ObjectiveCard objCard1;
+    public  final ObjectiveCard objCard1;
     /**
      * the second objective card
      */
-    public final ObjectiveCard objCard2;
+    public  final ObjectiveCard objCard2;
 
     /**
      * Constructor
