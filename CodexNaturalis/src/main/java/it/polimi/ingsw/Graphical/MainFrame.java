@@ -41,6 +41,9 @@ public class MainFrame extends JFrame {
         ImageIcon centerImgIcon = new ImageIcon(imgResized);
         this.add(new JLabel(img), BorderLayout.CENTER);
 
+        mainPanel = new JPanel(new CardLayout()); {
+            add(mainPanel, BorderLayout.CENTER);
+        }
         initialPanel = new JPanel() {
             protected void paintComponent(Graphics g) {
                 super.paintComponents(g);
@@ -50,12 +53,14 @@ public class MainFrame extends JFrame {
                 g.drawImage(imgResized, x, y, this);
             }
         };
-        add(initialPanel, BorderLayout.CENTER);
+        mainPanel.add(initialPanel, BorderLayout.CENTER);
         setVisible(true);
+
         initialPanel.revalidate();
         initialPanel.repaint();
 
         InitializeMenuBar(4);
+        GenerationPanels(4);
     }
 
 
@@ -107,7 +112,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    public void GenerationPanels() {
+    public void GenerationPanels(int NumberOfPLayers) {
 
         mainPanel = new JPanel();
         mainPanel.setLayout(null);
@@ -118,6 +123,12 @@ public class MainFrame extends JFrame {
         handPanel.setBackground(Color.CYAN);
         positionedCardPanel = new JPanel();
         positionedCardPanel.setBackground(Color.YELLOW);
+
+        mainPanel.add(tableCenterPanel,"tableCenterPanel");
+        mainPanel.add(handPanel,"handPanel");
+        for (int i = 0; i < NumberOfPLayers; i++){
+            mainPanel.add(positionedCardPanel, "positionedCardPanel "+ (i+1));
+        }
     }
     public void InitializeMenuBar( int NumberOfPLayers) {
         menuBar = new JMenuBar();
@@ -132,22 +143,20 @@ public class MainFrame extends JFrame {
             menuBar.add(positionedCards);
             positionedCards.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    switchPanel(positionedCardPanel);
-
-
+                    switchPanel("positionedCardPanel");
                 }
             });
         }
         tableCenter.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                switchPanel(tableCenterPanel);
+                switchPanel("tableCenterPanel");
 
             }
         });
 
         hand.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                switchPanel(handPanel);
+                switchPanel("handPanel");
             }
         });
 
@@ -155,22 +164,16 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    private void switchPanel(JPanel panel) {
-
-        Container currentPanel = getContentPane();
-        mainPanel.remove(currentPanel.getComponent(0));
-        mainPanel.add(panel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
+    private void switchPanel(String  panel) {
+        CardLayout layout =(CardLayout) (mainPanel.getLayout());
+        layout.show(mainPanel, panel);
     }
 
     public void reactstartGame(StartGame ev){
         InitializeMenuBar(ev.model.numPlayers);
-        remove (initialPanel);
-        add(mainPanel , BorderLayout.CENTER);
-        setVisible(true);
-        initialPanel.revalidate();
-        initialPanel.repaint();
+        switchPanel("tableCenterPanel");
+        /* In Theory this should show the two objective Cards to choose one of them, i put table CenterPanel as the first panel to be shown, i dont' know in which
+        * panel will be shown the draw of the Objective Card*/
     }
 
 }
