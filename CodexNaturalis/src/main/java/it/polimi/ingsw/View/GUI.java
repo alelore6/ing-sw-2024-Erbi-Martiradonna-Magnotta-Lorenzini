@@ -116,7 +116,7 @@ public class GUI extends UI{
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    //if(!ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.nickname.equals(client.getNickname())) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;

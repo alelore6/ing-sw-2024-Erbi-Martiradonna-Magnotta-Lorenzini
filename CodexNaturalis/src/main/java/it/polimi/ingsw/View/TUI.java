@@ -33,7 +33,7 @@ public class TUI extends UI {
             } catch (InputMismatchException e) {
                 // to skip the wrong input and try with the next one.
 
-                in.nextLine();
+                in.nextInt();
                 printOut(inputError());
 
                 continue;

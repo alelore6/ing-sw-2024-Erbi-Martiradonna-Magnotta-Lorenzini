@@ -54,7 +54,9 @@ public class Game{
 
     protected ArrayList<TokenColor> availableTokens;
 
-    public int turnPhase; //0: start turn, 1: play done, 2: draw done, 3: end turn
+    public int turnPhase=-1;//0: start turn, 1: play done, 2: draw done, 3: end turn
+
+    public final Object controllerLock = new Object();
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -70,7 +72,7 @@ public class Game{
         this.remainingTurns = -1;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
-            players[i]= new Player(nicknames[i]);
+            players[i]= new Player(nicknames[i],this);
         }
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
         StartingDeck = new StartingDeck();
@@ -145,60 +147,72 @@ public class Game{
 
             }
         }
-        int pos=0;
-        for(Player p: players){
+        //cosa bruttissima per chiamare clone
+        Game model=this;
+        //in un thread perchè si deve aspettare la sincronizzazione dal controller
+        new Thread(){
+            @Override
+            public void run() {
 
-            SetTokenColorRequest setTokenColor=new SetTokenColorRequest(p.getNickname(),availableTokens);
-            mvListeners.get(pos).addEvent(setTokenColor);
+                int pos = 0;
+                for (Player p : players) {
+                    synchronized (controllerLock) {
+                        while (turnPhase != -pos - 1) {
+                            //aspetto che il giocatore precedente abbia settato il suo colore di token
+                        }
+                    }
+                    SetTokenColorRequest setTokenColor = new SetTokenColorRequest(p.getNickname(), availableTokens);
+                    mvListeners.get(pos).addEvent(setTokenColor);
 
-            //every player gets to choose between 2 objective cards
-            ChooseObjectiveRequest chooseObjective=new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(),tablecenter.getObjDeck().draw(),p.getNickname());
-            mvListeners.get(pos).addEvent(chooseObjective);
+                    //every player gets to choose between 2 objective cards
+                    ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
+                    mvListeners.get(pos).addEvent(chooseObjective);
 
-            //every place gets to place his starting card
-            StartingCard startingCard= null;
-            try {
-                startingCard = StartingDeck.draw();
-                mvListeners.get(pos).addEvent(new PlaceStartingCard(startingCard,p.getNickname()));
-            } catch (isEmptyException e) {
-                //shouldn't happen
-                throw new RuntimeException(e);
+                    //every place gets to place his starting card
+                    StartingCard startingCard = null;
+                    try {
+                        startingCard = StartingDeck.draw();
+                        mvListeners.get(pos).addEvent(new PlaceStartingCard(startingCard, p.getNickname()));
+                    } catch (isEmptyException e) {
+                        //shouldn't happen
+                        throw new RuntimeException(e);
+                    }
+
+                    try {
+                        p.getHand().DrawFromDeck(tablecenter.getResDeck());
+                        p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
+                        p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
+                    } catch (isEmptyException | HandFullException e) {
+                        //should not happen
+                        throw new RuntimeException(e);
+                    }
+                    pos++;
+                }
+                //dopo che ho inizializzato tutti
+                String[] order= new String[numPlayers];
+                //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
+                int firstPlayerPos = (int) (Math.random()*numPlayers);
+                //setto il player come primo (non necessario è già fatto dal loop dopo)
+                //players[firstPlayerPos].position = 0;
+
+                int j = firstPlayerPos;
+                for(int i = 0; i < numPlayers; i++){
+                    //loop per settare la posizione in senso orario (da sinistra a destra) di tutti i player
+                    if (j >= numPlayers) {j = 0;}
+                    players[j].position = i;
+                    order[i]=players[j].getNickname();
+                    j++;
+                }
+
+                //notify all players on turn order
+                TurnOrder turnOrder=new TurnOrder(players[0].getNickname(),order,model.clone());
+                mvListeners.get(0).addEvent(turnOrder);
+
+                curPlayerPosition = firstPlayerPos;
+                nextPlayer(players[firstPlayerPos]);
+                //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
             }
-
-            try {
-                p.getHand().DrawFromDeck(tablecenter.getResDeck());
-                p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
-                p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
-            } catch(isEmptyException | HandFullException e){
-                //should not happen
-                throw new RuntimeException(e);
-            }
-            pos++;
-        }
-
-        String[] order= new String[numPlayers];
-        //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
-        int firstPlayerPos = (int) (Math.random()*numPlayers);
-        //setto il player come primo (non necessario è già fatto dal loop dopo)
-        //players[firstPlayerPos].position = 0;
-
-        int j = firstPlayerPos;
-        for(int i = 0; i < numPlayers; i++){
-            //loop per settare la posizione in senso orario (da sinistra a destra) di tutti i player
-            if (j >= numPlayers) {j = 0;}
-            players[j].position = i;
-            order[i]=players[j].getNickname();
-            j++;
-        }
-
-        //notify all players on turn order
-        TurnOrder turnOrder=new TurnOrder(players[0].getNickname(),order,this.clone());
-        mvListeners.get(0).addEvent(turnOrder);
-
-        curPlayerPosition = firstPlayerPos;
-        nextPlayer(players[firstPlayerPos]);
-        //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
-
+        }.start();
     }
 
     /**
@@ -309,7 +323,7 @@ public class Game{
      */
     public void nextPlayer(Player PreviousPlayer){
         //debug
-        if(turnPhase!=3) System.out.println("something went wrong with previous player's turn");
+        if(turnPhase!=3 && !(turnPhase <0)) System.out.println("Something went wrong with previous player's turn");
 
         //find next player index
         int nextPlayerIndex;

@@ -18,20 +18,17 @@ public class TurnOrder extends GenericEvent{
      * @param order the turns order
      */
     public TurnOrder(String nickname, String[] order, GameView gameView) {
-        super("The game turn order is", nickname);
+        super("The game turn order is:", nickname);
         this.order = order;
         this.gameView = gameView;
         mustBeSentToAll=true;
-    }
-
-    @Override
-    public String msgOutput() {
         String m=" ";
         int count=1;
         for (String key : order) {
-            m.concat("\t"+ count+". "+key+" \n");
+            m.concat("\t"+ count+". "+key+" ");
             count++;
         }
-        return message.concat(m);
+        message.concat(m);
     }
+
 }

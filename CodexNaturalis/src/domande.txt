@@ -115,6 +115,18 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 
 
 
+//aggiornamento 23/05/2024 20:26
+
+dovrei aver sistemato che fa la richiesta del colore del token uno alla volta
+su questo nella tui c'era un problema a prendere l'input: lo dovevi scrivere due volte
+
+si arriva alla scelta dell'obbiettivo correttamente ma il server a quanto pare non riceve la risposta
+sembra venir inviata dal client ma non ne sono certo
+
+
+
+
+
 
 
 

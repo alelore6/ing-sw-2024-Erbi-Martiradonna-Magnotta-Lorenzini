@@ -178,6 +178,10 @@ public class Controller {
                boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
                 if (ok){
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event, model.clone()));
+                    //da fare in un thread
+                    synchronized (model.controllerLock){
+                        model.turnPhase--;
+                    }
                 }
                 else getMVListenerByNickname(nickname).addEvent(new AckResponse(ok, nickname, event, model.clone()));
             }

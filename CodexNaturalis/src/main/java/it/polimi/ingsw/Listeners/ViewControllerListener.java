@@ -48,6 +48,7 @@ public class ViewControllerListener extends Listener {
                             try {
                                 ((ClientImpl) client).sendEvent(currentEvent);
                             } catch (RemoteException e) {
+                                e.printStackTrace();
                                 throw new RuntimeException(e);
                             }
                         }

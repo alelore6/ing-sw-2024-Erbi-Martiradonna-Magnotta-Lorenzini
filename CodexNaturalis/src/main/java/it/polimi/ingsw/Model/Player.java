@@ -45,7 +45,7 @@ public class Player {
      *
      * @param nickname the player's nickname
      */
-    public Player(String nickname){
+    public Player(String nickname, Game game){
         this.nickname=nickname;
         this.game = game;
         currentResources= new CurrentResources(this);
