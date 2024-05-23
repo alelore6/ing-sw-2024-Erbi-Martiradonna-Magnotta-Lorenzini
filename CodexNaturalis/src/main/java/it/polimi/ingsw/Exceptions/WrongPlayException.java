@@ -30,6 +30,7 @@ public class WrongPlayException extends Throwable{
      * @param card the card that cant be played
      */
     public WrongPlayException(Player player,int x,int y, Card card){
+        super("Wrong play : try again");
         this.player=player;
         this.card=card;
         if (x==-1 && y==-1){

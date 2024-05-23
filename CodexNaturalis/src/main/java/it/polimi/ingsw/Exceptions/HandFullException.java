@@ -17,6 +17,7 @@ public class HandFullException extends Throwable {
      * @param player the player that causes the exception
      */
     public HandFullException(Player player){
+        super("Hand full: cant draw a new card");
         this.player=player;
     }
 }
