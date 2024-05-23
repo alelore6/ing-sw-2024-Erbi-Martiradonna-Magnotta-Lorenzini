@@ -2,6 +2,7 @@ package it.polimi.ingsw.Distributed;
 
 import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Controller.Logger;
+import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
@@ -82,6 +83,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
+        // If client is connected with RMI.
+        if(!(client instanceof ClientSkeleton)) logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){
             if(event instanceof ClientRegister){
                 register(client);

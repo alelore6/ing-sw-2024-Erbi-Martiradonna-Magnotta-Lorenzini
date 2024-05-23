@@ -157,7 +157,7 @@ public class Controller {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(false, nickname, event, model.clone()));
                     }
                 }
-            nextPlayer();
+                nextPlayer();
             }
 
             else if(event instanceof PlayCardResponse){
@@ -198,7 +198,6 @@ public class Controller {
      * @return the player
      */
     private Player getPlayerByNickname(String nickname){
-
         try {
             for (Player player : model.getPlayers()) {
                 if (player.getNickname().equals(nickname)) {

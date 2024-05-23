@@ -53,7 +53,9 @@ public class ModelViewListener extends Listener {
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
                             try{
+                                if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
                                 client.update(currentEvent);
+                                if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENT);
                             }catch(RemoteException e) {
                                 throw new RuntimeException(e);
                             }
