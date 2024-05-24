@@ -56,7 +56,8 @@ public class Game{
 
     protected ArrayList<TokenColor> availableTokens;
 
-    public int pos;
+    public int waitNumClient = 1;
+
     public int turnPhase=-1;// 0: start turn, 1: play done, 2: draw done, 3: end turn
 
     public final Object controllerLock = new Object();
@@ -157,7 +158,7 @@ public class Game{
         new Thread(){
             @Override
             public void run() {
-                pos = 0;
+                int pos = 0;
                 for (Player p : players) {
                     SetTokenColorRequest setTokenColor = new SetTokenColorRequest(p.getNickname(), availableTokens);
                     mvListeners.get(pos).addEvent(setTokenColor);
@@ -225,8 +226,8 @@ public class Game{
     }
 
     private void checkpoint(Object lock){
-        if(pos >= numPlayers - 1) return;
-        while (pos < numPlayers - 1) {
+        if(waitNumClient >= numPlayers) return;
+        while (waitNumClient < numPlayers) {
             synchronized (lock) {
                 try {
                     lock.wait();
@@ -236,7 +237,7 @@ public class Game{
                 //aspetto che il giocatore precedente abbia finito
             }
         }
-        pos--;
+        waitNumClient = 1;
     }
 
     /**

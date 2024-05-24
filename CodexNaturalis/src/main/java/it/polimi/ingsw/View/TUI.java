@@ -4,7 +4,6 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 
-import javax.swing.*;
 import java.io.PrintStream;
 import java.util.*;
 
@@ -119,12 +118,12 @@ public class TUI extends UI {
     }
 
     protected void printCard(Card card){
-        printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
+        printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
         if(card instanceof PlayableCard){
             printOut("Color: " + ((PlayableCard) card).getColor() +
-                        "Visible corners: ");
-            Arrays.stream(card.getCorners()).forEach(c -> printOut(
-                    c.getPosition() + ": " + c.getResource() != null ? c.getResource().toString() : "empty"));
+                        "\nVisible corners: ");
+            Arrays.stream(card.getCorners()).forEach(corner -> printOut(
+                    corner.getPosition() + ": " + corner.getResource()));
 
             if(card instanceof GoldCard){
                 // the number of total distinct resources
@@ -139,16 +138,23 @@ public class TUI extends UI {
 
             if(((PlayableCard) card).getPoints() == 0)  return;
 
-            if(((PlayableCard) card).getPoints() > 0){
-                printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + "points");
-                if(card instanceof GoldCard){
-                    printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
-                }
+            printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + "points");
+            if(card instanceof GoldCard){
+                printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
             }
             printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
-
+            printOut("VISIBLE CORNER:\n\tFRONT:");
+            for(int i = 0; i < card.getCorners().length; i++){
+                if(i == 4) printOut("\tBACK:");
+                if(card.getCorners()[i] != null)
+                    printOut("\t\t" + card.getCorners()[i].getPosition() + ": " + card.getCorners()[i].getStringResource());
+            }
+            printOut("\tRESOURCES IN THE BACK:");
+            for(Resource resource : ((StartingCard) card).resource){
+                 printOut("\t\t" + resource + "\t\t");
+            }
         }
     }
 
@@ -233,7 +239,7 @@ public class TUI extends UI {
                             break;
 
                         case PlaceStartingCard e :
-                            printOut(e.msgOutput2());
+                            printCard(e.startingCard);
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
                             newEvent = new PlaceStartingCard( e.startingCard, client.getNickname());

@@ -182,8 +182,11 @@ public class Controller {
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event, model.clone()));
                     // da fare in un thread
                     synchronized (model.controllerLock){
+
+                        // still useful?
                         model.turnPhase--;
-                        model.pos++;
+
+                        model.waitNumClient++;
                         model.controllerLock.notifyAll();
                     }
                 }

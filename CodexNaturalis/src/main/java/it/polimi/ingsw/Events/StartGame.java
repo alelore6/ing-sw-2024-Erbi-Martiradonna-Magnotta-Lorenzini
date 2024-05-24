@@ -14,7 +14,7 @@ public class StartGame extends GenericEvent{
      * @param nickname the player that receives the event
      */
     public StartGame(String nickname, GameView model){
-        super("The game is starting", nickname);
+        super("The game is starting...", nickname);
         this.model = model;
     }
 }

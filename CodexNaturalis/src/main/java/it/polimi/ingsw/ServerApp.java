@@ -31,8 +31,6 @@ public class ServerApp {
 
     public static final int SOCKET_PORT = 2002;
     private static boolean isServerExported = false;
-    // ????
-    //private static final int portRMI = 2003;
 
     // TODO: gestire la disconnessione di un client con socket
 
