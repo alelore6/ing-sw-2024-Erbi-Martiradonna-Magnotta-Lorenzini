@@ -54,7 +54,8 @@ public class Game{
 
     protected ArrayList<TokenColor> availableTokens;
 
-    public int turnPhase=-1;//0: start turn, 1: play done, 2: draw done, 3: end turn
+    public int pos;
+    public int turnPhase=-1;// 0: start turn, 1: play done, 2: draw done, 3: end turn
 
     public final Object controllerLock = new Object();
     /**
@@ -153,16 +154,11 @@ public class Game{
         new Thread(){
             @Override
             public void run() {
-
-                int pos = 0;
+                pos = 0;
                 for (Player p : players) {
-                    synchronized (controllerLock) {
-                        while (turnPhase != -pos - 1) {
-                            //aspetto che il giocatore precedente abbia settato il suo colore di token
-                        }
-                    }
                     SetTokenColorRequest setTokenColor = new SetTokenColorRequest(p.getNickname(), availableTokens);
                     mvListeners.get(pos).addEvent(setTokenColor);
+                    checkpoint(controllerLock);
 
                     //every player gets to choose between 2 objective cards
                     ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
@@ -186,8 +182,12 @@ public class Game{
                         //should not happen
                         throw new RuntimeException(e);
                     }
+
+
                     pos++;
                 }
+
+
                 //dopo che ho inizializzato tutti
                 String[] order= new String[numPlayers];
                 //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
@@ -205,14 +205,30 @@ public class Game{
                 }
 
                 //notify all players on turn order
-                TurnOrder turnOrder=new TurnOrder(players[0].getNickname(),order,model.clone());
-                mvListeners.get(0).addEvent(turnOrder);
+                TurnOrder turnOrder=new TurnOrder("everyone",order,model.clone());
+                for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
 
                 curPlayerPosition = firstPlayerPos;
+                checkpoint(controllerLock);
                 nextPlayer(players[firstPlayerPos]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
             }
         }.start();
+    }
+
+    private void checkpoint(Object lock){
+        if(pos >= numPlayers - 1) return;
+        while (pos < numPlayers - 1) {
+            synchronized (controllerLock) {
+                try {
+                    controllerLock.wait();
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+                //aspetto che il giocatore precedente abbia finito
+            }
+        }
+        pos--;
     }
 
     /**

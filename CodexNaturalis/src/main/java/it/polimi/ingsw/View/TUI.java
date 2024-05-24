@@ -30,17 +30,22 @@ public class TUI extends UI {
         while(!isValid){
             try{
                 choice = in.nextInt();
+                in.nextLine();
             } catch (InputMismatchException e) {
                 // to skip the wrong input and try with the next one.
-
-                in.nextInt();
+                in.nextLine();
                 printOut(inputError());
 
                 continue;
             }
 
-            if(choice >= min && choice <= max)  isValid = true;
-            if(!isValid)                        printOut(inputError());
+            try{
+                if(choice >= min && choice <= max)  isValid = true;
+            }catch(InputMismatchException e){
+
+            }finally {
+                if(!isValid)    printOut(inputError());
+            }
         }
 
         return choice;
@@ -214,7 +219,7 @@ public class TUI extends UI {
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
 
-                            newEvent = new SetTokenColorResponse(chooseInt(1,4), client.getNickname());
+                            newEvent = new SetTokenColorResponse(n, client.getNickname());
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
                             break;

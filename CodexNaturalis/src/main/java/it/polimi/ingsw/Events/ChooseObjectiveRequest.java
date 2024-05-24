@@ -30,7 +30,7 @@ public class ChooseObjectiveRequest extends GenericRequest {
     @Override
     public String msgOutput() {
         return super.msgOutput() + "insert (1) for card number " + objCard1.getID()
-                                 + "or insert (2) for card number " + objCard2.getID() + ": ";
+                                 + " or insert (2) for card number " + objCard2.getID() + ": ";
     }
 
     public ObjectiveCard getChosenCard(int n){

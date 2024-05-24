@@ -26,14 +26,14 @@ public class SetTokenColorRequest extends GenericRequest{
     @Override
     public String msgOutput() {
 
-        String s = null;
+        String s = "\n";
 
-        if(availableColors.contains(TokenColor.RED))        s ="\n(1) for RED\n";
+        if(availableColors.contains(TokenColor.RED))        s = s + "(1) for RED\n";
         if(availableColors.contains(TokenColor.YELLOW))     s = s + "(2) for YELLOW\n";
         if(availableColors.contains(TokenColor.GREEN))      s = s + "(3) for GREEN\n";
-        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE\n";
+        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE";
 
-        return super.msgOutput() + availableColors.toString() + "\nColor: " + s;
+        return super.msgOutput() + availableColors.toString() + "\nColors: " + s;
     }
 
     public boolean choiceIsValid(int n){

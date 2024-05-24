@@ -165,9 +165,11 @@ public class Controller {
 
             else if(event instanceof PlayCardResponse){
                 try {
-                    getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                    MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
-                    model.turnPhase++;
+                    synchronized (model.controllerLock){
+                        getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
+                        model.turnPhase++;
+                    }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event));
@@ -178,17 +180,22 @@ public class Controller {
                boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
                 if (ok){
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event, model.clone()));
-                    //da fare in un thread
+                    // da fare in un thread
                     synchronized (model.controllerLock){
                         model.turnPhase--;
+                        model.pos++;
+                        model.controllerLock.notifyAll();
                     }
                 }
                 else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again", nickname, event));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
-                    getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse( nickname, event, model.clone()));
+                        getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse( nickname, event, model.clone()));
+                    synchronized (model.controllerLock){
+                        model.controllerLock.notifyAll();
+                    }
                 } catch (WrongPlayException e) {
                     //shouldn't happen
                     getMVListenerByNickname(nickname).addEvent(new AckResponse("Error in placing starting card", nickname, event));                }
