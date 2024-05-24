@@ -6,6 +6,8 @@ import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
+import it.polimi.ingsw.ModelView.PlayerView;
+import it.polimi.ingsw.ModelView.TableCenterView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -58,6 +60,7 @@ public class Game{
     public int turnPhase=-1;// 0: start turn, 1: play done, 2: draw done, 3: end turn
 
     public final Object controllerLock = new Object();
+    public final Object controllerLock2 = new Object();
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -148,7 +151,7 @@ public class Game{
 
             }
         }
-        //cosa bruttissima per chiamare clone
+        //cosa bruttissima per chiamare clone dentro al thread
         Game model=this;
         //in un thread perchè si deve aspettare la sincronizzazione dal controller
         new Thread(){
@@ -187,7 +190,6 @@ public class Game{
                     pos++;
                 }
 
-
                 //dopo che ho inizializzato tutti
                 String[] order= new String[numPlayers];
                 //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
@@ -203,13 +205,19 @@ public class Game{
                     order[i]=players[j].getNickname();
                     j++;
                 }
+                String message="";
+                for (int i=1; i<=order.length;i++) {
+                    message=message.concat(" | "+". "+order[i]+" ");
+                }
+
+                //wait for everyone to complete the start
+                checkpoint(controllerLock);
 
                 //notify all players on turn order
-                TurnOrder turnOrder=new TurnOrder("everyone",order,model.clone());
+                TurnOrder turnOrder=new TurnOrder("everyone",message,model.clone());
                 for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
 
                 curPlayerPosition = firstPlayerPos;
-                checkpoint(controllerLock);
                 nextPlayer(players[firstPlayerPos]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
             }
@@ -219,9 +227,9 @@ public class Game{
     private void checkpoint(Object lock){
         if(pos >= numPlayers - 1) return;
         while (pos < numPlayers - 1) {
-            synchronized (controllerLock) {
+            synchronized (lock) {
                 try {
-                    controllerLock.wait();
+                    lock.wait();
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -338,9 +346,6 @@ public class Game{
      * @param PreviousPlayer the instance of the player holding the previous turn
      */
     public void nextPlayer(Player PreviousPlayer){
-        //debug
-        if(turnPhase!=3 && !(turnPhase <0)) System.out.println("Something went wrong with previous player's turn");
-
         //find next player index
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
@@ -361,7 +366,7 @@ public class Game{
             mvListeners.get(curPlayerPosition).addEvent(event);
 
             // send play card request event
-            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), players[curPlayerPosition].getHand().getHandCards().clone(), players[curPlayerPosition].getHand().getDisplayedCards().clone(), players[curPlayerPosition].getCurrentResources());
+            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), new PlayerView(players[curPlayerPosition]));
             mvListeners.get(curPlayerPosition).addEvent(playCard);
 
             //check there are still card on table center
@@ -374,7 +379,7 @@ public class Game{
             }
             //if both deck are not empty and !empty, a draw will be requested
             if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty) {
-                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), tablecenter.getCenterCards().clone(), tablecenter.getGoldDeck().AckEmpty, tablecenter.getResDeck().AckEmpty);
+                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), new TableCenterView(tablecenter), tablecenter.getGoldDeck().AckEmpty, tablecenter.getResDeck().AckEmpty);
                 mvListeners.get(curPlayerPosition).addEvent(drawCard);
             }
             turnCounter++;

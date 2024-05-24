@@ -1,15 +1,15 @@
 package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.Model.PlayableCard;
+import it.polimi.ingsw.ModelView.TableCenterView;
 
 /**
  * Event that represent the model request for a source for the draw of a card.
  */
 public class DrawCardRequest extends GenericRequest{
-    /**
-     * the card positioned in the table center
-     */
-    public final PlayableCard[] tableCards;
+
+
+    public final TableCenterView tableCenterView;
     /**
      * represent if the gold deck is empty,
      * so that it will not be shown as an option for the draw
@@ -28,9 +28,9 @@ public class DrawCardRequest extends GenericRequest{
      * @param goldDeckEmpty represent if the gold deck is empty
      * @param resDeckEmpty represent if the resource deck is empty
      */
-    public DrawCardRequest(String nickname, PlayableCard[] tableCards, boolean goldDeckEmpty, boolean resDeckEmpty){
+    public DrawCardRequest(String nickname, TableCenterView tableCenterView, boolean goldDeckEmpty, boolean resDeckEmpty){
         super("Now it's time to draw a card: choose a source to draw from. \n",nickname);
-        this.tableCards = tableCards;
+        this.tableCenterView = tableCenterView;
         this.goldDeckEmpty = goldDeckEmpty;
         this.resDeckEmpty = resDeckEmpty;
     }

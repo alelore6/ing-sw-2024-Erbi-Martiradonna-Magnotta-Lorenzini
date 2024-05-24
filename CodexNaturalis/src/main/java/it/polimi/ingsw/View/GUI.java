@@ -189,7 +189,7 @@ public class GUI extends UI{
                             if(!((DrawCardRequest) ev).goldDeckEmpty)    p.add("Gold deck");
                             if(!((DrawCardRequest) ev).resDeckEmpty)    p.add("Resource deck");
                             n=1;
-                            for (PlayableCard c : ((DrawCardRequest) ev).tableCards){
+                            for (PlayableCard c : ((DrawCardRequest) ev).tableCenterView.centerCards){
                                 if(c!=null) p.add("Card "+n);
                                 n++;
                             }
@@ -265,11 +265,6 @@ public class GUI extends UI{
 
                         case TurnOrder e:
                             //show message +  order
-                            n=1;
-                            for (String player : ((TurnOrder) ev).order){
-                                message.concat("\n"+n+". "+player);
-                                n++;
-                            }
                             JOptionPane.showMessageDialog(f, message);
                             break;
                         case ReconnectionRequest e:

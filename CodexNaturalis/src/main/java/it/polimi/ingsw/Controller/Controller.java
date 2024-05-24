@@ -256,13 +256,12 @@ public class Controller {
     }
 
     private void nextPlayer(){
-        if(model.turnPhase==3){
-            //end turn event
-            EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
-            MVListeners.get(model.getCurPlayerPosition()).addEvent(endTurn);
-            if(model.getRemainingTurns() == 0) model.checkWinner();
-            else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
-        }
+        if(model.turnPhase!=3) System.out.println("Something went wrong with previous player's turn");
+        //end turn event
+        EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
+        MVListeners.get(model.getCurPlayerPosition()).addEvent(endTurn);
+        if(model.getRemainingTurns() == 0) model.checkWinner();
+        else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
     }
 
     public void disconnectPlayer(String nickname){

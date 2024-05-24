@@ -11,7 +11,7 @@ public class HandView implements Serializable {
     public final Card[][] playedCards;
 
     public HandView(Hand hand){
-        this.handCards=hand.getHandCards();
-        this.playedCards= hand.getDisplayedCards();
+        this.handCards=hand.getHandCards().clone();
+        this.playedCards= hand.getDisplayedCards().clone();
     }
 }

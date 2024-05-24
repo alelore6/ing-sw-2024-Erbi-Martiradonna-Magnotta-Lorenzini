@@ -204,10 +204,10 @@ public class TUI extends UI {
                             }while(!e.choiceIsValid(n));
 
                             printOut(e.msgOutput2());
-                            if(chooseInt(1,2) == 2) e.handCards[n-1].isFacedown = true;
+                            if(chooseInt(1,2) == 2) e.playerView.hand.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            newEvent = new PlayCardResponse(client.getNickname(), e.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80));
+                            newEvent = new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80));
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
                             break;
@@ -236,7 +236,7 @@ public class TUI extends UI {
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
-                            newEvent = new PlayCardResponse(client.getNickname(), e.startingCard, 40, 40);
+                            newEvent = new PlaceStartingCard( e.startingCard, client.getNickname());
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
                             break;
