@@ -4,6 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Listeners.ViewControllerListener;
 import it.polimi.ingsw.Model.Card;
+import it.polimi.ingsw.Model.ObjectiveCard;
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -21,6 +22,7 @@ public abstract class UI implements View{
     }
 
     protected abstract void printCard(Card card);
+    protected abstract void printCard(ObjectiveCard card);
 
     public ViewControllerListener getListener() {
         return listener;

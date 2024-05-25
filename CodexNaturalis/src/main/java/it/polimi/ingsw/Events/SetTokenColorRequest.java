@@ -19,7 +19,7 @@ public class SetTokenColorRequest extends GenericRequest{
      * @param availableColors the list of available colors
      */
     public SetTokenColorRequest(String nickname, ArrayList<TokenColor> availableColors) {
-        super("Choose token color from these:\n", nickname);
+        super("Choose token color from these:", nickname);
         this.availableColors = availableColors;
     }
 
@@ -27,13 +27,14 @@ public class SetTokenColorRequest extends GenericRequest{
     public String msgOutput() {
 
         String s = "\n";
+        String colorReset = "\u001B[0m";
 
-        if(availableColors.contains(TokenColor.RED))        s = s + "(1) for RED\n";
-        if(availableColors.contains(TokenColor.YELLOW))     s = s + "(2) for YELLOW\n";
-        if(availableColors.contains(TokenColor.GREEN))      s = s + "(3) for GREEN\n";
-        if(availableColors.contains(TokenColor.BLUE))       s = s + "(4) for BLUE";
+        if(availableColors.contains(TokenColor.RED))        s = s + "\u001B[31m" + "(1) for RED\n" + colorReset;
+        if(availableColors.contains(TokenColor.YELLOW))     s = s + "\u001B[33m" + "(2) for YELLOW\n" + colorReset;
+        if(availableColors.contains(TokenColor.GREEN))      s = s + "\u001B[32m" + "(3) for GREEN\n" + colorReset;
+        if(availableColors.contains(TokenColor.BLUE))       s = s + "\u001B[34m" + "(4) for BLUE\n" + colorReset;
 
-        return super.msgOutput() + availableColors.toString() + "\nColors: " + s;
+        return super.msgOutput() + s;
     }
 
     public boolean choiceIsValid(int n){

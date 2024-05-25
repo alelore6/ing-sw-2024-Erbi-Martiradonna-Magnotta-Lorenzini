@@ -19,8 +19,11 @@ public class PlaceStartingCard extends GenericRequest{
      * @param nickname the receiver of the event
      */
     public PlaceStartingCard(StartingCard startingCard, String nickname) {
-        super("Now it's time to place your starting card.\n" +
-                "Enter (1) if you want the card faced up, (2) if faced down: ",nickname);
+        super("Now it's time to place your starting card.", nickname);
         this.startingCard = startingCard;
+    }
+
+    public String msgOutput2(){
+        return "Enter (1) if you want the card faced up, (2) if faced down: ";
     }
 }

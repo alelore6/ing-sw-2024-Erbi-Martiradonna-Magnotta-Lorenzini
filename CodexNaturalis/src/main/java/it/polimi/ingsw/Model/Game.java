@@ -208,7 +208,7 @@ public class Game{
                 }
                 String message="";
                 for (int i=1; i<=order.length;i++) {
-                    message=message.concat(" | "+". "+order[i]+" ");
+                    message=message.concat(" | "+". "+order[i-1]+" ");
                 }
 
                 //wait for everyone to complete the start

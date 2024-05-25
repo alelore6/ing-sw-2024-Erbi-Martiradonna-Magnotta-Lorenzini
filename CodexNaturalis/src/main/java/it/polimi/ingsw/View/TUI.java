@@ -111,16 +111,29 @@ public class TUI extends UI {
         return "Input not allowed. Please try again";
     }
 
-    public final void update(GenericEvent e){
-        synchronized(lock_events){
-            inputEvents.add(e);
+
+    private String setColorForString(String color, String string){
+        String c;
+        String resetColor = "\u001B[0m";
+        switch (color){
+            case "RED" -> c = "\u001B[31m";
+            case "GREEN" -> c = "\u001B[32m";
+            case "YELLOW" -> c = "\u001B[33m";
+            case "BLUE" -> c = "\u001B[34m";
+            case "PURPLE" -> c = "\u001B[35m";
+            //case "CYAN" -> c = "\u001B[36m";
+            //case "BLACK" -> c = "\u001B[30m";
+            //case "WHITE" -> c = "\u001B[37m";
+            default -> c = "<INVALID COLOR> ";
         }
+
+        return c + string + resetColor;
     }
 
     protected void printCard(Card card){
-        printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
         if(card instanceof PlayableCard){
-            printOut("Color: " + ((PlayableCard) card).getColor() +
+            printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
+            printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString()) +
                         "\nVisible corners: ");
             Arrays.stream(card.getCorners()).forEach(corner -> printOut(
                     corner.getPosition() + ": " + corner.getResource()));
@@ -145,6 +158,7 @@ public class TUI extends UI {
             printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
+            printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
             printOut("VISIBLE CORNER:\n\tFRONT:");
             for(int i = 0; i < card.getCorners().length; i++){
                 if(i == 4) printOut("\tBACK:");
@@ -155,6 +169,37 @@ public class TUI extends UI {
             for(Resource resource : ((StartingCard) card).resource){
                  printOut("\t\t" + resource + "\t\t");
             }
+        }
+    }
+
+    protected void printCard(ObjectiveCard card){
+        printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
+        if(card instanceof ObjectiveCard1){
+            String grid = "";
+            int index = 0;
+            List<Integer> positions = Arrays.stream(((ObjectiveCard1) card).getRequiredPositions()).boxed().toList();
+
+            for(int i = 1; index < 3; i++){
+                if(positions.contains(i)){
+                    grid += setColorForString(((ObjectiveCard1) card).getCardColors()[index].toString(), "■");
+                    index++;
+                }
+                else grid += "  ";
+
+                if(i == 3 || i == 6)    grid += "\n";
+                if(i > 9)   printOut("\nERRORE DI STAMPA.\n");
+            }
+
+            printOut(grid);
+        }
+        else{ // card is an ObjectiveCard2
+
+        }
+    }
+
+    public final void update(GenericEvent e){
+        synchronized(lock_events){
+            inputEvents.add(e);
         }
     }
 
@@ -191,6 +236,9 @@ public class TUI extends UI {
                             break;
 
                         case ChooseObjectiveRequest e :
+                            printCard(e.objCard1);
+                            printCard(e.objCard2);
+                            printOut(e.msgOutput2());
                             newEvent = new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname());
                             notifyListener(newEvent);
                             printOut(newEvent.msgOutput());
@@ -206,7 +254,7 @@ public class TUI extends UI {
                             n = -1;
                             do{
                                 if(n != -1) printOut(inputError());
-                                n = chooseInt(1,80); // 80 is a secure upper bound for this choice (lower would be dangerous).
+                                n = chooseInt(1,80);
                             }while(!e.choiceIsValid(n));
 
                             printOut(e.msgOutput2());
@@ -240,11 +288,10 @@ public class TUI extends UI {
 
                         case PlaceStartingCard e :
                             printCard(e.startingCard);
+                            printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
-                            newEvent = new PlaceStartingCard( e.startingCard, client.getNickname());
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
                             break;
 
                         case AckResponse ack :

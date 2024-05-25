@@ -40,6 +40,11 @@ public class GUI extends UI{
 
     }
 
+    @Override
+    protected void printCard(ObjectiveCard card) {
+
+    }
+
     public String chooseNickname() {
         String s=null;
         while(s==null || s.length()<4 || s.contains(" ")) {
