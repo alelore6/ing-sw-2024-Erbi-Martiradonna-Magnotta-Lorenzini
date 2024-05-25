@@ -112,13 +112,13 @@ public class Controller {
     public void updateModel(GenericEvent event, String nickname) throws RemoteException {
 
             if(event instanceof NumPlayersResponse){
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
             }
 
             else if(event instanceof ChooseObjectiveResponse) {
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
                 getPlayerByNickname(nickname).chooseObjective(((ChooseObjectiveResponse) event).objectiveCard);
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
             }
 
             else if(event instanceof DrawCardResponse){

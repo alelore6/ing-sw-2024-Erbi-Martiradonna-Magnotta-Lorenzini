@@ -6,6 +6,7 @@ import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.ObjectiveCard;
 import it.polimi.ingsw.Model.PlayableCard;
+import it.polimi.ingsw.Model.TokenColor;
 
 import javax.swing.*;
 
@@ -101,7 +102,7 @@ public class GUI extends UI{
     public void update(GenericEvent e){
         synchronized (inputEvents) {
             inputEvents.add(e);
-            System.out.println("Event received");
+            //System.out.println("Event received");
         }
     }
 
@@ -126,16 +127,19 @@ public class GUI extends UI{
                     int n=0;
                     GenericEvent newEvent=null;
                     String s=null;
-                    Object[] possibilities=null;
+                    ArrayList<Object> possibilities=null;
                     String message= ev.msgOutput();
 
 
                     switch(ev){
                         //TODO per eventi di gioco devo anche aggiornare il frame
                         case NumPlayersRequest e :
-                            possibilities = new Object[]{"2", "3", "4"};
+                            possibilities = new ArrayList<Object>();
+                            possibilities.add("2");
+                            possibilities.add("3");
+                            possibilities.add("4");
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Number of players", JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Number of players", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
                             newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
@@ -179,9 +183,11 @@ public class GUI extends UI{
                             dialog.getContentPane().add(b2);
                             */
                             //mostrare dati evento
-                            possibilities = new Object[]{"Objective card 1", "Objective card 2"};
+                            possibilities = new ArrayList<Object>();
+                            possibilities.add("Objective card 1");
+                            possibilities.add("Objective card 2");
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Choose objective", JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Choose objective", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
                             ObjectiveCard choice= s.equals("Objective card 1")?((ChooseObjectiveRequest) ev).objCard1 : ((ChooseObjectiveRequest) ev).objCard2;
                             newEvent = new ChooseObjectiveResponse( choice, client.getNickname());
@@ -190,17 +196,17 @@ public class GUI extends UI{
 
                         case DrawCardRequest e :
                             //tolgo delle possibilità di scelta in base alle info dell'evento
-                            ArrayList<Object> p = new ArrayList<Object>();
-                            if(!((DrawCardRequest) ev).goldDeckEmpty)    p.add("Gold deck");
-                            if(!((DrawCardRequest) ev).resDeckEmpty)    p.add("Resource deck");
+                            possibilities = new ArrayList<Object>();
+                            if(!((DrawCardRequest) ev).goldDeckEmpty)    possibilities.add("Gold deck");
+                            if(!((DrawCardRequest) ev).resDeckEmpty)    possibilities.add("Resource deck");
                             n=1;
                             for (PlayableCard c : ((DrawCardRequest) ev).tableCenterView.centerCards){
-                                if(c!=null) p.add("Card "+n);
+                                if(c!=null) possibilities.add("Card "+n);
                                 n++;
                             }
 
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Draw a card", JOptionPane.PLAIN_MESSAGE, icon, p.toArray(), null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Draw a card", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
                             if (s.contains("deck")){
                                 if (s.contains("Resource")) n=4;
@@ -216,8 +222,12 @@ public class GUI extends UI{
                             break;
 
                         case SetTokenColorRequest e :
+                            possibilities=new ArrayList<Object>();
+                            for(TokenColor c : (((SetTokenColorRequest)ev).availableColors)){
+                                possibilities.add(c.name());
+                            }
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon,((SetTokenColorRequest)ev).availableColors.toArray(), null);
+                                s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
                             newEvent = new SetTokenColorResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
@@ -232,8 +242,15 @@ public class GUI extends UI{
                             break;
 
                         case PlaceStartingCard e :
+                            possibilities=new ArrayList<Object>();
+                            possibilities.add("Front");
+                            possibilities.add("Back");
+                            while(s==null) {
+                                s = (String) JOptionPane.showInputDialog(f, message, "Place starting card", JOptionPane.PLAIN_MESSAGE, icon,possibilities.toArray(), null);
+                            }
                             // can rotate card
                             JOptionPane.showMessageDialog(f, message);
+                            if (s.equalsIgnoreCase("Back")) e.startingCard.isFacedown=true;
                             notifyListener(ev);
                             break;
 
@@ -243,35 +260,16 @@ public class GUI extends UI{
                             f.reactStartGame((StartGame) ev);
                             break;
 
-                        case ReturnDrawCard e:
-                            //update view
-                            JOptionPane.showMessageDialog(f, message);
-                            break;
-
-                        case ReturnPlayCard e:
-                            //update view
-                            JOptionPane.showMessageDialog(f, message);
-                            break;
-
                         case EndTurn e:
-                            //update view
-                            JOptionPane.showMessageDialog(f, message);
-                            break;
-
-                        case FinalRankings e:
-                            //show message + rankings
-                            n=1;
-                            for (String player : ((FinalRankings) ev).Rankings.keySet()){
-                                message.concat("\n"+n+". "+player +" : " + ((FinalRankings) ev).Rankings.get(player)+ " points");
-                                n++;
-                            }
+                            //show message + update view
                             JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case TurnOrder e:
-                            //show message +  order
+                            //show message +  update view
                             JOptionPane.showMessageDialog(f, message);
                             break;
+
                         case ReconnectionRequest e:
                             while(s==null || s.length()<4 || s.contains(" ")) {
                                 s = (String) JOptionPane.showInputDialog(f, message, "Reconnection", JOptionPane.PLAIN_MESSAGE, icon, null, null);
@@ -279,9 +277,12 @@ public class GUI extends UI{
                             newEvent = new ReconnectionResponse( client.getNickname(),s.trim());
                             notifyListener(newEvent);
                             break;
+
                         case AckResponse e:
                             //TODO in alcuni casi aggiorno view e negli altri nulla???
+                            System.out.println("Received ack for "+ e.event.getClass().getName());
                             break;
+
                         default:
                             //show message
                             JOptionPane.showMessageDialog(f, message);

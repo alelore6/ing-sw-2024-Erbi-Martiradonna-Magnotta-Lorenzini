@@ -279,6 +279,7 @@ public class TUI extends UI {
 
                         case SetTokenColorRequest e :
                             n = -1;
+                            printOut(e.msgOutput2());
                             do{
                                 if(n != -1) printOut(inputError());
                                 n = chooseInt(1,4);

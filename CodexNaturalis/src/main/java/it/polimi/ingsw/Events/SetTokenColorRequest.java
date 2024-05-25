@@ -23,8 +23,7 @@ public class SetTokenColorRequest extends GenericRequest{
         this.availableColors = availableColors;
     }
 
-    @Override
-    public String msgOutput() {
+    public String msgOutput2() {
 
         String s = "\n";
         String colorReset = "\u001B[0m";
@@ -34,7 +33,7 @@ public class SetTokenColorRequest extends GenericRequest{
         if(availableColors.contains(TokenColor.GREEN))      s = s + "\u001B[32m" + "(3) for GREEN\n" + colorReset;
         if(availableColors.contains(TokenColor.BLUE))       s = s + "\u001B[34m" + "(4) for BLUE\n" + colorReset;
 
-        return super.msgOutput() + s;
+        return s;
     }
 
     public boolean choiceIsValid(int n){

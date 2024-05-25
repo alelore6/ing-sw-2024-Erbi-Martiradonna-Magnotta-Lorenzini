@@ -58,9 +58,9 @@ public class MainFrame extends JFrame {
 
         initialPanel.revalidate();
         initialPanel.repaint();
-
-        InitializeMenuBar(4);
-        GenerationPanels(4);
+        //danno errore
+        //InitializeMenuBar(4);
+        //GenerationPanels(4);
     }
 
 
