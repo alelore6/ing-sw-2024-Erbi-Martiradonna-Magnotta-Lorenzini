@@ -6,13 +6,8 @@ public abstract class Card implements Serializable {
      protected int ID;
 
     // Everything about the back of the card is based on this boolean:
-     public boolean isFacedown;
+     public boolean isFacedown = false;
      protected Corner[] corners;
-
-     protected Card(int ID) {
-        this.ID = ID;
-        isFacedown = false;
-    }
 
      public Card getCard(){
          return this;

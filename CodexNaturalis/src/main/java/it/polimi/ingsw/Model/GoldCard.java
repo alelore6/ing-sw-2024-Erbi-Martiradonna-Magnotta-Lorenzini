@@ -11,16 +11,6 @@ public class GoldCard extends PlayableCard{
 
     protected HashMap<Resource,Integer> req = new HashMap<>();
 
-    public GoldCard(int ID){
-        super(ID);
-
-        for (Resource k: Resource.values()){
-            // Inserts requested resources
-            // Those that aren't requested are set to 0
-            req.put(k,0);
-        }
-    }
-
     public void flip(){
         isFacedown = !isFacedown;
     }

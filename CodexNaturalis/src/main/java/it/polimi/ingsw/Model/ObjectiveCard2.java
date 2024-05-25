@@ -1,25 +1,16 @@
 package it.polimi.ingsw.Model;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gson.Gson;
-
 public class ObjectiveCard2 extends ObjectiveCard {
 
-    public Map<Resource, Integer> getObjectivecard2Map() {
-        return objectivecard2Map;
+    private Map<Resource, Integer> reqMap = new HashMap<Resource, Integer>();
+
+    public Map<Resource, Integer> getReqMap() {
+        return reqMap;
     }
-
-    private Map<Resource, Integer> objectivecard2Map;
-
-    public ObjectiveCard2(int ID) {
-        super(ID);
-        objectivecard2Map = new HashMap<>();
-        for (Resource k : Resource.values()) {
-            objectivecard2Map.put(k, 0);
-        }
+    public void addReqMap(Resource resource, int value){
+        reqMap.put(resource, value);
     }
 }

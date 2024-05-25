@@ -9,7 +9,6 @@ import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.ModelView.TableCenterView;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -413,9 +412,9 @@ public class Game{
         if (objectiveCard instanceof ObjectiveCard2) {
             int minPoints = 1000;
             //calcolo punti a seconda del tipo di obj card
-            for (Resource resource : ((ObjectiveCard2) objectiveCard).getObjectivecard2Map().keySet()) {
+            for (Resource resource : ((ObjectiveCard2) objectiveCard).getReqMap().keySet()) {
                 //controllo le risorse necessarie per i punti
-                int required = ((ObjectiveCard2) objectiveCard).getObjectivecard2Map().get(resource);
+                int required = ((ObjectiveCard2) objectiveCard).getReqMap().get(resource);
                 //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
                 //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
                 //avrà totalizzato

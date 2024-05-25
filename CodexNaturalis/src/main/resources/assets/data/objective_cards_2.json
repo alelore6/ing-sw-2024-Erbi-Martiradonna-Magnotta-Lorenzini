@@ -2,70 +2,59 @@
   {
     "ID" : 95,
     "points" : 2,
-    "req" : [
-      "FUNGI",
-      "FUNGI",
-      "FUNGI"
-    ]
+    "reqMap" : {
+      "FUNGI" : 3
+    }
   },
   {
     "ID" : 96,
     "points" : 2,
-    "req" : [
-      "PLANT",
-      "PLANT",
-      "PLANT"
-    ]
+    "reqMap" : {
+      "PLANT" : 3
+    }
   },
   {
     "ID" : 97,
     "points" : 2,
-    "req" : [
-      "ANIMAL",
-      "ANIMAL",
-      "ANIMAL"
-    ]
+    "reqMap" : {
+      "ANIMAL" : 3
+    }
   },
   {
     "ID" : 98,
     "points" : 2,
-    "req" : [
-      "INSECT",
-      "INSECT",
-      "INSECT"
-    ]
+    "reqMap" : {
+      "INSECT" : 3
+    }
   },
   {
     "ID" : 99,
     "points" : 3,
-    "req" : [
-      "QUILL",
-      "INKWELL",
-      "MANUSCRIPT"
-    ]
+    "reqMap" : {
+      "QUILL" : 1,
+      "INKWELL" : 1,
+      "MANUSCRIPT" : 1
+    }
   },
   {
     "ID" : 100,
     "points" : 2,
-    "req" : [
-      "MANUSCRIPT",
-      "MANUSCRIPT"
-    ]
+    "reqMap" : {
+      "MANUSCRIPT" : 2
+    }
   },
   {
     "ID" : 101,
     "points" : 2,
-    "req" : [
-      "INKWELL",
-      "INKWELL"
-    ]
+    "reqMap" : {
+      "INKWELL" : 2
+    }
   },
   {
     "ID" : 102,
     "points" : 2,
-    "req" : [
-      "QUILL",
-      "QUILL"
-    ]
+    "reqMap" : {
+      "QUILL" : 2
+    }
   }
 ]

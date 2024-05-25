@@ -34,6 +34,13 @@ public class ObjectiveDeck {
             temp_deck1 = gson.fromJson(reader1, ObjectiveCard1[].class);
             temp_deck2 = gson.fromJson(reader2, ObjectiveCard2[].class);
 
+            for(ObjectiveCard2 card : temp_deck2){
+                for (Resource resource : Resource.values()) {
+                    if(!card.getReqMap().containsKey(resource))
+                        card.addReqMap(resource, 0);
+                }
+            }
+
         } catch (IOException e) {
             System.err.println("Error with JSON.");
         }

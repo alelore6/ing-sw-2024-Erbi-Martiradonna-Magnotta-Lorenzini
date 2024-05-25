@@ -40,10 +40,10 @@ public class PlayCardRequest extends GenericRequest {
     }
 
     public String msgOutput2(){
-        return "Enter (1) if you want the card faced up, (2) if faced down: \n";
+        return "Enter (1) if you want the card faced up, (2) if faced down: ";
     }
 
     public String msgOutput3(){
-        return "Now enter the two coordinates where the card will be placed (0 to 80 included):\n";
+        return "Now enter the two coordinates where the card will be placed (0 to 80 included): ";
     }
 }

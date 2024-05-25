@@ -7,6 +7,8 @@ import it.polimi.ingsw.Model.*;
 import java.io.PrintStream;
 import java.util.*;
 
+import static it.polimi.ingsw.Model.Position.*;
+
 public class TUI extends UI {
 
     private final Scanner in = new Scanner(System.in);
@@ -161,11 +163,13 @@ public class TUI extends UI {
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
             printOut("VISIBLE CORNER:\n\tFRONT:");
             for(int i = 0; i < card.getCorners().length; i++){
-                if(i == 4) printOut("\tBACK:");
+                if(i == 4) printOut("\n\tBACK:");
                 if(card.getCorners()[i] != null)
-                    printOut("\t\t" + card.getCorners()[i].getPosition() + ": " + card.getCorners()[i].getStringResource());
+                    printOut("\t\t" + card.getCorners()[i].getPosition() + ": "
+                            + (card.getCorners()[i].getPosition().equals(UP_SX.toString()) || card.getCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + card.getCorners()[i].getStringResource());
             }
-            printOut("\tRESOURCES IN THE BACK:");
+            printOut("\n\tRESOURCES IN THE BACK:");
             for(Resource resource : ((StartingCard) card).resource){
                  printOut("\t\t" + resource + "\t\t");
             }
@@ -173,9 +177,10 @@ public class TUI extends UI {
     }
 
     protected void printCard(ObjectiveCard card){
-        printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
+        printOut("\n| OBJECTIVE CARD NUMBER " + card.getID() + "'S REQUESTS:");
         if(card instanceof ObjectiveCard1){
-            String grid = "";
+            printOut("\tPoints: " + card.getPoints() + "\n\tCards' disposition:");
+            String grid = "\t\t";
             int index = 0;
             List<Integer> positions = Arrays.stream(((ObjectiveCard1) card).getRequiredPositions()).boxed().toList();
 
@@ -186,14 +191,20 @@ public class TUI extends UI {
                 }
                 else grid += "  ";
 
-                if(i == 3 || i == 6)    grid += "\n";
+                if(i == 3 || i == 6)    grid += "\n\t\t";
+
+                // Shouldn't happen.
                 if(i > 9)   printOut("\nERRORE DI STAMPA.\n");
             }
 
             printOut(grid);
         }
         else{ // card is an ObjectiveCard2
-
+            printOut("\tPoints: " + card.getPoints() + "\n\tVISIBLE RESOURCES:");
+            for(Resource resource : ((ObjectiveCard2) card).getReqMap().keySet()){
+                if(((ObjectiveCard2) card).getReqMap().get(resource) > 0)
+                    printOut("\t\t " + ((ObjectiveCard2) card).getReqMap().get(resource) + " x " + resource.toString());
+            }
         }
     }
 

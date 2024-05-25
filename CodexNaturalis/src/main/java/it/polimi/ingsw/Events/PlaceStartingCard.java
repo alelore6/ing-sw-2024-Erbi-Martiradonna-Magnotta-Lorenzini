@@ -24,6 +24,6 @@ public class PlaceStartingCard extends GenericRequest{
     }
 
     public String msgOutput2(){
-        return "Enter (1) if you want the card faced up, (2) if faced down: ";
+        return "\nEnter (1) if you want the card faced up, (2) if faced down: ";
     }
 }
