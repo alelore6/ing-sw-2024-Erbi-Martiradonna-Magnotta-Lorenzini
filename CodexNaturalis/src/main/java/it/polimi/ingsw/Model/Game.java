@@ -207,8 +207,9 @@ public class Game{
                     j++;
                 }
                 String message="";
-                for (int i=1; i<=order.length;i++) {
-                    message=message.concat(" | "+". "+order[i-1]+" ");
+                for (int i=0; i<order.length;i++) {
+                    int x=i+1;
+                    message=message.concat(" | "+ x+". "+order[i]+" ");
                 }
 
                 //wait for everyone to complete the start
@@ -217,9 +218,11 @@ public class Game{
                 //notify all players on turn order
                 TurnOrder turnOrder=new TurnOrder("everyone",message,model.clone());
                 for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
-
-                curPlayerPosition = firstPlayerPos;
-                nextPlayer(players[firstPlayerPos]);
+                //devo trovare il giocatore precedente al primo!
+                //perchè next player fa l'avanzamento
+                int p= firstPlayerPos-1;
+                if (p<0) p=numPlayers-1;
+                nextPlayer(players[p]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
             }
         }.start();
