@@ -219,6 +219,7 @@ public class GUI extends UI{
 
                         case PlayCardRequest e :
                             //cosa fare???
+                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case SetTokenColorRequest e :

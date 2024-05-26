@@ -120,7 +120,7 @@ public class Hand {
             for (Card c: HandCards){
                 //save the position of the card in the hand
                 i++;
-                if (c.equals(card)) {
+                if (c.ID==card.ID) {
                     found = true;
                     break;
                 }

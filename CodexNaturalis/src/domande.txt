@@ -102,7 +102,9 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 
     problemi di sincronizzazzione nelle risposte di playcard e drawcard
 
-
+--> c'è da risolvere una cosa negli angoli delle carte nel json: se non vengono proprio inizializzati l'array corner non viene creato di 8 elementi
+        --> o cambiamo il modo di descrivere gli angoli coperti o separiamo gli angoli davanti e dietro
+        --> play card lancia eccezione per questo errore dentro currentResources.update riga 75 (array out of bounds)
 
 
 

@@ -47,6 +47,8 @@ public class ModelViewListener extends Listener {
                         if(ack != null){
                             try {
                                 client.update(ack);
+                                //TODO rimando  anche l'evento da rifare
+                                //if(!ack.ok) client.update(ack.event); //cosi rimando la risposta non la richiesta!
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }

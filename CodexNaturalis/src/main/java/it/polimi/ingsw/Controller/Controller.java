@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Distributed.Client;
-import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
@@ -16,7 +15,6 @@ import it.polimi.ingsw.Model.Player;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Class that represent the controller in the MVC pattern.
@@ -184,7 +182,7 @@ public class Controller {
                     synchronized (model.controllerLock){
 
                         // still useful?
-                        model.turnPhase--;
+                        //model.turnPhase--;
 
                         model.waitNumClient++;
                         model.controllerLock.notifyAll();
@@ -196,9 +194,11 @@ public class Controller {
                 try {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
                         getMVListenerByNickname(nickname).addEvent(new AckResponse( nickname, event, model.clone()));
-                    synchronized (model.controllerLock){
-                        model.controllerLock.notifyAll();
-                    }
+
+                        synchronized (model.lock2) {model.turnPhase++;}
+//                    synchronized (model.controllerLock){
+//                        model.controllerLock.notifyAll();
+//                    }
                 } catch (WrongPlayException e) {
                     //shouldn't happen
                     getMVListenerByNickname(nickname).addEvent(new AckResponse("Error in placing starting card", nickname, event));                }
@@ -258,11 +258,11 @@ public class Controller {
         listener.handleEvent();
     }
 
-    private void nextPlayer(){
+    private void nextPlayer() throws RemoteException {
         if(model.turnPhase!=3) System.out.println("Something went wrong with previous player's turn");
         //end turn event
         EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
-        MVListeners.get(model.getCurPlayerPosition()).addEvent(endTurn);
+        sendEventToAll(endTurn);
         if(model.getRemainingTurns() == 0) model.checkWinner();
         else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
     }

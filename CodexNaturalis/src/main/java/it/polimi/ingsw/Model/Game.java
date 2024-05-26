@@ -57,10 +57,10 @@ public class Game{
 
     public int waitNumClient = 1;
 
-    public int turnPhase=-1;// 0: start turn, 1: play done, 2: draw done, 3: end turn
+    public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done, 3: end turn
 
     public final Object controllerLock = new Object();
-    public final Object controllerLock2 = new Object();
+    public Object lock2=new Object();
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -74,6 +74,7 @@ public class Game{
         this.turnCounter = 0;
         this.isFinished = false;
         this.remainingTurns = -1;
+        this.curPlayerPosition = -1;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i],this);
@@ -194,8 +195,6 @@ public class Game{
                 String[] order= new String[numPlayers];
                 //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
                 int firstPlayerPos = (int) (Math.random()*numPlayers);
-                //setto il player come primo (non necessario è già fatto dal loop dopo)
-                //players[firstPlayerPos].position = 0;
 
                 int j = firstPlayerPos;
                 for(int i = 0; i < numPlayers; i++){
@@ -211,9 +210,14 @@ public class Game{
                     message=message.concat(" | "+ x+". "+order[i]+" ");
                 }
 
-                //wait for everyone to complete the start
-                checkpoint(controllerLock);
 
+                while(true) {
+                        //wait for everyone to complete the start
+                    synchronized (lock2){
+                        if (turnPhase ==numPlayers) break;
+                    }
+                }
+                turnPhase=-1;
                 //notify all players on turn order
                 TurnOrder turnOrder=new TurnOrder("everyone",message,model.clone());
                 for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
@@ -365,8 +369,8 @@ public class Game{
             turnPhase=0;
 
             //send StartTurn event
-            StartTurn event = new StartTurn(players[curPlayerPosition].getNickname(), getCurrentPlayer());
-            mvListeners.get(curPlayerPosition).addEvent(event);
+            StartTurn startTurn = new StartTurn(players[curPlayerPosition].getNickname(), getCurrentPlayer());
+            for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
             PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), new PlayerView(players[curPlayerPosition]));
