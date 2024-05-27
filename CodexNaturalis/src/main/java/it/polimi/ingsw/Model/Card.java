@@ -7,7 +7,8 @@ public abstract class Card implements Serializable {
 
     // Everything about the back of the card is based on this boolean:
      public boolean isFacedown = false;
-     protected Corner[] corners;
+     protected Corner[] frontCorners;
+     protected Corner[] backCorners;
 
      public Card getCard(){
          return this;
@@ -15,7 +16,8 @@ public abstract class Card implements Serializable {
      public int getID(){
           return this.ID;
      }
-     public Corner[] getCorners(){
-         return this.corners;
+     public Corner[] getFrontCorners(){
+         return frontCorners;
      }
+     public Corner[] getBackCorners(){return backCorners;}
 }

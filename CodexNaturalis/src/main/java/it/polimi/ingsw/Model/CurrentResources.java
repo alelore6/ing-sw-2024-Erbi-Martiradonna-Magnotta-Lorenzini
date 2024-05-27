@@ -50,8 +50,8 @@ public class CurrentResources implements Serializable {
              if(card instanceof StartingCard){
                  //add back corners resources
                 for(int i=4; i<8; i++){
-                    if (card.corners[i]!=null && card.corners[i].getResource()!=null){
-                        Resource r=card.corners[i].getResource();
+                    if (card.backCorners[i]!=null && card.backCorners[i].getResource()!=null){
+                        Resource r=card.backCorners[i].getResource();
                         currentResources.replace(r,currentResources.get(r)+1);
                     }
                 }
@@ -71,9 +71,9 @@ public class CurrentResources implements Serializable {
              }
          } else {
              // add new card's front resources
-             for(int j=0; j<card.corners.length; j++){
-                 if (card.corners[j]!=null && card.corners[j].getResource()!=null){
-                     Resource temp= card.corners[j].getResource();
+             for(int j=0; j<card.frontCorners.length; j++){
+                 if (card.frontCorners[j]!=null && card.frontCorners[j].getResource()!=null){
+                     Resource temp= card.frontCorners[j].getResource();
                      currentResources.replace(temp,currentResources.get(temp)+1);
                  }
              }
