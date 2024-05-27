@@ -48,7 +48,19 @@ public class ModelViewListener extends Listener {
                             try {
                                 client.update(ack);
                                 //TODO rimando  anche l'evento da rifare
+
                                 //if(!ack.ok) client.update(ack.event); //cosi rimando la risposta non la richiesta!
+
+                                if(!ack.ok){
+                                    switch(ack.event){
+                                        case PlayCardResponse e:
+                                            //TODO da errore perché la handView è vuota e non viene riempita, quindi non posso rimandare la richiesta dal controller
+                                            client.update(new PlayCardRequest(client.getNickname(), ack.gameView.getPlayerViewByNickname(ack.nickname)));
+                                            break;
+                                        default:
+                                            throw new IllegalStateException("Unexpected value: " + ack.event);
+                                    }
+                                }
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }

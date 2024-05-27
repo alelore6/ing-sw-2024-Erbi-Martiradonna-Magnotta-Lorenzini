@@ -225,7 +225,7 @@ public class Hand {
                         overlaps[k].isCovered = false;
                     }
                 }
-                throw new WrongPlayException(player,-2,-2,card);
+                throw new WrongPlayException(player,-2,-2,card); //TODO perché -2 -2 come coordinate?
             }
         }
         //play the card

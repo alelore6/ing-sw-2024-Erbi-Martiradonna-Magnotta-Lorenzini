@@ -71,7 +71,7 @@ public class CurrentResources implements Serializable {
              }
          } else {
              // add new card's front resources
-             for(int j=0; j<4; j++){
+             for(int j=0; j<card.corners.length; j++){
                  if (card.corners[j]!=null && card.corners[j].getResource()!=null){
                      Resource temp= card.corners[j].getResource();
                      currentResources.replace(temp,currentResources.get(temp)+1);

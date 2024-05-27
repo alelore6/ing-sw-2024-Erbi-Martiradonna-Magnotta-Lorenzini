@@ -11,6 +11,7 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Model.Player;
+import it.polimi.ingsw.ModelView.GameView;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -52,13 +53,15 @@ public class Controller {
     /**
      * Creates and starts the actual game
      */
+    GameView gameView = null;
     protected void createGame() throws RemoteException {
         String[] temp = new String[lobby.getNumPlayers()];
         lobby.getPlayers().toArray(temp);
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
         // NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        sendEventToAll(new StartGame("everyone", model.clone()));
+        gameView = model.clone();
+        sendEventToAll(new StartGame("everyone", gameView));
 
         getGame().startGame();
     }
@@ -170,7 +173,7 @@ public class Controller {
                     }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event, gameView));
                 }
             }
 

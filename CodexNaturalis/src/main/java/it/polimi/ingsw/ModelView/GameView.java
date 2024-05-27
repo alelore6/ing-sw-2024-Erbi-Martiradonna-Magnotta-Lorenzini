@@ -19,4 +19,13 @@ public class GameView implements Serializable {
         }
         this.tableCenterView = new TableCenterView(model.tablecenter);
     }
+
+    public PlayerView getPlayerViewByNickname(String nickname){
+        for(int i=0;i<players.size();i++){
+            if(players.get(i).nickname.equals(nickname)){
+                return players.get(i);
+            }
+        }
+        throw new RuntimeException("Player not found");
+    }
 }
