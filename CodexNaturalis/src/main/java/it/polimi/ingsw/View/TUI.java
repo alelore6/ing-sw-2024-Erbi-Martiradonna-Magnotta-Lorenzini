@@ -206,6 +206,7 @@ public class TUI extends UI {
         }
     }
 
+    // TODO: mettere la chat in un thread.
     // It returns true if the string is a chat message, and it also sends it.
     private boolean listenToChat(String string){
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
