@@ -130,6 +130,10 @@ public class Hand {
                 //negative position in the exception indicate specific type of errors
             }
         }
+        else{
+            displayedCards[40][40]=card;
+            return;
+        }
         // check required resource to play that card
         if (card instanceof GoldCard && !card.isFacedown){
             for (Resource r : Resource.values()){

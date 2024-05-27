@@ -4,6 +4,7 @@ import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.*;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.ModelView.PlayerView;
 
 import java.rmi.RemoteException;
 
@@ -54,8 +55,9 @@ public class ModelViewListener extends Listener {
                                 if(!ack.ok){
                                     switch(ack.event){
                                         case PlayCardResponse e:
-                                            //TODO da errore perché la handView è vuota e non viene riempita, quindi non posso rimandare la richiesta dal controller
-                                            client.update(new PlayCardRequest(client.getNickname(), ack.gameView.getPlayerViewByNickname(ack.nickname)));
+                                            //TODO se il player piazza la carta sopra la starting card (40 40) non dà errore. in playCard() ho gestito anche il caso
+                                            // in cui si piazzava la starting card (non c'era) ma nonostante ciò non funziona lo stesso
+                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
                                             break;
                                         default:
                                             throw new IllegalStateException("Unexpected value: " + ack.event);

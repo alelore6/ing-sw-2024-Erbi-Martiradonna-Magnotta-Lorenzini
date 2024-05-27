@@ -218,7 +218,7 @@ public class Controller {
      * @param nickname the player's nickname
      * @return the player
      */
-    private Player getPlayerByNickname(String nickname){
+    public Player getPlayerByNickname(String nickname){
         try {
             for (Player player : model.getPlayers()) {
                 if (player.getNickname().equals(nickname)) {
