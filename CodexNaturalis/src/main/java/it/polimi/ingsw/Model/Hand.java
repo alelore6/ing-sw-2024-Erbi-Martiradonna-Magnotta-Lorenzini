@@ -158,59 +158,59 @@ public class Hand {
         // if there is a card, check overlapping corners are visible
         //card down SX
         if (x!=0 && y!=0 && displayedCards[x-1][y-1]!=null){
-            // 0,4: UP_SX; 1,5: UP_DX; 2,6: DOWN_SX; 3,7: DOWN_DX (4,5,6,7 are backs corner)
+            // 0: UP_SX; 1: UP_DX; 2: DOWN_SX; 3: DOWN_DX
             //if there's no corner, it's NULL
             if (!displayedCards[x-1][y-1].isFacedown){
-                if ((displayedCards[x-1][y-1]).corners[1]==null)
+                if ((displayedCards[x-1][y-1]).frontCorners[1]==null)
                     throw new WrongPlayException(player,x,y,card);
                 //save the corner that is overlapped
-                else overlaps[0]= (displayedCards[x-1][y-1]).corners[1];
+                else overlaps[0]= (displayedCards[x-1][y-1]).frontCorners[1];
             }
             else {
                 //check back corner
-                if ((displayedCards[x-1][y-1]).corners[5]==null)
+                if ((displayedCards[x-1][y-1]).backCorners[1]==null)
                     throw new WrongPlayException(player,x,y,card);
                 //save the corner that is overlapped
-                else overlaps[0]= (displayedCards[x-1][y-1]).corners[5];
+                else overlaps[0]= (displayedCards[x-1][y-1]).backCorners[5];
             }
         }
         //card up SX
         if (x!=0 && y!=80 && displayedCards[x-1][y+1]!=null) {
             if (!displayedCards[x-1][y+1].isFacedown){
-                if ((displayedCards[x-1][y+1]).corners[3] == null)
+                if ((displayedCards[x-1][y+1]).frontCorners[3] == null)
                     throw new WrongPlayException(player, x, y, card);
-                else overlaps[1] = (displayedCards[x-1][y+1]).corners[3];
+                else overlaps[1] = (displayedCards[x-1][y+1]).frontCorners[3];
             }
             else {
-                if ((displayedCards[x-1][y+1]).corners[7] == null)
+                if ((displayedCards[x-1][y+1]).backCorners[3] == null)
                     throw new WrongPlayException(player, x, y, card);
-                else overlaps[1] = (displayedCards[x-1][y+1]).corners[7];
+                else overlaps[1] = (displayedCards[x-1][y+1]).backCorners[3];
             }
         }
         //card up DX
         if (x!=80 && y!=80 && displayedCards[x+1][y+1]!=null){
             if (!displayedCards[x+1][y+1].isFacedown){
-                if((displayedCards[x+1][y+1]).corners[2]==null)
+                if((displayedCards[x+1][y+1]).frontCorners[2]==null)
                     throw new WrongPlayException(player,x,y,card);
-                else overlaps[2]=(displayedCards[x+1][y+1]).corners[2];
+                else overlaps[2]=(displayedCards[x+1][y+1]).frontCorners[2];
             }
             else {
-                if((displayedCards[x+1][y+1]).corners[6]==null)
+                if((displayedCards[x+1][y+1]).backCorners[2]==null)
                     throw new WrongPlayException(player,x,y,card);
-                else overlaps[2]=(displayedCards[x+1][y+1]).corners[6];
+                else overlaps[2]=(displayedCards[x+1][y+1]).backCorners[2];
             }
         }
         //card down SX
         if (x!=80 && y!=0 && displayedCards[x+1][y-1]!=null){
             if (!displayedCards[x+1][y-1].isFacedown){
-                if((displayedCards[x+1][y-1]).corners[0]==null)
+                if((displayedCards[x+1][y-1]).frontCorners[0]==null)
                     throw new WrongPlayException(player,x,y,card);
-                overlaps[3]=(displayedCards[x+1][y-1]).corners[0];
+                overlaps[3]=(displayedCards[x+1][y-1]).frontCorners[0];
                 }
             else {
-                if((displayedCards[x+1][y-1]).corners[4]==null)
+                if((displayedCards[x+1][y-1]).backCorners[0]==null)
                     throw new WrongPlayException(player,x,y,card);
-                overlaps[3]=(displayedCards[x+1][y-1]).corners[4];
+                overlaps[3]=(displayedCards[x+1][y-1]).backCorners[0];
             }
         }
         //if it's not a starting card: overlaps must be at least 1 and all overlaps corners are set covered
@@ -229,7 +229,8 @@ public class Hand {
                         overlaps[k].isCovered = false;
                     }
                 }
-                throw new WrongPlayException(player,-2,-2,card); //TODO perché -2 -2 come coordinate?
+                //indicates the error play without overlaps
+                throw new WrongPlayException(player,-2,-2,card);
             }
         }
         //play the card
