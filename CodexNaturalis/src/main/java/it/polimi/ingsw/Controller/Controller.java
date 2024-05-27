@@ -119,7 +119,7 @@ public class Controller {
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
-                else if(getMVListenerByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addEvent(event);
+                else if(getMVListenerByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
                 else{
                     getMVListenerByNickname(nickname).addEvent(new AckResponse("Impossibile inviare il messaggio: destinatario non trovato.\n", nickname, event));
                     return;
@@ -244,8 +244,14 @@ public class Controller {
 
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
-        for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addEvent(event);
-        for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addEvent(event);
+        if(event instanceof ChatMessage){
+            for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addChatMessage((ChatMessage) event);
+            for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addChatMessage((ChatMessage) event);
+        }
+        else{
+            for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addEvent(event);
+            for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addEvent(event);
+        }
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){

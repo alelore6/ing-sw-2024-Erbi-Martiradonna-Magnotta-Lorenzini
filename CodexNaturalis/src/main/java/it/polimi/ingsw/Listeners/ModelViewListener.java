@@ -7,6 +7,8 @@ import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.ModelView.PlayerView;
 
 import java.rmi.RemoteException;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class ModelViewListener extends Listener {
 
@@ -15,12 +17,12 @@ public class ModelViewListener extends Listener {
 
     private int requestEventIndex = 0;
     public final Client client;
+    private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
     /**
      * the server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client
      */
     private final ServerImpl server;
-
 
     /**
      * Class that represents the listener situated between the Model and the View.
@@ -46,6 +48,15 @@ public class ModelViewListener extends Listener {
 
                 while(true) {
                     synchronized (lock_queue) {
+                        if(!chatMessages.isEmpty()) {
+                            try {
+                                if(!(client instanceof ClientSkeleton)) server.logger.addLog("CHAT", Severity.SENDING);
+                                client.update(chatMessages.poll());
+                                if(!(client instanceof ClientSkeleton)) server.logger.addLog("CHAT", Severity.SENT);
+                            } catch (RemoteException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
                         if(ack != null){
                             try {
                                 client.update(ack);
@@ -72,8 +83,8 @@ public class ModelViewListener extends Listener {
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }
+                            if(!(ack.event instanceof ChatMessage)) requestEventIndex--;
                             ack = null;
-                            requestEventIndex--;
                         }
                         else if(requestEventIndex == 0 && !getEventQueue().isEmpty()){
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
@@ -110,5 +121,11 @@ public class ModelViewListener extends Listener {
 
     public void setRequestEventIndex(int requestEventIndex) {
         this.requestEventIndex = requestEventIndex;
+    }
+
+    public void addChatMessage(ChatMessage message) {
+        synchronized (lock_queue) {
+            chatMessages.add(message);
+        }
     }
 }
