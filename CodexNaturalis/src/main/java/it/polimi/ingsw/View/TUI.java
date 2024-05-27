@@ -8,6 +8,7 @@ import java.io.PrintStream;
 import java.util.*;
 
 import static it.polimi.ingsw.Model.Position.*;
+import static java.lang.String.join;
 
 public class TUI extends UI {
 
@@ -25,31 +26,28 @@ public class TUI extends UI {
     // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
     //                                                  (e.g. let the user know the mapping between min:max and choices)
     private final int chooseInt(int min, int max){
-        int     choice  = 0;
         boolean isValid = false;
+        String choice = null;
+        int intChoice = 0;
 
         while(!isValid){
+                choice = in.nextLine();
+                // Checks if the input is a chat message and if yes, it sends it.
+                if(listenToChat(choice))    continue;
             try{
-                choice = in.nextInt();
-                in.nextLine();
-            } catch (InputMismatchException e) {
-                // to skip the wrong input and try with the next one.
-                in.nextLine();
+                intChoice = Integer.parseInt(choice);
+            } catch (NumberFormatException e) {
                 printOut(inputError());
 
                 continue;
             }
 
-            try{
-                if(choice >= min && choice <= max)  isValid = true;
-            }catch(InputMismatchException e){
+            if(intChoice >= min && intChoice <= max)  isValid = true;
 
-            }finally {
-                if(!isValid)    printOut(inputError());
-            }
+            if(!isValid)    printOut(inputError());
         }
 
-        return choice;
+        return intChoice;
     }
 
     public final void notifyListener(GenericEvent e) {
@@ -85,7 +83,7 @@ public class TUI extends UI {
         printOut("Insert " + s + ": ");
 
         while(!isValid){
-            tempString = in.next();
+            tempString = in.nextLine();
 
             if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
@@ -208,6 +206,36 @@ public class TUI extends UI {
         }
     }
 
+    // It returns true if the string is a chat message, and it also sends it.
+    private boolean listenToChat(String string){
+        ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
+
+        // If not, the chat message has not the correct format in order to be sent.
+        if(words.get(0).equals("CHAT") && words.size() > 1){
+            boolean isForEveryone = false;
+            String recipient = null;
+
+            // Private chat mode.
+            if(words.get(1).equals("P") && words.size() > 2){
+                recipient = words.get(2);
+                words.remove(2);
+                words.remove(1);
+            }
+            else{
+                recipient = "everyone";
+                isForEveryone = true;
+            }
+
+            words.remove(0);
+
+            listener.addEvent(new ChatMessage(join(" ", words), client.getNickname(), recipient, isForEveryone));
+
+            return true;
+        }
+
+        return false;
+    }
+
     public final void update(GenericEvent e){
         synchronized(lock_events){
             inputEvents.add(e);
@@ -232,7 +260,8 @@ public class TUI extends UI {
                     }
 
                     // Ignore all other player's events
-                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname()) && !(ev instanceof ChatMessage) ||
+                            ev instanceof ChatMessage && ev.nickname.equals(client.getNickname())) continue;
 
                     printOut(ev.msgOutput());
 

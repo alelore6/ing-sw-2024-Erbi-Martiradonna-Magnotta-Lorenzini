@@ -59,4 +59,12 @@ public class AckResponse extends GenericResponse{
         mustBeSentToAll=true;
         this.gameView = gameView;
     }
+
+    // Constructor just for ChatAck.
+    public AckResponse(ChatMessage event, String sender, String recipient){
+        super("The message has been sent correctly " + (recipient.equals("everyone") ? "to everyone." : "to " + recipient + "."), sender);
+        this.event = event;
+        this.ok = true;
+        this.gameView = null;
+    }
 }

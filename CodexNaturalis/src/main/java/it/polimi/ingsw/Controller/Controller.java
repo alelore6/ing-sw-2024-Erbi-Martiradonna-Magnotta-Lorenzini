@@ -116,6 +116,16 @@ public class Controller {
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
                 getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
             }
+            else if(event instanceof ChatMessage){
+
+                if(event.mustBeSentToAll)   sendEventToAll(event);
+                else if(getMVListenerByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addEvent(event);
+                else{
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse("Impossibile inviare il messaggio: destinatario non trovato.\n", nickname, event));
+                    return;
+                }
+                getMVListenerByNickname(nickname).addEvent(new AckResponse((ChatMessage) event, nickname, ((ChatMessage) event).recipient));
+            }
 
             else if(event instanceof ChooseObjectiveResponse) {
                 getPlayerByNickname(nickname).chooseObjective(((ChooseObjectiveResponse) event).objectiveCard);

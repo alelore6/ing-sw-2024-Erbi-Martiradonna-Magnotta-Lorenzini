@@ -48,7 +48,7 @@ public class ModelViewListener extends Listener {
                         if(ack != null){
                             try {
                                 client.update(ack);
-                                //TODO rimando  anche l'evento da rifare
+                                //TODO rimando anche l'evento da rifare (se non chat: in tal caso semplicemente stampare errore.)
 
                                 //if(!ack.ok) client.update(ack.event); //cosi rimando la risposta non la richiesta!
 
