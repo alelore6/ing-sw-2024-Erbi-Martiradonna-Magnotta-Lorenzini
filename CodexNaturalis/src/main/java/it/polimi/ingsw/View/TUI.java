@@ -135,8 +135,8 @@ public class TUI extends UI {
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
             printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString()) +
                         "\nVisible corners: ");
-            Arrays.stream(card.getCorners()).forEach(corner -> printOut(
-                    corner.getPosition() + ": " + corner.getResource()));
+            //Arrays.stream(card.getCorners()).forEach(corner -> printOut(
+            //        corner.getPosition() + ": " + corner.getResource()));
 
             if(card instanceof GoldCard){
                 // the number of total distinct resources
@@ -159,14 +159,14 @@ public class TUI extends UI {
         }
         else if(card instanceof StartingCard){
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
-            printOut("VISIBLE CORNER:\n\tFRONT:");
+            /*printOut("VISIBLE CORNER:\n\tFRONT:");
             for(int i = 0; i < card.getCorners().length; i++){
                 if(i == 4) printOut("\n\tBACK:");
                 if(card.getCorners()[i] != null)
                     printOut("\t\t" + card.getCorners()[i].getPosition() + ": "
                             + (card.getCorners()[i].getPosition().equals(UP_SX.toString()) || card.getCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + card.getCorners()[i].getStringResource());
-            }
+            }*/
             printOut("\n\tRESOURCES IN THE BACK:");
             for(Resource resource : ((StartingCard) card).resource){
                  printOut("\t\t" + resource + "\t\t");

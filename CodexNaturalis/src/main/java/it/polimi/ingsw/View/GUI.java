@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Graphical.ImageDialog;
 import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.ObjectiveCard;
@@ -11,6 +12,7 @@ import it.polimi.ingsw.Model.TokenColor;
 import javax.swing.*;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -25,10 +27,9 @@ public class GUI extends UI{
         super(client);
         inputEvents = new LinkedList<>();
         f = new MainFrame("CodexNaturalis");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setSize(1280,720);
-        f.setVisible(true);
-        printCard(102,false,100,100,0.6);
+        //f.setVisible(true);
+
+        //icon for dialogs
         ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
         Image imgResized = icon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
         this.icon=new ImageIcon(imgResized);
@@ -64,23 +65,6 @@ public class GUI extends UI{
         System.out.println(s);
     }
 
-    protected void printCard(int id, boolean isFacedown, int x, int y, double scale) {
-        String idString;
-        if(id < 100){
-            idString = valueOf(id);
-            idString = "0" + idString;
-
-            if(id<10){
-                idString = "0" + idString;
-            }
-        }
-        else{
-            idString = valueOf(id);
-        }
-
-        f.setPrintPath("assets/images/cards/" + (isFacedown ? "back" : "front") + "/" + idString + ".png");
-        f.setCoord(x, y, scale);
-    }
 
     protected String getCardPath(int id, boolean isFacedown) {
         String idString;
@@ -146,51 +130,19 @@ public class GUI extends UI{
                             break;
 
                         case ChooseObjectiveRequest e :
-                            /*
-                            JSplitPane dataPane=new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-                            dataPane.setResizeWeight(0.5);
-                            ObjectiveCard obj1 = ((ChooseObjectiveRequest) ev).objCard1;
-                            ObjectiveCard obj2 = ((ChooseObjectiveRequest) ev).objCard2;
-                            String path=null;
-                            for(int i=0; i<2; i++) {
-                                if(i==0) path = getCardPath(obj1.getID(), false);
-                                else path = getCardPath(obj2.getID(), false);
-                                BufferedImage img=null;
-                                try {
-                                    img = ImageIO.read(this.getClass().getClassLoader().getResource(path));
-                                } catch (IOException exception) {
-                                    exception.printStackTrace();
-                                    return;
+                            n=0;
+                            try {
+                                while(n==0){
+                                    ImageDialog dialog = new ImageDialog(f, e.msgOutput(),getCardPath(e.objCard1.getID(),false), getCardPath(e.objCard2.getID(),false),false);
+                                    dialog.setVisible(true);
+
+                                    n= dialog.getChoice();
                                 }
-                                dataPane.add("Objective card "+i, new JLabel(new ImageIcon(img)));
+                            } catch (IOException ex) {
+                                printErr("Error: " + ex.getMessage());
                             }
-
-                            JDialog dialog = new JDialog(f, "Choose objective",true);
-                            dialog.getContentPane().add(dataPane);
-
-                            JButton b1 = new JButton("Choose 1", null);
-                            b1.setVerticalTextPosition(AbstractButton.BOTTOM);
-                            b1.setHorizontalTextPosition(AbstractButton.CENTER);
-                            b1.setActionCommand("Confirm");
-                            JButton b2 = new JButton("Choose 2", null);
-                            b2.setVerticalTextPosition(AbstractButton.BOTTOM);
-                            b2.setHorizontalTextPosition(AbstractButton.CENTER);
-                            b2.setActionCommand("Confirm");
-                            //Listen for actions on buttons
-                            //b1.addActionListener();
-                            //b2.addActionListener();
-                            dialog.getContentPane().add(b1);
-                            dialog.getContentPane().add(b2);
-                            */
-                            //mostrare dati evento
-                            possibilities = new ArrayList<Object>();
-                            possibilities.add("Objective card 1");
-                            possibilities.add("Objective card 2");
-                            while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Choose objective", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
-                            }
-                            ObjectiveCard choice= s.equals("Objective card 1")?((ChooseObjectiveRequest) ev).objCard1 : ((ChooseObjectiveRequest) ev).objCard2;
-                            newEvent = new ChooseObjectiveResponse( choice, client.getNickname());
+                            ObjectiveCard chosenCard= n==1?((ChooseObjectiveRequest) ev).objCard1 : ((ChooseObjectiveRequest) ev).objCard2;
+                            newEvent = new ChooseObjectiveResponse( chosenCard, client.getNickname());
                             notifyListener(newEvent);
                             break;
 
@@ -243,16 +195,19 @@ public class GUI extends UI{
                             break;
 
                         case PlaceStartingCard e :
-                            possibilities=new ArrayList<Object>();
-                            possibilities.add("Front");
-                            possibilities.add("Back");
-                            while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Place starting card", JOptionPane.PLAIN_MESSAGE, icon,possibilities.toArray(), null);
+                            n=0;
+                            try {
+                                while(n==0){
+                                    ImageDialog dialog = new ImageDialog(f, e.msgOutput(),getCardPath(e.startingCard.getID(),false), getCardPath(e.startingCard.getID(),true),true);
+                                    dialog.setVisible(true);
+
+                                    n= dialog.getChoice();
+                                }
+                            } catch (IOException ex) {
+                                printErr("Error: " + ex.getMessage());
                             }
-                            // can rotate card
-                            JOptionPane.showMessageDialog(f, message);
-                            if (s.equalsIgnoreCase("Back")) e.startingCard.isFacedown=true;
-                            notifyListener(ev);
+                            if (n==2) e.startingCard.isFacedown=true; //rotate card
+                            notifyListener(e);
                             break;
 
                         case StartGame e:
@@ -280,7 +235,6 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            //TODO in alcuni casi aggiorno view e negli altri nulla???
                             System.out.println("Received ack for "+ e.event.getClass().getName());
                             break;
 
@@ -289,7 +243,6 @@ public class GUI extends UI{
                             JOptionPane.showMessageDialog(f, message);
                     }
 
-                    //TODO per alcuni eventi bisognerebbe aspettare l'ack prima di andare avanti
                 }
             }
         });
