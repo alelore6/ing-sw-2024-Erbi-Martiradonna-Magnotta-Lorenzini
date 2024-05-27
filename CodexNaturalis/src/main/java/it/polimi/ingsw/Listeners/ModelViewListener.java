@@ -55,8 +55,7 @@ public class ModelViewListener extends Listener {
                                 if(!ack.ok){
                                     switch(ack.event){
                                         case PlayCardResponse e:
-                                            //TODO se il player piazza la carta sopra la starting card (40 40) non dà errore. in playCard() ho gestito anche il caso
-                                            // in cui si piazzava la starting card (non c'era) ma nonostante ciò non funziona lo stesso
+                                            //TODO la seconda volta di fila che giochi male la carta non viene rimandato l'ack. (o forse viene mandato ma non viene gestito in tempo)
                                             client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
                                             break;
                                         default:
