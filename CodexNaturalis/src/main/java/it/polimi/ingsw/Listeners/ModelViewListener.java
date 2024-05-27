@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 public class ModelViewListener extends Listener {
 
 
+    private GenericRequest lastRequest;
 
     private int requestEventIndex = 0;
     public final Client client;
@@ -53,14 +54,20 @@ public class ModelViewListener extends Listener {
                                 //if(!ack.ok) client.update(ack.event); //cosi rimando la risposta non la richiesta!
 
                                 if(!ack.ok){
-                                    switch(ack.event){
-                                        case PlayCardResponse e:
-                                            //TODO la seconda volta di fila che giochi male la carta non viene rimandato l'ack. (o forse viene mandato ma non viene gestito in tempo)
-                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
-                                            break;
-                                        default:
-                                            throw new IllegalStateException("Unexpected value: " + ack.event);
-                                    }
+//                                    switch(ack.event){
+//                                        case PlayCardResponse e:
+//
+//                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
+//                                            break;
+//                                        default:
+//                                            throw new IllegalStateException("Unexpected value: " + ack.event);
+//                                    }
+                                    //TODO la seconda volta di fila che giochi male la carta non viene rimandato l'ack.
+                                    // (o forse viene mandato ma non viene gestito in tempo)
+                                    // in verità appena giochi male una carta, il client si stacca dal flusso di gioco
+
+                                    client.update(lastRequest);
+                                    requestEventIndex++;
                                 }
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
@@ -74,6 +81,9 @@ public class ModelViewListener extends Listener {
                             try{
 
                                 if (requestEventIndex == 0 || currentEvent instanceof GenericRequest) {
+                                    if (currentEvent instanceof GenericRequest) {
+                                        lastRequest = (GenericRequest) currentEvent;
+                                    }
                                     if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
                                     client.update(currentEvent);
                                     if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENT);

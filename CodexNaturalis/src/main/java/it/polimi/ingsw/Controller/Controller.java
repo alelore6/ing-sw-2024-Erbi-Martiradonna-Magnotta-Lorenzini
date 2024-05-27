@@ -272,7 +272,7 @@ public class Controller {
     }
 
     private void nextPlayer() throws RemoteException {
-        if(model.turnPhase!=3) System.out.println("Something went wrong with previous player's turn");
+        if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
         //end turn event
         EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
         sendEventToAll(endTurn);
