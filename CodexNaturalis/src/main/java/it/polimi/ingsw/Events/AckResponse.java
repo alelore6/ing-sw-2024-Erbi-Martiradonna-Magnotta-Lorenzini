@@ -66,6 +66,7 @@ public class AckResponse extends GenericResponse{
 
     @Override
     public String msgOutput(){
+        if(response == null)    return "";
         return "\n\u001B[30m" + (ok ? "\u001B[42m" + response.message : "\u001B[41m" + message) + "\u001B[0m";
     }
 }

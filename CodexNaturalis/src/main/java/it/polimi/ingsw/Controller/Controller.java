@@ -206,7 +206,7 @@ public class Controller {
             else if(event instanceof PlaceStartingCard){
                 try {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, model.clone()));
 
                         synchronized (model.lock2) {model.turnPhase++;}
 //                    synchronized (model.controllerLock){
