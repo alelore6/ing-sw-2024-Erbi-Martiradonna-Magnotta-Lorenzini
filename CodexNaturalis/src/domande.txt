@@ -83,7 +83,7 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     su questo nella tui c'era un problema a prendere l'input: lo dovevi scrivere due volte
 
     si arriva alla scelta dell'obbiettivo correttamente ma il server a quanto pare non riceve la risposta
-    non ci sono eccezzioni e sembra venir inviata dal client perchè fa la print appena prima della writeObject
+    non ci sono eccezioni e sembra venir inviata dal client perchè fa la print appena prima della writeObject
 
     aggiunti costrutti a ackResponse: guardateli prima di utilizzarli
 

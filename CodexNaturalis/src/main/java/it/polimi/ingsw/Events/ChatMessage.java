@@ -16,6 +16,6 @@ public class ChatMessage extends GenericEvent{
 
     @Override
     public String msgOutput(){
-        return "\u001B[51mCHAT | " + nickname + (mustBeSentToAll ? " says\u001B[0m      " : " whispers\u001B[0m  ") + message;
+        return "\u001B[51mCHAT | " + nickname + (mustBeSentToAll ? "\u001B[0m says \"" : "\u001B[0m whispers \"") + message + "\"";
     }
 }

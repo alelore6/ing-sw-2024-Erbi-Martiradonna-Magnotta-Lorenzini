@@ -37,6 +37,7 @@ public class ClientSkeleton implements Client {
     public void update(GenericEvent e) throws RemoteException {
         try {
             logger.addLog(e, Severity.SENDING);
+            out.reset();
             out.writeObject(e);
             out.flush();
             logger.addLog(e, Severity.SENT);

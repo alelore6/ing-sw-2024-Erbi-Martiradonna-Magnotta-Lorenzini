@@ -53,7 +53,7 @@ public class Game{
 
     private final ArrayList<ModelViewListener> mvListeners;
 
-    protected ArrayList<TokenColor> availableTokens;
+    protected final ArrayList<TokenColor> availableTokens;
 
     public int waitNumClient = 1;
 
@@ -162,9 +162,6 @@ public class Game{
                 for (Player p : players) {
                     SetTokenColorRequest setTokenColor = new SetTokenColorRequest(p.getNickname(), availableTokens);
                     mvListeners.get(pos).addEvent(setTokenColor);
-
-                    // I don't think that this checkpoint is needed.
-                    // checkpoint(controllerLock);
 
                     //every player gets to choose between 2 objective cards
                     ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());

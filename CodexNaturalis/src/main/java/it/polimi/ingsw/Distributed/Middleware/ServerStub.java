@@ -52,6 +52,7 @@ public class ServerStub implements Server, Serializable {
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {
             //System.out.println("Sending " + event.msgOutput() + " to server");
+            out.reset();
             out.writeObject(event);
             out.flush();
             System.out.println("[DEBUG] Event sent to server: " + event.getClass().getName());

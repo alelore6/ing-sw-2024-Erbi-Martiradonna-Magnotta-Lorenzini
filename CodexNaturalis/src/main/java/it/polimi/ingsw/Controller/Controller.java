@@ -119,11 +119,13 @@ public class Controller {
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
-                else if(server.findClientByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
-                else{
+                else if(server.findClientByNickname(((ChatMessage) event).recipient) != null)
+                    getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
+                else {
                     getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, false));
                     return;
                 }
+
                 getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, true));
             }
 
