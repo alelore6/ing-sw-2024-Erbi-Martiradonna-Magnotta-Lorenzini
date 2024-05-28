@@ -9,6 +9,8 @@ public class Corner implements Serializable {
 
     public Corner(Position pos, Resource resource){
         isCovered = false;
+        this.pos = pos;
+        this.resource = resource;
     }
 
     public String getPosition(){

@@ -4,7 +4,7 @@
     "resource" : [
       "INSECT"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "FUNGI"
@@ -20,7 +20,9 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "ANIMAL"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX"
       },
@@ -42,7 +44,7 @@
     "resource" : [
       "FUNGI"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "PLANT"
@@ -58,7 +60,9 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "INSECT"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "ANIMAL"
@@ -81,7 +85,7 @@
       "PLANT",
       "FUNGI"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "INSECT"
@@ -97,7 +101,9 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "PLANT"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX"
       },
@@ -118,7 +124,7 @@
       "ANIMAL",
       "INSECT"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "PLANT"
@@ -134,7 +140,9 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "FUNGI"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX"
       },
@@ -156,7 +164,7 @@
       "INSECT",
       "PLANT"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "INSECT"
@@ -172,13 +180,17 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "ANIMAL"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX"
       },
       {
         "pos" : "UP_DX"
-      }
+      },
+      {},
+      {}
     ]
   },
   {
@@ -188,7 +200,7 @@
       "ANIMAL",
       "FUNGI"
     ],
-    "corners" : [
+    "frontCorners" : [
       {
         "pos" : "UP_SX",
         "resource" : "FUNGI"
@@ -204,13 +216,17 @@
       {
         "pos" : "DOWN_DX",
         "resource" : "INSECT"
-      },
+      }
+    ],
+    "backCorners" : [
       {
         "pos" : "UP_SX"
       },
       {
         "pos" : "UP_DX"
-      }
+      },
+      {},
+      {}
     ]
   }
 ]

@@ -5,6 +5,8 @@ import it.polimi.ingsw.Exceptions.isEmptyException;
 
 import java.io.*;
 
+import static it.polimi.ingsw.Model.Position.*;
+
 public class ResourceDeck extends Deck{
 
     private ResourceCard[] cards;
@@ -26,6 +28,20 @@ public class ResourceDeck extends Deck{
 
         } catch (IOException e) {
             System.err.println("Error with JSON.");
+        }
+
+        for(ResourceCard card : cards){
+            card.backCorners = new Corner[4];
+            for(int i = 0; i < 4; i++){
+                Position pos = null;
+                switch (i){
+                    case 0 -> pos = UP_SX;
+                    case 1 -> pos = UP_DX;
+                    case 2 -> pos = DOWN_SX;
+                    case 3 -> pos = DOWN_DX;
+                }
+                card.backCorners[i] = new Corner(pos, null);
+            }
         }
 
         cards = (ResourceCard[]) shuffle(cards);
