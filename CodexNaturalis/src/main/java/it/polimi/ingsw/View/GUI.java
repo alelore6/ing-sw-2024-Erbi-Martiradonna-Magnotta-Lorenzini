@@ -104,7 +104,7 @@ public class GUI extends UI{
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone")) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -178,6 +178,7 @@ public class GUI extends UI{
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
+                                //TODO capire perchè non prende il valore preselezionato
                                 s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
                             newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal() , client.getNickname());

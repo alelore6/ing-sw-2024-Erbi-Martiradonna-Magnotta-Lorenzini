@@ -55,12 +55,12 @@ public class Game{
 
     protected final ArrayList<TokenColor> availableTokens;
 
-    public int waitNumClient = 1;
+    public int waitNumClient = 0;
 
-    public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done, 3: end turn
+    public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done
 
     public final Object controllerLock = new Object();
-    public Object lock2=new Object();
+    public Object lock=new Object();
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -212,8 +212,8 @@ public class Game{
 
                 while(true) {
                         //wait for everyone to complete the start
-                    synchronized (lock2){
-                        if (turnPhase ==numPlayers) break;
+                    synchronized (lock){
+                        if (waitNumClient ==numPlayers) break;
                     }
                 }
                 turnPhase=-1;

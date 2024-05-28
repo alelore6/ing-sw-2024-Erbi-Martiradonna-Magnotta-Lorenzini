@@ -31,7 +31,7 @@ public class Controller {
     /**
      * the waiting lobby before the game starts
      */
-    private final Lobby lobby;
+    private Lobby lobby;
     /**
      * the actual game, represent the model in the MVC pattern.
      */
@@ -41,29 +41,48 @@ public class Controller {
      */
     private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
 
+    private boolean numPlayersRequestSent = false;
+
+    private final Object lock = new Object();
+    private Integer wait=0;
+
     /**
      * Constructor
      * @param server the server that handles the connections
      */
     public Controller(ServerImpl server){
         this.server = server;
-        this.lobby  = new Lobby();
     }
 
     /**
      * Creates and starts the actual game
      */
-    GameView gameView = null;
     protected void createGame() throws RemoteException {
         String[] temp = new String[lobby.getNumPlayers()];
         lobby.getPlayers().toArray(temp);
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
         // NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        gameView = model.clone();
-        sendEventToAll(new StartGame("everyone", gameView));
+        sendEventToAll(new StartGame("everyone", model.clone()));
+        new Thread(){
+            @Override
+            public void run() {
+                while(true) {
+                    //wait for everyone to complete the start
+                    synchronized (lock){
+                        if (wait == lobby.getNumPlayers()) break;
+                    }
+                }
+                wait=0;
+                getGame().startGame();
+            }
+        }.start();
+    }
 
-        getGame().startGame();
+    public void createLobby(int numPlayers) throws RemoteException {
+        synchronized(this){
+        this.lobby  = new Lobby();
+        lobby.setNumPlayers(numPlayers);}
     }
 
     /**
@@ -74,29 +93,30 @@ public class Controller {
      * @param nickname
      */
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
-        boolean numPlayersRequestSent = false;
-
-        // Checks the game hasn't started yet.
-        if (model == null) {
+        synchronized (this){
             // If the lobby is empty, the player decides its size.
-            if (lobby.getNumPlayers() == 0 && !numPlayersRequestSent) {
+            if (lobby == null && !numPlayersRequestSent) {
                 mvListener.addEvent(new NumPlayersRequest(nickname));
                 numPlayersRequestSent = true;
-            }
-            if(!lobby.addPlayer(nickname)) {
-                server.logger.addLog("Can't add the player", Severity.WARNING);
-                mvListener.addEvent(new ErrorJoinLobby(nickname));
-            }
-            else {
-                mvListener.addEvent(new JoinLobby(nickname, oldNickname));
-                if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
-                    createGame();
+            } else{
+                // Checks the game hasn't started yet.
+                 if (model == null && lobby!=null) {
+                    if(!lobby.addPlayer(nickname)) {
+                        server.logger.addLog("Can't add the player", Severity.WARNING);
+                        mvListener.addEvent(new ErrorJoinLobby(nickname));
+                    }
+                    else {
+                        mvListener.addEvent(new JoinLobby(nickname, oldNickname));
+                        if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
+                            createGame();
+                        }
+                    }
+                }
+                else{
+                    server.logger.addLog("Can't add the player: the game has already started or lobby isn't ready.", Severity.WARNING);
+                    mvListener.addEvent(new ErrorJoinLobby(nickname));
                 }
             }
-        }
-        else{
-            server.logger.addLog("Can't add the player: the game has already started.", Severity.WARNING);
-            mvListener.addEvent(new ErrorJoinLobby(nickname));
         }
     }
 
@@ -116,8 +136,19 @@ public class Controller {
     public void updateModel(GenericEvent event, String nickname) throws RemoteException {
 
             if(event instanceof NumPlayersResponse){
-                lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
+                createLobby(((NumPlayersResponse) event).numPlayers);
                 getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
+                //the first player is added after creating the lobby
+                if(!lobby.addPlayer(nickname)) {
+                    server.logger.addLog("Can't add the player", Severity.WARNING);
+                    getMVListenerByNickname(nickname).addEvent(new ErrorJoinLobby(nickname));
+                }
+                else {
+                    getMVListenerByNickname(nickname).addEvent(new JoinLobby(nickname, nickname));
+                    if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
+                        createGame();
+                    }
+                }
             }
             else if(event instanceof ChatMessage){
 
@@ -196,15 +227,11 @@ public class Controller {
                boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
                 if (ok){
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
-                    // da fare in un thread
-                    synchronized (model.controllerLock){
-
-                        // still useful?
-                        //model.turnPhase--;
-
-                        model.waitNumClient++;
-                        model.controllerLock.notifyAll();
-                    }
+//                    synchronized (model.controllerLock){
+//
+//                        model.waitNumClient++;
+//                        model.controllerLock.notifyAll();
+//                    }
                 }
                 else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again", nickname, (GenericResponse) event));
             }
@@ -213,7 +240,7 @@ public class Controller {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) null, model.clone()));
 
-                        synchronized (model.lock2) {model.turnPhase++;}
+                        synchronized (model.lock) {model.waitNumClient++;}
 //                    synchronized (model.controllerLock){
 //                        model.controllerLock.notifyAll();
 //                    }
@@ -224,7 +251,8 @@ public class Controller {
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
                 getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
-                String p = passwords.get(event.nickname);
+                //String p = passwords.get(event.nickname);
+                synchronized (lock) {wait++;}
             }
     }
 
