@@ -45,7 +45,6 @@ public class ModelViewListener extends Listener {
         new Thread(){
             @Override
             public void run() {
-
                 while(true) {
                     synchronized (lock_queue) {
                         if(!chatMessages.isEmpty()) {
@@ -126,6 +125,15 @@ public class ModelViewListener extends Listener {
     public void addChatMessage(ChatMessage message) {
         synchronized (lock_queue) {
             chatMessages.add(message);
+        }
+    }
+
+    @Override
+    public void addEvent(GenericEvent event) {
+        synchronized (lock_queue) {
+            if(event instanceof AckResponse)      ack = (AckResponse) event;
+            else if(event instanceof ChatMessage) chatMessages.add((ChatMessage) event);
+            else                                  getEventQueue().add(event);
         }
     }
 }

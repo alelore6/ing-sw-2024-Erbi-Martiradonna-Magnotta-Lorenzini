@@ -16,6 +16,7 @@ public class TUI extends UI {
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
     private Object lock_events = new Object();
+    private Object lock_chat = new Object();
 
     public TUI(ClientImpl client) {
         super(client);
@@ -206,7 +207,7 @@ public class TUI extends UI {
         }
     }
 
-    // TODO: mettere la chat in un thread.
+    // TODO: poter scrivere sempre.
     // It returns true if the string is a chat message, and it also sends it.
     private boolean listenToChat(String string){
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
@@ -238,8 +239,15 @@ public class TUI extends UI {
     }
 
     public final void update(GenericEvent e){
-        synchronized(lock_events){
-            inputEvents.add(e);
+        if(e instanceof ChatMessage){
+            synchronized (lock_chat){
+                chatMessages.add((ChatMessage) e);
+            }
+        }
+        else{
+            synchronized(lock_events){
+                inputEvents.add(e);
+            }
         }
     }
 
@@ -248,6 +256,27 @@ public class TUI extends UI {
 
         clearConsole();
 
+        // Chat's thread
+        new Thread(){
+            @Override
+            public void run() {
+                while(isActive){
+                    ChatMessage msg = null;
+
+                    synchronized (lock_chat){
+                        if(chatMessages.isEmpty())   continue;
+
+                        msg = chatMessages.poll();
+
+                        if(msg.nickname.equals(client.getNickname())) continue;
+
+                        printOut(msg.msgOutput());
+                    }
+                }
+            }
+        }.start();
+
+        // Event's handling thread
         new Thread(){
             @Override
             public void run() {
@@ -261,8 +290,7 @@ public class TUI extends UI {
                     }
 
                     // Ignore all other player's events
-                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname()) && !(ev instanceof ChatMessage) ||
-                            ev instanceof ChatMessage && ev.nickname.equals(client.getNickname())) continue;
+                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     printOut(ev.msgOutput());
 

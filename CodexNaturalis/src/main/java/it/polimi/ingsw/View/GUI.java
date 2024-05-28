@@ -25,7 +25,6 @@ public class GUI extends UI{
 
     public GUI(ClientImpl client) {
         super(client);
-        inputEvents = new LinkedList<>();
         f = new MainFrame("CodexNaturalis");
         //f.setVisible(true);
 
