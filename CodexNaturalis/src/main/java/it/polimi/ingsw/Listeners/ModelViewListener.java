@@ -61,18 +61,19 @@ public class ModelViewListener extends Listener {
                                 client.update(ack);
 
                                 if(!ack.ok){
-                                    switch(ack.response){
-                                        /*case PlayCardResponse e:
-
-                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
-                                            break;*/
-                                        case SetTokenColorResponse e:
-                                            client.update(new SetTokenColorRequest(client.getNickname(), server.controller.getGame().getAvailableTokens()));
-
-                                            break;
-                                        default:
-                                            throw new IllegalStateException("Unexpected value: " + ack.response);
-                                    }
+//                                    switch(ack.response){
+//                                        /*case PlayCardResponse e:
+//
+//                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
+//                                            break;*/
+//                                        case SetTokenColorResponse e:
+//                                            client.update(new SetTokenColorRequest(client.getNickname(), server.controller.getGame().getAvailableTokens()));
+//
+//                                            break;
+//                                        default:
+//                                            throw new IllegalStateException("Unexpected value: " + ack.response);
+//                                    }
+                                    client.update(lastRequest);
                                     //TODO la seconda volta di fila che giochi male la carta non viene rimandato l'ack.
                                     // (o forse viene mandato ma non viene gestito in tempo)
                                     // in verità appena giochi male una carta, il client si stacca dal flusso di gioco
