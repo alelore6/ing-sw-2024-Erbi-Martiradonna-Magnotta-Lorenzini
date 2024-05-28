@@ -64,7 +64,7 @@ public class GUI extends UI{
     }
 
 
-    protected String getCardPath(int id, boolean isFacedown) {
+    public static String getCardPath(int id, boolean isFacedown) {
         String idString;
         if (id < 100) {
             idString = valueOf(id);
@@ -84,7 +84,7 @@ public class GUI extends UI{
     public void update(GenericEvent e){
         synchronized (inputEvents) {
             inputEvents.add(e);
-            //System.out.println("Event received");
+            System.out.println("[DEBUG] received: "+ e.getClass().getName());
         }
     }
 
@@ -180,7 +180,7 @@ public class GUI extends UI{
                             while(s==null) {
                                 s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
-                            newEvent = new SetTokenColorResponse(Integer.parseInt(s) , client.getNickname());
+                            newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal() , client.getNickname());
                             notifyListener(newEvent);
                             break;
 
@@ -211,7 +211,7 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            f.reactStartGame((StartGame) ev);
+                            //f.reactStartGame((StartGame) ev);
                             break;
 
                         case EndTurn e:
@@ -233,7 +233,8 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            System.out.println("Received ack for "+ e.response.getClass().getName());
+                            if(e.response!=null)
+                                System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
 
                         default:

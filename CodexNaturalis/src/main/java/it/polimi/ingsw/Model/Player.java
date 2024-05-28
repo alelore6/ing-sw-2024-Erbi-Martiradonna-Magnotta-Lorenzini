@@ -117,7 +117,7 @@ public class Player {
      */
     public boolean setToken(TokenColor color) {
         synchronized (game.availableTokens) {
-            //non so se serve veramente visto che il controller è unico e non su thread
+            //non so se serve veramente
             if(game.availableTokens.remove(color)){
                 this.token = new Token(color,game.tablecenter.getScoretrack(),this);
                 return true;

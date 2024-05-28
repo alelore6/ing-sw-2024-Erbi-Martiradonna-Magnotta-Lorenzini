@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Graphical;
 
+import it.polimi.ingsw.View.GUI;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -12,7 +14,7 @@ public class ImageDialog extends JDialog {
 //TODO ringraziare i creatori di chatgpt
     private int choice;
 
-    public ImageDialog(Frame parent, String message, String cardPath1, String cardPath2, boolean front) throws IOException {
+    public ImageDialog(Frame parent, String message, String cardPath1, String cardPath2, boolean useFront) throws IOException {
         super(parent, "Choose Image", true);
         setLayout(new BorderLayout());
         choice = 0;
@@ -21,7 +23,7 @@ public class ImageDialog extends JDialog {
         JPanel messagePanel = new JPanel(new BorderLayout());
         messagePanel.add(messageLabel, BorderLayout.CENTER);
 
-        // Load the images from provided paths: front is the first one
+        // Load the images from provided paths: Front is the first one
         BufferedImage img1 = ImageIO.read(this.getClass().getClassLoader().getResource(cardPath1));
         BufferedImage img2 = ImageIO.read(this.getClass().getClassLoader().getResource(cardPath2));
 
@@ -30,19 +32,19 @@ public class ImageDialog extends JDialog {
 
         JLabel label1;
         JLabel label2;
-        if (!front) {
+        if (!useFront) {
             label1 = new JLabel("Card 1  ");
             label2 = new JLabel("Card 2  ");
         } else {
-            label1 = new JLabel("Front");
-            label2 = new JLabel("Back");
+            label1 = new JLabel("Front  ");
+            label2 = new JLabel("Back  ");
         }
 
-        label1.setHorizontalAlignment(SwingConstants.CENTER);
-        label2.setHorizontalAlignment(SwingConstants.CENTER);
+        //label1.setHorizontalAlignment(SwingConstants.CENTER);
+        //label2.setHorizontalAlignment(SwingConstants.CENTER);
 
-        label1.setPreferredSize(label1.getPreferredSize());
-        label2.setPreferredSize(label2.getPreferredSize());
+        //label1.setPreferredSize(label1.getPreferredSize());
+        //label2.setPreferredSize(label2.getPreferredSize());
 
         JPanel imagePanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -90,11 +92,29 @@ public class ImageDialog extends JDialog {
         add(messagePanel, BorderLayout.NORTH);
         add(imagePanel, BorderLayout.CENTER);
 
-        setSize(700, 600);
+        setSize(750, 600);
         setLocationRelativeTo(parent);
     }
 
     public int getChoice() {
         return choice;
+    }
+
+    public static void main(String[] args){
+        //main di test
+        int n=0;
+        JFrame parent=new JFrame();
+        try {
+            while(n==0){
+                ImageDialog dialog = new ImageDialog(parent, "messaggio",GUI.getCardPath(1,false), GUI.getCardPath(2,false),false);
+                dialog.setVisible(true);
+
+                n= dialog.getChoice();
+            }
+        } catch (IOException ex) {
+            System.out.println("Error: " + ex.getMessage());
+        }
+        System.out.println("Scelta: " +n);
+
     }
 }
