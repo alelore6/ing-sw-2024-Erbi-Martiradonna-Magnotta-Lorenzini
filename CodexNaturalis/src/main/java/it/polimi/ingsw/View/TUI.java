@@ -7,6 +7,7 @@ import it.polimi.ingsw.Model.*;
 import java.io.PrintStream;
 import java.util.*;
 
+import static it.polimi.ingsw.Model.Position.*;
 import static java.lang.String.join;
 
 public class TUI extends UI {
@@ -153,9 +154,12 @@ public class TUI extends UI {
         if(card instanceof PlayableCard){
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
             printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString(), true) +
-                        "\nVisible corners: ");
-            //Arrays.stream(card.getCorners()).forEach(corner -> printOut(
-            //        corner.getPosition() + ": " + corner.getResource()));
+                        "\n\tVisible corners:\n");
+            Arrays.stream(card.getFrontCorners()).forEach(corner -> printOut(
+                    "\t\t" + corner.getPosition() + ": " + corner.getResource()));
+            printOut("\tBACK:");
+            Arrays.stream(card.getBackCorners()).forEach(corner -> printOut(
+                    "\t\t" + corner.getPosition() + ": " + corner.getResource()));
 
             if(card instanceof GoldCard){
                 // the number of total distinct resources
@@ -178,14 +182,20 @@ public class TUI extends UI {
         }
         else if(card instanceof StartingCard){
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
-            /*printOut("VISIBLE CORNER:\n\tFRONT:");
-            for(int i = 0; i < card.getCorners().length; i++){
-                if(i == 4) printOut("\n\tBACK:");
-                if(card.getCorners()[i] != null)
-                    printOut("\t\t" + card.getCorners()[i].getPosition() + ": "
-                            + (card.getCorners()[i].getPosition().equals(UP_SX.toString()) || card.getCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
-                            + card.getCorners()[i].getStringResource());
-            }*/
+            printOut("VISIBLE CORNER:\n\tFRONT:");
+            for(int i = 0; i < 4; i++){
+                if(card.getFrontCorners()[i].getPosition() != null)
+                    printOut("\t\t" + card.getFrontCorners()[i].getPosition() + ": "
+                            + (card.getFrontCorners()[i].getPosition().equals(UP_SX.toString()) || card.getFrontCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + card.getFrontCorners()[i].getStringResource());
+            }
+            printOut("\n\tBACK:");
+            for(int i = 0; i < card.getBackCorners().length; i++){
+                if(card.getBackCorners()[i].getPosition() != null)
+                    printOut("\t\t" + card.getBackCorners()[i].getPosition() + ": "
+                            + (card.getBackCorners()[i].getPosition().equals(UP_SX.toString()) || card.getBackCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + card.getBackCorners()[i].getStringResource());
+            }
             printOut("\n\tRESOURCES IN THE BACK:");
             for(Resource resource : ((StartingCard) card).resource){
                  printOut("\t\t" + resource + "\t\t");
@@ -332,6 +342,10 @@ public class TUI extends UI {
                             break;
 
                         case PlayCardRequest e :
+                            printOut("CARTE NELLA TUA MANO:");
+                            for(Card card : e.playerView.hand.handCards){
+                                printCard(card);
+                            }
                             n = -1;
                             do{
                                 if(n != -1) printOut(inputError());
