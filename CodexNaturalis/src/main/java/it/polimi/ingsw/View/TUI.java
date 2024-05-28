@@ -176,7 +176,7 @@ public class TUI extends UI {
 
             printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + "points");
             if(card instanceof GoldCard){
-                printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
+                printOut("\t for every " + (((GoldCard) card).isRPointsCorner() && ((GoldCard) card).getRPoints() != null ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
             }
             printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
