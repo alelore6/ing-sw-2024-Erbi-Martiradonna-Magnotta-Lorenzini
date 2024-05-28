@@ -9,6 +9,10 @@ public class GoldCard extends PlayableCard{
 
     private boolean RPointsCorner;
 
+    public void addReq(Resource resource, int value) {
+        req.put(resource, value);
+    }
+
     protected HashMap<Resource,Integer> req = new HashMap<>();
 
     public void flip(){

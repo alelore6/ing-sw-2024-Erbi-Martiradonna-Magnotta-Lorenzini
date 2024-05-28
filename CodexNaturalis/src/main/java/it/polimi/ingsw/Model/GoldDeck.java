@@ -45,6 +45,13 @@ public class GoldDeck extends Deck{
             }
         }
 
+        for(GoldCard card : cards){
+            for (Resource resource : Resource.values()) {
+                if(!card.getReq().containsKey(resource))
+                    card.addReq(resource, 0);
+            }
+        }
+
         cards = (GoldCard[]) shuffle(cards);
     }
 
