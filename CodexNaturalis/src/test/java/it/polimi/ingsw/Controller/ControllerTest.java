@@ -37,7 +37,7 @@ public class ControllerTest {
     @Test
     public void createGame() throws RemoteException {
  Game game = controller.getGame();
-  assert
+
 
 
     }

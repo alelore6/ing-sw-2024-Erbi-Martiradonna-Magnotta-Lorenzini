@@ -74,12 +74,15 @@ public class Controller {
      * @param nickname
      */
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
-        boolean ok = false;
+        boolean numPlayersRequestSent = false;
 
         // Checks the game hasn't started yet.
         if (model == null) {
             // If the lobby is empty, the player decides its size.
-            if (lobby.getNumPlayers() == 0) mvListener.addEvent(new NumPlayersRequest(nickname));
+            if (lobby.getNumPlayers() == 0 && !numPlayersRequestSent) {
+                mvListener.addEvent(new NumPlayersRequest(nickname));
+                numPlayersRequestSent = true;
+            }
             if(!lobby.addPlayer(nickname)) {
                 server.logger.addLog("Can't add the player", Severity.WARNING);
                 mvListener.addEvent(new ErrorJoinLobby(nickname));
@@ -185,7 +188,7 @@ public class Controller {
                     }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericResponse) event));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.message, nickname, (GenericResponse) event));
                 }
             }
 
