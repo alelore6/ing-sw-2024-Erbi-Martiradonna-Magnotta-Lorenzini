@@ -162,7 +162,9 @@ public class Game{
                 for (Player p : players) {
                     SetTokenColorRequest setTokenColor = new SetTokenColorRequest(p.getNickname(), availableTokens);
                     mvListeners.get(pos).addEvent(setTokenColor);
-                    checkpoint(controllerLock);
+
+                    // I don't think that this checkpoint is needed.
+                    // checkpoint(controllerLock);
 
                     //every player gets to choose between 2 objective cards
                     ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
@@ -535,7 +537,9 @@ public class Game{
         //TODO se un solo giocatore rimasto si deve interrompere la partita!
     }
 
-
+    public ArrayList<TokenColor> getAvailableTokens() {
+        return availableTokens;
+    }
 }
 
 

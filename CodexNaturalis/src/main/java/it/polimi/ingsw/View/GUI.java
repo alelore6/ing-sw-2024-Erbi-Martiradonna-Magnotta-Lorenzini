@@ -14,7 +14,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 import static java.lang.String.valueOf;
 
@@ -234,7 +233,7 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            System.out.println("Received ack for "+ e.event.getClass().getName());
+                            System.out.println("Received ack for "+ e.request.getClass().getName());
                             break;
 
                         default:

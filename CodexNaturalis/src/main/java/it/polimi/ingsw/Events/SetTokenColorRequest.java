@@ -28,10 +28,10 @@ public class SetTokenColorRequest extends GenericRequest{
         String s = "\n";
         String colorReset = "\u001B[0m";
 
-        if(availableColors.contains(TokenColor.RED))        s = s + "\u001B[31m" + "(1) for RED\n" + colorReset;
-        if(availableColors.contains(TokenColor.YELLOW))     s = s + "\u001B[33m" + "(2) for YELLOW\n" + colorReset;
-        if(availableColors.contains(TokenColor.GREEN))      s = s + "\u001B[32m" + "(3) for GREEN\n" + colorReset;
-        if(availableColors.contains(TokenColor.BLUE))       s = s + "\u001B[34m" + "(4) for BLUE\n" + colorReset;
+        if(availableColors.contains(TokenColor.RED))        s = s + "\u001B[91m" + "(1) for RED\n" + colorReset;
+        if(availableColors.contains(TokenColor.YELLOW))     s = s + "\u001B[93m" + "(2) for YELLOW\n" + colorReset;
+        if(availableColors.contains(TokenColor.GREEN))      s = s + "\u001B[92m" + "(3) for GREEN\n" + colorReset;
+        if(availableColors.contains(TokenColor.BLUE))       s = s + "\u001B[94m" + "(4) for BLUE\n" + colorReset;
 
         return s;
     }

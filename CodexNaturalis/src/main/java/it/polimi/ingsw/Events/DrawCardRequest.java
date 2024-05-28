@@ -29,7 +29,7 @@ public class DrawCardRequest extends GenericRequest{
      * @param resDeckEmpty represent if the resource deck is empty
      */
     public DrawCardRequest(String nickname, TableCenterView tableCenterView, boolean goldDeckEmpty, boolean resDeckEmpty){
-        super("Now it's time to draw a card: choose a source to draw from. \n",nickname);
+        super("Now it's time to draw a card: choose a source to draw from.\n",nickname);
         this.tableCenterView = tableCenterView;
         this.goldDeckEmpty = goldDeckEmpty;
         this.resDeckEmpty = resDeckEmpty;
@@ -37,6 +37,6 @@ public class DrawCardRequest extends GenericRequest{
 
     @Override
     public String msgOutput() {
-        return super.msgOutput() + "(1) for RESOURCE or (2) for GOLD: ";
+        return super.msgOutput() + "\u001B[4m" + "(1) for RESOURCE or (2) for GOLD:" + "\u001B[0m";
     }
 }

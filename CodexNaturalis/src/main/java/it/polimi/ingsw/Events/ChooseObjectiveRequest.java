@@ -22,7 +22,7 @@ public class ChooseObjectiveRequest extends GenericRequest {
      * @param nickname the receiver of the event
      */
     public ChooseObjectiveRequest(ObjectiveCard objCard1, ObjectiveCard objCard2, String nickname){
-        super("Choose your secret objective card from these two: ", nickname);
+        super("Choose your secret objective card from these two:", nickname);
         this.objCard1 = objCard1;
         this.objCard2 = objCard2;
     }

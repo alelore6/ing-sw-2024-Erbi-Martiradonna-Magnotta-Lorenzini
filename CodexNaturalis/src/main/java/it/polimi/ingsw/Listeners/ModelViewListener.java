@@ -4,7 +4,6 @@ import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.*;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
-import it.polimi.ingsw.ModelView.PlayerView;
 
 import java.rmi.RemoteException;
 import java.util.LinkedList;
@@ -82,7 +81,7 @@ public class ModelViewListener extends Listener {
                             } catch (RemoteException e) {
                                 throw new RuntimeException(e);
                             }
-                            if(!(ack.event instanceof ChatMessage)) requestEventIndex--;
+                            requestEventIndex--;
                             ack = null;
                         }
                         else if(requestEventIndex == 0 && !getEventQueue().isEmpty()){

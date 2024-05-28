@@ -114,22 +114,22 @@ public class Controller {
 
             if(event instanceof NumPlayersResponse){
                 lobby.setNumPlayers(((NumPlayersResponse) event).numPlayers);
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
             }
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
-                else if(getMVListenerByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
+                else if(server.findClientByNickname(((ChatMessage) event).recipient) != null) getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
                 else{
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse("Impossibile inviare il messaggio: destinatario non trovato.\n", nickname, event));
+                    getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, false));
                     return;
                 }
-                getMVListenerByNickname(nickname).addEvent(new AckResponse((ChatMessage) event, nickname, ((ChatMessage) event).recipient));
+                getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, true));
             }
 
             else if(event instanceof ChooseObjectiveResponse) {
                 getPlayerByNickname(nickname).chooseObjective(((ChooseObjectiveResponse) event).objectiveCard);
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
             }
 
             else if(event instanceof DrawCardResponse){
@@ -140,11 +140,11 @@ public class Controller {
                         //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericRequest) event));
                     }
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
@@ -153,22 +153,22 @@ public class Controller {
                 else if(chosenPosition == 4){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericRequest) event));
                     }
                 }
                 else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
                     } catch (HandFullException | isEmptyException e ) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericRequest) event));
                     }
                 }
                 nextPlayer();
@@ -178,19 +178,19 @@ public class Controller {
                 try {
                     synchronized (model.controllerLock){
                         getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, event, model.clone()));
+                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                     }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, event, gameView));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericRequest) event, gameView));
                 }
             }
 
             else if(event instanceof SetTokenColorResponse){
                boolean ok=getPlayerByNickname(nickname).setToken(((SetTokenColorResponse)event).tokenColor);
                 if (ok){
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, event, model.clone()));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                     // da fare in un thread
                     synchronized (model.controllerLock){
 
@@ -201,12 +201,12 @@ public class Controller {
                         model.controllerLock.notifyAll();
                     }
                 }
-                else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again", nickname, event));
+                else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again", nickname, new SetTokenColorRequest(nickname, model.getAvailableTokens())));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse( nickname, event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         synchronized (model.lock2) {model.turnPhase++;}
 //                    synchronized (model.controllerLock){
@@ -214,11 +214,11 @@ public class Controller {
 //                    }
                 } catch (WrongPlayException e) {
                     //shouldn't happen
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse("Error in placing starting card", nickname, event));                }
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse("Error in placing starting card", nickname, (GenericRequest) event));                }
             }
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
-                getMVListenerByNickname(nickname).addEvent(new AckResponse( nickname, event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
                 String p = passwords.get(event.nickname);
             }
     }

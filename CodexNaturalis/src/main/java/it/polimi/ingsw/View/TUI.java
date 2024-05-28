@@ -7,7 +7,6 @@ import it.polimi.ingsw.Model.*;
 import java.io.PrintStream;
 import java.util.*;
 
-import static it.polimi.ingsw.Model.Position.*;
 import static java.lang.String.join;
 
 public class TUI extends UI {
@@ -81,14 +80,14 @@ public class TUI extends UI {
         boolean isValid = false;
         String tempString = null;
 
-        printOut("Insert " + s + ": ");
+        printOut("\u001B[4m" + "Insert " + s + ":" + "\u001B[0m");
 
         while(!isValid){
             tempString = in.nextLine();
 
             if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
-            else printOut("Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:");
+            else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:", true));
         }
 
         return tempString.trim();
@@ -112,19 +111,38 @@ public class TUI extends UI {
         return "Input not allowed. Please try again";
     }
 
-
-    private String setColorForString(String color, String string){
+    private String setColorForBackground(String color, String string){
         String c;
-        String resetColor = "\u001B[0m";
+        String reset = "\u001B[49m";
         switch (color){
-            case "RED" -> c = "\u001B[31m";
-            case "GREEN" -> c = "\u001B[32m";
-            case "YELLOW" -> c = "\u001B[33m";
-            case "BLUE" -> c = "\u001B[34m";
-            case "PURPLE" -> c = "\u001B[35m";
-            //case "CYAN" -> c = "\u001B[36m";
-            //case "BLACK" -> c = "\u001B[30m";
-            //case "WHITE" -> c = "\u001B[37m";
+            case "RED" -> c = "\u001B[41m";
+            case "GREEN" -> c = "\u001B[42m";
+            case "YELLOW" -> c = "\u001B[43m";
+            case "BLUE" -> c = "\u001B[44m";
+            case "PURPLE" -> c = "\u001B[45m";
+            //case "CYAN" -> c = "\u001B[46m";
+            //case "BLACK" -> c = "\u001B[40m";
+            //case "WHITE" -> c = "\u001B[47m";
+            default -> c = "<INVALID COLOR> ";
+        }
+
+        return c + string + reset;
+    }
+
+    private String setColorForString(String color, String string, boolean isBright){
+        String c;
+        String temp = isBright ? "9" : "3";
+        String resetColor = "\u001B[0m";
+
+        switch (color){
+            case "RED" -> c = "\u001B[" + temp + "1m";
+            case "GREEN" -> c = "\u001B[" + temp + "2m";
+            case "YELLOW" -> c = "\u001B[" + temp + "3m";
+            case "BLUE" -> c = "\u001B[" + temp + "4m";
+            case "PURPLE" -> c = "\u001B[" + temp + "5m";
+            //case "CYAN" -> c = "\u001B[" + temp + "6m";
+            //case "BLACK" -> c = "\u001B[" + temp + "0m";
+            //case "WHITE" -> c = "\u001B[" + temp + "7m";
             default -> c = "<INVALID COLOR> ";
         }
 
@@ -134,7 +152,7 @@ public class TUI extends UI {
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
-            printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString()) +
+            printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString(), true) +
                         "\nVisible corners: ");
             //Arrays.stream(card.getCorners()).forEach(corner -> printOut(
             //        corner.getPosition() + ": " + corner.getResource()));
@@ -185,7 +203,7 @@ public class TUI extends UI {
 
             for(int i = 1; index < 3; i++){
                 if(positions.contains(i)){
-                    grid += setColorForString(((ObjectiveCard1) card).getCardColors()[index].toString(), "■");
+                    grid += setColorForString(((ObjectiveCard1) card).getCardColors()[index].toString(), "■", false);
                     index++;
                 }
                 else grid += "  ";
@@ -268,7 +286,7 @@ public class TUI extends UI {
 
                         msg = chatMessages.poll();
 
-                        if(msg.nickname.equals(client.getNickname())) continue;
+                        if(!(msg instanceof ChatAck) && msg.nickname.equals(client.getNickname())) continue;
 
                         printOut(msg.msgOutput());
                     }
@@ -292,31 +310,25 @@ public class TUI extends UI {
                     // Ignore all other player's events
                     if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
-                    printOut(ev.msgOutput());
+                    // This check is not necessary but until the ack aren't fixed it helps to have the correct output.
+                    if((ev instanceof AckResponse) || !(ev instanceof GenericResponse)) printOut(ev.msgOutput());
 
                     int n;
-                    GenericEvent newEvent;
 
                     switch(ev){
                         case DrawCardRequest e :
-                            newEvent = new DrawCardResponse(chooseInt(1,2),client.getNickname());
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new DrawCardResponse(chooseInt(1,2),client.getNickname()));
                             break;
 
                         case ChooseObjectiveRequest e :
                             printCard(e.objCard1);
                             printCard(e.objCard2);
                             printOut(e.msgOutput2());
-                            newEvent = new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname());
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
                             break;
 
                         case NumPlayersRequest e :
-                            newEvent = new NumPlayersResponse(chooseInt(2,4), client.getNickname());
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
                             break;
 
                         case PlayCardRequest e :
@@ -330,9 +342,7 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.playerView.hand.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            newEvent = new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80));
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
                             break;
 
                         case SetTokenColorRequest e :
@@ -343,17 +353,13 @@ public class TUI extends UI {
                                 n = chooseInt(1,4);
                             }while(!e.choiceIsValid(n));
 
-                            newEvent = new SetTokenColorResponse(n, client.getNickname());
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new SetTokenColorResponse(n, client.getNickname()));
                             break;
 
                         case JoinLobby e :
                             if(e.getNickname() != null)  client.setNickname(e.getNickname());
 
-                            newEvent = new SetPassword(client.getNickname(), chooseString("password"));
-                            notifyListener(newEvent);
-                            printOut(newEvent.msgOutput());
+                            notifyListener(new SetPassword(client.getNickname(), chooseString("password")));
                             break;
 
                         case PlaceStartingCard e :
@@ -367,14 +373,14 @@ public class TUI extends UI {
                         case AckResponse ack :
                             if(!ack.ok){
                                 synchronized(lock_events){
-                                    inputEvents.addFirst(ack.event);
+                                    inputEvents.addFirst(ack.request);
                                 }
                             }
                             break;
                         case ReconnectionRequest e:
-                            newEvent = new ReconnectionResponse( client.getNickname(),chooseString("password"));
-                            notifyListener(newEvent);
+                            notifyListener(new ReconnectionResponse( client.getNickname(),chooseString("password")));
                             break;
+
                         default :
                             break;
                     }

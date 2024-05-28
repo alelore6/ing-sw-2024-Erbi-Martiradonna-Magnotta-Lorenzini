@@ -1,6 +1,5 @@
 package it.polimi.ingsw.Events;
 
-import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.ModelView.GameView;
 
 /**
@@ -15,7 +14,8 @@ public class AckResponse extends GenericResponse{
     /**
      * the corresponding event
      */
-    public final GenericEvent event;
+    public final GenericRequest  request;
+    public final GenericResponse response;
 
     public final GameView gameView;
     /**
@@ -24,47 +24,48 @@ public class AckResponse extends GenericResponse{
      * @param nickname the player that did the action
      * @param event the corresponding event
      */
-    public AckResponse(String nickname, GenericEvent event, GameView gameView){
+    public AckResponse(String nickname, GenericResponse response, GameView gameView){
         //per esito positivo e per aggiornare view
         super("Event has gone successfully", nickname);
         this.ok = true;
-        this.event = event;
+        this.request = null;
+        this.response = response;
         mustBeSentToAll=true;
         this.gameView = gameView;
     }
 
-    public AckResponse(String errorMessage, String nickname, GenericEvent event){
+    public AckResponse(String errorMessage, String nickname, GenericRequest request){
         //solo per esito negativo
         super(errorMessage, nickname);
         this.ok = false;
-        this.event = event;
+        this.request = request;
+        this.response = null;
         mustBeSentToAll=true;
         this.gameView = null;
     }
-    public AckResponse( String nickname, GenericEvent event){
+    public AckResponse(String nickname, GenericResponse response){
         //per esito positivo senza aggiornare view
         //togliere il booleano da input e sistemare utilizzi
         super("Event has gone successfully", nickname);
         this.ok = true;
-        this.event = event;
+        this.request = null;
+        this.response = response;
         mustBeSentToAll=true;
         this.gameView = null;
     }
 
-    public AckResponse(String errorMessage, String nickname, GenericEvent event, GameView gameView){
+    public AckResponse(String errorMessage, String nickname, GenericRequest request, GameView gameView){
         //solo per esito negativo
         super(errorMessage, nickname);
         this.ok = false;
-        this.event = event;
+        this.request = request;
+        this.response = null;
         mustBeSentToAll=true;
         this.gameView = gameView;
     }
 
-    // Constructor just for ChatAck.
-    public AckResponse(ChatMessage event, String sender, String recipient){
-        super("The message has been sent correctly " + (recipient.equals("everyone") ? "to everyone." : "to " + recipient + "."), sender);
-        this.event = event;
-        this.ok = true;
-        this.gameView = null;
+    @Override
+    public String msgOutput(){
+        return "\n\u001B[30m" + (ok ? "\u001B[42m" + response.message : "\u001B[41m" + message) + "\u001B[0m";
     }
 }
