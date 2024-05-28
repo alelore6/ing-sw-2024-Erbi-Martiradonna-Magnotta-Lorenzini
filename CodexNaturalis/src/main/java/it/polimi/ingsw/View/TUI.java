@@ -281,15 +281,15 @@ public class TUI extends UI {
                 while(isActive){
                     ChatMessage msg = null;
 
-                    synchronized (lock_chat){
-                        if(chatMessages.isEmpty())   continue;
+                    synchronized (lock_chat) {
+                        if (chatMessages.isEmpty()) continue;
 
                         msg = chatMessages.poll();
-
-                        if(!(msg instanceof ChatAck) && msg.nickname.equals(client.getNickname())) continue;
-
-                        printOut(msg.msgOutput());
                     }
+
+                    if(!(msg instanceof ChatAck) && msg.nickname.equals(client.getNickname())) continue;
+
+                    printOut(msg.msgOutput());
                 }
             }
         }.start();
@@ -370,13 +370,6 @@ public class TUI extends UI {
                             notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
                             break;
 
-                        case AckResponse ack :
-                            if(!ack.ok){
-                                synchronized(lock_events){
-                                    inputEvents.addFirst(ack.request);
-                                }
-                            }
-                            break;
                         case ReconnectionRequest e:
                             notifyListener(new ReconnectionResponse( client.getNickname(),chooseString("password")));
                             break;

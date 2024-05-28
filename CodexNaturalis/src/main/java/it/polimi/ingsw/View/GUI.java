@@ -233,7 +233,7 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            System.out.println("Received ack for "+ e.request.getClass().getName());
+                            System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
 
                         default:
