@@ -6,5 +6,6 @@ public enum CardColor implements Serializable {
     RED,
     GREEN,
     PURPLE,
-    BLUE
+    BLUE,
+    WHITE
 }

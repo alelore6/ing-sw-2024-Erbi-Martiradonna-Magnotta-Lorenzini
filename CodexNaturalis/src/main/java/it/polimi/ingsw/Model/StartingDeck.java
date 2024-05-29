@@ -5,6 +5,8 @@ import it.polimi.ingsw.Exceptions.isEmptyException;
 
 import java.io.*;
 
+import static it.polimi.ingsw.Model.CardColor.WHITE;
+
 public class StartingDeck extends Deck{
 
     int NCards = 6;
@@ -26,6 +28,9 @@ public class StartingDeck extends Deck{
         } catch (IOException e) {
             System.out.println("Error with JSON.");
         }
+
+        for(StartingCard card : cards)
+            card.color = WHITE;
 
         cards = (StartingCard[]) shuffle(cards);
     }

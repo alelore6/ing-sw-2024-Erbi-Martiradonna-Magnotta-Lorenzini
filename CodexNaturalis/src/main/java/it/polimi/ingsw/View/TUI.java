@@ -142,8 +142,8 @@ public class TUI extends UI {
             case "BLUE" -> c = "\u001B[" + temp + "4m";
             case "PURPLE" -> c = "\u001B[" + temp + "5m";
             //case "CYAN" -> c = "\u001B[" + temp + "6m";
-            //case "BLACK" -> c = "\u001B[" + temp + "0m";
-            //case "WHITE" -> c = "\u001B[" + temp + "7m";
+            case "BLACK" -> c = "\u001B[" + temp + "0m";
+            case "WHITE" -> c = "\u001B[" + temp + "7m";
             default -> c = "<INVALID COLOR> ";
         }
 
@@ -153,7 +153,7 @@ public class TUI extends UI {
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
-            printOut("Color: " + setColorForString(((PlayableCard) card).getColor().toString(), ((PlayableCard) card).getColor().toString(), true) +
+            printOut("Color: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
                         "\n\tVisible corners:\n");
             Arrays.stream(card.getFrontCorners()).forEach(corner -> printOut(
                     "\t\t" + corner.getPosition() + ": " + corner.getResource()));
@@ -168,13 +168,13 @@ public class TUI extends UI {
                 printOut("Requirements:");
                 for(Resource res : ((GoldCard) card).getReq().keySet()){
                     if(((GoldCard) card).getReq().get(res) > 0)
-                        printOut(((GoldCard) card).getReq().get(res) + res.toString());
+                        printOut(((GoldCard) card).getReq().get(res) + " " + res.toString());
                 }
             }
 
             if(((PlayableCard) card).getPoints() == 0)  return;
 
-            printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + "points");
+            printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + " points");
             if(card instanceof GoldCard){
                 //printOut("\t for every " + (((GoldCard) card).isRPointsCorner() && ((GoldCard) card).getRPoints() != null ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
             }
@@ -184,14 +184,14 @@ public class TUI extends UI {
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
             printOut("VISIBLE CORNER:\n\tFRONT:");
             for(int i = 0; i < 4; i++){
-                if(card.getFrontCorners()[i].getPosition() != null)
+                if(!card.getFrontCorners()[i].getPosition().equals("empty"))
                     printOut("\t\t" + card.getFrontCorners()[i].getPosition() + ": "
                             + (card.getFrontCorners()[i].getPosition().equals(UP_SX.toString()) || card.getFrontCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + card.getFrontCorners()[i].getStringResource());
             }
             printOut("\n\tBACK:");
             for(int i = 0; i < card.getBackCorners().length; i++){
-                if(card.getBackCorners()[i].getPosition() != null)
+                if(!card.getBackCorners()[i].getPosition().equals("empty"))
                     printOut("\t\t" + card.getBackCorners()[i].getPosition() + ": "
                             + (card.getBackCorners()[i].getPosition().equals(UP_SX.toString()) || card.getBackCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + card.getBackCorners()[i].getStringResource());
@@ -233,6 +233,67 @@ public class TUI extends UI {
                     printOut("\t\t " + ((ObjectiveCard2) card).getReqMap().get(resource) + " x " + resource.toString());
             }
         }
+    }
+
+    private void printGrid(Card[][] playedCards){
+        int minRow = 40;
+        int minColumn = 40;
+        int maxRow = 40;
+        int maxColumn = 40;
+        final int GRID_MARGIN = 2;
+        assert GRID_MARGIN >= 0;
+        final String HORIZONTAL_SPACE = "\t";
+        final String FAR_BLOCK = setColorForString("BLACK", "■", false);
+        final String NEAR_BLOCK = setColorForString("YELLOW", "■", true);
+        String grid = "";
+
+        for(int i = 0; i < 80; i++){
+            for(int j = 0; j < 80; j++){
+                if(playedCards[i][j] != null){
+                    if(i < minRow)    minRow    = i;
+                    if(i > maxRow)    maxRow    = i;
+                    if(j < minColumn) minColumn = j;
+                    if(j > maxColumn) maxColumn = j;
+                }
+            }
+        }
+
+        // Renormalization of pathological cases.
+        if(minRow    - GRID_MARGIN < 0)   minRow    =      GRID_MARGIN;
+        if(minColumn - GRID_MARGIN < 0)   minColumn =      GRID_MARGIN;
+        if(maxRow    + GRID_MARGIN >= 80) maxRow    = 80 - GRID_MARGIN - 1;
+        if(maxColumn + GRID_MARGIN >= 80) maxColumn = 80 - GRID_MARGIN - 1;
+
+        for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++)
+            grid += HORIZONTAL_SPACE + j;
+
+        for(int i = minRow - GRID_MARGIN; i <= maxRow + GRID_MARGIN; i++){
+            grid += "\n" + i;
+            for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++){
+                if(playedCards[i][j] == null){
+                    if(checkNear(playedCards, i, j)){
+                        grid += HORIZONTAL_SPACE + NEAR_BLOCK;
+                    }
+                    else{
+                        grid += HORIZONTAL_SPACE + FAR_BLOCK;
+                    }
+                }
+                else{
+                    grid += HORIZONTAL_SPACE + setColorForString(playedCards[i][j].getColor().toString(), String.valueOf(playedCards[i][j].getID()), true);
+                }
+            }
+        }
+
+        printOut(grid + "\n");
+    }
+
+    private boolean checkNear(Card[][] playedCards, int x, int y){
+        if(x-1 >=  0 && y-1 >=  0 && playedCards[x-1][y-1] != null && !playedCards[x-1][y-1].getCorners()[3].getPosition().equals("empty")) return true;
+        if(x-1 >=  0 && y+1 <= 80 && playedCards[x-1][y+1] != null && !playedCards[x-1][y+1].getCorners()[2].getPosition().equals("empty")) return true;
+        if(x+1 >=  0 && y-1 >=  0 && playedCards[x+1][y-1] != null && !playedCards[x+1][y-1].getCorners()[1].getPosition().equals("empty")) return true;
+        if(x+1 <= 80 && y+1 <= 80 && playedCards[x+1][y+1] != null && !playedCards[x+1][y+1].getCorners()[0].getPosition().equals("empty")) return true;
+
+        return false;
     }
 
     // TODO: poter scrivere sempre.
@@ -342,7 +403,10 @@ public class TUI extends UI {
                             break;
 
                         case PlayCardRequest e :
-                            printOut("CARTE NELLA TUA MANO:");
+                            printOut("YOUR PLAYED CARDS:");
+                            printGrid(e.playerView.hand.playedCards);
+
+                            printOut("YOUR HAND:");
                             for(Card card : e.playerView.hand.handCards){
                                 printCard(card);
                             }
