@@ -32,12 +32,10 @@ public class Game{
      * attribute that keeps count of remaining turns when the ending stage of the game is triggered
      */
     private int remainingTurns;
-
     /**
      * integer representing the current player position in the array of players
      */
      private int curPlayerPosition;
-
     /**
      * The starting cards deck
      */
@@ -260,7 +258,7 @@ public class Game{
                 remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
-                    EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname());
+                    EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
                     mvListeners.get(i).addEvent(event);
                 }
             //both decks are found empty simultaneously
@@ -270,7 +268,7 @@ public class Game{
                 remainingTurns = numPlayers + (numPlayers-curPlayerPosition); //calcolo turni rimanenti
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
-                    EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                    EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
                     mvListeners.get(i).addEvent(event);
                 }
             //gold deck is found empty
@@ -285,7 +283,7 @@ public class Game{
                     //both decks are empty: same as case 4
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
-                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
                         mvListeners.get(i).addEvent(event);
                     }
                 }
@@ -299,7 +297,7 @@ public class Game{
                 if (tablecenter.getGoldDeck().AckEmpty){
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
-                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname());
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
                         mvListeners.get(i).addEvent(event);
                     }
                 }

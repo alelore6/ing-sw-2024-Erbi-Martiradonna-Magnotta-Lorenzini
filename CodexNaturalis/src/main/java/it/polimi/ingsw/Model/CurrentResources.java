@@ -20,13 +20,17 @@ public class CurrentResources implements Serializable {
      * Constructor: initialize all resources values to 0
      * @param player the player that owns the resources
      */
-     CurrentResources(Player player){
-         currentResources=new HashMap<>();
-         this.player=player;
-         for (Resource r: Resource.values()){
+     CurrentResources(Player player) {
+         currentResources = new HashMap<Resource, Integer>();
+         this.player = player;
+         for (Resource r : Resource.values()) {
              currentResources.put(r, 0);
          }
      }
+
+    public HashMap<Resource, Integer> getCurrentResources() {
+        return currentResources;
+    }
 
     /**
      * update the player's resources after every card played:

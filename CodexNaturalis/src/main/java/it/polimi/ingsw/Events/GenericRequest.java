@@ -8,6 +8,11 @@ public abstract class GenericRequest extends GenericEvent{
      * @param nickname player that receives or sends the event
      */
     public GenericRequest(String message, String nickname) {
-        super("\u001B[47m" + "\u001B[30m" + message + "\u001B[0m", nickname);
+        super(message, nickname);
+    }
+
+    @Override
+    public String msgOutput() {
+        return "\u001B[47m" + "\u001B[30m" + super.msgOutput() + "\u001B[0m";
     }
 }

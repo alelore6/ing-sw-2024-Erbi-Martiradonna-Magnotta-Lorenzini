@@ -33,4 +33,16 @@ public class FinalRankings extends GenericEvent{
         }
         return message.concat(m);
     }
+
+    @Override
+    public String getMessage() {
+        String m=" ";
+        int count=1;
+        for (String key : Rankings.keySet()) {
+            //non sono sicuro siano già in ordine
+            m.concat("\t"+ count+". "+key+": "+Rankings.get(key)+"\n");
+            count++;
+        }
+        return message.concat(m);
+    }
 }

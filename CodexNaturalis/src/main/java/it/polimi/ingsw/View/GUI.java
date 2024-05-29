@@ -110,7 +110,7 @@ public class GUI extends UI{
                     GenericEvent newEvent=null;
                     String s=null;
                     ArrayList<Object> possibilities=null;
-                    String message= ev.msgOutput();
+                    String message= ev.getMessage();
 
 
                     switch(ev){
@@ -168,8 +168,19 @@ public class GUI extends UI{
                             break;
 
                         case PlayCardRequest e :
-                            //cosa fare???
-                            JOptionPane.showMessageDialog(f, message);
+                            //TODO sistemare quando frame sarà pronto
+                            int posx=-1, posy=-1;
+                            while(s==null) {
+                                s = (String) JOptionPane.showInputDialog(f, message, "Play a card: choose card", JOptionPane.PLAIN_MESSAGE, icon,null, null);
+                            }
+                            while(posx==-1) {
+                                posx = Integer.parseInt((String) JOptionPane.showInputDialog(f, message, "Play a card: choose posx", JOptionPane.PLAIN_MESSAGE, icon,null, null));
+                            }
+                            while(posy==-1) {
+                                posy = Integer.parseInt((String) JOptionPane.showInputDialog(f, message, "Play a card: choose posy", JOptionPane.PLAIN_MESSAGE, icon,null, null));
+                            }
+                            newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[Integer.parseInt(s)-1] ,posx,posy);
+                            notifyListener(newEvent);
                             break;
 
                         case SetTokenColorRequest e :
@@ -178,10 +189,9 @@ public class GUI extends UI{
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
-                                //TODO capire perchè non prende il valore preselezionato
                                 s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
                             }
-                            newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal() , client.getNickname());
+                            newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal()+1 , client.getNickname());
                             notifyListener(newEvent);
                             break;
 

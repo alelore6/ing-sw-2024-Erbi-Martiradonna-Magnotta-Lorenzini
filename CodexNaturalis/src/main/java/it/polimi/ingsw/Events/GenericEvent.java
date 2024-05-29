@@ -33,4 +33,8 @@ public abstract class GenericEvent implements Serializable {
     public String msgOutput(){
         return "------------------------\n" + message;
     }
+
+    public String getMessage() {
+        return message;
+    }
 }
