@@ -440,6 +440,14 @@ public class TUI extends UI {
                             notifyListener(new DrawCardResponse(chooseInt(1,2),client.getNickname()));
                             break;
 
+                        case ErrorJoinLobby e :
+                            printOut("Do you want to try to connect again?\n" +
+                                    "(1) for yes, (2) for no:");
+                            n = chooseInt(1,2);
+                            if(n == 1)  notifyListener(new ClientRegister(client));
+                            else        System.exit(1);
+                            break;
+
                         case ChooseObjectiveRequest e :
                             printCard(e.objCard1);
                             printCard(e.objCard2);
@@ -481,7 +489,7 @@ public class TUI extends UI {
                             break;
 
                         case JoinLobby e :
-                            if(e.getNickname() != null)  client.setNickname(e.getNickname());
+                            if(e.getNewNickname() != null)  client.setNickname(e.getNewNickname());
 
                             notifyListener(new SetPassword(client.getNickname(), chooseString("password")));
                             break;

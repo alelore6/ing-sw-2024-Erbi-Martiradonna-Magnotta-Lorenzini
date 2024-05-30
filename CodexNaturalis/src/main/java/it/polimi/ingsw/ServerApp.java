@@ -16,6 +16,8 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 import java.rmi.registry.Registry;
 
+import static java.lang.Thread.sleep;
+
 public class ServerApp {
 
     private static final ServerImpl server;
@@ -38,18 +40,21 @@ public class ServerApp {
 
         Scanner terminal = new Scanner(System.in);
 
-        // TODO: creare un thread per il ping ogni tot
-
         // creo server RMI
-        Thread rmiThread = new Thread(() -> {
-            try {
-                startRMI();
-            } catch (RemoteException | AlreadyBoundException e) {
-                System.err.println("Cannot start RMI.\n");
-                e.printStackTrace();
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    startRMI();
+                } catch (RemoteException | AlreadyBoundException e) {
+                    System.err.println("Cannot start RMI.\n");
+                    e.printStackTrace();
+                }
+
+                // TODO: creare un thread per il ping ogni tot (il socket lo ha già di per sé).
+                // while(true){}
             }
-        });
-        rmiThread.start();
+        }.start();
 
         // creo server socket
         Thread socketThread = new Thread(() -> {
@@ -82,12 +87,11 @@ public class ServerApp {
                 try{
                     Socket socket = serverSocket.accept();
 
-                    System.out.println("A client (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
-
                     new Thread(){
                         public void run(){
                             try{
                                 ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
+                                System.out.println(clientSkeleton.getNickname() + " (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
                                 server.register(clientSkeleton);
 
@@ -95,7 +99,7 @@ public class ServerApp {
 
                             }catch(RemoteException e){
                                 System.err.println("Cannot receive client.");
-                            }finally {
+                            }finally{
                                 System.out.println("Closing connection.");
                                 try {
                                     socket.close();

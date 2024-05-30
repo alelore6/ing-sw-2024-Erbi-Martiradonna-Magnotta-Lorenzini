@@ -47,8 +47,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             numClient++;
 
             // if MALEDETTO
-            if(client instanceof ClientSkeleton)    clientSkeletons.add((ClientSkeleton) client);
-            else                                    clientProxies.add(client);
+            if(client instanceof ClientSkeleton)
+                clientSkeletons.add((ClientSkeleton) client);
+            else{
+                clientProxies.add(client);
+                System.out.println(client.getNickname() + " is connected with RMI.");
+            }
         }
     }
 

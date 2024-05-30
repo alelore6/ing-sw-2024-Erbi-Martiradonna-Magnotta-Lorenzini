@@ -18,6 +18,9 @@ import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.TUI;
 
 public class ClientApp {
+
+    private static final int PING_INTERVAL = 100; // milliseconds
+
     public static void main(String[] args) throws RemoteException, NotBoundException {
 
         List<String> args_list = Arrays.stream(args).toList();
@@ -45,8 +48,19 @@ public class ClientApp {
 
             ClientImpl client = new ClientImpl(server, isTUI);
 
-            //client registers itself on the server
-            //server.register(client); //con questo registro lo stub del client al server
+            new Thread(){
+                @Override
+                public void run() {
+                    while(true){
+                        try {
+                            sleep(PING_INTERVAL);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                        // sendPing();
+                    }
+                }
+            }; // Inserisci start quando completato
         }
         else{   //socket
 

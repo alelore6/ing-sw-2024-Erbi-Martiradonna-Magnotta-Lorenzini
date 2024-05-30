@@ -102,11 +102,11 @@ public class Controller {
                 // Checks the game hasn't started yet.
                  if (model == null && lobby!=null) {
                     if(!lobby.addPlayer(nickname)) {
-                        server.logger.addLog("Can't add the player", Severity.WARNING);
-                        mvListener.addEvent(new ErrorJoinLobby(nickname));
+                        server.logger.addLog("Can't add the player.", Severity.WARNING);
+                        mvListener.addEvent(new ErrorJoinLobby(nickname, lobby.getNumPlayers() == 0 ? 1 : 0));
                     }
                     else {
-                        mvListener.addEvent(new JoinLobby(nickname, oldNickname));
+                        mvListener.addEvent(new JoinLobby(oldNickname, nickname));
                         if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                             createGame();
                         }
@@ -114,7 +114,7 @@ public class Controller {
                 }
                 else{
                     server.logger.addLog("Can't add the player: the game has already started or lobby isn't ready.", Severity.WARNING);
-                    mvListener.addEvent(new ErrorJoinLobby(nickname));
+                    mvListener.addEvent(new ErrorJoinLobby(oldNickname, model == null ? 1 : 2));
                 }
             }
         }
@@ -141,7 +141,7 @@ public class Controller {
                 //the first player is added after creating the lobby
                 if(!lobby.addPlayer(nickname)) {
                     server.logger.addLog("Can't add the player", Severity.WARNING);
-                    getMVListenerByNickname(nickname).addEvent(new ErrorJoinLobby(nickname));
+                    getMVListenerByNickname(nickname).addEvent(new ErrorJoinLobby(nickname, 1));
                 }
                 else {
                     getMVListenerByNickname(nickname).addEvent(new JoinLobby(nickname, nickname));
