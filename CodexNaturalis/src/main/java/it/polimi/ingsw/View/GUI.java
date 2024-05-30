@@ -24,8 +24,7 @@ public class GUI extends UI{
 
     public GUI(ClientImpl client) {
         super(client);
-        f = new MainFrame("CodexNaturalis");
-        //f.setVisible(true);
+        f = new MainFrame( client.getNickname());
 
         //icon for dialogs
         ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));

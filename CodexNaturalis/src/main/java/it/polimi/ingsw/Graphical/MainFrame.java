@@ -1,6 +1,6 @@
 package it.polimi.ingsw.Graphical;
 
-import it.polimi.ingsw.Events.StartGame;
+import it.polimi.ingsw.ModelView.GameView;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,60 +10,80 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 
 public class MainFrame extends JFrame {
 
-    int x;
-    int y;
-    double scale;
-    private String fileToPrintPath = null;
-    private ActionListener ActionEvent;
-    private JLabel viewLabel;
     private JMenuBar menuBar;
-    private JPanel initialPanel;
     private JPanel mainPanel;
-    private JPanel tableCenterPanel;
-    private JPanel handPanel;
-    private JPanel positionedCardPanel;
+    private TableCenterPanel tableCenterPanel;
+    private PersonalPanel personalPanel;
+    private HashMap<String,PlayerPanel> otherPlayers;
+    private String nickname;
 
 
 
-
-    public MainFrame(String s) {
-        super(s);
+    public MainFrame(String nickname) {
+        super("CodexNaturalis");
+        this.nickname = nickname;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1280, 720); //16:9 proporzione
+        //this.setSize(1280, 720); //16:9 proporzione
+        setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
         setLayout(new BorderLayout());
-        ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
-        int width = 800;
-        int height = 720;
-        Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
-        ImageIcon centerImgIcon = new ImageIcon(imgResized);
-        this.add(new JLabel(img), BorderLayout.CENTER);
-
-        mainPanel = new JPanel(new CardLayout()); {
-            add(mainPanel, BorderLayout.CENTER);
-        }
-        initialPanel = new JPanel() {
-            protected void paintComponent(Graphics g) {
-                super.paintComponents(g);
-
-                int x =( getWidth()-width)/2;
-                int y = (getHeight()-height)/2;
-                g.drawImage(imgResized, x, y, this);
+        //TODO non funziona nessuno dei due modi per aggiungere l'immagine
+        try {
+            ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
+            int width = 800;
+            int height = 720;
+            if (img.getImageLoadStatus() == MediaTracker.ERRORED) {
+                System.out.println("Errore nel caricamento dell'immagine.");
+                return;
             }
-        };
-        mainPanel.add(initialPanel, BorderLayout.CENTER);
+            Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
+            //ImageIcon resizedIcon = new ImageIcon(imgResized);
+
+            //1
+            mainPanel = new JPanel(){
+                @Override
+                protected void paintComponent(Graphics g) {
+                    super.paintComponent(g);
+
+                    int x = (getWidth() - width) / 2;
+                    int y = (getHeight() - height) / 2;
+                    g.drawImage(img.getImage(), x, y, this);
+                }
+            };
+
+            //2
+            JLabel imageLabel = new JLabel(img);
+            mainPanel = new JPanel();
+            mainPanel.add(imageLabel);
+
+            mainPanel.setBackground(Color.BLUE);
+        } catch (Exception e) {
+            System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        //mainPanel.add(new JLabel(centerImgIcon));
+        add(mainPanel,BorderLayout.CENTER);
+        mainPanel.setVisible(true);
+
         setVisible(true);
 
-        initialPanel.revalidate();
-        initialPanel.repaint();
-        //danno errore
-        //InitializeMenuBar(4);
-        //GenerationPanels(4);
     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                // Crea un'istanza della finestra fullscreen
+                MainFrame frame = new MainFrame("1111");
 
+
+            }
+        });
+    }
 
     public void paint(Graphics g) {
         //TODO paint method is called automatically when the frame is istantiated
@@ -75,105 +95,73 @@ public class MainFrame extends JFrame {
 */
     }
 
-    private void printRectangle(Graphics g) {
-        g.drawString("Hello", 900, 50);
-        int X = 800;
-        int Y = 100;
-        int rectwidth = 50;
-        int rectheight = 100;
-        g.setColor(Color.red);
-        g.drawRect(X, Y, rectwidth, rectheight);
-    }
 
-    private void printCard(Graphics g) {
-        ClassLoader cl = this.getClass().getClassLoader();
-        InputStream url = cl.getResourceAsStream(fileToPrintPath);
-        BufferedImage img = null;
-        try {
-            img = ImageIO.read(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return;
+    public void createGamePanels(GameView gameView) {
+
+        tableCenterPanel = new TableCenterPanel(gameView);
+        addToMenuBar("Table center");
+        mainPanel.getLayout().addLayoutComponent("Table center", tableCenterPanel);
+
+        otherPlayers = new HashMap<String, PlayerPanel>();
+
+        for(int i=0; i<gameView.numPlayers;i++){
+
+            if (gameView.players.get(i).nickname.equalsIgnoreCase(nickname)){
+                personalPanel = new PersonalPanel(gameView.players.get(i));
+                addToMenuBar("Personal panel");
+                mainPanel.getLayout().addLayoutComponent("Personal panel", personalPanel);
+
+            } else {
+                otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i)));
+                addToMenuBar(gameView.players.get(i).nickname+" panel");
+                mainPanel.getLayout().addLayoutComponent(gameView.players.get(i).nickname+" panel", tableCenterPanel);
+            }
         }
 
-        int width = (int) (993 * scale);
-        int height = (int) (width / 1.5); // 1.5 is the aspect ratio of a card
-        g.drawImage(img, x, y, width, height, null);
-    }
-
-    public void setPrintPath(String s) {
-        this.fileToPrintPath = s;
-    }
-
-    public void setCoord(int x, int y, double scale) {
-        this.x = x;
-        this.y = y;
-        this.scale = scale;
     }
 
 
-    public void GenerationPanels(int NumberOfPLayers) {
+    private void addToMenuBar(String label){
 
-        mainPanel = new JPanel();
-        mainPanel.setLayout(null);
+        JMenuItem menuItem = new JMenuItem(label);
 
-        tableCenterPanel = new JPanel();
-        tableCenterPanel.setBackground(Color.RED);
-        handPanel = new JPanel();
-        handPanel.setBackground(Color.CYAN);
-        positionedCardPanel = new JPanel();
-        positionedCardPanel.setBackground(Color.YELLOW);
-
-        mainPanel.add(tableCenterPanel,"tableCenterPanel");
-        mainPanel.add(handPanel,"handPanel");
-        for (int i = 0; i < NumberOfPLayers; i++){
-            mainPanel.add(positionedCardPanel, "positionedCardPanel "+ (i+1));
-        }
-    }
-    public void InitializeMenuBar( int NumberOfPLayers) {
-        menuBar = new JMenuBar();
-        JMenuItem tableCenter = new JMenuItem("Table Center");
-        JMenuItem hand = new JMenuItem("Hand");
-
-        menuBar.add(tableCenter);
-        menuBar.add(hand);
-
-        for (int i = 0; i < NumberOfPLayers; i++) {
-            JMenuItem positionedCards = new JMenuItem("Positioned Cards Player " + (i + 1));
-            menuBar.add(positionedCards);
-            positionedCards.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    switchPanel("positionedCardPanel");
-                }
-            });
-        }
-        tableCenter.addActionListener(new ActionListener() {
+        menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                switchPanel("tableCenterPanel");
-
+                switchPanel(label);
             }
         });
 
-        hand.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                switchPanel("handPanel");
-            }
-        });
+        menuBar.add(menuItem);
 
-        setJMenuBar(menuBar);
-        setVisible(true);
     }
 
-    private void switchPanel(String  panel) {
+    public void switchPanel(String  panel) {
         CardLayout layout =(CardLayout) (mainPanel.getLayout());
         layout.show(mainPanel, panel);
     }
 
-    public void reactStartGame(StartGame ev){
-        InitializeMenuBar(ev.model.numPlayers);
+    public void reactStartGame(GameView gameView){
+        this.menuBar=new JMenuBar();
+        this.setJMenuBar(menuBar);
+        menuBar.setVisible(true);
+        createGamePanels(gameView);
         switchPanel("tableCenterPanel");
-        /* In Theory this should show the two objective Cards to choose one of them, i put table CenterPanel as the first panel to be shown, i dont' know in which
-        * panel will be shown the draw of the Objective Card*/
+    }
+
+    private JPanel getPanelByLabel(String label){
+        if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
+        else if(label.equalsIgnoreCase("Personal panel")) return personalPanel;
+        else return otherPlayers.get(label);
+    }
+
+    public void update(GameView gameView){
+        tableCenterPanel.update(gameView);
+        personalPanel.update(gameView.getPlayerViewByNickname(nickname));
+
+        for(String name:otherPlayers.keySet()){
+            otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
+        }
     }
 
 }
