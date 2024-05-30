@@ -26,6 +26,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         isRMI = server instanceof ServerStub ? false : true;
         clientFasullo = false;
         userInterface = isTUI ? new TUI(this) : new GUI(this);
+        run();
         nickname = userInterface.chooseNickname();
 
         initialize(server);

@@ -47,8 +47,6 @@ public class ClientApp {
 
             //client registers itself on the server
             //server.register(client); //con questo registro lo stub del client al server
-
-            client.run();
         }
         else{   //socket
 
@@ -79,7 +77,6 @@ public class ClientApp {
                     }
                 }
             }.start();
-            client.run();
         }
     }
 }

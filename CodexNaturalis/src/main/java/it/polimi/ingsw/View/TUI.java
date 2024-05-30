@@ -4,7 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 
-import java.io.PrintStream;
+import java.io.*;
 import java.util.*;
 
 import static it.polimi.ingsw.Model.Position.*;
@@ -12,7 +12,8 @@ import static java.lang.String.join;
 
 public class TUI extends UI {
 
-    private final Scanner in = new Scanner(System.in);
+    private final Queue<String> lastInputs = new LinkedList<>();
+    private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
     private Object lock_events = new Object();
@@ -32,9 +33,23 @@ public class TUI extends UI {
         int intChoice = 0;
 
         while(!isValid){
-                choice = in.nextLine();
-                // Checks if the input is a chat message and if yes, it sends it.
-                if(listenToChat(choice))    continue;
+            synchronized (lastInputs){
+                lastInputs.clear();
+
+                while(lastInputs.isEmpty()){
+                    try{
+                        lastInputs.wait();
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                choice = lastInputs.poll();
+            }
+
+            if(listenToChat(choice))    continue;
+
+            // Checks if the input is a chat message and if yes, it sends it.
             try{
                 intChoice = Integer.parseInt(choice);
             } catch (NumberFormatException e) {
@@ -84,7 +99,19 @@ public class TUI extends UI {
         printOut("\u001B[4m" + "Insert " + s + ":" + "\u001B[0m");
 
         while(!isValid){
-            tempString = in.nextLine();
+            synchronized (lastInputs){
+                lastInputs.clear();
+
+                while(lastInputs.isEmpty()){
+                    try{
+                        lastInputs.wait();
+                    }catch(InterruptedException e){
+                        e.printStackTrace();
+                    }
+                }
+
+                tempString = lastInputs.poll();
+            }
 
             if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
@@ -153,7 +180,7 @@ public class TUI extends UI {
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
-            printOut("Color: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
+            printOut("\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
                         "\n\tVisible corners:\n");
             Arrays.stream(card.getFrontCorners()).forEach(corner -> printOut(
                     "\t\t" + corner.getPosition() + ": " + corner.getResource()));
@@ -247,6 +274,8 @@ public class TUI extends UI {
         final String NEAR_BLOCK = setColorForString("YELLOW", "■", true);
         String grid = "";
 
+        // Find the min and max of rows and columns used for a better view:
+        // by doing so, every time it prints the used grid and not the entire one of the size of 80x80.
         for(int i = 0; i < 80; i++){
             for(int j = 0; j < 80; j++){
                 if(playedCards[i][j] != null){
@@ -258,18 +287,26 @@ public class TUI extends UI {
             }
         }
 
-        // Renormalization of pathological cases.
+        // Renormalization of pathological cases:
+        // if the margins are too big, it simply rescales the min and max of rows and columns.
         if(minRow    - GRID_MARGIN < 0)   minRow    =      GRID_MARGIN;
         if(minColumn - GRID_MARGIN < 0)   minColumn =      GRID_MARGIN;
         if(maxRow    + GRID_MARGIN >= 80) maxRow    = 80 - GRID_MARGIN - 1;
         if(maxColumn + GRID_MARGIN >= 80) maxColumn = 80 - GRID_MARGIN - 1;
 
-        for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++)
+        // It prints the column numbers.
+        for(int j = minColumn - GRID_MARGIN - 40; j <= maxColumn + GRID_MARGIN - 40; j++)
             grid += HORIZONTAL_SPACE + j;
 
+        // It prints the rest.
         for(int i = minRow - GRID_MARGIN; i <= maxRow + GRID_MARGIN; i++){
-            grid += "\n" + i;
+            // It prints the row numbers.
+            int I = i - 40;
+            grid += "\n" + (I < 0 ? "" : " ") + I;
+
             for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++){
+                // If the current element is null, it checks possible adjacent cards and, if it finds at least one,
+                // it marks this position with yellow, else with black.
                 if(playedCards[i][j] == null){
                     if(checkNear(playedCards, i, j)){
                         grid += HORIZONTAL_SPACE + NEAR_BLOCK;
@@ -278,6 +315,7 @@ public class TUI extends UI {
                         grid += HORIZONTAL_SPACE + FAR_BLOCK;
                     }
                 }
+                // If the current element is not null, it simply prints the card's ID located here colored by the corresponding color.
                 else{
                     grid += HORIZONTAL_SPACE + setColorForString(playedCards[i][j].getColor().toString(), String.valueOf(playedCards[i][j].getID()), true);
                 }
@@ -345,22 +383,51 @@ public class TUI extends UI {
 
         clearConsole();
 
-        // Chat's thread
+        // Chat's input
+        new Thread(){
+            @Override
+            public void run() {
+                while(isActive){
+                    String s = null;
+                    try {
+                        s = in.readLine();
+                        synchronized(lastInputs){
+                            if(!listenToChat(s)){
+                                lastInputs.add(s);
+                                lastInputs.notifyAll();
+                            }
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                    /*if(in.hasNextLine()){
+                        s = in.nextLine();
+                        synchronized(lastInputs){
+                            if(!listenToChat(s)){
+                                lastInputs.add(s);
+                                lastInputs.notifyAll();
+                            }
+                        }
+                    }*/
+                }
+            }
+        }.start();
+
+        // Chat's output
         new Thread(){
             @Override
             public void run() {
                 while(isActive){
                     ChatMessage msg = null;
+                    synchronized(lock_chat){
+                        if (!chatMessages.isEmpty()){
+                            msg = chatMessages.poll();
 
-                    synchronized (lock_chat) {
-                        if (chatMessages.isEmpty()) continue;
-
-                        msg = chatMessages.poll();
+                            if((msg instanceof ChatAck) || !msg.nickname.equals(client.getNickname()))
+                                printOut(msg.msgOutput());
+                        }
                     }
-
-                    if(!(msg instanceof ChatAck) && msg.nickname.equals(client.getNickname())) continue;
-
-                    printOut(msg.msgOutput());
                 }
             }
         }.start();
@@ -382,9 +449,10 @@ public class TUI extends UI {
                     if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     // This check is not necessary but until the ack aren't fixed it helps to have the correct output.
-                    if((ev instanceof AckResponse) || !(ev instanceof GenericResponse)) printOut(ev.msgOutput());
 
                     int n;
+
+                    if((ev instanceof AckResponse) || !(ev instanceof GenericResponse)) printOut(ev.msgOutput());
 
                     switch(ev){
                         case DrawCardRequest e :
@@ -410,17 +478,14 @@ public class TUI extends UI {
                             for(Card card : e.playerView.hand.handCards){
                                 printCard(card);
                             }
-                            n = -1;
-                            do{
-                                if(n != -1) printOut(inputError());
-                                n = chooseInt(1,80);
-                            }while(!e.choiceIsValid(n));
+
+                            n = chooseInt(1,3);
 
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.playerView.hand.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            notifyListener(new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], chooseInt(0, 80), chooseInt(0, 80)));
+                            notifyListener(new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], 40 + chooseInt(-40, 40), 40 + chooseInt(-40, 40)));
                             break;
 
                         case SetTokenColorRequest e :

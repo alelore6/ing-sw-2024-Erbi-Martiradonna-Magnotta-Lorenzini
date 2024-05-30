@@ -9,11 +9,11 @@ public class NumPlayersRequest extends GenericRequest{
      * @param nickname the player that receives the event
      */
     public NumPlayersRequest(String nickname){
-        super("You are the first player in the lobby, please set the number of players for the game.\n",nickname);
+        super("You are the first player in the lobby, please set the number of players for the game.",nickname);
     }
 
     @Override
     public String msgOutput() {
-        return super.msgOutput() + "\u001B[4m" + "Enter a number between 2 and 4:" + "\u001B[0m";
+        return super.msgOutput() + "\n\u001B[4m" + "Enter a number between 2 and 4:" + "\u001B[0m";
     }
 }

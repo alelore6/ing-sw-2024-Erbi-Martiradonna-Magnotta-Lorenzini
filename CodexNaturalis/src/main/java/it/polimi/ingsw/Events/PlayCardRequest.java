@@ -22,15 +22,9 @@ public class PlayCardRequest extends GenericRequest {
         this.playerView = playerView;
     }
 
-    public boolean choiceIsValid(int n){
-        if(n <= 3) return true;
-
-        return false;
-    }
-
     @Override
     public String msgOutput(){
-        String s = super.msgOutput() + "Enter the chosen card's number:\n";
+        String s = super.msgOutput() + "Select a card:\n";
 
         for(int i = 0; i < 3; i++){
             s = s + String.valueOf(i+1) + ": " + String.valueOf(playerView.hand.handCards[i].getID()) + "\n";
@@ -44,6 +38,6 @@ public class PlayCardRequest extends GenericRequest {
     }
 
     public String msgOutput3(){
-        return "Now enter the two coordinates where the card will be placed (0 to 80 included): ";
+        return "Now enter the two coordinates (first row, then column) where the card will be placed (look at the grid for help): ";
     }
 }

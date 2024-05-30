@@ -13,8 +13,8 @@ public class JoinLobby extends GenericRequest{
      * @param nickname the player that has joined the lobby
      */
     public JoinLobby(String nickname, String oldNickname){
-        super("You have joined a lobby, waiting for other players to start the game..." +
-                "\nSet a password so that you can reconnect to this game in case of disconnection (min. 4 characters and no space allowed):", nickname);
+        super("You have joined a lobby, waiting for other players to start the game...\u001B[49m\n" +
+                "\u001B[47m" + "Set a password so that you can reconnect to this game in case of disconnection (min. 4 characters and no space allowed):", nickname);
         this.nickname = nickname;
         this.oldNickname = oldNickname;
     }
