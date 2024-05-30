@@ -27,7 +27,7 @@ public class PlayCardRequest extends GenericRequest {
         String s = super.msgOutput() + "Select a card:\n";
 
         for(int i = 0; i < 3; i++){
-            s = s + String.valueOf(i+1) + ": " + String.valueOf(playerView.hand.handCards[i].getID()) + "\n";
+            s = s + "(" + String.valueOf(i+1) + ")" + ": " + String.valueOf(playerView.hand.handCards[i].getID()) + "\n";
         }
 
         return s;

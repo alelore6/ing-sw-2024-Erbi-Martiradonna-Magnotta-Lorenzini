@@ -74,18 +74,10 @@ public class TUI extends UI {
         try{
             final String so = System.getProperty("os.name");
 
-            if (so.contains("Windows"))
-            {
-                Runtime.getRuntime().exec("cls");
-            }
-            else
-            {
-                Runtime.getRuntime().exec("clear");
-            }
+            if(so.contains("Windows"))  Runtime.getRuntime().exec("cls");
+            else                        Runtime.getRuntime().exec("clear");
         }
-        catch (Exception ignored){
-
-        }
+        catch (Exception ignored){}
     }
 
     public String chooseNickname() {
@@ -179,19 +171,20 @@ public class TUI extends UI {
 
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
-            printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:");
-            printOut("\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
-                        "\n\tVisible corners:\n");
-            Arrays.stream(card.getFrontCorners()).forEach(corner -> printOut(
-                    "\t\t" + corner.getPosition() + ": " + corner.getResource()));
+            printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
+                    + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
+                    "\n\tVisible corners:\n");
+            for(Corner corner : card.getFrontCorners()){
+                printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                        + ": "+ corner.getResource());
+            }
             printOut("\tBACK:");
-            Arrays.stream(card.getBackCorners()).forEach(corner -> printOut(
-                    "\t\t" + corner.getPosition() + ": " + corner.getResource()));
+            for(Corner corner : card.getBackCorners()){
+                printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                        + ": " + corner.getResource());
+            }
 
             if(card instanceof GoldCard){
-                // the number of total distinct resources
-                int NUM_RES = 7;
-
                 printOut("Requirements:");
                 for(Resource res : ((GoldCard) card).getReq().keySet()){
                     if(((GoldCard) card).getReq().get(res) > 0)
@@ -202,26 +195,26 @@ public class TUI extends UI {
             if(((PlayableCard) card).getPoints() == 0)  return;
 
             printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + " points");
-            if(card instanceof GoldCard){
-                //printOut("\t for every " + (((GoldCard) card).isRPointsCorner() && ((GoldCard) card).getRPoints() != null ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
+            if(card instanceof GoldCard && (((GoldCard) card).isRPointsCorner() == true || ((GoldCard) card).getRPoints() != null)){
+                printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
             }
             printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
             printOut("VISIBLE CORNER:\n\tFRONT:");
-            for(int i = 0; i < 4; i++){
-                if(!card.getFrontCorners()[i].getPosition().equals("empty"))
-                    printOut("\t\t" + card.getFrontCorners()[i].getPosition() + ": "
-                            + (card.getFrontCorners()[i].getPosition().equals(UP_SX.toString()) || card.getFrontCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
-                            + card.getFrontCorners()[i].getStringResource());
+            for(Corner corner : card.getFrontCorners()){
+                if(!corner.getPosition().equals("empty"))
+                    printOut("\t\t" + corner.getPosition() + ": "
+                            + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + corner.getStringResource());
             }
             printOut("\n\tBACK:");
-            for(int i = 0; i < card.getBackCorners().length; i++){
-                if(!card.getBackCorners()[i].getPosition().equals("empty"))
-                    printOut("\t\t" + card.getBackCorners()[i].getPosition() + ": "
-                            + (card.getBackCorners()[i].getPosition().equals(UP_SX.toString()) || card.getBackCorners()[i].getPosition().equals(UP_DX.toString()) ? "  " : "")
-                            + card.getBackCorners()[i].getStringResource());
+            for(Corner corner : card.getBackCorners()){
+                if(!corner.getPosition().equals("empty"))
+                    printOut("\t\t" + corner.getPosition() + ": "
+                            + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + corner.getStringResource());
             }
             printOut("\n\tRESOURCES IN THE BACK:");
             for(Resource resource : ((StartingCard) card).resource){
@@ -268,7 +261,6 @@ public class TUI extends UI {
         int maxRow = 40;
         int maxColumn = 40;
         final int GRID_MARGIN = 2;
-        assert GRID_MARGIN >= 0;
         final String HORIZONTAL_SPACE = "\t";
         final String FAR_BLOCK = setColorForString("BLACK", "■", false);
         final String NEAR_BLOCK = setColorForString("YELLOW", "■", true);
@@ -301,8 +293,7 @@ public class TUI extends UI {
         // It prints the rest.
         for(int i = minRow - GRID_MARGIN; i <= maxRow + GRID_MARGIN; i++){
             // It prints the row numbers.
-            int I = i - 40;
-            grid += "\n" + (I < 0 ? "" : " ") + I;
+            grid += "\n" + (i - 40 < 0 ? "" : " ") + (i - 40);
 
             for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++){
                 // If the current element is null, it checks possible adjacent cards and, if it finds at least one,
@@ -334,7 +325,6 @@ public class TUI extends UI {
         return false;
     }
 
-    // TODO: poter scrivere sempre.
     // It returns true if the string is a chat message, and it also sends it.
     private boolean listenToChat(String string){
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
@@ -401,15 +391,6 @@ public class TUI extends UI {
                         e.printStackTrace();
                         System.exit(1);
                     }
-                    /*if(in.hasNextLine()){
-                        s = in.nextLine();
-                        synchronized(lastInputs){
-                            if(!listenToChat(s)){
-                                lastInputs.add(s);
-                                lastInputs.notifyAll();
-                            }
-                        }
-                    }*/
                 }
             }
         }.start();
@@ -448,9 +429,9 @@ public class TUI extends UI {
                     // Ignore all other player's events
                     if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
-                    // This check is not necessary but until the ack aren't fixed it helps to have the correct output.
-
                     int n;
+
+                    clearConsole();
 
                     if((ev instanceof AckResponse) || !(ev instanceof GenericResponse)) printOut(ev.msgOutput());
 

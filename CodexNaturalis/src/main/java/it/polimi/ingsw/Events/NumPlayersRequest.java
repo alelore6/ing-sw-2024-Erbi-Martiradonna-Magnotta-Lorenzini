@@ -14,6 +14,6 @@ public class NumPlayersRequest extends GenericRequest{
 
     @Override
     public String msgOutput() {
-        return super.msgOutput() + "\n\u001B[4m" + "Enter a number between 2 and 4:" + "\u001B[0m";
+        return super.msgOutput() + "\nEnter a number between 2 and 4:";
     }
 }

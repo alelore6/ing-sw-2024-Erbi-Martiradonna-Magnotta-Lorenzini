@@ -233,7 +233,7 @@ public class Controller {
 //                        model.controllerLock.notifyAll();
 //                    }
                 }
-                else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again", nickname, (GenericResponse) event));
+                else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again.", nickname, (GenericResponse) event));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
