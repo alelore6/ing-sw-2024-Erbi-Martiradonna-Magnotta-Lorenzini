@@ -107,7 +107,11 @@ DEBUG E LAVORO (Alessandro e Gianluca):
         --> play card lancia eccezione per questo errore dentro currentResources.update riga 75 (array out of bounds)
 
 
+//aggiornamento 31/05:
 
+    -known bugs:
+        -quando si gioca nella tui, se piazzi una carta tra 2 carte e una di quelle non ha l'angolo scoperto, la piazza lo stesso.
+           --> controllare i controlli lato client in playCard()     UPDATE:  SOLVED ✅✅✅✅✅✅✅✅✅✅✅✅✅✅
 
 
 

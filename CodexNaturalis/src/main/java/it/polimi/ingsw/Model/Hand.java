@@ -149,69 +149,69 @@ public class Hand {
         if (x!=0 && displayedCards[x-1][y]!=null)
             throw new WrongPlayException(player,x,y,card);
         if (x!=80 && displayedCards[x+1][y]!=null)
-            throw new WrongPlayException(player,x,y,card);
-        if (y!=0 && displayedCards[x][y-1]!=null)
+            throw new WrongPlayException(player,x,y,card);  //TODO queste eccezioni probabilmente non vengono lanciate mai?
+        if (y!=0 && displayedCards[x][y-1]!=null)           // è un controllo sulle carte in modo che non vengano posizonate a croce?
             throw new WrongPlayException(player,x,y,card);
         if (y!=80 && displayedCards[x][y+1]!=null)
             throw new WrongPlayException(player,x,y,card);
         // corner that the card overlaps, must be at least 1
         Corner[] overlaps= new Corner[4];
         // if there is a card, check overlapping corners are visible
-        //card down SX
+        //CARD UP SX
         if (x!=0 && y!=0 && displayedCards[x-1][y-1]!=null){
             // 0: UP_SX; 1: UP_DX; 2: DOWN_SX; 3: DOWN_DX
             //if there's no corner, it's NULL
             if (!displayedCards[x-1][y-1].isFacedown){
-                if ((displayedCards[x-1][y-1]).frontCorners[1].pos==null)
+                if ((displayedCards[x-1][y-1]).frontCorners[3].pos==null)
                     throw new WrongPlayException(player,x,y,card);
                 //save the corner that is overlapped
-                else overlaps[0]= (displayedCards[x-1][y-1]).frontCorners[1];
+                else overlaps[0]= (displayedCards[x-1][y-1]).frontCorners[3];
             }
             else {
                 //check back corner
-                if ((displayedCards[x-1][y-1]).backCorners[1].pos==null)
+                if ((displayedCards[x-1][y-1]).backCorners[3].pos==null)
                     throw new WrongPlayException(player,x,y,card);
                 //save the corner that is overlapped
-                else overlaps[0]= (displayedCards[x-1][y-1]).backCorners[1];
+                else overlaps[0]= (displayedCards[x-1][y-1]).backCorners[3];
             }
         }
-        //card up SX
+        //card UP RIGHT
         if (x!=0 && y!=80 && displayedCards[x-1][y+1]!=null) {
             if (!displayedCards[x-1][y+1].isFacedown){
-                if ((displayedCards[x-1][y+1]).frontCorners[3].pos == null)
+                if ((displayedCards[x-1][y+1]).frontCorners[2].pos == null)
                     throw new WrongPlayException(player, x, y, card);
-                else overlaps[1] = (displayedCards[x-1][y+1]).frontCorners[3];
+                else overlaps[1] = (displayedCards[x-1][y+1]).frontCorners[2];
             }
             else {
-                if ((displayedCards[x-1][y+1]).backCorners[3].pos == null)
+                if ((displayedCards[x-1][y+1]).backCorners[2].pos == null)
                     throw new WrongPlayException(player, x, y, card);
-                else overlaps[1] = (displayedCards[x-1][y+1]).backCorners[3];
+                else overlaps[1] = (displayedCards[x-1][y+1]).backCorners[2];
             }
         }
-        //card up DX
+        //card DOWN RIGHT
         if (x!=80 && y!=80 && displayedCards[x+1][y+1]!=null){
             if (!displayedCards[x+1][y+1].isFacedown){
-                if((displayedCards[x+1][y+1]).frontCorners[2].pos==null)
+                if((displayedCards[x+1][y+1]).frontCorners[0].pos==null)
                     throw new WrongPlayException(player,x,y,card);
-                else overlaps[2]=(displayedCards[x+1][y+1]).frontCorners[2];
+                else overlaps[2]=(displayedCards[x+1][y+1]).frontCorners[0];
             }
             else {
-                if((displayedCards[x+1][y+1]).backCorners[2].pos==null)
+                if((displayedCards[x+1][y+1]).backCorners[0].pos==null)
                     throw new WrongPlayException(player,x,y,card);
-                else overlaps[2]=(displayedCards[x+1][y+1]).backCorners[2];
+                else overlaps[2]=(displayedCards[x+1][y+1]).backCorners[0];
             }
         }
         //card down SX
         if (x!=80 && y!=0 && displayedCards[x+1][y-1]!=null){
             if (!displayedCards[x+1][y-1].isFacedown){
-                if((displayedCards[x+1][y-1]).frontCorners[0].pos==null)
+                if((displayedCards[x+1][y-1]).frontCorners[1].pos==null)
                     throw new WrongPlayException(player,x,y,card);
-                overlaps[3]=(displayedCards[x+1][y-1]).frontCorners[0];
+                overlaps[3]=(displayedCards[x+1][y-1]).frontCorners[1];
                 }
             else {
-                if((displayedCards[x+1][y-1]).backCorners[0].pos==null)
+                if((displayedCards[x+1][y-1]).backCorners[1].pos==null)
                     throw new WrongPlayException(player,x,y,card);
-                overlaps[3]=(displayedCards[x+1][y-1]).backCorners[0];
+                overlaps[3]=(displayedCards[x+1][y-1]).backCorners[1];
             }
         }
         //if it's not a starting card: overlaps must be at least 1 and all overlaps corners are set covered
