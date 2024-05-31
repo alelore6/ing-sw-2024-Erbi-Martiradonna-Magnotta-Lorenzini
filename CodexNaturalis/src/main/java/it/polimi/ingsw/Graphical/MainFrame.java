@@ -27,10 +27,13 @@ public class MainFrame extends JFrame {
         super("CodexNaturalis");
         this.nickname = nickname;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.setSize(1280, 720); //16:9 proporzione
+        this.setSize(1280, 720); //16:9 proporzione
         setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
         setLayout(new BorderLayout());
         //TODO non funziona nessuno dei due modi per aggiungere l'immagine
+        mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBackground(Color.BLUE);
         try {
             ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
             int width = 800;
@@ -40,11 +43,11 @@ public class MainFrame extends JFrame {
                 return;
             }
             Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
-            //ImageIcon resizedIcon = new ImageIcon(imgResized);
+            ImageIcon resizedIcon = new ImageIcon(imgResized);
 
             //1
-            mainPanel = new JPanel(){
-                @Override
+           JPanel initialPanel = new JPanel(new CardLayout()){
+              @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
 
@@ -54,23 +57,20 @@ public class MainFrame extends JFrame {
                 }
             };
 
-            //2
-            JLabel imageLabel = new JLabel(img);
+            mainPanel.add(initialPanel, BorderLayout.CENTER);
+
+            /*JLabel imageLabel = new JLabel(img);
             mainPanel = new JPanel();
             mainPanel.add(imageLabel);
-
-            mainPanel.setBackground(Color.BLUE);
+           */
         } catch (Exception e) {
             System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
             e.printStackTrace();
         }
-
         //mainPanel.add(new JLabel(centerImgIcon));
-        add(mainPanel,BorderLayout.CENTER);
-        mainPanel.setVisible(true);
+        add(mainPanel, BorderLayout.CENTER);
 
         setVisible(true);
-
     }
 
     public static void main(String[] args) {
@@ -79,8 +79,6 @@ public class MainFrame extends JFrame {
             public void run() {
                 // Crea un'istanza della finestra fullscreen
                 MainFrame frame = new MainFrame("1111");
-
-
             }
         });
     }

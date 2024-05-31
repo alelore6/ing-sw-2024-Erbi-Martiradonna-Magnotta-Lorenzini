@@ -21,6 +21,7 @@ public class GUI extends UI{
 
     private static MainFrame f;
     private final ImageIcon icon;
+    private  Object g;
 
     public GUI(ClientImpl client) {
         super(client);

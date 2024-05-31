@@ -18,4 +18,5 @@ public interface Server extends Remote {
     //process event
     void update(Client client, GenericEvent event) throws RemoteException;
 
+
 }
