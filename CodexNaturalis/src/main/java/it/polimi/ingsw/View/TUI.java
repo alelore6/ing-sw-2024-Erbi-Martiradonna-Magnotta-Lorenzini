@@ -317,12 +317,34 @@ public class TUI extends UI {
     }
 
     private boolean checkNear(Card[][] playedCards, int x, int y){
-        if(x-1 >=  0 && y-1 >=  0 && playedCards[x-1][y-1] != null && !playedCards[x-1][y-1].getCorners()[3].getPosition().equals("empty")) return true;
-        if(x-1 >=  0 && y+1 <= 80 && playedCards[x-1][y+1] != null && !playedCards[x-1][y+1].getCorners()[2].getPosition().equals("empty")) return true;
-        if(x+1 >=  0 && y-1 >=  0 && playedCards[x+1][y-1] != null && !playedCards[x+1][y-1].getCorners()[1].getPosition().equals("empty")) return true;
-        if(x+1 <= 80 && y+1 <= 80 && playedCards[x+1][y+1] != null && !playedCards[x+1][y+1].getCorners()[0].getPosition().equals("empty")) return true;
+        int check = 0;
+        boolean hasNear = false;
+        if(x-1 >= 0 && y-1 >= 0 && playedCards[x-1][y-1] != null){
+                if(!playedCards[x-1][y-1].getCorners()[3].getPosition().equals("empty"))
+                    hasNear = true;
+                else
+                    return false;
+        }
+        if(x-1 >= 0 && y+1 <= 80 && playedCards[x-1][y+1] != null){
+                if(!playedCards[x-1][y+1].getCorners()[2].getPosition().equals("empty"))
+                    hasNear = true;
+                else
+                    return false;
+        }
+        if(x+1 >= 0 && y-1 >= 0 && playedCards[x+1][y-1] != null){
+            if(!playedCards[x+1][y-1].getCorners()[1].getPosition().equals("empty"))
+                hasNear = true;
+            else
+                return false;
+        }
+        if(x+1 <= 80 && y+1 <= 80 && playedCards[x+1][y+1] != null){
+            if(!playedCards[x+1][y+1].getCorners()[0].getPosition().equals("empty"))
+                hasNear = true;
+            else
+                return false;
+        }
 
-        return false;
+        return hasNear;
     }
 
     // It returns true if the string is a chat message, and it also sends it.
