@@ -153,7 +153,7 @@ public class Controller {
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
-                else if(server.findClientByNickname(((ChatMessage) event).recipient) != null)
+                else if(server.findClientByNickname(((ChatMessage) event).recipient, null) != null)
                     getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
                 else {
                     getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, false));
@@ -284,9 +284,9 @@ public class Controller {
 
     public ModelViewListener getMVListenerByNickname(String nickname){
         try {
-            for(ModelViewListener listener : MVListeners){
-                if(listener.client.getNickname().equals(nickname)){
-                    return listener;
+            for(int i = MVListeners.size() - 1; i >= 0; i--){
+                if(MVListeners.get(i).client.getNickname().equals(nickname)){
+                    return MVListeners.get(i);
                }
             }
             throw new RuntimeException();

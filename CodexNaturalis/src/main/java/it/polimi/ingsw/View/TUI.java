@@ -105,9 +105,9 @@ public class TUI extends UI {
                 tempString = lastInputs.poll();
             }
 
-            if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
+            if(tempString != null && !tempString.contains(".") && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
-            else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:", true));
+            else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces or points. Try again:", true));
         }
 
         return tempString.trim();
@@ -448,14 +448,17 @@ public class TUI extends UI {
                         ev = inputEvents.poll();
                     }
 
+                    if(!client.getNickname().contains(".") && ev instanceof JoinLobby && ev.nickname.equals(client.getNickname()))
+                        client.setNickname(((JoinLobby) ev).getNewNickname());
                     // Ignore all other player's events
-                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
+                    else if(!client.getNickname().contains(".") && !ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     int n;
 
-                    clearConsole();
+                    // clearConsole();
 
-                    if((ev instanceof AckResponse) || !(ev instanceof GenericResponse)) printOut(ev.msgOutput());
+                    if((ev instanceof AckResponse) || !(ev instanceof GenericResponse))
+                        printOut(ev.msgOutput());
 
                     switch(ev){
                         case DrawCardRequest e :
@@ -511,7 +514,7 @@ public class TUI extends UI {
                             break;
 
                         case JoinLobby e :
-                            if(e.getNewNickname() != null)  client.setNickname(e.getNewNickname());
+                            client.setNickname(e.getNewNickname());
 
                             notifyListener(new SetPassword(client.getNickname(), chooseString("password")));
                             break;

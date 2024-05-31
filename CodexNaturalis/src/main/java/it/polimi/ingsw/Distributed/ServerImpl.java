@@ -56,29 +56,31 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         }
     }
 
-    public Client findClientByNickname(String nickname) throws RemoteException {
-        Client client = findCPByNickname(nickname);
+    public Client findClientByNickname(String nickname, Client clientToExclude) throws RemoteException {
+        Client client = findCPByNickname(nickname, clientToExclude);
         if(client != null)  return client;
-        client = findCSbyNickname(nickname);
+        client = findCSbyNickname(nickname, clientToExclude);
         if(client != null)  return client;
 
         return null;
     }
 
-    public Client findCPByNickname(String nickname) throws RemoteException {
+    public Client findCPByNickname(String nickname, Client clientToExclude) throws RemoteException {
         synchronized (lock_clients){
             for(Client client : clientProxies){
-                if (client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))    return client;
+                if (!client.equals(clientToExclude) && client.getNickname().equalsIgnoreCase(nickname))
+                    return client;
             }
         }
 
         return null;
     }
 
-    public ClientSkeleton findCSbyNickname(String nickname){
+    public ClientSkeleton findCSbyNickname(String nickname, Client clientToExclude){
         synchronized (lock_clients){
             for(ClientSkeleton client : clientSkeletons){
-                if(client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))     return client;
+                if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))
+                    return client;
             }
         }
 
@@ -108,22 +110,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 }
             }
         }
-//        if(CLIENT_IMPL_LIST.contains(Clien)){
-//            //check it is client's turn
-//            if(((ClientImpl) client).getNickname().equalsIgnoreCase( controller.getGame().getCurrentPlayer())) {
-//                controller.updateModel(event,((ClientImpl) client).getNickname());
-//            }
-//            else throw new RemoteException("It is not "+((ClientImpl)client).getNickname() +" turn to play");
-//        } else throw new RemoteException("Client sending the event isn't registered to the server");
     }
 
     private void setClient(Client client, ClientRegister event) throws RemoteException{
         String oldNickname = event.getNickname();
 
         synchronized (lock_clients){
-            Client temp = findClientByNickname(oldNickname);
+            Client temp = findClientByNickname(oldNickname, client);
             // An identical nickname has been found and adds a sequential number at the end of the nickname.
-            if(temp != null && !temp.equals(client))    client.setNickname(oldNickname + numClient);
+            if(temp != null && !temp.equals(client))    client.setNickname(oldNickname + "." + numClient);
             else                                        client.setNickname(oldNickname);
 
             controller.addPlayerToLobby(client.getNickname(), controller.getMVListenerByNickname(client.getNickname()), oldNickname);
