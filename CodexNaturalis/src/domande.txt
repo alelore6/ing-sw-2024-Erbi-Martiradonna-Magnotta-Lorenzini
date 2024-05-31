@@ -113,6 +113,10 @@ DEBUG E LAVORO (Alessandro e Gianluca):
         -quando si gioca nella tui, se piazzi una carta tra 2 carte e una di quelle non ha l'angolo scoperto, la piazza lo stesso.
            --> controllare i controlli lato client in playCard()     UPDATE:  SOLVED ✅✅✅✅✅✅✅✅✅✅✅✅✅✅
 
+        -testando l'endgame nella tui (ho messo 1 come punto per triggerare endgame):
+            -->viene stampato sempre "zero cards left" anche se non è così come messaggio di endgame (assieme a quello normale)
+            --> alla fine dei turni rimanenti non ci si riallaccia alla fine del gioco (non vengono stampati i giocatori vincenti
+                e non viene terminato il gioco propriamente)  (sembra che l'evento FinalRankings non venga mandato)
 
 
 
