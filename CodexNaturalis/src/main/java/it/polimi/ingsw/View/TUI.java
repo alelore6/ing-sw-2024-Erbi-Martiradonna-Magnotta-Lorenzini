@@ -349,20 +349,37 @@ public class TUI extends UI {
 
     // It returns true if the string is a chat message, and it also sends it.
     private boolean listenToChat(String string){
+        if(string == null)  return false;
+
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
 
         // If not, the chat message has not the correct format in order to be sent.
-        if(words.get(0).equals("CHAT") && words.size() > 1){
+        if(words.get(0).equals("CHAT")){
             boolean isForEveryone = false;
             String recipient = null;
 
             // Private chat mode.
-            if(words.get(1).equals("P") && words.size() > 2){
+            if(words.size() > 3 && words.get(1).equals("P")){
                 recipient = words.get(2);
+
+                if(client.getNickname().equals(recipient)){
+                    printErr("You can't send a message to yourself!");
+                    return true;
+                }
+                if(words.get(3).equals("")){
+                    printErr("The message is empty!");
+                    return true;
+                }
+
                 words.remove(2);
                 words.remove(1);
             }
             else{
+                if(words.size() == 1 || words.get(1).equals("")){
+                    printErr("The message is empty!");
+                    return true;
+                }
+
                 recipient = "everyone";
                 isForEveryone = true;
             }
