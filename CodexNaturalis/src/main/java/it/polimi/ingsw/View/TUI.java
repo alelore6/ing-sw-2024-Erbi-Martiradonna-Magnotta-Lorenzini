@@ -4,6 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 
+import javax.swing.text.html.Option;
 import java.io.*;
 import java.util.*;
 
@@ -16,6 +17,8 @@ public class TUI extends UI {
     private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
+    private Card[][] lastPlayedCards = null;
+    private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
     private Object lock_chat = new Object();
 
@@ -47,9 +50,11 @@ public class TUI extends UI {
                 choice = lastInputs.poll();
             }
 
-            if(listenToChat(choice))    continue;
-
             // Checks if the input is a chat message and if yes, it sends it.
+                 if(listenToChat(choice))                  continue;
+            // Checks if the input is a card print request and if yes, it sends it.
+            else if(listenToCard(choice, lastPlayedCards)) continue;
+
             try{
                 intChoice = Integer.parseInt(choice);
             } catch (NumberFormatException e) {
@@ -173,45 +178,46 @@ public class TUI extends UI {
         if(card instanceof PlayableCard){
             printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
                     + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
-                    "\n\tVisible corners:\n");
+                    "\n\tVisible corners:\n\t\tFRONT:");
             for(Corner corner : card.getFrontCorners()){
-                printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
-                        + ": "+ corner.getResource());
+                if(corner.getPosition() != null && corner.isCovered == false)
+                    printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                            + ": "+ corner.getStringResource());
             }
-            printOut("\tBACK:");
+            printOut("\t\tBACK:");
             for(Corner corner : card.getBackCorners()){
-                printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
-                        + ": " + corner.getResource());
+                printOut("\t\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                        + ": " + corner.getStringResource());
             }
 
             if(card instanceof GoldCard){
-                printOut("Requirements:");
+                printOut("\tRequirements:");
                 for(Resource res : ((GoldCard) card).getReq().keySet()){
                     if(((GoldCard) card).getReq().get(res) > 0)
-                        printOut(((GoldCard) card).getReq().get(res) + " " + res.toString());
+                        printOut("\t\t" + ((GoldCard) card).getReq().get(res) + " x " + res.toString());
                 }
             }
 
             if(((PlayableCard) card).getPoints() == 0)  return;
 
-            printOut("\nReward:\t" + ((PlayableCard) card).getPoints() + " points");
+            printOut("\tReward:\t" + ((PlayableCard) card).getPoints() + " points.");
             if(card instanceof GoldCard && (((GoldCard) card).isRPointsCorner() == true || ((GoldCard) card).getRPoints() != null)){
                 printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
             }
-            printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
+            // printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
             printOut("\n| YOUR STARTING CARD'S DESCRIPTION:");
-            printOut("VISIBLE CORNER:\n\tFRONT:");
+            printOut("Visible corners:\n\tFRONT:");
             for(Corner corner : card.getFrontCorners()){
-                if(!corner.getPosition().equals("empty"))
+                if(corner.getPosition() != null)
                     printOut("\t\t" + corner.getPosition() + ": "
                             + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + corner.getStringResource());
             }
             printOut("\n\tBACK:");
             for(Corner corner : card.getBackCorners()){
-                if(!corner.getPosition().equals("empty"))
+                if(corner.getPosition() != null)
                     printOut("\t\t" + corner.getPosition() + ": "
                             + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + corner.getStringResource());
@@ -241,7 +247,7 @@ public class TUI extends UI {
                 if(i == 3 || i == 6)    grid += "\n\t\t";
 
                 // Shouldn't happen.
-                if(i > 9)   printOut("\nERRORE DI STAMPA.\n");
+                if(i > 9)   printErr("\nPRINT ERROR.\n");
             }
 
             printOut(grid);
@@ -253,6 +259,18 @@ public class TUI extends UI {
                     printOut("\t\t " + ((ObjectiveCard2) card).getReqMap().get(resource) + " x " + resource.toString());
             }
         }
+    }
+
+    private void requestCard(int ID, Card[][] playedCards){
+        if(playedCards == null){
+            printErr("You can't see the card: you haven't even started the game!");
+            return;
+        }
+
+        Optional<Card> cardRequested = Arrays.stream(playedCards).flatMap(Arrays::stream).filter(card -> card != null && card.getID() == ID).findFirst();
+
+        if(cardRequested.isPresent()) printCard(cardRequested.get());
+        else printErr("You can't see the card: it's not present on your played cards.");
     }
 
     private void printGrid(Card[][] playedCards){
@@ -320,25 +338,25 @@ public class TUI extends UI {
         int check = 0;
         boolean hasNear = false;
         if(x-1 >= 0 && y-1 >= 0 && playedCards[x-1][y-1] != null){
-                if(!playedCards[x-1][y-1].getCorners()[3].getPosition().equals("empty"))
+                if(playedCards[x-1][y-1].getCorners()[3].getPosition() != null)
                     hasNear = true;
                 else
                     return false;
         }
         if(x-1 >= 0 && y+1 <= 80 && playedCards[x-1][y+1] != null){
-                if(!playedCards[x-1][y+1].getCorners()[2].getPosition().equals("empty"))
+                if(playedCards[x-1][y+1].getCorners()[2].getPosition() != null)
                     hasNear = true;
                 else
                     return false;
         }
         if(x+1 >= 0 && y-1 >= 0 && playedCards[x+1][y-1] != null){
-            if(!playedCards[x+1][y-1].getCorners()[1].getPosition().equals("empty"))
+            if(playedCards[x+1][y-1].getCorners()[1].getPosition() != null)
                 hasNear = true;
             else
                 return false;
         }
         if(x+1 <= 80 && y+1 <= 80 && playedCards[x+1][y+1] != null){
-            if(!playedCards[x+1][y+1].getCorners()[0].getPosition().equals("empty"))
+            if(playedCards[x+1][y+1].getCorners()[0].getPosition() != null)
                 hasNear = true;
             else
                 return false;
@@ -354,12 +372,12 @@ public class TUI extends UI {
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
 
         // If not, the chat message has not the correct format in order to be sent.
-        if(words.get(0).equals("CHAT")){
+        if(words.get(0).equalsIgnoreCase("CHAT")){
             boolean isForEveryone = false;
             String recipient = null;
 
             // Private chat mode.
-            if(words.size() > 3 && words.get(1).equals("P")){
+            if(words.size() > 3 && words.get(1).equalsIgnoreCase("P")){
                 recipient = words.get(2);
 
                 if(client.getNickname().equals(recipient)){
@@ -394,6 +412,39 @@ public class TUI extends UI {
         return false;
     }
 
+    private boolean listenToCard(String string, Card[][] playedCards){
+        if(string == null)  return false;
+
+        ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
+        int ID;
+
+        if(words.get(0).equalsIgnoreCase("CARD") && words.size() > 1){
+            try{
+                ID = Integer.parseInt(words.get(1));
+            } catch (NumberFormatException e) {
+                printOut(inputError());
+
+                return true;
+            }
+            if(ID < 1 || ID > 102){
+                printErr("There's no card with such ID.");
+                return true;
+            }
+
+            // If the player wants to print theirs objective card.
+            if(privateObjectiveCard != null && ID == privateObjectiveCard.getID()){
+                printCard(privateObjectiveCard);
+                return true;
+            }
+
+            requestCard(ID, playedCards);
+
+            return true;
+        }
+
+        return false;
+    }
+
     public final void update(GenericEvent e){
         if(e instanceof ChatMessage){
             synchronized (lock_chat){
@@ -421,7 +472,7 @@ public class TUI extends UI {
                     try {
                         s = in.readLine();
                         synchronized(lastInputs){
-                            if(!listenToChat(s)){
+                            if(!(listenToChat(s) || listenToCard(s, lastPlayedCards))){
                                 lastInputs.add(s);
                                 lastInputs.notifyAll();
                             }
@@ -494,7 +545,9 @@ public class TUI extends UI {
                             printCard(e.objCard1);
                             printCard(e.objCard2);
                             printOut(e.msgOutput2());
-                            notifyListener(new ChooseObjectiveResponse(e.getChosenCard(chooseInt(1,2)), client.getNickname()));
+                            n = chooseInt(1,2);
+                            notifyListener(new ChooseObjectiveResponse(e.getChosenCard(n), client.getNickname()));
+                            privateObjectiveCard = e.getChosenCard(n);
                             break;
 
                         case NumPlayersRequest e :
@@ -502,6 +555,18 @@ public class TUI extends UI {
                             break;
 
                         case PlayCardRequest e :
+                            printOut("YOUR SECRET OBJECTIVE CARD's ID: " + privateObjectiveCard.getID());
+                            printOut("YOUR CURRENT RESOURCES:");
+                            boolean isAny = false;
+                            for(Resource resource : e.playerView.currentResources.keySet()){
+                                if(e.playerView.currentResources.get(resource) > 0){
+                                    printOut("\t" + resource.toString() + " x " + e.playerView.currentResources.get(resource));
+                                    isAny = true;
+                                }
+                            }
+
+                            if(!isAny)  printOut("\tnone");
+
                             printOut("YOUR PLAYED CARDS:");
                             printGrid(e.playerView.hand.playedCards);
 
@@ -509,6 +574,8 @@ public class TUI extends UI {
                             for(Card card : e.playerView.hand.handCards){
                                 printCard(card);
                             }
+
+                            lastPlayedCards = e.playerView.hand.playedCards;
 
                             n = chooseInt(1,3);
 
@@ -542,6 +609,7 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
                             notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
+                            printOut("\nWaiting for other players...\n");
                             break;
 
                         case ReconnectionRequest e:

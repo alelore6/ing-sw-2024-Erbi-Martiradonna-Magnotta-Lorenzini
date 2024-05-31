@@ -14,12 +14,12 @@ public class Corner implements Serializable {
     }
 
     public String getPosition(){
-        return pos == null ? "empty" : pos.toString();
+        return pos == null ? null : pos.toString();
     }
     public Resource getResource(){
         return resource;
     }
     public String getStringResource(){
-        return resource == null ? "empty" : resource.toString();
+        return resource == null ? "none" : resource.toString();
     }
 }
