@@ -27,13 +27,17 @@ public class MainFrame extends JFrame {
         super("CodexNaturalis");
         this.nickname = nickname;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(1280, 720); //16:9 proporzione
         setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
-        setLayout(new BorderLayout());
+        /*setLayout(new BorderLayout());*/
+
         //TODO non funziona nessuno dei due modi per aggiungere l'immagine
-        mainPanel = new JPanel();
-        mainPanel.setLayout(new BorderLayout());
-        mainPanel.setBackground(Color.BLUE);
+        mainPanel = new JPanel(new BorderLayout()) {
+            @Override
+            public void paint(Graphics g) {
+                super.paint(g);
+            }
+        };
+
         try {
             ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
             int width = 800;
@@ -53,22 +57,22 @@ public class MainFrame extends JFrame {
 
                     int x = (getWidth() - width) / 2;
                     int y = (getHeight() - height) / 2;
-                    g.drawImage(img.getImage(), x, y, this);
+                    g.drawImage(resizedIcon.getImage(), x, y, this);
                 }
             };
 
             mainPanel.add(initialPanel, BorderLayout.CENTER);
 
-            /*JLabel imageLabel = new JLabel(img);
-            mainPanel = new JPanel();
-            mainPanel.add(imageLabel);
-           */
+
+
         } catch (Exception e) {
             System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
             e.printStackTrace();
         }
-        //mainPanel.add(new JLabel(centerImgIcon));
+       // mainPanel.add(new JLabel(centerImgIcon));
         add(mainPanel, BorderLayout.CENTER);
+        mainPanel.revalidate();
+        mainPanel.repaint();
 
         setVisible(true);
     }
@@ -83,17 +87,10 @@ public class MainFrame extends JFrame {
         });
     }
 
-    public void paint(Graphics g) {
-        //TODO paint method is called automatically when the frame is istantiated
-        // we have to understand how and when to call it correctly. There is the "repaint()" method
-        // that will be used to "refresh" the GUI accordingly, recalling the paint() method.
-
-       /* printRectangle(g);
-        printCard(g);
-*/
-    }
 
 
+
+/*
     public void createGamePanels(GameView gameView) {
 
         tableCenterPanel = new TableCenterPanel(gameView);
@@ -118,7 +115,7 @@ public class MainFrame extends JFrame {
 
     }
 
-
+/*
     private void addToMenuBar(String label){
 
         JMenuItem menuItem = new JMenuItem(label);
@@ -133,7 +130,7 @@ public class MainFrame extends JFrame {
         menuBar.add(menuItem);
 
     }
-
+/*
     public void switchPanel(String  panel) {
         CardLayout layout =(CardLayout) (mainPanel.getLayout());
         layout.show(mainPanel, panel);
@@ -147,7 +144,7 @@ public class MainFrame extends JFrame {
         switchPanel("tableCenterPanel");
     }
 
-    private JPanel getPanelByLabel(String label){
+   private JPanel getPanelByLabel(String label){
         if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
         else if(label.equalsIgnoreCase("Personal panel")) return personalPanel;
         else return otherPlayers.get(label);
@@ -161,5 +158,5 @@ public class MainFrame extends JFrame {
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
         }
     }
-
+*/
 }
