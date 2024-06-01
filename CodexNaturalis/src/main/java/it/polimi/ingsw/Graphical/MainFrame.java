@@ -1,8 +1,9 @@
 package it.polimi.ingsw.Graphical;
 
+import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
 
-import javax.imageio.ImageIO;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,11 +16,13 @@ import java.util.HashMap;
 public class MainFrame extends JFrame {
 
     private JMenuBar menuBar;
+    private JMenu menu;
     private JPanel mainPanel;
     private TableCenterPanel tableCenterPanel;
     private PersonalPanel personalPanel;
     private HashMap<String,PlayerPanel> otherPlayers;
     private String nickname;
+    private Graphics g;
 
 
 
@@ -81,8 +84,10 @@ public class MainFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                // Crea un'istanza della finestra fullscreen
-                MainFrame frame = new MainFrame("1111");
+                //Game model = new Game(2,new String[]{"1111","2222"}, null);
+                MainFrame mainFrame = new MainFrame("Test");
+                //frame.reactStartGame(model.clone());
+
             }
         });
     }
@@ -90,7 +95,7 @@ public class MainFrame extends JFrame {
 
 
 
-/*
+
     public void createGamePanels(GameView gameView) {
 
         tableCenterPanel = new TableCenterPanel(gameView);
@@ -115,7 +120,7 @@ public class MainFrame extends JFrame {
 
     }
 
-/*
+
     private void addToMenuBar(String label){
 
         JMenuItem menuItem = new JMenuItem(label);
@@ -127,10 +132,10 @@ public class MainFrame extends JFrame {
             }
         });
 
-        menuBar.add(menuItem);
+        menu.add(menuItem);
 
     }
-/*
+
     public void switchPanel(String  panel) {
         CardLayout layout =(CardLayout) (mainPanel.getLayout());
         layout.show(mainPanel, panel);
@@ -138,10 +143,12 @@ public class MainFrame extends JFrame {
 
     public void reactStartGame(GameView gameView){
         this.menuBar=new JMenuBar();
-        this.setJMenuBar(menuBar);
-        menuBar.setVisible(true);
+        this.menu = new JMenu("Panels");
         createGamePanels(gameView);
         switchPanel("tableCenterPanel");
+        menuBar.add(menu);
+        this.setJMenuBar(menuBar);
+        this.setVisible(true);
     }
 
    private JPanel getPanelByLabel(String label){
@@ -158,5 +165,5 @@ public class MainFrame extends JFrame {
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
         }
     }
-*/
+
 }
