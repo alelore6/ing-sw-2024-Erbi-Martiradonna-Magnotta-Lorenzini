@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
-    public  final Controller controller = new Controller(this);
-
+    private static final int PING_INTERVAL = 5000; // milliseconds
+    public final Controller controller = new Controller(this);
     public final Logger logger;
 
     // This lock allows to serialize the incoming events from possible multiple clients, e.g:
@@ -24,66 +24,84 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     private Object lock_clients = new Object();
     private int numClient = 0;
-    private final ArrayList<Client> clientProxies = new ArrayList<>();
-    private final ArrayList<ClientSkeleton> clientSkeletons = new ArrayList<ClientSkeleton>();
+    private final ArrayList<Client> clients = new ArrayList<>();
+    private final ArrayList<Client> disconnectedClients = new ArrayList<>();
 
     //server constructor with the default rmi port
     public ServerImpl(Logger logger) throws RemoteException {
         super();
         this.logger = logger;
+        pong();
     }
 
     //server implementation with a certain RMI port
     public ServerImpl(Logger logger, int port) throws RemoteException {
         super(port);
         this.logger = logger;
+        pong();
     }
 
     @Override
     public void register(Client client) throws RemoteException{
-        controller.addMVListener(new ModelViewListener(this, client));
-
         synchronized(lock_clients){
             numClient++;
 
-            // if MALEDETTO
-            if(client instanceof ClientSkeleton)
-                clientSkeletons.add((ClientSkeleton) client);
-            else{
-                clientProxies.add(client);
+            clients.add(client);
+
+            // if MALEDETTO (RIP)
+            if(!(client instanceof ClientSkeleton))
                 System.out.println(client.getNickname() + " is connected with RMI.");
-            }
         }
     }
 
-    public Client findClientByNickname(String nickname, Client clientToExclude) throws RemoteException {
-        Client client = findCPByNickname(nickname, clientToExclude);
-        if(client != null)  return client;
-        client = findCSbyNickname(nickname, clientToExclude);
-        if(client != null)  return client;
+    private void pong(){
+        // Thread for periodic controls.
+        new Thread(() -> {
+            while (true) {
+                String residue = null;
 
-        return null;
+                synchronized (clients){
+                    synchronized(disconnectedClients){
+                        for (Client client : clients) {
+                            try {
+                                client.ping();
+                            } catch (RemoteException e) {
+                                System.err.println("A client is disconnected.");
+
+                                disconnectedClients.add(client);
+
+                                for(ModelViewListener listener : controller.getMVListeners()){
+                                    if(listener.client.equals(client)){
+                                        controller.disconnectPlayer(listener.nickname);
+                                        controller.getMVListeners().remove(listener);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        clients.removeAll(disconnectedClients);
+                    }
+                }
+
+                try {
+                    Thread.sleep(PING_INTERVAL);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
-    public Client findCPByNickname(String nickname, Client clientToExclude) throws RemoteException {
+    public Client findClientByNickname(String nickname, Client clientToExclude){
         synchronized (lock_clients){
-            for(Client client : clientProxies){
-                if (!client.equals(clientToExclude) && client.getNickname().equalsIgnoreCase(nickname))
-                    return client;
-            }
+            try{
+                for(Client client : clients){
+                    if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))
+                        return client;
+                }
+            }catch(RemoteException e){}
         }
-
-        return null;
-    }
-
-    public ClientSkeleton findCSbyNickname(String nickname, Client clientToExclude){
-        synchronized (lock_clients){
-            for(ClientSkeleton client : clientSkeletons){
-                if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))
-                    return client;
-            }
-        }
-
         return null;
     }
 
@@ -93,20 +111,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         if(!(client instanceof ClientSkeleton)) logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){
             if(event instanceof ClientRegister){
-                if(!(client instanceof ClientSkeleton)) register(client);
+                if(!(client instanceof ClientSkeleton))
+                    register(client);
+
                 setClient(client, (ClientRegister) event);
             }
             else{
                 //client has responded to a request to modify the model
-                for(Client c : clientProxies){
-                    if (c.getNickname().equalsIgnoreCase(client.getNickname())) {
+                for(Client c : clients){
+                    if (c.getNickname().equalsIgnoreCase(client.getNickname()))
                         controller.updateModel(event, c.getNickname());
-                    }
-                }
-                for(ClientSkeleton c : clientSkeletons){
-                    if(c.getNickname().equalsIgnoreCase(client.getNickname())){
-                        controller.updateModel(event, c.getNickname());
-                    }
                 }
             }
         }
@@ -121,15 +135,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             if(temp != null && !temp.equals(client))    client.setNickname(oldNickname + "." + numClient);
             else                                        client.setNickname(oldNickname);
 
-            controller.addPlayerToLobby(client.getNickname(), controller.getMVListenerByNickname(client.getNickname()), oldNickname);
+            ModelViewListener listener = new ModelViewListener(this, client);
+            controller.addMVListener(listener);
+            controller.addPlayerToLobby(client.getNickname(), listener, oldNickname);
         }
     }
 
-    public ArrayList<Client> getClientProxies(){
-        return clientProxies;
-    }
-
-    public ArrayList<ClientSkeleton> getClientSkeletons(){
-        return clientSkeletons;
+    public ArrayList<Client> getClients(){
+        return clients;
     }
 }

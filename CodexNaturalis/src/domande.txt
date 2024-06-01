@@ -118,7 +118,12 @@ DEBUG E LAVORO (Alessandro e Gianluca):
             --> alla fine dei turni rimanenti non ci si riallaccia alla fine del gioco (non vengono stampati i giocatori vincenti
                 e non viene terminato il gioco propriamente)  (sembra che l'evento FinalRankings non venga mandato)
 
-
+// Aggiornamento 01/06:
+    disconnessione implementata in parte:
+    ✅   Il client si disconnette correttamente ora (anche nel model)
+    ✅   L'evento viene mandato a tutti
+    🔜   Riconnessione (da implementare)
+    🔜   Far finire la partita quando rimane un giocatore solo (magari dopo un timeout)
 
 
 

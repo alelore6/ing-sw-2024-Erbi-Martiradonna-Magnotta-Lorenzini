@@ -16,11 +16,14 @@ public class ClientSkeleton implements Client {
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private final Logger logger;
+    public final Socket socket;
 
     private String nickname = null;
 
     public ClientSkeleton(Socket socket, Logger logger) throws RemoteException {
         this.logger = logger;
+        this.socket = socket;
+
         try {
             this.out = new ObjectOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -31,6 +34,12 @@ public class ClientSkeleton implements Client {
         } catch (IOException e) {
             throw new RemoteException("Cannot create input stream", e);
         }
+    }
+
+    @Override
+    public void ping() throws RemoteException {
+        if(socket.isClosed())
+            throw new RemoteException("Socket is closed");
     }
 
     @Override

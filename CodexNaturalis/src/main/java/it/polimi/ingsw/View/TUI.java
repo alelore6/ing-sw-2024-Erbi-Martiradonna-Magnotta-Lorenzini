@@ -4,7 +4,6 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 
-import javax.swing.text.html.Option;
 import java.io.*;
 import java.util.*;
 
@@ -523,7 +522,7 @@ public class TUI extends UI {
 
                     int n;
 
-                    // clearConsole();
+                    clearConsole();
 
                     if((ev instanceof AckResponse) || !(ev instanceof GenericResponse))
                         printOut(ev.msgOutput());

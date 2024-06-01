@@ -228,21 +228,6 @@ public class Game{
         }.start();
     }
 
-    private void checkpoint(Object lock){
-        if(waitNumClient >= numPlayers) return;
-        while (waitNumClient < numPlayers) {
-            synchronized (lock) {
-                try {
-                    lock.wait();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                //aspetto che il giocatore precedente abbia finito
-            }
-        }
-        waitNumClient = 1;
-    }
-
     /**
      * sets the parameter remainingTurns accordingly, displays a message on the user screen stating which
      * occasion triggered the endgame status notifying the Controller as well.
@@ -481,7 +466,7 @@ public class Game{
                                 break;
                             }
 
-                            if (((PlayableCard) subMatrix[x][y]).getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) {
+                            if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) {
                                 savedCards[index] = subMatrix[x][y];
                             } else {
                                 found = false;
@@ -517,7 +502,6 @@ public class Game{
 
     public void disconnectPlayer(Player p){
         p.disconnected=true;
-        //TODO eliminare listener dopo disconnessione
         int pos=-1, count=0;
         for(Player x: players){
             if(x.disconnected) {
