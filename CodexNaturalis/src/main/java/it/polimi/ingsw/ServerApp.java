@@ -97,10 +97,8 @@ public class ServerApp {
 
                                 while (true)    clientSkeleton.receive(server);
 
-                            }catch(RemoteException e){
-                                System.err.println("Cannot receive client.");
-                            }finally{
-                                System.out.println("Closing connection.");
+                            }catch(RemoteException e){}
+                            finally{
                                 try {
                                     socket.close();
                                 } catch (IOException e){

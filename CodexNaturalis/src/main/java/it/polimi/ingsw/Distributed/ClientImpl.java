@@ -61,7 +61,10 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
 
 
     @Override
-    public void update(GenericEvent e) throws RemoteException {
+    public void ping() throws RemoteException{}
+
+    @Override
+    public void update(GenericEvent e){
         userInterface.update(e);
     }
 
@@ -75,7 +78,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
     }
 
     @Override
-    public String getNickname() {
+    public String getNickname(){
         return nickname;
     }
 }

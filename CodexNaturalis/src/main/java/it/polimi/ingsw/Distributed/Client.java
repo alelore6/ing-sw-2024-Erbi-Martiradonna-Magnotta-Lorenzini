@@ -9,8 +9,8 @@ import java.rmi.RemoteException;
 
 public interface Client extends Remote{
 
+    void ping() throws RemoteException;
 
-    //receive Object
     void update(GenericEvent e) throws RemoteException;
 
     String getNickname() throws RemoteException;

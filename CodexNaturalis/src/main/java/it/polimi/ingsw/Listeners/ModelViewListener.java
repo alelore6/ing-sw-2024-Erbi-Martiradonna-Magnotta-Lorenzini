@@ -13,9 +13,9 @@ public class ModelViewListener extends Listener {
 
 
     private GenericRequest lastRequest;
-
     private int requestEventIndex = 0;
     public final Client client;
+    public final String nickname;
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
     /**
      * the server bound to this specific listener.
@@ -28,9 +28,10 @@ public class ModelViewListener extends Listener {
      * This listener will receive updates from the model and will pass them to the specific view, which will be updated aswell.
      * @param server the server that will receive the updates from this listener
      */
-    public ModelViewListener(ServerImpl server, Client client) {
+    public ModelViewListener(ServerImpl server, Client client) throws RemoteException {
         this.server = server;
         this.client = client;
+        this.nickname = client.getNickname();
     }
 
     /**
@@ -46,6 +47,7 @@ public class ModelViewListener extends Listener {
             public void run() {
                 while(true) {
                     synchronized (lock_queue) {
+
                         if(!chatMessages.isEmpty()) {
                             try {
                                 if(!(client instanceof ClientSkeleton)) server.logger.addLog("CHAT", Severity.SENDING);
@@ -57,26 +59,10 @@ public class ModelViewListener extends Listener {
                         }
                         if(ack != null){
                             try {
-                                //TODO rimando anche l'evento da rifare
                                 client.update(ack);
 
                                 if(!ack.ok){
-//                                    switch(ack.response){
-//                                        /*case PlayCardResponse e:
-//
-//                                            client.update(new PlayCardRequest(client.getNickname(), new PlayerView(server.controller.getPlayerByNickname(ack.nickname))));
-//                                            break;*/
-//                                        case SetTokenColorResponse e:
-//                                            client.update(new SetTokenColorRequest(client.getNickname(), server.controller.getGame().getAvailableTokens()));
-//
-//                                            break;
-//                                        default:
-//                                            throw new IllegalStateException("Unexpected value: " + ack.response);
-//                                    }
                                     client.update(lastRequest);
-                                    //TODO la seconda volta di fila che giochi male la carta non viene rimandato l'ack.
-                                    // (o forse viene mandato ma non viene gestito in tempo)
-                                    // in verità appena giochi male una carta, il client si stacca dal flusso di gioco
 
                                     requestEventIndex++;
                                 }

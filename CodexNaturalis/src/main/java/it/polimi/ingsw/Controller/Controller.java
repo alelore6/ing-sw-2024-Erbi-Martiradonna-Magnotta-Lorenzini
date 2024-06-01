@@ -278,8 +278,7 @@ public class Controller {
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
-        for(ClientSkeleton client : server.getClientSkeletons()) getMVListenerByNickname(client.getNickname()).addEvent(event);
-        for(Client client : server.getClientProxies())           getMVListenerByNickname(client.getNickname()).addEvent(event);
+        for(Client client : server.getClients()) getMVListenerByNickname(client.getNickname()).addEvent(event);
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){
