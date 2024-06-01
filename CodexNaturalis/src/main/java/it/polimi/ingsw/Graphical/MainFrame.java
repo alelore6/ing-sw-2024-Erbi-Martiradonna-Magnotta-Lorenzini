@@ -2,6 +2,7 @@ package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
+import it.polimi.ingsw.View.GUI;
 
 
 import javax.swing.*;
@@ -16,15 +17,12 @@ import java.util.HashMap;
 public class MainFrame extends JFrame {
 
     private JMenuBar menuBar;
-    private JMenu menu;
-    private JPanel mainPanel;
+    public JPanel mainPanel;
     private TableCenterPanel tableCenterPanel;
     private PersonalPanel personalPanel;
     private HashMap<String,PlayerPanel> otherPlayers;
     private String nickname;
-    private Graphics g;
-
-
+    private ImageIcon icon;
 
     public MainFrame(String nickname) {
         super("CodexNaturalis");
@@ -33,27 +31,21 @@ public class MainFrame extends JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
         /*setLayout(new BorderLayout());*/
 
-        //TODO non funziona nessuno dei due modi per aggiungere l'immagine
-        mainPanel = new JPanel(new BorderLayout()) {
-            @Override
-            public void paint(Graphics g) {
-                super.paint(g);
-            }
-        };
+
 
         try {
             ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
             int width = 800;
             int height = 720;
-            if (img.getImageLoadStatus() == MediaTracker.ERRORED) {
-                System.out.println("Errore nel caricamento dell'immagine.");
-                return;
-            }
+
             Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
             ImageIcon resizedIcon = new ImageIcon(imgResized);
 
-            //1
-           JPanel initialPanel = new JPanel(new CardLayout()){
+            //icon for dialogs
+            Image icon = img.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
+            this.icon=new ImageIcon(icon);
+
+           mainPanel = new JPanel(){
               @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -64,18 +56,13 @@ public class MainFrame extends JFrame {
                 }
             };
 
-            mainPanel.add(initialPanel, BorderLayout.CENTER);
-
-
-
         } catch (Exception e) {
             System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
             e.printStackTrace();
         }
-       // mainPanel.add(new JLabel(centerImgIcon));
         add(mainPanel, BorderLayout.CENTER);
-        mainPanel.revalidate();
-        mainPanel.repaint();
+//        mainPanel.revalidate();
+//        mainPanel.repaint();
 
         setVisible(true);
     }
@@ -84,9 +71,14 @@ public class MainFrame extends JFrame {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                //Game model = new Game(2,new String[]{"1111","2222"}, null);
-                MainFrame mainFrame = new MainFrame("Test");
-                //frame.reactStartGame(model.clone());
+                Game model = new Game(2,new String[]{"1111","2222"}, null);
+                MainFrame mainFrame = new MainFrame("1111");
+                mainFrame.reactStartGame(model.clone());
+
+                String s= mainFrame.showDialog("test","messaggio",null);
+
+                System.out.println(s);
+
 
             }
         });
@@ -96,11 +88,11 @@ public class MainFrame extends JFrame {
 
 
 
-    public void createGamePanels(GameView gameView) {
+    private void createGamePanels(GameView gameView) {
 
         tableCenterPanel = new TableCenterPanel(gameView);
         addToMenuBar("Table center");
-        mainPanel.getLayout().addLayoutComponent("Table center", tableCenterPanel);
+        mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
 
         otherPlayers = new HashMap<String, PlayerPanel>();
 
@@ -109,12 +101,12 @@ public class MainFrame extends JFrame {
             if (gameView.players.get(i).nickname.equalsIgnoreCase(nickname)){
                 personalPanel = new PersonalPanel(gameView.players.get(i));
                 addToMenuBar("Personal panel");
-                mainPanel.getLayout().addLayoutComponent("Personal panel", personalPanel);
+                mainPanel.getLayout().addLayoutComponent(null, personalPanel);
 
             } else {
                 otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i)));
-                addToMenuBar(gameView.players.get(i).nickname+" panel");
-                mainPanel.getLayout().addLayoutComponent(gameView.players.get(i).nickname+" panel", tableCenterPanel);
+                addToMenuBar(gameView.players.get(i).nickname+"'s panel");
+                mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
             }
         }
 
@@ -132,23 +124,21 @@ public class MainFrame extends JFrame {
             }
         });
 
-        menu.add(menuItem);
+        menuBar.add(menuItem);
 
     }
 
     public void switchPanel(String  panel) {
-        CardLayout layout =(CardLayout) (mainPanel.getLayout());
-        layout.show(mainPanel, panel);
+        //CardLayout layout =(CardLayout) (mainPanel.getLayout());
+        //layout.show(mainPanel, panel);
+        System.out.println("Switching panel: " + panel);
     }
 
     public void reactStartGame(GameView gameView){
         this.menuBar=new JMenuBar();
-        this.menu = new JMenu("Panels");
         createGamePanels(gameView);
-        switchPanel("tableCenterPanel");
-        menuBar.add(menu);
+        switchPanel("Table center");
         this.setJMenuBar(menuBar);
-        this.setVisible(true);
     }
 
    private JPanel getPanelByLabel(String label){
@@ -164,6 +154,14 @@ public class MainFrame extends JFrame {
         for(String name:otherPlayers.keySet()){
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
         }
+    }
+
+    public String showDialog(String title, String message, Object[] possibilities){
+        return (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
+    }
+
+    public void setNickname(String nickname){
+        this.nickname = nickname;
     }
 
 }

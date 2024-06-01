@@ -19,19 +19,14 @@ import static java.lang.String.valueOf;
 
 public class GUI extends UI{
 
-    private static MainFrame f;
-    private final ImageIcon icon;
-    private  Object g;
+    private MainFrame f;
+    private String nickname;
+    private boolean nicknameOK=false;
 
     public GUI(ClientImpl client) {
         super(client);
-        f = new MainFrame( client.getNickname());
-
-        //icon for dialogs
-        ImageIcon icon = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
-        Image imgResized = icon.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
-        this.icon=new ImageIcon(imgResized);
-        //TODO sistemare mainframe: aggiungere sfondo e levare print card
+        f = new MainFrame( null);
+        run();
     }
 
 
@@ -46,11 +41,16 @@ public class GUI extends UI{
     }
 
     public String chooseNickname() {
+        //TODO è l'unica dialog che da errore, le altre funzionano. sarà perchè non dentro a SwingUtilities.invokeLater
         String s=null;
-        while(s==null || s.length()<4 || s.contains(" ")) {
-            s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, icon, null, null);
-        }
-        return s.trim();
+        update(new ChooseNickname("message","everyone"));
+//        while(s==null || s.length()<4 || s.contains(" ")) {
+//            s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
+//        }
+//        return s.trim();
+        while(!nicknameOK) {}
+        System.out.println("Nickname: "+nickname);
+        return nickname;
     }
 
     @Override
@@ -104,7 +104,7 @@ public class GUI extends UI{
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone")) continue;
+                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") ) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -115,13 +115,23 @@ public class GUI extends UI{
 
                     switch(ev){
                         //TODO per eventi di gioco devo anche aggiornare il frame
+
+                        case ChooseNickname e:
+                            while(s==null || s.length()<4 || s.contains(" ")) {
+                                s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
+                            }
+                            nickname=s;
+                            f.setNickname(s);
+                            nicknameOK=true;
+                            break;
+
                         case NumPlayersRequest e :
                             possibilities = new ArrayList<Object>();
                             possibilities.add("2");
                             possibilities.add("3");
                             possibilities.add("4");
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Number of players", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
+                                s = f.showDialog("Number of players",message, possibilities.toArray());
                             }
                             newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
@@ -156,7 +166,7 @@ public class GUI extends UI{
                             }
 
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Draw a card", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
+                                s = f.showDialog("Draw a card",message, possibilities.toArray());
                             }
                             if (s.contains("deck")){
                                 if (s.contains("Resource")) n=4;
@@ -171,13 +181,13 @@ public class GUI extends UI{
                             //TODO sistemare quando frame sarà pronto
                             int posx=-1, posy=-1;
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Play a card: choose card", JOptionPane.PLAIN_MESSAGE, icon,null, null);
+                                s = f.showDialog("Play card phase 1: choose card",message, null);
                             }
                             while(posx==-1) {
-                                posx = Integer.parseInt((String) JOptionPane.showInputDialog(f, message, "Play a card: choose posx", JOptionPane.PLAIN_MESSAGE, icon,null, null));
+                                posx = Integer.parseInt( f.showDialog("Play a card phase 2: choose posx",message, null));
                             }
                             while(posy==-1) {
-                                posy = Integer.parseInt((String) JOptionPane.showInputDialog(f, message, "Play a card: choose posy", JOptionPane.PLAIN_MESSAGE, icon,null, null));
+                                posy = Integer.parseInt( f.showDialog("Play a card phase 3: choose posy",message, null));
                             }
                             newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[Integer.parseInt(s)-1] ,posx,posy);
                             notifyListener(newEvent);
@@ -189,7 +199,7 @@ public class GUI extends UI{
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Token color", JOptionPane.PLAIN_MESSAGE, icon, possibilities.toArray(), null);
+                                s = f.showDialog("Choose token color",message, possibilities.toArray());
                             }
                             newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal()+1 , client.getNickname());
                             notifyListener(newEvent);
@@ -197,9 +207,10 @@ public class GUI extends UI{
 
                         case JoinLobby e :
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Set password", JOptionPane.PLAIN_MESSAGE, icon, null, null);
+                                s = f.showDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
                             }
-                            newEvent = new SetPassword( client.getNickname(),s.trim());
+                            f.setNickname(e.getNewNickname());
+                            newEvent = new SetPassword( e.getNewNickname(),s.trim());
                             notifyListener(newEvent);
                             break;
 
@@ -237,7 +248,7 @@ public class GUI extends UI{
 
                         case ReconnectionRequest e:
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = (String) JOptionPane.showInputDialog(f, message, "Reconnection", JOptionPane.PLAIN_MESSAGE, icon, null, null);
+                                s = f.showDialog("Reconnection",message, null);
                             }
                             newEvent = new ReconnectionResponse( client.getNickname(),s.trim());
                             notifyListener(newEvent);
