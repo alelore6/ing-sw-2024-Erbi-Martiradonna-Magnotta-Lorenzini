@@ -4,16 +4,14 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Graphical.ImageDialog;
 import it.polimi.ingsw.Graphical.MainFrame;
-import it.polimi.ingsw.Model.Card;
-import it.polimi.ingsw.Model.ObjectiveCard;
-import it.polimi.ingsw.Model.PlayableCard;
-import it.polimi.ingsw.Model.TokenColor;
+import it.polimi.ingsw.Model.*;
 
 import javax.swing.*;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.*;
 
 import static java.lang.String.valueOf;
 
@@ -21,12 +19,11 @@ public class GUI extends UI{
 
     private MainFrame f;
     private String nickname;
-    private boolean nicknameOK=false;
+    private Object lock=new Object();
 
     public GUI(ClientImpl client) {
         super(client);
-        f = new MainFrame( null);
-        run();
+        f = new MainFrame( );
     }
 
 
@@ -41,21 +38,35 @@ public class GUI extends UI{
     }
 
     public String chooseNickname() {
-        //TODO è l'unica dialog che da errore, le altre funzionano. sarà perchè non dentro a SwingUtilities.invokeLater
-        String s=null;
+        //mando l'evento per gestirlo dentro run con swingUtilities.invokeLater
         update(new ChooseNickname("message","everyone"));
-//        while(s==null || s.length()<4 || s.contains(" ")) {
-//            s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
-//        }
-//        return s.trim();
-        while(!nicknameOK) {}
-        System.out.println("Nickname: "+nickname);
-        return nickname;
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        //thread speciale che aspetta l'input
+        Callable<String> task = () -> {
+            synchronized(lock) { lock.wait();}
+            //System.out.println("Nickname: "+nickname);
+            return nickname;
+        };
+
+        //aspetta il return del thread sopra
+        Future<String> future = executor.submit(task);
+
+        try {
+            return future.get();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (ExecutionException e) {
+            throw new RuntimeException(e);
+        } finally {
+            executor.shutdown();
+        }
     }
+
 
     @Override
     public void printErr(String s) {
-        System.out.println(s);
+        System.err.println(s);
     }
 
     @Override
@@ -97,6 +108,7 @@ public class GUI extends UI{
     @Override
     public void run() {
         SwingUtilities.invokeLater(new Runnable() {
+            @Override
             public void run() {
 
                 while(true){
@@ -117,12 +129,13 @@ public class GUI extends UI{
                         //TODO per eventi di gioco devo anche aggiornare il frame
 
                         case ChooseNickname e:
-                            while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = (String) JOptionPane.showInputDialog(f, "Enter your nickname: \n At least 4 characters and no space allowed.", "Choose nickname", JOptionPane.PLAIN_MESSAGE, null, null, null);
+
+                            synchronized(lock) {
+                                while (nickname == null || nickname.length() < 4 || nickname.contains(" ")) {
+                                    nickname = f.showDialog("Choose nickname", "Enter your nickname: \n At least 4 characters and no space allowed.", null);
+                                }
+                                lock.notifyAll();
                             }
-                            nickname=s;
-                            f.setNickname(s);
-                            nicknameOK=true;
                             break;
 
                         case NumPlayersRequest e :
@@ -178,7 +191,7 @@ public class GUI extends UI{
                             break;
 
                         case PlayCardRequest e :
-                            //TODO sistemare quando frame sarà pronto
+                            s=null;
                             int posx=-1, posy=-1;
                             while(s==null) {
                                 s = f.showDialog("Play card phase 1: choose card",message, null);

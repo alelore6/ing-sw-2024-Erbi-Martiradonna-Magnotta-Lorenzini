@@ -24,9 +24,8 @@ public class MainFrame extends JFrame {
     private String nickname;
     private ImageIcon icon;
 
-    public MainFrame(String nickname) {
+    public MainFrame() {
         super("CodexNaturalis");
-        this.nickname = nickname;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
         /*setLayout(new BorderLayout());*/
@@ -72,12 +71,11 @@ public class MainFrame extends JFrame {
             @Override
             public void run() {
                 Game model = new Game(2,new String[]{"1111","2222"}, null);
-                MainFrame mainFrame = new MainFrame("1111");
+                MainFrame mainFrame = new MainFrame();
                 mainFrame.reactStartGame(model.clone());
 
-                String s= mainFrame.showDialog("test","messaggio",null);
-
-                System.out.println(s);
+                //String s= mainFrame.showDialog("test","messaggio",null);
+                //System.out.println(s);
 
 
             }
