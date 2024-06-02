@@ -1,5 +1,7 @@
 package it.polimi.ingsw.Events;
 
+import it.polimi.ingsw.Distributed.Client;
+
 public class ReconnectionRequest extends GenericRequest{
     /**
      * Constructor
@@ -8,6 +10,6 @@ public class ReconnectionRequest extends GenericRequest{
      * @param nickname player that receives or sends the event
      */
     public ReconnectionRequest(String nickname) {
-        super("It has been found a disconnected player with this nickname. If it's you enter your password,\n else set one but know that game has already started: no new players can join ", nickname);
+        super("It has been found a disconnected player with this nickname. Enter the password associated with that player:", nickname);
     }
 }

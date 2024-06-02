@@ -47,4 +47,8 @@ public abstract class Listener {
             }
         }
     }
+
+    public AckResponse getPendingAck() {
+        return ack;
+    }
 }

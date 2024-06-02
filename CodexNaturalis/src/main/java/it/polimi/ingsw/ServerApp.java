@@ -93,8 +93,6 @@ public class ServerApp {
                                 ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
                                 System.out.println(clientSkeleton.getNickname() + " (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
-                                server.register(clientSkeleton);
-
                                 while (true)    clientSkeleton.receive(server);
 
                             }catch(RemoteException e){}

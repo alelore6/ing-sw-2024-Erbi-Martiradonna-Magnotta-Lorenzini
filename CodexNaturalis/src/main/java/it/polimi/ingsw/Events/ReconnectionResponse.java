@@ -1,6 +1,12 @@
 package it.polimi.ingsw.Events;
 
+import it.polimi.ingsw.Distributed.Client;
+
 public class ReconnectionResponse extends GenericResponse{
+    // This attribute is for registering the client after a disconnection and it'll be assigned by the server
+    // after a correct login.
+    public transient Client client;
+
     private final String password;
     /**
      * Constructor
@@ -9,7 +15,7 @@ public class ReconnectionResponse extends GenericResponse{
      * @param nickname player that receives or sends the event
      */
     public ReconnectionResponse(String nickname, String password) {
-        super("Password entered", nickname);
+        super("Password entered.", nickname);
         this.password = password;
     }
 

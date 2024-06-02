@@ -150,6 +150,31 @@ public class Controller {
                     }
                 }
             }
+            else if(event instanceof ReconnectionResponse){
+                // The password is correct.
+                if(((ReconnectionResponse) event).getPassword().equals(passwords.get(nickname))){
+                    synchronized (server.disconnectedClients){
+                        for(Client client : server.disconnectedClients.keySet()){
+                            if(server.disconnectedClients.get(client).equals(nickname)){
+                                server.disconnectedClients.remove(client);
+                            }
+                        }
+                    }
+
+                    server.register(((ReconnectionResponse) event).client);
+                }
+                else{
+                    GenericResponse ack = new AckResponse("Can't rejoin: the password is incorrect.", event.nickname, (GenericResponse) event);
+                    ModelViewListener listener = getMVListenerByNickname(event.nickname);
+                    listener.addEvent(ack);
+
+                    // wait until the ack is sent
+                    while(!listener.getPendingAck().equals(ack)){
+                    }
+
+                    MVListeners.remove(listener);
+                }
+            }
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
@@ -278,7 +303,7 @@ public class Controller {
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
-        for(Client client : server.getClients()) getMVListenerByNickname(client.getNickname()).addEvent(event);
+        for(Client client : server.getClients().keySet()) getMVListenerByNickname(client.getNickname()).addEvent(event);
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){
