@@ -126,6 +126,10 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     🔜   Far finire la partita quando rimane un giocatore solo (magari dopo un timeout)
 
 
+//Aggiornamento 4/06
+  BUG: Il gioco non conta le risorse della starting card.
+
+
 
 
 

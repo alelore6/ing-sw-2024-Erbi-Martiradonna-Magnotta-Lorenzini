@@ -72,7 +72,8 @@ public class ServerApp {
     //server start rmi
     private static void startRMI () throws RemoteException, AlreadyBoundException {
 
-        Registry registry = LocateRegistry.createRegistry(45656);
+        System.setProperty("java.rmi.server.hostname", "");
+        Registry registry = LocateRegistry.createRegistry(1099);
         //Binding the server to the RMI registry so that the client can look up
         registry.rebind("server", server);
 

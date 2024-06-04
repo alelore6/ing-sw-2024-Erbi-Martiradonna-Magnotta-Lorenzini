@@ -42,7 +42,7 @@ public class ClientApp {
 
         if(isRMI){   //RMI
 
-            Registry registry = LocateRegistry.getRegistry(ip,45656);
+            Registry registry = LocateRegistry.getRegistry(ip,1099);
 
             Server server = (Server) registry.lookup("server");
 
