@@ -50,7 +50,7 @@ public class ClientApp {
 
             new Thread(){
                 @Override
-                public void run() {
+                public void run(){
                     while(true){
                         try {
                             sleep(PING_INTERVAL);
@@ -60,7 +60,7 @@ public class ClientApp {
                         // sendPing();
                     }
                 }
-            }; // Inserisci start quando completato
+            }; // TODO: inserisci start quando completato
         }
         else{   //socket
 
@@ -73,20 +73,18 @@ public class ClientApp {
                         GenericEvent receivedEvent = null;
                         try {
                             receivedEvent = serverStub.receive(client);
-                        } catch (RemoteException e) {
+                            if(receivedEvent != null)
+                                client.getUserInterface().update(receivedEvent);
+                        }catch(RemoteException e){
                             client.getUserInterface().printErr("Cannot receive from server.");
 
-                            try {
+                            try{
                                 serverStub.close();
-                            } catch (RemoteException ex) {
+                            }catch(RemoteException ex){
                                 client.getUserInterface().printErr("Cannot close connection with server.");
                             }
 
                             System.exit(1);
-                        }finally {
-                            if(receivedEvent != null) {
-                                client.getUserInterface().update(receivedEvent);
-                            }
                         }
                     }
                 }

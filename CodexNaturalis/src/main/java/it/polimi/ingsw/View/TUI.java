@@ -180,7 +180,7 @@ public class TUI extends UI {
                     "\n\tVisible corners:\n\t\tFRONT:");
             for(Corner corner : card.getFrontCorners()){
                 if(corner.getPosition() != null && corner.isCovered == false)
-                    printOut("\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
+                    printOut("\t\t\t" + corner.getPosition() + (corner.getPosition().equals(UP_SX.toString()) || corner.getPosition().equals(UP_DX.toString()) ? "  " : "")
                             + ": "+ corner.getStringResource());
             }
             printOut("\t\tBACK:");
@@ -462,7 +462,7 @@ public class TUI extends UI {
 
         clearConsole();
 
-        // Chat's input
+        // Commands input
         new Thread(){
             @Override
             public void run() {

@@ -15,8 +15,8 @@ import java.rmi.RemoteException;
 
 public class ServerStub implements Server, Serializable {
 
-    private String ip;
-    private int port;
+    private final String ip;
+    private final int port;
     private Socket socket;
 
     private ObjectOutputStream out;

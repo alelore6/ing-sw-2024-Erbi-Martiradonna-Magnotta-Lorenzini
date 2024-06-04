@@ -107,7 +107,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         synchronized (clients){
             try{
                 for(Client client : clients.keySet()){
-                    if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equalsIgnoreCase(nickname))
+                    if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equals(nickname))
                         return client;
                 }
             }catch(RemoteException e){}
@@ -130,7 +130,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
                 //client has responded to a request to modify the model
                 for(Client c : clients.keySet()){
-                    if (c.getNickname().equalsIgnoreCase(client.getNickname()))
+                    if (c.getNickname().equals(client.getNickname()))
                         controller.updateModel(event, c.getNickname());
                 }
             }
