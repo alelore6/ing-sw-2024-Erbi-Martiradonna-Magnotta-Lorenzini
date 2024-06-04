@@ -97,7 +97,7 @@ public class MainFrame extends JFrame {
         for(int i=0; i<gameView.numPlayers;i++){
 
             if (gameView.players.get(i).nickname.equalsIgnoreCase(nickname)){
-                personalPanel = new PersonalPanel(gameView.players.get(i));
+                personalPanel = new PersonalPanel(gameView.players.get(i), new JPanel());
                 addToMenuBar("Personal panel");
                 mainPanel.getLayout().addLayoutComponent(null, personalPanel);
 
@@ -139,7 +139,7 @@ public class MainFrame extends JFrame {
         this.setJMenuBar(menuBar);
     }
 
-   private JPanel getPanelByLabel(String label){
+   private JComponent getPanelByLabel(String label){
         if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
         else if(label.equalsIgnoreCase("Personal panel")) return personalPanel;
         else return otherPlayers.get(label);
