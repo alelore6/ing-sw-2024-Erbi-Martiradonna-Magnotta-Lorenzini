@@ -2,16 +2,12 @@ package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.View.GUI;
 
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 
 public class MainFrame extends JFrame {
@@ -19,8 +15,8 @@ public class MainFrame extends JFrame {
     private JMenuBar menuBar;
     public JPanel mainPanel;
     private TableCenterPanel tableCenterPanel;
-    private PersonalPanel personalPanel;
-    private HashMap<String,PlayerPanel> otherPlayers;
+    private PlayerPanel PlayerPanel;
+    private HashMap<String, PersonalPanel> otherPlayers;
     private String nickname;
     private ImageIcon icon;
 
@@ -92,17 +88,17 @@ public class MainFrame extends JFrame {
         addToMenuBar("Table center");
         mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
 
-        otherPlayers = new HashMap<String, PlayerPanel>();
+        otherPlayers = new HashMap<String, PersonalPanel>();
 
         for(int i=0; i<gameView.numPlayers;i++){
 
             if (gameView.players.get(i).nickname.equalsIgnoreCase(nickname)){
-                personalPanel = new PersonalPanel(gameView.players.get(i), new JPanel());
+                PlayerPanel = new PlayerPanel(gameView.players.get(i), new JPanel());
                 addToMenuBar("Personal panel");
-                mainPanel.getLayout().addLayoutComponent(null, personalPanel);
+                mainPanel.getLayout().addLayoutComponent(null, PlayerPanel);
 
             } else {
-                otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i)));
+                otherPlayers.put(gameView.players.get(i).nickname, new PersonalPanel(gameView.players.get(i)));
                 addToMenuBar(gameView.players.get(i).nickname+"'s panel");
                 mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
             }
@@ -141,13 +137,13 @@ public class MainFrame extends JFrame {
 
    private JComponent getPanelByLabel(String label){
         if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
-        else if(label.equalsIgnoreCase("Personal panel")) return personalPanel;
+        else if(label.equalsIgnoreCase("Personal panel")) return PlayerPanel;
         else return otherPlayers.get(label);
     }
 
     public void update(GameView gameView){
         tableCenterPanel.update(gameView);
-        personalPanel.update(gameView.getPlayerViewByNickname(nickname));
+        PlayerPanel.update(gameView.getPlayerViewByNickname(nickname));
 
         for(String name:otherPlayers.keySet()){
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
