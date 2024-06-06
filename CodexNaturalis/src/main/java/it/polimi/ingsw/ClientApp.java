@@ -20,21 +20,20 @@ import it.polimi.ingsw.View.TUI;
 public class ClientApp {
 
     private static final int PING_INTERVAL = 100; // milliseconds
+    private volatile boolean running = true;
 
     public static void main(String[] args) throws RemoteException, NotBoundException {
 
-        List<String> args_list = Arrays.stream(args).toList();
+        List<String> args_list = Arrays.asList(args);
 
         final Scanner in = new Scanner(System.in);
         final int SOCKET_PORT = ServerApp.SOCKET_PORT;
-        boolean isRMI = (args_list.contains("-rmi") ? true : false);
-        boolean isTUI = (args_list.contains("-tui") ? true : false);
-        boolean isLocal = (args_list.contains("-local") ? true : false);
+        boolean isRMI   = args_list.contains("-rmi");
+        boolean isTUI   = args_list.contains("-tui");
+        boolean isLocal = args_list.contains("-local");
         String ip;
 
-        if(isLocal){
-            ip = "localhost";
-        }
+        if(isLocal) ip = "localhost";
         else{
             System.out.println("Enter server IP address: ");
             ip = in.next();
@@ -42,9 +41,9 @@ public class ClientApp {
 
         if(isRMI){   //RMI
 
-            Registry registry = LocateRegistry.getRegistry(ip,1099);
+            Registry registry = LocateRegistry.getRegistry(ip);
 
-            Server server = (Server) registry.lookup("server");
+            Server server = (Server) registry.lookup("CodexNaturalis_Server");
 
             ClientImpl client = new ClientImpl(server, isTUI);
 
@@ -90,5 +89,9 @@ public class ClientApp {
                 }
             }.start();
         }
+    }
+
+    public void stop(){
+        running = false;
     }
 }

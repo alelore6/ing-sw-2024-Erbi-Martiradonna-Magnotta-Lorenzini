@@ -30,25 +30,17 @@ public class AckResponse extends GenericResponse{
         this.gameView = gameView;
     }
 
-    public AckResponse(String errorMessage, String nickname, GenericResponse response){
-        //solo per esito negativo
-        super(errorMessage, nickname);
-        this.ok = false;
-        this.response = response;
-        mustBeSentToAll=true;
-        this.gameView = null;
-    }
-    public AckResponse(String nickname, GenericResponse response){
-        //per esito positivo senza aggiornare view
+    public AckResponse(String nickname, String message, GenericResponse response, boolean isOk){
+        // senza aggiornare view
         //togliere il booleano da input e sistemare utilizzi
-        super("Event has gone successfully", nickname);
-        this.ok = true;
+        super(message, nickname);
+        this.ok = isOk;
         this.response = response;
         mustBeSentToAll=true;
         this.gameView = null;
     }
 
-    public AckResponse(String errorMessage, String nickname, GameView gameView){
+    public AckResponse(String nickname, String errorMessage, GameView gameView){
         //solo per esito negativo
         super(errorMessage, nickname);
         this.ok = false;

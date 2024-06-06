@@ -7,12 +7,6 @@ import java.rmi.RemoteException;
 
 public interface Server extends Remote {
 
-    /**
-     * binds a client to the server
-     * @throws RemoteException
-     */
-    void register(Client client) throws RemoteException;
-
     void update(Client client, GenericEvent event) throws RemoteException;
 
 }

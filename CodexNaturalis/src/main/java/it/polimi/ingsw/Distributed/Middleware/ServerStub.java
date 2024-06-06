@@ -27,7 +27,6 @@ public class ServerStub implements Server, Serializable {
         this.port = port;
     }
 
-    @Override
     public void register(Client client) throws RemoteException {
         try{
             this.socket = new Socket(ip, port);

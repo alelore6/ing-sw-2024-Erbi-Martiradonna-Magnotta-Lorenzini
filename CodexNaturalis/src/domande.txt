@@ -66,8 +66,6 @@ DEBUG E LAVORO (Alessandro e Gianluca):
     - se si chiude la finestra di gui è una disconnessione? si
 
 
-//TODO (21/5)
-
 -Classe immutabile del model (serializzabile) da passare alla view  --> probabile causa di crash quando si starta il game
 
 -Sistemare eventi mandati a tutti (mustbesenttoAll)
@@ -129,6 +127,7 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 //Aggiornamento 4/06
   BUG: Il gioco non conta le risorse della starting card.
 
+TODO: se un utente inserisce un nick con dei punti, lato server cambiare con _
 
 
 

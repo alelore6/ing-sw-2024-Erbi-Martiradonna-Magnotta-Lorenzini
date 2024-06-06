@@ -15,6 +15,7 @@ import it.polimi.ingsw.ModelView.GameView;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -98,9 +99,10 @@ public class Controller {
             if (lobby == null && !numPlayersRequestSent) {
                 mvListener.addEvent(new NumPlayersRequest(nickname));
                 numPlayersRequestSent = true;
-            } else{
+            }
+            else{
                 // Checks the game hasn't started yet.
-                 if (model == null && lobby!=null) {
+                if (model == null && lobby!=null) {
                     if(!lobby.addPlayer(nickname)) {
                         server.logger.addLog("Can't add the player.", Severity.WARNING);
                         mvListener.addEvent(new ErrorJoinLobby(nickname, lobby.getNumPlayers() == 0 ? 1 : 0));
@@ -109,6 +111,14 @@ public class Controller {
                         mvListener.addEvent(new JoinLobby(oldNickname, nickname));
                         if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                             createGame();
+                        }
+                    }
+                }
+                // This is for rejoin a game
+                else if(model != null){
+                    for(Player player : model.getPlayers()){
+                        if(player.getNickname().equals(nickname)){
+                            // TODO: collegarsi al game
                         }
                     }
                 }
@@ -137,7 +147,7 @@ public class Controller {
 
             if(event instanceof NumPlayersResponse){
                 createLobby(((NumPlayersResponse) event).numPlayers);
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
                 //the first player is added after creating the lobby
                 if(!lobby.addPlayer(nickname)) {
                     server.logger.addLog("Can't add the player", Severity.WARNING);
@@ -155,16 +165,17 @@ public class Controller {
                 if(((ReconnectionResponse) event).getPassword().equals(passwords.get(nickname))){
                     synchronized (server.disconnectedClients){
                         for(Client client : server.disconnectedClients.keySet()){
-                            if(server.disconnectedClients.get(client).equals(nickname)){
-                                server.disconnectedClients.remove(client);
-                            }
+                            if(server.disconnectedClients.get(client).equals(nickname))
+                                nickname = server.disconnectedClients.remove(client);
                         }
                     }
+
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
 
                     server.register(((ReconnectionResponse) event).client);
                 }
                 else{
-                    GenericResponse ack = new AckResponse("Can't rejoin: the password is incorrect.", event.nickname, (GenericResponse) event);
+                    GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the password is incorrect.", (GenericResponse) event, false);
                     ModelViewListener listener = getMVListenerByNickname(event.nickname);
                     listener.addEvent(ack);
 
@@ -190,7 +201,7 @@ public class Controller {
 
             else if(event instanceof ChooseObjectiveResponse) {
                 getPlayerByNickname(nickname).chooseObjective(((ChooseObjectiveResponse) event).objectiveCard);
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
             }
 
             else if(event instanceof DrawCardResponse){
@@ -205,7 +216,7 @@ public class Controller {
                         model.turnPhase++;
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericResponse) event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
@@ -218,7 +229,7 @@ public class Controller {
                         model.turnPhase++;
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericResponse) event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
                 else if(chosenPosition == 5){
@@ -229,7 +240,7 @@ public class Controller {
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
                     } catch (HandFullException | isEmptyException e ) {
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(e.getMessage(), nickname, (GenericResponse) event));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
                 nextPlayer();
@@ -244,7 +255,7 @@ public class Controller {
                     }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
                 } catch (WrongPlayException e) {
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(e.message, nickname, (GenericResponse) event));
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.message, (GenericResponse) event, false));
                 }
             }
 
@@ -258,7 +269,7 @@ public class Controller {
 //                        model.controllerLock.notifyAll();
 //                    }
                 }
-                else getMVListenerByNickname(nickname).addEvent(new AckResponse("Color already taken. Please try again.", nickname, (GenericResponse) event));
+                else getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, "Color already taken. Please try again.", (GenericResponse) event, false));
             }
             else if(event instanceof PlaceStartingCard){
                 try {
@@ -271,11 +282,11 @@ public class Controller {
 //                    }
                 } catch (WrongPlayException e) {
                     //shouldn't happen
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse("Error in placing starting card", nickname, (GenericResponse) null));                }
+                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, "Error in placing starting card", null, false));                }
             }
             else if(event instanceof SetPassword){
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
-                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event));
+                getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
                 //String p = passwords.get(event.nickname);
                 synchronized (lock) {wait++;}
             }

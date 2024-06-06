@@ -15,7 +15,7 @@ public class ReconnectionResponse extends GenericResponse{
      * @param nickname player that receives or sends the event
      */
     public ReconnectionResponse(String nickname, String password) {
-        super("Password entered.", nickname);
+        super("Login done correctly.", nickname);
         this.password = password;
     }
 

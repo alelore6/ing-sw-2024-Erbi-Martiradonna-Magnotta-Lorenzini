@@ -35,8 +35,8 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
     private void initialize(Server server) throws RemoteException {
         // Socket
         if(server instanceof ServerStub){
+            ((ServerStub) server).register(this);
             this.server = server;
-            this.server.register(this);
             userInterface.notifyListener(new ClientRegister(this));
             userInterface.getListener().handleEvent();
         }

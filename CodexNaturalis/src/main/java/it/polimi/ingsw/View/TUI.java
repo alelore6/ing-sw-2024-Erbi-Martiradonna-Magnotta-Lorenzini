@@ -16,6 +16,7 @@ public class TUI extends UI {
     private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
+    private boolean isReconnecting;
     private Card[][] lastPlayedCards = null;
     private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
@@ -109,7 +110,7 @@ public class TUI extends UI {
                 tempString = lastInputs.poll();
             }
 
-            if(tempString != null && !tempString.contains(".") && !tempString.contains(" ") && tempString.length() >= 4)
+            if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
             else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces or points. Try again:", true));
         }
@@ -444,6 +445,11 @@ public class TUI extends UI {
         return false;
     }
 
+    private boolean listenToDisconnection(String command){
+
+        return false;
+    }
+
     public final void update(GenericEvent e){
         if(e instanceof ChatMessage){
             synchronized (lock_chat){
@@ -471,7 +477,7 @@ public class TUI extends UI {
                     try {
                         s = in.readLine();
                         synchronized(lastInputs){
-                            if(!(listenToChat(s) || listenToCard(s, lastPlayedCards))){
+                            if(!(listenToChat(s) || listenToCard(s, lastPlayedCards) || listenToDisconnection(s))){
                                 lastInputs.add(s);
                                 lastInputs.notifyAll();
                             }
@@ -526,6 +532,13 @@ public class TUI extends UI {
 
                     if((ev instanceof AckResponse) || !(ev instanceof GenericResponse))
                         printOut(ev.msgOutput());
+
+                    // If login fails.
+                    if(ev instanceof AckResponse && ((AckResponse) ev).response instanceof ReconnectionResponse && ((AckResponse) ev).ok == false){
+                        printErr("Exiting...");
+                        System.exit(1);
+                    }
+
 
                     switch(ev){
                         case DrawCardRequest e :
