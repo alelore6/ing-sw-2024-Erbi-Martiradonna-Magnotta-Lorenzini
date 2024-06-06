@@ -14,11 +14,13 @@ import java.io.IOException;
 
 public class PersonalPanel extends JSplitPane {
     protected final String nickname;
+    private final PlayerView playerView;
 
      PersonalPanel(PlayerView playerView) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.nickname = playerView.nickname;
-    }
+        this.playerView = playerView;
+     }
 
 
 
@@ -31,7 +33,7 @@ public class PersonalPanel extends JSplitPane {
             PersonalPanel panel=new PersonalPanel(new PlayerView(new Player("test",null)));
 
             JPanel leftPanel = new JPanel();
-            //leftPanel.setBackground(Color.BLUE);
+            leftPanel.setBackground(Color.ORANGE);
 
             JPanel rightPanel = new JPanel();
             //rightPanel.setBackground(Color.GREEN);
@@ -101,7 +103,6 @@ public class PersonalPanel extends JSplitPane {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
         return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
     }
 
