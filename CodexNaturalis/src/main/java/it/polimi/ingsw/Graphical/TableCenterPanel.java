@@ -21,15 +21,45 @@ public class TableCenterPanel extends JSplitPane {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
 
-        JPanel leftPanel = createLeftPanel();
-        JPanel rightPanel = createRightPanel();
+        this.setLeftComponent(createLeftPanel());
+        this.setRightComponent(createRightPanel());
 
-        this.setLeftComponent(leftPanel);
-        this.setRightComponent(rightPanel);
+        this.setDividerLocation(1140);
+        createRightPanel().setMinimumSize(new Dimension(390, 300));
+        createLeftPanel().setMinimumSize(new Dimension(1000, 300));
+    }
 
-        this.setDividerLocation((int) (Toolkit.getDefaultToolkit().getScreenSize().width * 0.8)); // 80% division
-        leftPanel.setMinimumSize(new Dimension(800, 300));
-        rightPanel.setMinimumSize(new Dimension(390, 300));
+    private JPanel createRightPanel() {
+
+        ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
+        int originalWidth = img.getIconWidth();
+        int originalHeight = img.getIconHeight();
+        int width = 900;
+        int height = 700;
+        double widthproportion = (double) width / originalWidth;
+        double heightproportion = (double) height / originalHeight;
+        double proportion =Math.min(widthproportion,heightproportion);
+
+        double finalwidth =  proportion * originalWidth;
+        double finalheight =  proportion * originalHeight;
+
+
+        Image imgResized = img.getImage().getScaledInstance((int) finalwidth, (int) finalheight,Image.SCALE_DEFAULT);
+        ImageIcon resizedIcon = new ImageIcon(imgResized);
+        JPanel rightPanel = new JPanel(){
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                int  x= (int) ((getWidth()- finalwidth)/2);
+                int  y  = (int) ((getHeight()- finalheight)/2);
+                g.drawImage(resizedIcon.getImage(), x,y, this);
+            }
+        };
+        rightPanel.setLayout(new BorderLayout());
+
+        setVisible(true);
+
+        return rightPanel;
     }
 
     private JPanel createLeftPanel() {
@@ -81,7 +111,6 @@ public class TableCenterPanel extends JSplitPane {
         cardPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JLabel cardLabel = new JLabel();
-        cardLabel.setHorizontalAlignment(JLabel.CENTER);
         cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
 
         cardPanel.add(cardLabel, BorderLayout.CENTER);
@@ -94,27 +123,6 @@ public class TableCenterPanel extends JSplitPane {
         panel.add(cardPanel);
     }
 
-    private JPanel createRightPanel() {
-
-        ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
-        int width = 800;
-        int height = 720;
-
-        Image imgResized = img.getImage().getScaledInstance(width,height,Image.SCALE_DEFAULT);
-        ImageIcon resizedIcon = new ImageIcon(imgResized);
-        JPanel rightPanel = new JPanel(){
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-
-                g.drawImage(resizedIcon.getImage(), width,height , this);
-            }
-        };
-        rightPanel.setLayout(new BorderLayout());
-        setVisible(true);
-
-        return rightPanel;
-    }
 
     private ImageIcon getImageIcon(String path, int scaleX, int scaleY) {
         BufferedImage img = null;
