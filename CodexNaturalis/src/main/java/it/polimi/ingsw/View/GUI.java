@@ -154,7 +154,7 @@ public class GUI extends UI{
                             n=0;
                             try {
                                 while(n==0){
-                                    ImageDialog dialog = new ImageDialog(f, e.msgOutput(),getCardPath(e.objCard1.getID(),false), getCardPath(e.objCard2.getID(),false),false);
+                                    ImageDialog dialog = new ImageDialog(f, message,getCardPath(e.objCard1.getID(),false), getCardPath(e.objCard2.getID(),false),false);
                                     dialog.setVisible(true);
 
                                     n= dialog.getChoice();
@@ -231,7 +231,7 @@ public class GUI extends UI{
                             n=0;
                             try {
                                 while(n==0){
-                                    ImageDialog dialog = new ImageDialog(f, e.msgOutput(),getCardPath(e.startingCard.getID(),false), getCardPath(e.startingCard.getID(),true),true);
+                                    ImageDialog dialog = new ImageDialog(f, message,getCardPath(e.startingCard.getID(),false), getCardPath(e.startingCard.getID(),true),true);
                                     dialog.setVisible(true);
 
                                     n= dialog.getChoice();

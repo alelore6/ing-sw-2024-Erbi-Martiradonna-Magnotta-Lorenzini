@@ -5,6 +5,7 @@ import java.io.Serializable;
 public abstract class Card implements Serializable {
     protected int ID;
     protected CardColor color;
+    protected int playOrder;
 
     // Everything about the back of the card is based on this boolean:
     public boolean isFacedown = false;
@@ -28,4 +29,6 @@ public abstract class Card implements Serializable {
     public CardColor getColor(){
         return color;
     }
+
+    public int getPlayOrder() {return playOrder;}
 }

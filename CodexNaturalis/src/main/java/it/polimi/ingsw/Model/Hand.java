@@ -29,6 +29,8 @@ public class Hand {
         return displayedCards;
     }
 
+    private int NcardsPlayed=0;
+
     /**
      * Constructor of the class
      * @param player player that owns the class
@@ -236,6 +238,8 @@ public class Hand {
         }
         //play the card
         displayedCards[x][y] = card;
+        card.playOrder=NcardsPlayed;
+        NcardsPlayed++;
         //card is removed from the hand, not in case of starting card
         if (found) {
             HandCards[i] = null;

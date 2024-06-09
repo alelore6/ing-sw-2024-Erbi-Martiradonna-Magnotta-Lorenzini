@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Graphical;
 
+import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.ModelView.PlayerView;
 
 import javax.swing.*;
@@ -7,25 +8,28 @@ import java.awt.*;
 
 public class PlayerPanel extends JScrollPane {
 
-    PlayerPanel(PlayerView playerView, JPanel panel){
-        super(panel);
-        panel.setBackground(Color.ORANGE);
+    private PlayedCardsPanel panel ;
 
+    private PlayerView playerView;
 
+    PlayerPanel(PlayerView playerView){
+        super();
+        this.playerView = playerView;
+//        this.panel= new PlayedCardsPanel(null); //   subMatrix(playerView.hand.playedCards)
+//        setViewportView(panel);
     }
-
 
     protected void update(PlayerView playerView) {
 
     }
 
-    public static int[][] subMatrix(int[][] matrix) {
+    public static Card[][] subMatrix(Card[][] matrix) {
         int n = matrix.length;
         int startRow = n, endRow = -1, startCol = n, endCol = -1;
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (matrix[i][j] != 0) {
+                if (matrix[i][j] != null) {
                     if (i < startRow) startRow = i;
                     if (i > endRow) endRow = i;
                     if (j < startCol) startCol = j;
@@ -38,13 +42,13 @@ public class PlayerPanel extends JScrollPane {
         int size = Math.max(endRow - startRow + 1, endCol - startCol + 1);
 
         // Estrai la sotto-matrice quadrata
-        int[][] subMatrix = new int[size][size];
+        Card[][] subMatrix = new Card[size][size];
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (startRow + i < n && startCol + j < n) {
                     subMatrix[i][j] = matrix[startRow + i][startCol + j];
                 } else {
-                    subMatrix[i][j] = 0;
+                    subMatrix[i][j] = null;
                 }
             }
         }

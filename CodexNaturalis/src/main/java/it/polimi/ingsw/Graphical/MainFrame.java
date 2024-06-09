@@ -15,8 +15,8 @@ public class MainFrame extends JFrame {
     private JMenuBar menuBar;
     public JPanel mainPanel;
     private TableCenterPanel tableCenterPanel;
-    private PlayerPanel PlayerPanel;
-    private HashMap<String, PersonalPanel> otherPlayers;
+    private PersonalPanel myPanel;
+    private HashMap<String, PlayerPanel> otherPlayers;
     private String nickname;
     private ImageIcon icon;
 
@@ -88,17 +88,17 @@ public class MainFrame extends JFrame {
         addToMenuBar("Table center");
         mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
 
-        otherPlayers = new HashMap<String, PersonalPanel>();
+        otherPlayers = new HashMap<String, PlayerPanel>();
 
         for(int i=0; i<gameView.numPlayers;i++){
 
             if (gameView.players.get(i).nickname.equalsIgnoreCase(nickname)){
-                PlayerPanel = new PlayerPanel(gameView.players.get(i), new JPanel());
+                myPanel = new PersonalPanel(gameView.players.get(i));
                 addToMenuBar("Personal panel");
-                mainPanel.getLayout().addLayoutComponent(null, PlayerPanel);
+                mainPanel.getLayout().addLayoutComponent(null, myPanel);
 
             } else {
-                otherPlayers.put(gameView.players.get(i).nickname, new PersonalPanel(gameView.players.get(i)));
+                otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i)));
                 addToMenuBar(gameView.players.get(i).nickname+"'s panel");
                 mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
             }
@@ -137,13 +137,13 @@ public class MainFrame extends JFrame {
 
    private JComponent getPanelByLabel(String label){
         if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
-        else if(label.equalsIgnoreCase("Personal panel")) return PlayerPanel;
+        else if(label.equalsIgnoreCase("Personal panel")) return myPanel;
         else return otherPlayers.get(label);
     }
 
-    public void update(GameView gameView){
+    public void update(GameView gameView, boolean play){
         tableCenterPanel.update(gameView);
-        PlayerPanel.update(gameView.getPlayerViewByNickname(nickname));
+        myPanel.update(gameView.getPlayerViewByNickname(nickname),play);
 
         for(String name:otherPlayers.keySet()){
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));

@@ -1,5 +1,6 @@
 package it.polimi.ingsw.Graphical;
-
+import it.polimi.ingsw.Model.Card;
+import it.polimi.ingsw.Model.ResourceCard;
 import it.polimi.ingsw.View.GUI;
 
 import javax.imageio.ImageIO;
@@ -7,111 +8,97 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 class PlayedCardsPanel extends JPanel {
-    //panel che permette la sovrapposizione degli angoli delle carte
     private final int overlapOffset = 40;
-    private int[][] matrix;
-    private final int size;
+    private final List<CardComponent> cardComponents;
 
-
-    public PlayedCardsPanel(int[][] matrix) {
-        this.matrix = matrix;
-        size = matrix[0].length;
+    public PlayedCardsPanel(Card[][] matrix) {
+        this.cardComponents = new ArrayList<>();
+        int size = matrix[0].length;
+        int orderCounter = 0; // Counter to track the order of positioning
         setLayout(null); // Layout manager nullo per posizionamento assoluto
 
-        //aggiungo le carte
+        java.util.Random rand = new java.util.Random();
+
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                JLabel label = new JLabel();
-                label.setHorizontalAlignment(JLabel.CENTER);
-                label.setVerticalAlignment(JLabel.CENTER);
-
-                if (matrix[i][j] != 0) {
-                    label.setIcon(getImageIcon(GUI.getCardPath(matrix[i][j],false)));
+                if (matrix[i][j] != null) {
+                    BufferedImage image = getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown));
+                    //TODO mettere  matrix[i][j].getPlayOrder() al posto del numero random
+                    cardComponents.add(new CardComponent(matrix[i][j], image, i, j,rand.nextInt(100)+1));
                 }
-
-                add(label);
             }
         }
     }
 
-    private static final int MATRIX_SIZE = 10; //solo per test
-
-    public static void main(String[] args) {
-
-        int[][] matrix = new int[MATRIX_SIZE][MATRIX_SIZE];
-
-        // Riempimento della matrice con valori casuali per esempio
-        java.util.Random rand = new java.util.Random();
-        for (int i = 0; i < MATRIX_SIZE; i++) {
-            for (int j = 0; j < MATRIX_SIZE; j++) {
-                if(i%2==j%2) matrix[i][j] = rand.nextInt(20);
-                else matrix[i][j] = 0;
-            }
-        }
-        JFrame frame = new JFrame();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        PlayedCardsPanel panel = new PlayedCardsPanel(matrix);
-        PlayerPanel scrollPane = new PlayerPanel(null,panel);
-
-
-        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
-
-        frame.setVisible(true);
-    }
-
-
-
-
-    private ImageIcon getImageIcon(String path) {
-        BufferedImage img = null;
+    private BufferedImage getImage(String path) {
         try {
-            img = ImageIO.read(this.getClass().getClassLoader().getResource(path));
+            return ImageIO.read(this.getClass().getClassLoader().getResource(path));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return new ImageIcon(img.getScaledInstance(250, 150, Image.SCALE_DEFAULT));
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        // Ordina i componenti per ordine di posizionamento
+        cardComponents.sort(Comparator.comparingInt(CardComponent::getPositionOrder));
 
-
-
-        @Override
-    public void doLayout() {
-        int numComponents = getComponentCount();
-        int rowCount = (int) Math.sqrt(numComponents);
-        int colCount = rowCount;
-
-        for (int i = 0; i < rowCount; i++) {
-            for (int j = 0; j < colCount; j++) {
-                int index = i * colCount + j;
-                if (index < numComponents) {
-                    Component comp = getComponent(index);
-                    int x = j * (comp.getPreferredSize().width - overlapOffset);
-                    int y = i * (comp.getPreferredSize().height - overlapOffset);
-                    comp.setBounds(x, y, comp.getPreferredSize().width, comp.getPreferredSize().height);
-                }
-            }
+        for (CardComponent cardComponent : cardComponents) {
+            int x = cardComponent.getCol() * (250 - overlapOffset);
+            int y = cardComponent.getRow() * (150 - overlapOffset);
+            g.drawImage(cardComponent.getImage(), x, y, 250, 150, null);
         }
     }
 
     @Override
     public Dimension getPreferredSize() {
-        if (getComponentCount() > 0) {
-            int rowCount = size;
-            int colCount = size;
-            int componentWidth = getComponent(0).getPreferredSize().width;
-            int componentHeight = getComponent(0).getPreferredSize().height;
-            int preferredWidth = (colCount - 1) * (componentWidth - overlapOffset) + componentWidth;
-            int preferredHeight = (rowCount - 1) * (componentHeight - overlapOffset) + componentHeight;
+        if (cardComponents.size() > 0) {
+            int maxRow = cardComponents.stream().mapToInt(CardComponent::getRow).max().orElse(0);
+            int maxCol = cardComponents.stream().mapToInt(CardComponent::getCol).max().orElse(0);
+            int componentWidth = 250;
+            int componentHeight = 150;
+            int preferredWidth = (maxCol + 1) * (componentWidth - overlapOffset) + overlapOffset;
+            int preferredHeight = (maxRow + 1) * (componentHeight - overlapOffset) + overlapOffset;
             return new Dimension(preferredWidth, preferredHeight);
         } else {
-            return super.getPreferredSize();
+            return new Dimension(800, 600); // Default size
         }
     }
-}
 
+
+
+    public static void main(String[] args) {
+        Card[][] matrix = new Card[10][10];
+
+        java.util.Random rand = new java.util.Random();
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                if (i % 2 == j % 2) {
+                    ResourceCard card = new ResourceCard(rand.nextInt(20));
+                    matrix[i][j] = card;
+                } else {
+                    matrix[i][j] = null;
+                }
+            }
+        }
+
+        JFrame frame = new JFrame();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        PlayedCardsPanel panel = new PlayedCardsPanel(PlayerPanel.subMatrix(matrix));
+
+        PlayerPanel scrollPane = new PlayerPanel(null);
+        scrollPane.setViewportView(panel);
+
+        frame.getContentPane().add(scrollPane, BorderLayout.CENTER);
+
+        frame.setVisible(true);
+    }
+}

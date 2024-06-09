@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class ImageDialog extends JDialog {
-//TODO ringraziare i creatori di chatgpt
     private int choice;
 
     public ImageDialog(Frame parent, String message, String cardPath1, String cardPath2, boolean useFront) throws IOException {
@@ -100,21 +99,4 @@ public class ImageDialog extends JDialog {
         return choice;
     }
 
-    public static void main(String[] args){
-        //main di test
-        int n=0;
-        JFrame parent=new JFrame();
-        try {
-            while(n==0){
-                ImageDialog dialog = new ImageDialog(parent, "messaggio",GUI.getCardPath(1,false), GUI.getCardPath(2,false),false);
-                dialog.setVisible(true);
-
-                n= dialog.getChoice();
-            }
-        } catch (IOException ex) {
-            System.out.println("Error: " + ex.getMessage());
-        }
-        System.out.println("Scelta: " +n);
-
-    }
 }
