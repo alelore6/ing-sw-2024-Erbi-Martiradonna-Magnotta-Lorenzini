@@ -13,20 +13,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class PersonalPanel extends JSplitPane {
     protected final String nickname;
     private final PlayerView playerView;
     private int choice;
-    private JButton playButton1;
-    private JButton playButton2;
-    private JButton playButton3;
+    private ArrayList<JButton> playButtons;
+    private  ArrayList<JLabel> labels;
+    private int[] cardsID= new int[3];
+    private boolean[] isFacedown= new boolean[3];
     private JLabel selectedLabel;
 
     PersonalPanel(PlayerView playerView) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.nickname = playerView.nickname;
         this.playerView = playerView;
+        playButtons = new ArrayList<>();
+        labels = new ArrayList<>();
 
         JPanel leftPanel = new JPanel(); // questo sarebbe playedcards panel
         leftPanel.setBackground(Color.decode("#d9dbc1"));
@@ -39,30 +43,30 @@ public class PersonalPanel extends JSplitPane {
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(2, 2, 2, 2);
 
-            // Creazione e aggiunta dell'immagine
             JLabel label = new JLabel();
             int k = ((i - 1) * 25) + 1;
-            label.setIcon(getImageIcon(GUI.getCardPath(k, false)));
+            label.setIcon(getImageIcon(GUI.getCardPath(k, false))); //mettere la carta al posto di k
+
             gbc.gridx = 0;
             gbc.gridy = 0;
-            gbc.gridheight = 2; // Span di due righe
+            gbc.gridheight = 2;
             imagePanel.add(label, gbc);
 
             if (i != 1) {
+                //carte della mano
+                cardsID[i-2]=k;
+                isFacedown[i-2]=false;
+                labels.add(i-2,label);
                 // Creazione e aggiunta del bottone Flip
                 JButton flipButton = new JButton("Flip");
-                final int index = i;
-                final boolean[] isFacedown = new boolean[3];
-                for (int j = 0; j < 3; j++) {
-                    isFacedown[j] = false;
-                }
-                final int cardID = k;
+                final int index = i-2;
+
                 flipButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         //devo anche girare la carta veramente
-                        isFacedown[index - 2] = !isFacedown[index - 2];
-                        label.setIcon(getImageIcon(GUI.getCardPath(k, isFacedown[index - 2])));
+                        isFacedown[index] = !isFacedown[index];
+                        label.setIcon(getImageIcon(GUI.getCardPath(cardsID[index], isFacedown[index])));
                     }
                 });
                 gbc.gridx = 1;
@@ -75,19 +79,17 @@ public class PersonalPanel extends JSplitPane {
                 playButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        choice = index - 2;
-                        System.out.println("You have chosen card N. "+ (choice+1));
+                        choice = index;
+                        System.out.println("You have chosen card N. "+ (choice+1)+ " ID: "+cardsID[choice]);
                         if (selectedLabel != null) {
-                            selectedLabel.setBorder(null); // Rimuove il bordo dalla label precedente
+                            selectedLabel.setBorder(null);
                         }
                         selectedLabel = label;
-                        Border border = new LineBorder(Color.GREEN, 4); // Crea un bordo rosso
-                        selectedLabel.setBorder(border); // Imposta il bordo sulla label selezionata
+                        selectedLabel.setBorder(new LineBorder(Color.GREEN, 4));
+                        confirmPlay();
                     }
                 });
-                if (i == 2) playButton1 = playButton;
-                else if (i == 3) playButton2 = playButton;
-                else playButton3 = playButton;
+                playButtons.add(playButton);
                 gbc.gridy = 1;
                 imagePanel.add(playButton, gbc);
             }
@@ -96,7 +98,7 @@ public class PersonalPanel extends JSplitPane {
             rightPanel.add(Box.createVerticalStrut(5)); // Riduce lo spazio verticale tra le carte
         }
 
-        //hidePlayButton();
+        hidePlayButton();
         add(leftPanel, JSplitPane.LEFT);
         add(rightPanel, JSplitPane.RIGHT);
 
@@ -120,18 +122,20 @@ public class PersonalPanel extends JSplitPane {
 
         // Visualizzazione del frame
         frame.setVisible(true);
+
+        panel.update(null,true);
     }
 
     private void showPlayButton() {
-        playButton1.setVisible(true);
-        playButton2.setVisible(true);
-        playButton3.setVisible(true);
+        for(JButton b : playButtons){
+            b.setVisible(true);
+        }
     }
 
     private void hidePlayButton() {
-        playButton1.setVisible(false);
-        playButton2.setVisible(false);
-        playButton3.setVisible(false);
+        for(JButton b : playButtons){
+            b.setVisible(false);
+        }
     }
 
     private ImageIcon getImageIcon(String path) {
@@ -147,6 +151,16 @@ public class PersonalPanel extends JSplitPane {
     public int getChoice() {
         return choice;
     }
+
+    private void confirmPlay(){
+        if(selectedLabel!=null){
+            int i=JOptionPane.showConfirmDialog(this,"Confirm the play");
+            if(i==0) {//la giocata viene confermata
+                hidePlayButton();
+            }
+        }
+    }
+
 
     protected void update(PlayerView playerView, boolean play ) {
         if (play) showPlayButton();

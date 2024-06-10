@@ -6,6 +6,8 @@ import it.polimi.ingsw.View.GUI;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,24 +17,49 @@ import java.util.List;
 class PlayedCardsPanel extends JPanel {
     private final int overlapOffset = 40;
     private final List<CardComponent> cardComponents;
+    private BufferedImage possiblePlayimage=null;
 
     public PlayedCardsPanel(Card[][] matrix) {
         this.cardComponents = new ArrayList<>();
         int size = matrix[0].length;
-        int orderCounter = 0; // Counter to track the order of positioning
         setLayout(null); // Layout manager nullo per posizionamento assoluto
+
+        try {
+            possiblePlayimage=ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
 
         java.util.Random rand = new java.util.Random();
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 if (matrix[i][j] != null) {
-                    BufferedImage image = getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown));
-                    //TODO mettere  matrix[i][j].getPlayOrder() al posto del numero random
-                    cardComponents.add(new CardComponent(matrix[i][j], image, i, j,rand.nextInt(100)+1));
+                    // mettere  matrix[i][j].getPlayOrder() al posto del numero random
+                    CardComponent c=new CardComponent(matrix[i][j], i, j,rand.nextInt(100)+1);
+                    c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown)));
+                    cardComponents.add(c);
                 }
             }
         }
+
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                Point clickPoint = e.getPoint();
+                for (CardComponent cardComponent : cardComponents) {
+                    int x = cardComponent.getCol() * (250 - overlapOffset);
+                    int y = cardComponent.getRow() * (150 - overlapOffset);
+                    Rectangle imageBounds = new Rectangle(x, y, 250, 150);
+                    if (imageBounds.contains(clickPoint)) {
+                        System.out.println("Card clicked: " + cardComponent.getCard().getID());
+                        // Aggiungi qui l'azione personalizzata che desideri
+                        break;
+                    }
+                }
+            }
+        });
     }
 
     private BufferedImage getImage(String path) {
@@ -49,10 +76,11 @@ class PlayedCardsPanel extends JPanel {
         // Ordina i componenti per ordine di posizionamento
         cardComponents.sort(Comparator.comparingInt(CardComponent::getPositionOrder));
 
-        for (CardComponent cardComponent : cardComponents) {
-            int x = cardComponent.getCol() * (250 - overlapOffset);
-            int y = cardComponent.getRow() * (150 - overlapOffset);
-            g.drawImage(cardComponent.getImage(), x, y, 250, 150, null);
+        for (CardComponent c : cardComponents) {
+            int x = c.getCol() * (250 - overlapOffset);
+            int y = c.getRow() * (150 - overlapOffset);
+            if(c.getCol()*c.getRow()%5==0) g.drawImage(possiblePlayimage, x, y, 250, 150, null);
+            else g.drawImage(c.getImage(), x, y, 250, 150, null);
         }
     }
 
@@ -80,10 +108,8 @@ class PlayedCardsPanel extends JPanel {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 if (i % 2 == j % 2) {
-                    ResourceCard card = new ResourceCard(rand.nextInt(20));
+                    ResourceCard card = new ResourceCard(rand.nextInt(80));
                     matrix[i][j] = card;
-                } else {
-                    matrix[i][j] = null;
                 }
             }
         }

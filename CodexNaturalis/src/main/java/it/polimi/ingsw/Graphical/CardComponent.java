@@ -6,14 +6,13 @@ import java.awt.image.BufferedImage;
 
 class CardComponent {
     private final Card card;
-    private final BufferedImage image;
+    private BufferedImage image;
     private final int row;
     private final int col;
     private final int positionOrder;
 
-    public CardComponent(Card card, BufferedImage image, int row, int col, int positionOrder) {
+    public CardComponent(Card card, int row, int col, int positionOrder) {
         this.card = card;
-        this.image = image;
         this.row = row;
         this.col = col;
         this.positionOrder = positionOrder;
@@ -37,5 +36,9 @@ class CardComponent {
 
     public int getPositionOrder() {
         return positionOrder;
+    }
+
+    public void setImage(BufferedImage image) {
+        this.image = image;
     }
 }

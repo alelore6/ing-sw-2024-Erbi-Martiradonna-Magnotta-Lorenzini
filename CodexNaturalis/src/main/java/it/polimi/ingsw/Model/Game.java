@@ -246,6 +246,7 @@ public class Game{
                     EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
                     mvListeners.get(i).addEvent(event);
                 }
+                break;
             //both decks are found empty simultaneously
             case 4:
                 tablecenter.getGoldDeck().AckEmpty=true;
@@ -256,6 +257,7 @@ public class Game{
                     EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
                     mvListeners.get(i).addEvent(event);
                 }
+                break;
             //gold deck is found empty
             case 5:
                 // if I already had this information do nothing
@@ -272,6 +274,7 @@ public class Game{
                         mvListeners.get(i).addEvent(event);
                     }
                 }
+                break;
             //resource deck is found empty
             case 6:
                 //same as case 5 but decks are inverted
@@ -286,6 +289,7 @@ public class Game{
                         mvListeners.get(i).addEvent(event);
                     }
                 }
+                break;
         }
 
     }
@@ -377,8 +381,8 @@ public class Game{
         else{
             turnCounter++;
             remainingTurns--;
-            //if (remainingTurns==0 ) checkWinner();    //TODO vedere se funza
-            //else nextPlayer(players[curPlayerPosition]);
+//            if (remainingTurns==0 ) checkWinner();
+//            else nextPlayer(players[curPlayerPosition]);
         }
     }
 

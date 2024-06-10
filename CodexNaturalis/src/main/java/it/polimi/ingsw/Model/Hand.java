@@ -151,8 +151,8 @@ public class Hand {
         if (x!=0 && displayedCards[x-1][y]!=null)
             throw new WrongPlayException(player,x,y,card);
         if (x!=80 && displayedCards[x+1][y]!=null)
-            throw new WrongPlayException(player,x,y,card);  //TODO queste eccezioni probabilmente non vengono lanciate mai?
-        if (y!=0 && displayedCards[x][y-1]!=null)           // è un controllo sulle carte in modo che non vengano posizonate a croce?
+            throw new WrongPlayException(player,x,y,card);
+        if (y!=0 && displayedCards[x][y-1]!=null)
             throw new WrongPlayException(player,x,y,card);
         if (y!=80 && displayedCards[x][y+1]!=null)
             throw new WrongPlayException(player,x,y,card);
