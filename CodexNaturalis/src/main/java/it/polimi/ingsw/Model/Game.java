@@ -377,8 +377,8 @@ public class Game{
         else{
             turnCounter++;
             remainingTurns--;
-            if (remainingTurns==0 ) checkWinner();
-            else nextPlayer(players[curPlayerPosition]);
+            //if (remainingTurns==0 ) checkWinner();    //TODO vedere se funza
+            //else nextPlayer(players[curPlayerPosition]);
         }
     }
 
