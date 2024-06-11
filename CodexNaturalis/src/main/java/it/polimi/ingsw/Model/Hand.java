@@ -134,6 +134,8 @@ public class Hand {
         }
         else{
             displayedCards[40][40]=card;
+
+            player.getCurrentResources().update(card, null);
             return;
         }
         // check required resource to play that card
@@ -246,7 +248,9 @@ public class Hand {
         }
         // update current resources
         player.getCurrentResources().update(card, overlaps);
+
     }
+
 
 
 }

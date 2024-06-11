@@ -42,11 +42,14 @@ public class CurrentResources implements Serializable {
      */
      protected void update(Card card, Corner[] overlaps){
          //remove overlapped corners resources
-         for (Corner c: overlaps){
-             if (c!=null && c.getResource() !=null){
-                 Resource r = c.getResource();
-                 if(currentResources.get(r)>0)
-                     currentResources.replace(r,currentResources.get(r)-1);
+
+         if (overlaps != null) {
+             for (Corner c: overlaps){
+                 if (c!=null && c.getResource() !=null){
+                     Resource r = c.getResource();
+                     if(currentResources.get(r)>0)
+                         currentResources.replace(r,currentResources.get(r)-1);
+                 }
              }
          }
          // face down cards are different
