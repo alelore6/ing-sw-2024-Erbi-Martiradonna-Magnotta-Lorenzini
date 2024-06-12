@@ -74,6 +74,7 @@ public class Token {
      * @param points points done in that turn by the player's owning the token
      */
     public void move(int points){
+        boolean isTriggered = false;
         if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //if currentpos is 29 or goes over 29 sets position at 29
             scoretrack.getTokenPos()[scoreTrackPos] -= 1;
             scoretrack.getTokenPos()[29] += 1;
@@ -85,7 +86,7 @@ public class Token {
             scoreTrackPos = scoreTrackPos + points;
         }
         scoretrack.move(this,scoreTrackPos);
-        if(getScoretrack().getTokenPos()[scoreTrackPos] >=3){ //endgame if 20 points are reached
+        if(getScoretrack().getTokenPos()[scoreTrackPos] >=1 && !player.game.isTriggered){ //endgame if 20 points are reached
             player.game.endGame(player.position);
         }
 

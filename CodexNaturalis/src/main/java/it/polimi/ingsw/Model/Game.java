@@ -57,6 +57,8 @@ public class Game{
 
     public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done
 
+    public boolean isTriggered = false; //to see if endgame is triggered
+
     public final Object controllerLock = new Object();
     public Object lock=new Object();
     /**
@@ -236,14 +238,16 @@ public class Game{
      * "both decks are empty"
      */
     public void endGame(int occasion){
+        isTriggered = true;
         switch(occasion){
             // a player reached 20 points
             case 0,1,2,3:
                 // a full round plus the turns remaining of this one
-                remainingTurns = numPlayers + (numPlayers-players[curPlayerPosition].position); //calcolo turni rimanenti
+                remainingTurns = numPlayers + (numPlayers-(players[curPlayerPosition].position + 1)); //calcolo turni rimanenti
+                String nickname = players[curPlayerPosition].getNickname();
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
-                    EndGameTriggered event=new EndGameTriggered("Player " + occasion + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
+                    EndGameTriggered event=new EndGameTriggered(nickname + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
                     mvListeners.get(i).addEvent(event);
                 }
                 break;
@@ -328,6 +332,9 @@ public class Game{
         }
 
         //send FinalRankings event to everyone
+        for(Player player : players){
+            FinalRankings event = new FinalRankings(player.getNickname(), rankings);
+        }
         FinalRankings event=new FinalRankings(players[curPlayerPosition].getNickname(),rankings);
         mvListeners.get(curPlayerPosition).addEvent(event);
     }
@@ -339,6 +346,9 @@ public class Game{
      * @param PreviousPlayer the instance of the player holding the previous turn
      */
     public void nextPlayer(Player PreviousPlayer){
+        if(isFinished){
+            return;
+        }
         //find next player index
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
@@ -377,12 +387,13 @@ public class Game{
             }
             turnCounter++;
             remainingTurns--;
+            //if (remainingTurns==0 ) checkWinner();
         }
         else{
             turnCounter++;
             remainingTurns--;
-//            if (remainingTurns==0 ) checkWinner();
-//            else nextPlayer(players[curPlayerPosition]);
+            //if (remainingTurns==0 ) checkWinner();
+            //else nextPlayer(players[curPlayerPosition]);
         }
     }
 
@@ -399,7 +410,7 @@ public class Game{
     protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
         // credo sia al contrario
-        if (objectiveCard instanceof ObjectiveCard2) {
+        if (objectiveCard instanceof ObjectiveCard2) {  //TODO fixare
             int minPoints = 1000;
             //calcolo punti a seconda del tipo di obj card
             for (Resource resource : ((ObjectiveCard2) objectiveCard).getReqMap().keySet()) {
@@ -408,8 +419,11 @@ public class Game{
                 //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
                 //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
                 //avrà totalizzato
-                if (players[playerPos].getCurrentResources().currentResources.get(resource) / required < minPoints) {
-                    minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
+
+                if (required != 0) {
+                    if ((players[playerPos].getCurrentResources().currentResources.get(resource) / required) < minPoints) {
+                        minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
+                    }
                 }
 
 
@@ -439,30 +453,39 @@ public class Game{
                                 case 1:
                                     x = 0;
                                     y = 0;
+                                    break;
                                 case 2:
                                     x = 0;
                                     y = 1;
+                                    break;
                                 case 3:
                                     x = 0;
                                     y = 2;
+                                    break;
                                 case 4:
                                     x = 1;
                                     y = 0;
+                                    break;
                                 case 5:
                                     x = 1;
                                     y = 1;
+                                    break;
                                 case 6:
                                     x = 1;
                                     y = 2;
+                                    break;
                                 case 7:
                                     x = 2;
                                     y = 0;
+                                    break;
                                 case 8:
                                     x = 2;
                                     y = 1;
+                                    break;
                                 case 9:
                                     x = 2;
                                     y = 2;
+                                    break;
                             }
 
                             if (subMatrix[x][y] == null || subMatrix[x][y] instanceof StartingCard || ((PlayableCard)subMatrix[x][y]).isChecked == 1) {
@@ -492,7 +515,10 @@ public class Game{
                 }
             for(int rowz = 0; rowz < 81; rowz++){
                 for(int columnz = 0; columnz < 81; columnz++){
-                    ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
+                    if (!(players[playerPos].getHand().getDisplayedCards()[rowz][columnz] instanceof StartingCard) &&
+                            players[playerPos].getHand().getDisplayedCards()[rowz][columnz]!= null ) {
+                        ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
+                    }
                 }
             }
             return totalpoints;

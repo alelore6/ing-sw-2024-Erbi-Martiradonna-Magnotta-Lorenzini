@@ -125,7 +125,7 @@ DEBUG E LAVORO (Alessandro e Gianluca):
 
 
 //Aggiornamento 4/06
-  BUG: Il gioco non conta le risorse della starting card.
+  BUG: Il gioco non conta le risorse della starting card.  ✅ SOLVED ✅
 
 
 TODO: - se un utente inserisce un nick con dei punti, lato server cambiare con _
