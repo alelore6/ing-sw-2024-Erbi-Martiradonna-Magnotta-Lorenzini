@@ -331,12 +331,14 @@ public class Game{
             rankings.put(players[i].getNickname(), punteggi[i]);  //fill the rankings hashmap
         }
 
+
         //send FinalRankings event to everyone
-        for(Player player : players){
-            FinalRankings event = new FinalRankings(player.getNickname(), rankings);
+        FinalRankings event = new FinalRankings(players[curPlayerPosition].getNickname(), rankings);
+        for(int i = 0; i < numPlayers; i++){
+            mvListeners.get(i).addEvent(event);
         }
-        FinalRankings event=new FinalRankings(players[curPlayerPosition].getNickname(),rankings);
-        mvListeners.get(curPlayerPosition).addEvent(event);
+
+
     }
 
     /**
