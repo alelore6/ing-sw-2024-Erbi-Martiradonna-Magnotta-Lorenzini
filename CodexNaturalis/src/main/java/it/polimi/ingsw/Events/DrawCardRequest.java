@@ -37,6 +37,6 @@ public class DrawCardRequest extends GenericRequest{
 
     @Override
     public String msgOutput() {
-        return super.msgOutput() + "\u001B[4m\n" + "(1) for RESOURCE or (2) for GOLD:" + "\u001B[0m";
+        return super.msgOutput() + "\u001B[4m\n" + "(0,1,2,3) for CENTERED CARDS, (4) for RESOURCE or (5) for GOLD:" + "\u001B[0m";
     }
 }

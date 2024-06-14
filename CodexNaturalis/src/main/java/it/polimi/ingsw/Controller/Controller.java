@@ -209,6 +209,7 @@ public class Controller {
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
                     try {
+                        //TODO collegarsi al tablecenter per fare pescata anche di carte a terra
                         //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack

@@ -542,8 +542,13 @@ public class TUI extends UI {
 
                     switch(ev){
                         case DrawCardRequest e :
-                            notifyListener(new DrawCardResponse(chooseInt(1,2),client.getNickname()));
+                            for(Card card : e.tableCenterView.centerCards){
+                                printCard(card);
+                            }
+                            notifyListener(new DrawCardResponse(chooseInt(0,5),client.getNickname()));
                             break;
+
+
 
                         case ErrorJoinLobby e :
                             printOut("Do you want to try to connect again?\n" +
