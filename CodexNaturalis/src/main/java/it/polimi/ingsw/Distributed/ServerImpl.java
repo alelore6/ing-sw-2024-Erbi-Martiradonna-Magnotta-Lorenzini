@@ -53,7 +53,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             }
 
             // if MALEDETTO (RIP)
-            if(!(client instanceof ClientSkeleton))
+            if(!(client instanceof ClientSkeleton) && !isReconnected)
                 System.out.println(client.getNickname() + " is connected with RMI.");
         }
 

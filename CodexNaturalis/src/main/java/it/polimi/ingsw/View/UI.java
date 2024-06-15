@@ -14,7 +14,6 @@ import java.util.Queue;
 public abstract class UI implements View{
 
     protected final Deque<GenericEvent> inputEvents = new LinkedList<>();
-    protected final Queue<ChatMessage> chatMessages = new LinkedList<>();
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
     protected volatile boolean isActive = true;

@@ -56,7 +56,7 @@ public class CurrentResources implements Serializable {
          if(card.isFacedown){
              if(card instanceof StartingCard){
                  //add back corners resources
-                for(int i=4; i<8; i++){
+                for(int i=0; i<4; i++){
                     if (card.backCorners[i].pos!=null && card.backCorners[i].getResource()!=null){
                         Resource r=card.backCorners[i].getResource();
                         currentResources.replace(r,currentResources.get(r)+1);
@@ -69,7 +69,7 @@ public class CurrentResources implements Serializable {
              }
              else {
                  //add central resources for resource and gold card
-                 switch (((PlayableCard) card).getColor()){
+                 switch (card.getColor()){
                      case RED -> currentResources.replace(Resource.FUNGI,currentResources.get(Resource.FUNGI)+1);
                      case GREEN -> currentResources.replace(Resource.PLANT,currentResources.get(Resource.PLANT)+1);
                      case PURPLE -> currentResources.replace(Resource.INSECT,currentResources.get(Resource.INSECT)+1);

@@ -9,7 +9,7 @@ public class PlayerDisconnected extends GenericEvent{
      * @param nickname player that receives or sends the event
      */
     public PlayerDisconnected(String playerNickname, String nickname, int remainingPlayers) {
-        super(playerNickname+" has disconnected, "+remainingPlayers+" left.", nickname);
+        super(playerNickname + " has disconnected, " + remainingPlayers + (remainingPlayers == 1 ? " player " : " players ") + "left.", nickname);
         mustBeSentToAll=true;
         if (remainingPlayers==1) message.concat(" Game is over. "+nickname+ " is the winner.");
     }

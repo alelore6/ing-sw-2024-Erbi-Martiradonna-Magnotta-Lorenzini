@@ -20,7 +20,6 @@ public class TUI extends UI {
     private Card[][] lastPlayedCards = null;
     private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
-    private Object lock_chat = new Object();
 
     public TUI(ClientImpl client) {
         super(client);
@@ -451,10 +450,11 @@ public class TUI extends UI {
     }
 
     public final void update(GenericEvent e){
-        if(e instanceof ChatMessage){
-            synchronized (lock_chat){
-                chatMessages.add((ChatMessage) e);
-            }
+        if(e instanceof ChatMessage && (e instanceof ChatAck || !e.nickname.equals(client.getNickname()))){
+            printOut(e.msgOutput());
+        }
+        else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
+            printOut(e.msgOutput());
         }
         else{
             synchronized(lock_events){
@@ -485,24 +485,6 @@ public class TUI extends UI {
                     } catch (IOException e) {
                         e.printStackTrace();
                         System.exit(1);
-                    }
-                }
-            }
-        }.start();
-
-        // Chat's output
-        new Thread(){
-            @Override
-            public void run() {
-                while(isActive){
-                    ChatMessage msg = null;
-                    synchronized(lock_chat){
-                        if (!chatMessages.isEmpty()){
-                            msg = chatMessages.poll();
-
-                            if((msg instanceof ChatAck) || !msg.nickname.equals(client.getNickname()))
-                                printOut(msg.msgOutput());
-                        }
                     }
                 }
             }
