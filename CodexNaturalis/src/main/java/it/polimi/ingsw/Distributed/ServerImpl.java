@@ -24,8 +24,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     // if two clients connect at almost the same time, only one (the first) will have the NumPlayerRequest event.
     private Object lock_update  = new Object();
 
-    private final HashMap<Client, String> clients = new HashMap<>();
-    public final HashMap<Client, String> disconnectedClients = new HashMap<>();
+    private final HashMap<String, Client> clients = new HashMap<>();
+    public final HashMap<String, Client> disconnectedClients = new HashMap<>();
 
     //server constructor with the default rmi port
     public ServerImpl(Logger logger) throws RemoteException {
@@ -45,21 +45,29 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         boolean isReconnected = false;
 
         synchronized(clients){
+            // Initialize of a client
+            String oldNickname = client.getNickname();
+
+            String temp = oldNickname;
+
+            while(findClientByNickname(temp, client) != null){
+                // An identical nickname has been found and adds a sequential number at the end of the nickname.
+                temp = temp + "." + clients.size();
+            }
+
             synchronized(disconnectedClients){
                 if(disconnectedClients.containsValue(client.getNickname()))
                     isReconnected = true;
                 else
-                    clients.put(client, client.getNickname());
+                    clients.put(temp, client);
             }
 
             // if MALEDETTO (RIP)
             if(!(client instanceof ClientSkeleton) && !isReconnected)
-                System.out.println(client.getNickname() + " is connected with RMI.");
-        }
+                System.out.println(temp + " is connected with RMI.");
 
-        ModelViewListener listener;
+            ModelViewListener listener;
 
-        synchronized (clients){
             synchronized(disconnectedClients){
                 listener = new ModelViewListener(this, client);
 
@@ -68,13 +76,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
                 if(isReconnected) listener.addEvent(new ReconnectionRequest(client.getNickname()));
                 else{
-                    // Initialize of a client
-                    String oldNickname = client.getNickname();
-                    Client temp = findClientByNickname(oldNickname, client);
-                    // An identical nickname has been found and adds a sequential number at the end of the nickname.
-                    if(temp != null)    client.setNickname(oldNickname + "." + clients.size());
 
-                    controller.addPlayerToLobby(client.getNickname(), listener, oldNickname);
+                    client.setNickname(temp);
+                    clients.replace(temp, client);
+                    listener.nickname = temp;
+
+                    controller.addPlayerToLobby(temp, listener, oldNickname);
                 }
             }
         }
@@ -86,17 +93,17 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             while (true) {
                 synchronized (clients){
                     synchronized(disconnectedClients){
-                        for (Client client : clients.keySet()) {
+                        for (String nickname : clients.keySet()) {
                             try {
-                                client.ping();
+                                clients.get(nickname).ping();
                             } catch (RemoteException e) {
-                                System.err.println(clients.get(client) + " is disconnected.");
+                                System.err.println(clients.get(clients.get(nickname)) + " is disconnected.");
 
-                                disconnectedClients.put(client, clients.get(client));
+                                disconnectedClients.put(nickname, clients.get(nickname));
 
                                 for(ModelViewListener listener : controller.getMVListeners()){
-                                    if(listener.client.equals(client)){
-                                        controller.disconnectPlayer(clients.get(client));
+                                    if(listener.client.equals(clients.get(nickname))){
+                                        controller.disconnectPlayer(nickname);
                                         controller.getMVListeners().remove(listener);
                                         break;
                                     }
@@ -120,9 +127,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public Client findClientByNickname(String nickname, Client clientToExclude){
         synchronized (clients){
             try{
-                for(Client client : clients.keySet()){
-                    if(!client.equals(clientToExclude) && client.getNickname() != null && client.getNickname().equals(nickname))
-                        return client;
+                for(String nick : clients.keySet()){
+                    if(!clients.get(nick).equals(clientToExclude) && clients.get(nick).getNickname() != null && clients.get(nick).getNickname().equals(nickname))
+                        return clients.get(nick);
                 }
             }catch(RemoteException e){}
         }
@@ -148,7 +155,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         }
     }
 
-    public HashMap<Client, String> getClients(){
+    public HashMap<String, Client> getClients(){
         return clients;
     }
 }

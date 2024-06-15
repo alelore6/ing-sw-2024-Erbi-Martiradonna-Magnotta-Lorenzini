@@ -8,10 +8,10 @@ public class ChatMessage extends GenericEvent{
      * @param message  message describing the event
      * @param nickname player that receives or sends the event
      */
-    public ChatMessage(String message, String sender, String recipient, boolean isForEveryone) {
+    public ChatMessage(String message, String sender, String recipient) {
         super(message, sender);
         this.recipient = recipient;
-        this.mustBeSentToAll = isForEveryone;
+        this.mustBeSentToAll = recipient == null ? true : false;
     }
 
     @Override

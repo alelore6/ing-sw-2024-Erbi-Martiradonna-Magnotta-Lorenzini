@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Distributed.Client;
-import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
@@ -11,11 +10,9 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Model.Player;
-import it.polimi.ingsw.ModelView.GameView;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -43,6 +40,7 @@ public class Controller {
     private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
 
     private boolean numPlayersRequestSent = false;
+    private String newNickname = null;
 
     private final Object lock = new Object();
     private Integer wait=0;
@@ -96,8 +94,10 @@ public class Controller {
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
         synchronized (this){
             // If the lobby is empty, the player decides its size.
-            if (lobby == null && !numPlayersRequestSent) {
-                mvListener.addEvent(new NumPlayersRequest(nickname));
+            if (lobby == null && !numPlayersRequestSent){
+                this.newNickname = nickname;
+
+                mvListener.addEvent(new NumPlayersRequest(oldNickname));
                 numPlayersRequestSent = true;
             }
             else{
@@ -154,7 +154,13 @@ public class Controller {
                     getMVListenerByNickname(nickname).addEvent(new ErrorJoinLobby(nickname, 1));
                 }
                 else {
-                    getMVListenerByNickname(nickname).addEvent(new JoinLobby(nickname, nickname));
+                    String newNickname = null;
+                    if(this.newNickname != null){
+                        newNickname = this.newNickname;
+                        this.newNickname = null;
+                    }
+                    getMVListenerByNickname(nickname).addEvent(new JoinLobby(nickname, newNickname));
+
                     if(lobby.getNumPlayers() != 0 && lobby.getNumPlayers() == lobby.getPlayers().size()){
                         createGame();
                     }
@@ -164,10 +170,7 @@ public class Controller {
                 // The password is correct.
                 if(((ReconnectionResponse) event).getPassword().equals(passwords.get(nickname))){
                     synchronized (server.disconnectedClients){
-                        for(Client client : server.disconnectedClients.keySet()){
-                            if(server.disconnectedClients.get(client).equals(nickname))
-                                nickname = server.disconnectedClients.remove(client);
-                        }
+                        server.disconnectedClients.remove(nickname);
                     }
 
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
@@ -315,7 +318,7 @@ public class Controller {
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
-        for(Client client : server.getClients().keySet()) getMVListenerByNickname(client.getNickname()).addEvent(event);
+        for(String nickname : server.getClients().keySet()) getMVListenerByNickname(server.getClients().get(nickname).getNickname()).addEvent(event);
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){

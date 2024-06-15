@@ -15,7 +15,7 @@ public class ModelViewListener extends Listener {
     private GenericRequest lastRequest;
     private int requestEventIndex = 0;
     public final Client client;
-    public final String nickname;
+    public String nickname;
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
     /**
      * the server bound to this specific listener.

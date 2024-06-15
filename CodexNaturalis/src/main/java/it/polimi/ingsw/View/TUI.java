@@ -111,7 +111,7 @@ public class TUI extends UI {
 
             if(tempString != null && !tempString.contains(" ") && tempString.length() >= 4)
                 isValid = true;
-            else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces or points. Try again:", true));
+            else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:", true));
         }
 
         return tempString.trim();
@@ -391,19 +391,15 @@ public class TUI extends UI {
                 words.remove(2);
                 words.remove(1);
             }
-            else{
-                if(words.size() == 1 || words.get(1).equals("")){
-                    printErr("The message is empty!");
-                    return true;
-                }
+            else if(words.size() == 1 || words.get(1).equals("")){
+                printErr("The message is empty!");
 
-                recipient = "everyone";
-                isForEveryone = true;
+                return true;
             }
 
             words.remove(0);
 
-            listener.addEvent(new ChatMessage(join(" ", words), client.getNickname(), recipient, isForEveryone));
+            listener.addEvent(new ChatMessage(join(" ", words), client.getNickname(), recipient));
 
             return true;
         }
@@ -503,10 +499,10 @@ public class TUI extends UI {
                         ev = inputEvents.poll();
                     }
 
-                    if(!client.getNickname().contains(".") && ev instanceof JoinLobby && ev.nickname.equals(client.getNickname()))
+                    if(ev instanceof JoinLobby && !((JoinLobby) ev).getNewNickname().equals(client.getNickname()))
                         client.setNickname(((JoinLobby) ev).getNewNickname());
                     // Ignore all other player's events
-                    else if(!client.getNickname().contains(".") && !ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
+                    else if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     int n;
 
@@ -597,7 +593,6 @@ public class TUI extends UI {
                             break;
 
                         case JoinLobby e :
-                            client.setNickname(e.getNewNickname());
 
                             notifyListener(new SetPassword(client.getNickname(), chooseString("password")));
                             break;
