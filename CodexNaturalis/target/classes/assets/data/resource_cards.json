@@ -717,6 +717,7 @@
     {
         "ID" : 40,
         "color" : "PURPLE",
+        "points" : 1,
         "frontCorners" : [
             {},
             {

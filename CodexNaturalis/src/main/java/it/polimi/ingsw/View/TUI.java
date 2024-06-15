@@ -18,6 +18,8 @@ public class TUI extends UI {
     private final PrintStream outErr = new PrintStream(System.err, true);
     private boolean isReconnecting;
     private Card[][] lastPlayedCards = null;
+    private final ObjectiveCard[] publicObjCards = new ObjectiveCard[2];
+    private boolean objBool = true;
     private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
 
@@ -261,6 +263,14 @@ public class TUI extends UI {
     }
 
     private void requestCard(int ID, Card[][] playedCards){
+        if(publicObjCards[0].getID() == ID){
+            printCard(publicObjCards[0]);
+            return;
+        }
+        if(publicObjCards[1].getID() == ID){
+            printCard(publicObjCards[1]);
+            return;
+        }
         if(playedCards == null){
             printErr("You can't see the card: you haven't even started the game!");
             return;
@@ -550,7 +560,14 @@ public class TUI extends UI {
                             break;
 
                         case PlayCardRequest e :
+                            if(objBool){
+                                publicObjCards[0] = e.tableView.objCards[0];
+                                publicObjCards[1] = e.tableView.objCards[1];
+
+                                objBool = false;
+                            }
                             printOut("YOUR SECRET OBJECTIVE CARD's ID: " + privateObjectiveCard.getID());
+                            printOut("PUBLIC OBJECTIVE CARDS: " + publicObjCards[0].getID() + ", " + publicObjCards[1].getID());
                             printOut("YOUR CURRENT RESOURCES:");
                             boolean isAny = false;
                             for(Resource resource : e.playerView.currentResources.keySet()){
