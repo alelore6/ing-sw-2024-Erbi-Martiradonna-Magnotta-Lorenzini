@@ -146,9 +146,9 @@ public class TUI extends UI {
             case "YELLOW" -> c = "\u001B[43m";
             case "BLUE" -> c = "\u001B[44m";
             case "PURPLE" -> c = "\u001B[45m";
-            //case "CYAN" -> c = "\u001B[46m";
-            //case "BLACK" -> c = "\u001B[40m";
-            //case "WHITE" -> c = "\u001B[47m";
+            case "CYAN" -> c = "\u001B[46m";
+            case "BLACK" -> c = "\u001B[40m";
+            case "WHITE" -> c = "\u001B[47m";
             default -> c = "<INVALID COLOR> ";
         }
 
@@ -166,7 +166,7 @@ public class TUI extends UI {
             case "YELLOW" -> c = "\u001B[" + temp + "3m";
             case "BLUE" -> c = "\u001B[" + temp + "4m";
             case "PURPLE" -> c = "\u001B[" + temp + "5m";
-            //case "CYAN" -> c = "\u001B[" + temp + "6m";
+            case "CYAN" -> c = "\u001B[" + temp + "6m";
             case "BLACK" -> c = "\u001B[" + temp + "0m";
             case "WHITE" -> c = "\u001B[" + temp + "7m";
             default -> c = "<INVALID COLOR> ";
@@ -565,21 +565,22 @@ public class TUI extends UI {
                             break;
 
                         case PlayCardRequest e :
+                            String STATS_COLOR = "CYAN";
                             if(objBool){
                                 publicObjCards[0] = e.tableView.objCards[0];
                                 publicObjCards[1] = e.tableView.objCards[1];
 
                                 objBool = false;
                             }
-                            printOut("CURRENT RANKINGS:");
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "CURRENT RANKINGS"), false));
                             n = 1;
                             for(String nickname : e.tableView.scoreTrack.points.keySet()){
-                                printOut(n + ") " + nickname + ": " + e.tableView.scoreTrack.points.get(nickname) + "point" + (e.tableView.scoreTrack.points.get(nickname) == 1 ? "" : "s"));
+                                printOut(n + ") " + nickname + ": " + e.tableView.scoreTrack.points.get(nickname) + " point" + (e.tableView.scoreTrack.points.get(nickname) == 1 ? "" : "s"));
                                 n++;
                             }
-                            printOut("YOUR SECRET OBJECTIVE CARD's ID: " + privateObjectiveCard.getID());
-                            printOut("PUBLIC OBJECTIVE CARDS: " + publicObjCards[0].getID() + ", " + publicObjCards[1].getID());
-                            printOut("YOUR CURRENT RESOURCES:");
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR SECRET OBJECTIVE CARD's ID"), false) + "\n" + privateObjectiveCard.getID());
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "PUBLIC OBJECTIVE CARDS"), false) + "\n" + publicObjCards[0].getID() + ", " + publicObjCards[1].getID());
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR CURRENT RESOURCES"), false));
                             boolean isAny = false;
                             for(Resource resource : e.playerView.currentResources.keySet()){
                                 if(e.playerView.currentResources.get(resource) > 0){
@@ -590,10 +591,10 @@ public class TUI extends UI {
 
                             if(!isAny)  printOut("\tnone");
 
-                            printOut("YOUR PLAYED CARDS:");
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR PLAYED CARDS"), false));
                             printGrid(e.playerView.hand.playedCards);
 
-                            printOut("YOUR HAND:");
+                            printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR HAND"), false));
                             for(Card card : e.playerView.hand.handCards){
                                 printCard(card);
                             }

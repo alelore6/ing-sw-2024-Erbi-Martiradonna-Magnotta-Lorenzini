@@ -209,6 +209,7 @@ public class Controller {
 
             else if(event instanceof DrawCardResponse){
                 int chosenPosition = ((DrawCardResponse)event).position;
+                boolean isException = false;
                 //If position between 0 and 3 the player draws from the centered cards in the table center.
                 if(chosenPosition <= 3){
                     try {
@@ -217,9 +218,10 @@ public class Controller {
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack
                         MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
-                        model.turnPhase++;
+
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
+                        isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
@@ -230,9 +232,10 @@ public class Controller {
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
                         MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
-                        model.turnPhase++;
+
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
+                        isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
@@ -240,14 +243,18 @@ public class Controller {
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
                         MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
-                        model.turnPhase++;
+
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
 
                     } catch (HandFullException | isEmptyException e ) {
+                        isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
                 }
-                nextPlayer();
+                if(!isException){
+                    model.turnPhase++;
+                    nextPlayer();
+                }
             }
 
             else if(event instanceof PlayCardResponse){
