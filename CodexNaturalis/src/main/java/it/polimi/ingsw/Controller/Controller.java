@@ -121,7 +121,8 @@ public class Controller {
                     for(Player player : model.getPlayers()){
                         if(player.getNickname().equals(nickname)){
                             isPresent = true;
-                            // TODO: collegarsi al game
+
+                            model.rejoin(mvListener);
                         }
                     }
                     if(!isPresent){
@@ -183,6 +184,7 @@ public class Controller {
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
 
                     server.register(((ReconnectionResponse) event).client);
+                    model.notifyAll();
                 }
                 else{
                     GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the password is incorrect.", (GenericResponse) event, false);

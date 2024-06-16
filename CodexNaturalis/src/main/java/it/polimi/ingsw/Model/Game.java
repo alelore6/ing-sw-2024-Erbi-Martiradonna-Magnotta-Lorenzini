@@ -563,16 +563,23 @@ public class Game{
 
                 System.exit(0);
             }
-            else{
-                count++;
-                for(int i = 0; i < players.length; i++){
-                    if(!players[i].disconnected){
-                        mvListeners.get(i).addEvent(new PlayerDisconnected(p.getNickname(), players[pos].getNickname(), count, true));
-                    }
-                }
-                // TODO: ricollegarlo effettivamente.
-            }
         }
+    }
+
+    public void rejoin(ModelViewListener listener) {
+        int pos = -1;
+
+        for (int i = 0; i < players.length; i++) {
+            if (!players[i].disconnected && players[i].getNickname().equals(listener.nickname)) {
+                mvListeners.get(i).addEvent(new PlayerDisconnected(listener.nickname, players[i].getNickname(), -1, true));
+            }
+            if(players[i].getNickname().equals(listener.nickname))
+                pos = i;
+        }
+
+        players[pos].disconnected = false;
+
+        // TODO: ricollegarlo effettivamente.
     }
 
     public ArrayList<TokenColor> getAvailableTokens() {
