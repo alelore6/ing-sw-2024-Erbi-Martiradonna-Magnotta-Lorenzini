@@ -337,12 +337,12 @@ public class Controller {
     public ModelViewListener getMVListenerByNickname(String nickname){
         try {
             for(int i = MVListeners.size() - 1; i >= 0; i--){
-                if(MVListeners.get(i).client.getNickname().equals(nickname)){
+                if(MVListeners.get(i).nickname.equals(nickname)){
                     return MVListeners.get(i);
                }
             }
             throw new RuntimeException();
-        } catch (Exception e) { //SHOULDN'T HAPPEN
+        } catch (NullPointerException e) { //SHOULDN'T HAPPEN
             server.logger.addLog("MVListener not found", Severity.FAILURE);
             return null;
         }

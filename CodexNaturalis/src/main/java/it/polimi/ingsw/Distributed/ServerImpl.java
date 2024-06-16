@@ -9,10 +9,13 @@ import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.Events.ReconnectionRequest;
 import it.polimi.ingsw.Events.ReconnectionResponse;
 import it.polimi.ingsw.Listeners.ModelViewListener;
+import org.springframework.ui.Model;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
@@ -25,7 +28,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     private Object lock_update  = new Object();
 
     private final HashMap<String, Client> clients = new HashMap<>();
-    public final HashMap<String, Client> disconnectedClients = new HashMap<>();
+    public final List<String> disconnectedClients = new ArrayList<>();
 
     //server constructor with the default rmi port
     public ServerImpl(Logger logger) throws RemoteException {
@@ -56,7 +59,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             }
 
             synchronized(disconnectedClients){
-                if(disconnectedClients.containsKey(client.getNickname()))
+                if(disconnectedClients.contains(client.getNickname()))
                     isReconnected = true;
                 else
                     clients.put(temp, client);
@@ -99,19 +102,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                             } catch (RemoteException e) {
                                 System.err.println(nickname + " is disconnected.");
 
-                                disconnectedClients.put(nickname, clients.get(nickname));
+                                disconnectedClients.add(nickname);
 
-                                for(ModelViewListener listener : controller.getMVListeners()){
-                                    if(listener.client.equals(clients.get(nickname))){
-                                        controller.disconnectPlayer(nickname);
-                                        controller.getMVListeners().remove(listener);
-                                        break;
-                                    }
-                                }
+                                ModelViewListener listener = controller.getMVListenerByNickname(nickname);
+
+                                controller.disconnectPlayer(nickname);
+                                controller.getMVListeners().remove(listener);
                             }
                         }
 
-                        clients.keySet().removeAll(disconnectedClients.keySet());
+                        clients.keySet().removeAll(disconnectedClients);
                     }
                 }
 

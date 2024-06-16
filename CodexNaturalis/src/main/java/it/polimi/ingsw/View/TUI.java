@@ -464,7 +464,7 @@ public class TUI extends UI {
                 printOut(e.msgOutput());
             }
         }
-        else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
+        else if(e instanceof PlayerDisconnected || e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
             printOut(e.msgOutput());
         }
         else{

@@ -8,9 +8,9 @@ public class PlayerDisconnected extends GenericEvent{
      * @param message  message describing the event
      * @param nickname player that receives or sends the event
      */
-    public PlayerDisconnected(String playerNickname, String nickname, int remainingPlayers) {
-        super(playerNickname + " has disconnected, " + remainingPlayers + (remainingPlayers == 1 ? " player " : " players ") + "left.", nickname);
+    public PlayerDisconnected(String playerNickname, String nickname, int remainingPlayers, boolean isRejoined) {
+        super(playerNickname + " has " + (isRejoined == true ? "rejoined." : ("disconnected, " + remainingPlayers + (remainingPlayers == 1 ? " player " : " players ") + "left.\n")), nickname);
         mustBeSentToAll=true;
-        if (remainingPlayers==1) message.concat(" Game is over. "+nickname+ " is the winner.");
+        if (remainingPlayers==1) message.concat("Waiting for a player to rejoin the game.");
     }
 }

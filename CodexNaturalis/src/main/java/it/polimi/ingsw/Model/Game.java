@@ -532,20 +532,47 @@ public class Game{
         return new GameView(this);
     }
 
-    public void disconnectPlayer(Player p){
+    public synchronized void disconnectPlayer(Player p){
         p.disconnected=true;
         int pos=-1, count=0;
-        for(Player x: players){
-            if(x.disconnected) {
-                //  position of a player still connected
-                pos=count;
+        for(int i = 0; i < players.length; i++){
+            if(!players[i].disconnected){
                 // number of players still connected
                 count++;
             }
+            if(players[i].equals(p)){
+                // position of the player just disconnected
+                pos = i;
+            }
         }
-        mvListeners.get(pos).addEvent(new PlayerDisconnected(p.getNickname(),players[pos].getNickname(),count));
-        //if(count==1)
-        //TODO se un solo giocatore rimasto si deve interrompere la partita!
+        for(int i = 0; i < players.length; i++){
+            if(!players[i].disconnected){
+                mvListeners.get(i).addEvent(new PlayerDisconnected(p.getNickname(), players[pos].getNickname(), count, false));
+            }
+        }
+        if(count==1){
+            try{
+                // Wait for 30 seconds
+                wait(30000);
+            }catch(InterruptedException ignored){}
+            if(p.disconnected){
+                // TODO: end game
+
+                // Test
+                System.out.println("Partita finita: un solo giocatore rimasto.");
+
+                System.exit(0);
+            }
+            else{
+                count++;
+                for(int i = 0; i < players.length; i++){
+                    if(!players[i].disconnected){
+                        mvListeners.get(i).addEvent(new PlayerDisconnected(p.getNickname(), players[pos].getNickname(), count, true));
+                    }
+                }
+                // TODO: ricollegarlo effettivamente.
+            }
+        }
     }
 
     public ArrayList<TokenColor> getAvailableTokens() {
