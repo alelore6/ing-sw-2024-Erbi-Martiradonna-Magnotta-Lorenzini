@@ -86,7 +86,7 @@ public class Token {
             scoreTrackPos = scoreTrackPos + points;
         }
         scoretrack.move(this,scoreTrackPos);
-        if(getScoretrack().getTokenPos()[scoreTrackPos] >=20 && !player.game.isTriggered){ //endgame if 20 points are reached
+        if(getScoretrack().getTokenPos()[scoreTrackPos] >= 20 && !player.game.isTriggered){ //endgame if 20 points are reached
             player.game.endGame(player.position);
         }
 

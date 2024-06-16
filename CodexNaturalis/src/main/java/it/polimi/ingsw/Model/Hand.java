@@ -71,8 +71,10 @@ public class Hand {
     public void DrawPositionedCard( PlayableCard card) throws HandFullException, isEmptyException {
         int result = player.game.tablecenter.drawAndPosition(card);
         //the card chosen cant be found
-        if (result<0)
-            return;
+        if (result<0){
+            throw new isEmptyException(null);
+        }
+
         boolean done=false;
         for(int i=0; i< 3; i++){
             if (HandCards[i]==null){
@@ -122,7 +124,7 @@ public class Hand {
             for (Card c: HandCards){
                 //save the position of the card in the hand
                 i++;
-                if (c.ID==card.ID) {
+                if (c!=null && c.ID==card.ID) {
                     found = true;
                     break;
                 }

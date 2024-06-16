@@ -383,7 +383,7 @@ public class Game{
                 }
             }
             //if both deck are not empty and !empty, a draw will be requested
-            if (!tablecenter.getResDeck().AckEmpty && !tablecenter.getGoldDeck().AckEmpty && !empty) {
+            if (!tablecenter.getResDeck().AckEmpty || !tablecenter.getGoldDeck().AckEmpty || !empty) {
                 DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), new TableCenterView(tablecenter), tablecenter.getGoldDeck().AckEmpty, tablecenter.getResDeck().AckEmpty);
                 mvListeners.get(curPlayerPosition).addEvent(drawCard);
             }
@@ -394,8 +394,8 @@ public class Game{
         else{
             turnCounter++;
             remainingTurns--;
-            //if (remainingTurns==0 ) checkWinner();
-            //else nextPlayer(players[curPlayerPosition]);
+            if (remainingTurns==0 ) checkWinner();
+            else nextPlayer(players[curPlayerPosition]);
         }
     }
 

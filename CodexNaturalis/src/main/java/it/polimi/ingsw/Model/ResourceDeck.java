@@ -13,7 +13,7 @@ public class ResourceDeck extends Deck{
 
     public ResourceDeck(){
 
-        NCards = 40;
+        NCards = 10;
 
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("assets/data/resource_cards.json");

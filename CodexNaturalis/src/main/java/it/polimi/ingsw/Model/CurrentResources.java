@@ -84,24 +84,25 @@ public class CurrentResources implements Serializable {
                      currentResources.replace(temp,currentResources.get(temp)+1);
                  }
              }
+             if (!(card instanceof StartingCard)){
+                 int addPoints=((PlayableCard) card).getPoints();
+                 if (card instanceof GoldCard){
+                     if (((GoldCard) card).getRPoints()!=null){
+                         Resource g=((GoldCard) card).getRPoints();
+                         addPoints *= currentResources.get(g);
+                     }else if(((GoldCard) card).isRPointsCorner()){
+                         int count=0;
+                         for(Corner c: overlaps){
+                             if (c!=null){
+                                 count++;
+                             }
+                         }
+                         addPoints *= count;
+                     }
+                 }
+                 player.getToken().move(addPoints);
+             }
          }
-        if (!(card instanceof StartingCard)){
-            int addPoints=((PlayableCard) card).getPoints();
-            if (card instanceof GoldCard){
-                if (((GoldCard) card).getRPoints()!=null){
-                    Resource g=((GoldCard) card).getRPoints();
-                    addPoints *= currentResources.get(g);
-                }else if(((GoldCard) card).isRPointsCorner()){
-                    int count=0;
-                    for(Corner c: overlaps){
-                        if (c!=null){
-                            count++;
-                        }
-                    }
-                    addPoints *= count;
-                }
-            }
-            player.getToken().move(addPoints);
-        }
+
      }
 }

@@ -134,6 +134,6 @@ TODO: - se un utente inserisce un nick con dei punti, lato server cambiare con _
 
 
 
-//TODO: quando peschi dal deck d'oro ed è vuoto, manda il next turn comunque all'altro giocatore mentre non dovrebbe!
+
 
 

@@ -227,9 +227,12 @@ public class Controller {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
-                    } catch (HandFullException | isEmptyException e) {
-                        isException = true;
+                    } catch (isEmptyException e) {
+                        //isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
+                    }catch(HandFullException e2){
+                        model.turnPhase++;
+                        nextPlayer();
                     }
                 }
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
@@ -241,9 +244,11 @@ public class Controller {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
-                    } catch (HandFullException | isEmptyException e) {
+                    } catch (isEmptyException e) {
                         isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
+                    }catch(HandFullException e2){
+
                     }
                 }
                 else if(chosenPosition == 5){
@@ -252,9 +257,11 @@ public class Controller {
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
-                    } catch (HandFullException | isEmptyException e) {
+                    } catch (isEmptyException e) {
                         isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
+                    }catch(HandFullException e2){
+
                     }
                 }
                 if(!isException){
