@@ -456,8 +456,13 @@ public class TUI extends UI {
     }
 
     public final void update(GenericEvent e){
-        if(e instanceof ChatMessage && (e instanceof ChatAck || !e.nickname.equals(client.getNickname()))){
-            printOut(e.msgOutput());
+        if(e instanceof ChatMessage){
+            if(e instanceof ChatAck && e.nickname.equals(client.getNickname())){
+                printOut(e.msgOutput());
+            }
+            else if(!(e instanceof ChatAck) && !e.nickname.equals(client.getNickname())){
+                printOut(e.msgOutput());
+            }
         }
         else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
             printOut(e.msgOutput());
@@ -514,7 +519,7 @@ public class TUI extends UI {
                     // Ignore all other player's events
                     else if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
-                    int n;
+                    int n = -1;
 
                     clearConsole();
 
@@ -565,6 +570,12 @@ public class TUI extends UI {
                                 publicObjCards[1] = e.tableView.objCards[1];
 
                                 objBool = false;
+                            }
+                            printOut("CURRENT RANKINGS:");
+                            n = 1;
+                            for(String nickname : e.tableView.scoreTrack.points.keySet()){
+                                printOut(n + ") " + nickname + ": " + e.tableView.scoreTrack.points.get(nickname) + "point" + (e.tableView.scoreTrack.points.get(nickname) == 1 ? "" : "s"));
+                                n++;
                             }
                             printOut("YOUR SECRET OBJECTIVE CARD's ID: " + privateObjectiveCard.getID());
                             printOut("PUBLIC OBJECTIVE CARDS: " + publicObjCards[0].getID() + ", " + publicObjCards[1].getID());

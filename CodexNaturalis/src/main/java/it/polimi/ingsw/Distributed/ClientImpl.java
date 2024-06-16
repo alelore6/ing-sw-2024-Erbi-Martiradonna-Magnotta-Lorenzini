@@ -59,7 +59,6 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         userInterface.run();
     }
 
-
     @Override
     public void ping() throws RemoteException{}
 
@@ -71,7 +70,6 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
     public void sendEvent(GenericEvent e) throws RemoteException {
         server.update(this, e);
     }
-
 
     public UI getUserInterface() {
         return userInterface;
