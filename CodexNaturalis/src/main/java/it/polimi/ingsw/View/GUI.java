@@ -15,28 +15,37 @@ import java.util.concurrent.*;
 
 import static java.lang.String.valueOf;
 
+/**
+ * Represent the logic behind the connection between the server and the client's interface
+ */
 public class GUI extends UI{
-
+    /**
+     * the frame that contains the GUI
+     */
     private MainFrame f;
+    /**
+     * the nickname of the player
+     */
     private String nickname;
+    /**
+     * lock for synchronizations
+     */
     private Object lock=new Object();
 
+    /**
+     * Constructor
+     * @param client the owner of the GUI
+     */
     public GUI(ClientImpl client) {
         super(client);
         f = new MainFrame( );
     }
 
-
-    @Override
-    protected void printCard(Card card) {
-
-    }
-
-    @Override
-    protected void printCard(ObjectiveCard card) {
-
-    }
-
+    /**
+     * method that allows the player to set his nickname.
+     * This method is blocking that means that until the player enter his nickname everything will be waiting (see also run method)
+     * @return the player's nickname
+     */
     public String chooseNickname() {
         //mando l'evento per gestirlo dentro run con swingUtilities.invokeLater
         update(new ChooseNickname("message","everyone"));
@@ -63,18 +72,29 @@ public class GUI extends UI{
         }
     }
 
-
+    /**
+    * method to print errors in the console
+     */
     @Override
     public void printErr(String s) {
         System.err.println(s);
     }
 
+    /**
+     * method to print messages in the console
+     * @param s the message to print
+     */
     @Override
     public void printOut(String s) {
         System.out.println(s);
     }
 
-
+    /**
+     * static method that build the path to an image based on the card info
+     * @param id the card id
+     * @param isFacedown the boolean representing if the card is showing his front or his back
+     * @return the path to the image of the card
+     */
     public static String getCardPath(int id, boolean isFacedown) {
         String idString;
         if (id < 100) {
@@ -91,7 +111,11 @@ public class GUI extends UI{
 
     }
 
-        @Override
+    /**
+     * An event is received from the server, it is added to the queue where it will be handled in the run method.
+     * @param e th received event
+     */
+    @Override
     public void update(GenericEvent e){
         synchronized (inputEvents) {
             inputEvents.add(e);
@@ -99,12 +123,19 @@ public class GUI extends UI{
         }
     }
 
+    /**
+     * Every time the player make a play action the listener is notified
+     * @param e the event that is sent to the listener
+     */
     @Override
     public void notifyListener(GenericEvent e) {
         listener.addEvent(e);
     }
 
-
+    /**
+     * Represent  all the logic behind the user interface.
+     * Here event are taken from the queue and handled based on their type
+     */
     @Override
     public void run() {
         SwingUtilities.invokeLater(new Runnable() {

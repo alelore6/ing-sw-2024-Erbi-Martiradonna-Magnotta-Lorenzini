@@ -23,8 +23,7 @@ public abstract class UI implements View{
         this.listener = new ViewControllerListener(client);
     }
 
-    protected abstract void printCard(Card card);
-    protected abstract void printCard(ObjectiveCard card);
+
 
     public ViewControllerListener getListener() {
         return listener;

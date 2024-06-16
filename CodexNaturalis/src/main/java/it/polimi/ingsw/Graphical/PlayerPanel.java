@@ -6,53 +6,46 @@ import it.polimi.ingsw.ModelView.PlayerView;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * panel with scroll bars that contains the playedCardPanel
+ */
 public class PlayerPanel extends JScrollPane {
-
+    /**
+     * the played cards panel contained
+     */
     private PlayedCardsPanel panel ;
-
+    /**
+     * the current player info
+     */
     private PlayerView playerView;
 
-    PlayerPanel(PlayerView playerView){
+    /**
+     * Constructor that also creates the relative played cards panel
+     * @param playerView the player info
+     * @param playing boolean that represent if this panel is contained in a personal panel or not
+     */
+    PlayerPanel(PlayerView playerView, boolean playing){
         super();
         this.playerView = playerView;
-//        this.panel= new PlayedCardsPanel(null); //   subMatrix(playerView.hand.playedCards)
-//        setViewportView(panel);
+        this.panel= new PlayedCardsPanel(null, playing); // TODO modificare in playerView.hand.playedCards
+        setViewportView(panel);
     }
 
+    /**
+     * update the current player info and call the updated on the played cards panel
+     * @param playerView the players info
+     */
     protected void update(PlayerView playerView) {
-
+        this.playerView = playerView;
+        panel.update(playerView.hand.playedCards);
     }
 
-    public static Card[][] subMatrix(Card[][] matrix) {
-        int n = matrix.length;
-        int startRow = n, endRow = -1, startCol = n, endCol = -1;
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                if (matrix[i][j] != null) {
-                    if (i < startRow) startRow = i;
-                    if (i > endRow) endRow = i;
-                    if (j < startCol) startCol = j;
-                    if (j > endCol) endCol = j;
-                }
-            }
-        }
-
-        // Calcola la dimensione della sotto-matrice quadrata
-        int size = Math.max(endRow - startRow + 1, endCol - startCol + 1);
-
-        // Estrai la sotto-matrice quadrata
-        Card[][] subMatrix = new Card[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-                if (startRow + i < n && startCol + j < n) {
-                    subMatrix[i][j] = matrix[startRow + i][startCol + j];
-                } else {
-                    subMatrix[i][j] = null;
-                }
-            }
-        }
-
-        return subMatrix;
+    /**
+     * Getter for the chosen position where a card will be played
+     * @return the card component describing that contains the position
+     */
+    protected CardComponent getPlayPosition() {
+        return panel.getSelectedCard();
     }
+
 }

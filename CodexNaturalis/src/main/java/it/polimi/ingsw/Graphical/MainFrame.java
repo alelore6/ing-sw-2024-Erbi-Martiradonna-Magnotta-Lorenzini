@@ -98,7 +98,7 @@ public class MainFrame extends JFrame {
                 mainPanel.getLayout().addLayoutComponent(null, myPanel);
 
             } else {
-                otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i)));
+                otherPlayers.put(gameView.players.get(i).nickname, new PlayerPanel(gameView.players.get(i),false));
                 addToMenuBar(gameView.players.get(i).nickname+"'s panel");
                 mainPanel.getLayout().addLayoutComponent(null, tableCenterPanel);
             }
