@@ -56,7 +56,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             }
 
             synchronized(disconnectedClients){
-                if(disconnectedClients.containsValue(client.getNickname()))
+                if(disconnectedClients.containsKey(client.getNickname()))
                     isReconnected = true;
                 else
                     clients.put(temp, client);
@@ -97,7 +97,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                             try {
                                 clients.get(nickname).ping();
                             } catch (RemoteException e) {
-                                System.err.println(clients.get(clients.get(nickname)) + " is disconnected.");
+                                System.err.println(nickname + " is disconnected.");
 
                                 disconnectedClients.put(nickname, clients.get(nickname));
 

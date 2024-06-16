@@ -10,6 +10,7 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Model.Player;
+import org.springframework.ui.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -116,15 +117,21 @@ public class Controller {
                 }
                 // This is for rejoin a game
                 else if(model != null){
+                    boolean isPresent = false;
                     for(Player player : model.getPlayers()){
                         if(player.getNickname().equals(nickname)){
+                            isPresent = true;
                             // TODO: collegarsi al game
                         }
                     }
+                    if(!isPresent){
+                        server.logger.addLog("Can't add the player: the game has already started.", Severity.WARNING);
+                        mvListener.addEvent(new ErrorJoinLobby(oldNickname, 2));
+                    }
                 }
                 else{
-                    server.logger.addLog("Can't add the player: the game has already started or lobby isn't ready.", Severity.WARNING);
-                    mvListener.addEvent(new ErrorJoinLobby(oldNickname, model == null ? 1 : 2));
+                    server.logger.addLog("Can't add the player: lobby isn't ready.", Severity.WARNING);
+                    mvListener.addEvent(new ErrorJoinLobby(oldNickname, 1));
                 }
             }
         }
@@ -217,7 +224,7 @@ public class Controller {
                         //make the draw
                         getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
                         // send ack
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
@@ -231,7 +238,7 @@ public class Controller {
                 else if(chosenPosition == 4){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
                     } catch (HandFullException | isEmptyException e) {
@@ -242,11 +249,10 @@ public class Controller {
                 else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
                         //getMVListenerByNickname(nickname).addEvent(new ReturnDrawCard(getPlayerByNickname(nickname).getHand().getHandCards().clone(),nickname));
-
-                    } catch (HandFullException | isEmptyException e ) {
+                    } catch (HandFullException | isEmptyException e) {
                         isException = true;
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, e.getMessage(), (GenericResponse) event, false));
                     }
@@ -362,5 +368,12 @@ public class Controller {
 
     public void disconnectPlayer(String nickname){
         model.disconnectPlayer(getPlayerByNickname(nickname));
+    }
+
+    public void deleteClient(Client client) throws RemoteException {
+        ModelViewListener listener = getMVListenerByNickname(client.getNickname());
+        listener.isActive = false;
+        server.getClients().remove(client.getNickname());
+        MVListeners.remove(listener);
     }
 }

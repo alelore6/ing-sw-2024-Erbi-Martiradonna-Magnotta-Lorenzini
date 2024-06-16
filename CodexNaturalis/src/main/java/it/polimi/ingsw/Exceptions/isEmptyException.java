@@ -12,7 +12,7 @@ public class isEmptyException extends Throwable{
      */
     public final Deck deck;
     public isEmptyException(Deck deck){
-        super("deck is empty");
+        super("The deck is empty.");
         this.deck=deck;
     }
 }
