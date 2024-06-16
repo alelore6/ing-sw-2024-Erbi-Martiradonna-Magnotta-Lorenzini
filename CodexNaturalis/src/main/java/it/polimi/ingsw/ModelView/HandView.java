@@ -25,7 +25,7 @@ public class HandView implements Serializable {
      */
     public HandView(Hand hand){
         this.handCards=hand.getHandCards().clone();
-        this.playedCards= subMatrix(hand.getDisplayedCards().clone());
+        this.playedCards= hand.getDisplayedCards().clone();
         //TODO aggiungere possible plays
         //se riesci la cosa migliore sarebbe aggiungerle direttamente a questa matrice
         //puoi usare il costruttore che ho aggiunto per test in resource card mettendo un id negativo (tipo -1)
