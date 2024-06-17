@@ -218,8 +218,8 @@ public class Controller {
             else if(event instanceof DrawCardResponse){
                 int chosenPosition = ((DrawCardResponse)event).position;
                 boolean isException = false;
-                //If position between 0 and 3 the player draws from the centered cards in the table center.
-                if(chosenPosition <= 3){
+                //If position between 1 and 4 the player draws from the centered cards in the table center.
+                if(chosenPosition <= 4){
                     try {
                         //TODO collegarsi al tablecenter per fare pescata anche di carte a terra
                         //make the draw
@@ -239,7 +239,7 @@ public class Controller {
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
                 //wants to draw either from the ResourceDeck or the GoldDeck
 
-                else if(chosenPosition == 4){
+                else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
@@ -252,7 +252,7 @@ public class Controller {
 
                     }
                 }
-                else if(chosenPosition == 5){
+                else if(chosenPosition == 6){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));

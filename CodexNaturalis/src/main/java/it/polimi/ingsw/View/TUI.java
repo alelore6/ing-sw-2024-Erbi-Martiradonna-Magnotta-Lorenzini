@@ -537,14 +537,25 @@ public class TUI extends UI {
 
                     switch(ev){
                         case DrawCardRequest e :
+                            boolean[] presentCards = new boolean[4];
                             for(int i = 1; i <= e.tableCenterView.centerCards.length; i++){
-                                printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(" + i + ")"), false));
-                                printCard(e.tableCenterView.centerCards[i-1]);
+                                if(e.tableCenterView.centerCards[i-1] != null){
+                                    printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(" + i + ")"), false));
+                                    printCard(e.tableCenterView.centerCards[i-1]);
+                                    presentCards[i] = true;
+                                }
+                                else presentCards[i] = false;
                             }
                             printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left)\n" +
                                     setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left)\n");
 
-                            notifyListener(new DrawCardResponse(chooseInt(0,5),client.getNickname()));
+                            n = -1;
+                            do{
+                                if(n != -1) printOut(inputError());
+                                n = chooseInt(1, 6);
+                            } while (!presentCards[n]);
+
+                            notifyListener(new DrawCardResponse(n,client.getNickname()));
                             break;
 
 
@@ -633,8 +644,8 @@ public class TUI extends UI {
                             printOut(e.msgOutput2());
                             do{
                                 if(n != -1) printOut(inputError());
-                                n = chooseInt(1,4);
-                            }while(!e.choiceIsValid(n));
+                                n = chooseInt(1, 4);
+                            } while (!e.choiceIsValid(n));
 
                             notifyListener(new SetTokenColorResponse(n, client.getNickname()));
                             break;
