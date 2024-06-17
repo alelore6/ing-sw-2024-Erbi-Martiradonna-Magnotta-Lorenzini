@@ -262,16 +262,20 @@ public class TUI extends UI {
     }
 
     private void requestCard(int ID, Card[][] playedCards){
+        if(playedCards == null){
+            printErr("You can't see the card: you haven't even started the game!");
+            return;
+        }
+        if(publicObjCards[0] == null){
+            printErr("Can't see the card yet. Wait the start of your game!");
+            return;
+        }
         if(publicObjCards[0].getID() == ID){
             printCard(publicObjCards[0]);
             return;
         }
         if(publicObjCards[1].getID() == ID){
             printCard(publicObjCards[1]);
-            return;
-        }
-        if(playedCards == null){
-            printErr("You can't see the card: you haven't even started the game!");
             return;
         }
 
@@ -534,7 +538,6 @@ public class TUI extends UI {
                         System.exit(1);
                     }
 
-
                     switch(ev){
                         case DrawCardRequest e :
                             boolean[] presentCards = new boolean[4];
@@ -542,9 +545,9 @@ public class TUI extends UI {
                                 if(e.tableCenterView.centerCards[i-1] != null){
                                     printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(" + i + ")"), false));
                                     printCard(e.tableCenterView.centerCards[i-1]);
-                                    presentCards[i] = true;
+                                    presentCards[i-1] = true;
                                 }
-                                else presentCards[i] = false;
+                                else presentCards[i-1] = false;
                             }
                             printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topResourceCardColor +"\n");
                                     printOut(setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topGoldCardColor +"\n");
@@ -557,8 +560,6 @@ public class TUI extends UI {
 
                             notifyListener(new DrawCardResponse(n,client.getNickname()));
                             break;
-
-
 
                         case ErrorJoinLobby e :
                             printOut("Do you want to try to connect again?\n" +
