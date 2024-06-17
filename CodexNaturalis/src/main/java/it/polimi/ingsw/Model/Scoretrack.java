@@ -13,7 +13,7 @@ public class Scoretrack {
     /**
      * map that connect every token to his position on the table
      */
-    protected HashMap<Token,Integer> points;
+    public HashMap<Token,Integer> points;
 
     /**
      * Constructor: initializes array representing all the 30 positions of the score track (from 0 to 29)
@@ -36,7 +36,7 @@ public class Scoretrack {
      * @param token the player's token
      */
     protected void addToken(Token token) {
-        points.put(token,0);
+        points.put(token,18);
     }
 
     /**

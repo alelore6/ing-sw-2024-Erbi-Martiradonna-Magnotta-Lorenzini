@@ -133,7 +133,7 @@ TODO: - se un utente inserisce un nick con dei punti, lato server cambiare con _
             e modificare anche l'evento draw che ritorna il colore della carta dopo
 
 
-
+//TODO FIXARE GETCOLOR RESOURCE DECK GOLD DECK
 
 
 

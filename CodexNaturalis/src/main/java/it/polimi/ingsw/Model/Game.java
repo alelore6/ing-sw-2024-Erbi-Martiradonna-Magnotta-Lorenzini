@@ -241,10 +241,10 @@ public class Game{
      * "both decks are empty"
      */
     public void endGame(int occasion){
-        isTriggered = true;
         switch(occasion){
             // a player reached 20 points
             case 0,1,2,3:
+                isTriggered = true;
                 // a full round plus the turns remaining of this one
                 remainingTurns = numPlayers + (numPlayers-(players[curPlayerPosition].position + 1)); //calcolo turni rimanenti
                 String nickname = players[curPlayerPosition].getNickname();
@@ -256,6 +256,7 @@ public class Game{
                 break;
             //both decks are found empty simultaneously
             case 4:
+                isTriggered = true;
                 tablecenter.getGoldDeck().AckEmpty=true;
                 tablecenter.getResDeck().AckEmpty=true;
                 remainingTurns = numPlayers + (numPlayers-curPlayerPosition); //calcolo turni rimanenti
@@ -299,6 +300,7 @@ public class Game{
                 break;
 
             case 7:
+                isTriggered = true;
                 remainingTurns = 0;
                     System.out.println("FINISCE");
                 for(int i = 0; i < numPlayers; i++){

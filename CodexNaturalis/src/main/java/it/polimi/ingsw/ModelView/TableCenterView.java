@@ -32,7 +32,7 @@ public class TableCenterView implements Serializable {
         objCards=tableCenter.getObjCards();
         centerCards=tableCenter.getCenterCards();
         scoreTrack=new ScoretrackView(tableCenter.getScoretrack());
-        this.topResourceCardColor = tableCenter.getGoldDeck().peek();
-        this.topGoldCardColor = tableCenter.getResDeck().peek();
+        this.topResourceCardColor = tableCenter.getResDeck().peek();
+        this.topGoldCardColor = tableCenter.getGoldDeck().peek();
     }
 }
