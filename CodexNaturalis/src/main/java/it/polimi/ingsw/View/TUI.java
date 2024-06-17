@@ -594,16 +594,17 @@ public class TUI extends UI {
                             n = 1;
                             Map<String, Integer> sortedMap = e.tableView.scoreTrack.points.entrySet()
                                     .stream()
-                                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
+                                            .thenComparing(Map.Entry.comparingByKey()))
                                     .collect(Collectors.toMap(
                                             Map.Entry::getKey,
                                             Map.Entry::getValue,
                                             (e1, e2) -> e1,
                                             LinkedHashMap::new
                                     ));
-                            for(int i = 0; i < e.tableView.scoreTrack.points.keySet().size(); i++){
-                                String[] nicks = e.tableView.scoreTrack.points.keySet().toArray(new String[e.tableView.scoreTrack.points.size()]);
-                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + e.tableView.scoreTrack.points.get(nicks[i]) + " point" + (e.tableView.scoreTrack.points.get(nicks[i]) == 1 ? "" : "s"), e.tableView.scoreTrack.points.get(nicks[i]) == e.tableView.scoreTrack.points.get(nicks[0]) ? true : false));
+                            for(int i = 0; i < sortedMap.keySet().size(); i++){
+                                String[] nicks = sortedMap.keySet().toArray(new String[sortedMap.size()]);
+                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + sortedMap.get(nicks[i]) + " point" + (sortedMap.get(nicks[i]) == 1 ? "" : "s"), sortedMap.get(nicks[i]) == sortedMap.get(nicks[0]) ? true : false));
                                 n++;
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR SECRET OBJECTIVE CARD's ID"), false) + "\n" + privateObjectiveCard.getID());
