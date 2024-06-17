@@ -73,14 +73,15 @@ public class ModelViewListener extends Listener {
                             requestEventIndex--;
                             ack = null;
                         }
-                        else if(requestEventIndex == 0 && !getEventQueue().isEmpty()){
+                        else if(!getEventQueue().isEmpty()){
                             GenericEvent currentEvent = getEventQueue().poll(); //remove and return the first queue element
 
                             try{
 
-                                if (requestEventIndex == 0 || currentEvent instanceof GenericRequest) {
+                                if (requestEventIndex == 0 || currentEvent instanceof ServerMessage) {
                                     if (currentEvent instanceof GenericRequest) {
                                         lastRequest = (GenericRequest) currentEvent;
+                                        requestEventIndex++;
                                     }
                                     if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
                                     client.update(currentEvent);
@@ -89,13 +90,10 @@ public class ModelViewListener extends Listener {
                                     if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
                                 }
                                 else{
-                                    getEventQueue().offer(currentEvent);
+                                    getEventQueue().addFirst(currentEvent);
                                 }
                             }catch(RemoteException e) {
                                 throw new RuntimeException(e);
-                            }
-                            if(currentEvent instanceof GenericRequest){
-                                requestEventIndex++;
                             }
                         }
                     }
@@ -123,6 +121,7 @@ public class ModelViewListener extends Listener {
         synchronized (lock_queue) {
             if(event instanceof AckResponse)      ack = (AckResponse) event;
             else if(event instanceof ChatMessage) chatMessages.add((ChatMessage) event);
+            else if(event instanceof ServerMessage) getEventQueue().addFirst(event);
             else                                  getEventQueue().add(event);
         }
     }

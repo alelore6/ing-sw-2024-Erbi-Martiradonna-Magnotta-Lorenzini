@@ -14,7 +14,7 @@ public class GoldDeck extends Deck{
 
     public GoldDeck(){
 
-        NCards = 7; //TODO modificare a 40
+        NCards = 40;
 
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("assets/data/gold_cards.json");

@@ -10,7 +10,6 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Model.Player;
-import org.springframework.ui.Model;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -43,7 +42,7 @@ public class Controller {
     private boolean numPlayersRequestSent = false;
     private String newNickname = null;
 
-    private final Object lock = new Object();
+    private final Object flux_lock = new Object();
     private Integer wait=0;
 
     /**
@@ -69,7 +68,7 @@ public class Controller {
             public void run() {
                 while(true) {
                     //wait for everyone to complete the start
-                    synchronized (lock){
+                    synchronized (flux_lock){
                         if (wait == lobby.getNumPlayers()) break;
                     }
                 }
@@ -219,8 +218,8 @@ public class Controller {
             else if(event instanceof DrawCardResponse){
                 int chosenPosition = ((DrawCardResponse)event).position;
                 boolean isException = false;
-                //If position between 0 and 3 the player draws from the centered cards in the table center.
-                if(chosenPosition <= 3){
+                //If position between 1 and 4 the player draws from the centered cards in the table center.
+                if(chosenPosition <= 4){
                     try {
                         //TODO collegarsi al tablecenter per fare pescata anche di carte a terra
                         //make the draw
@@ -240,7 +239,7 @@ public class Controller {
                 //else if position is 4 or 5 (exceeds the centered cards array) it means the player
                 //wants to draw either from the ResourceDeck or the GoldDeck
 
-                else if(chosenPosition == 4){
+                else if(chosenPosition == 5){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getResDeck());
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
@@ -253,7 +252,7 @@ public class Controller {
 
                     }
                 }
-                else if(chosenPosition == 5){
+                else if(chosenPosition == 6){
                     try {
                         getPlayerByNickname(nickname).getHand().DrawFromDeck(model.getTablecenter().getGoldDeck());
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
@@ -276,7 +275,7 @@ public class Controller {
                 try {
                     synchronized (model.controllerLock){
                         getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
-                        MVListeners.get(model.getCurPlayerPosition()).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                     }
                     //getMVListenerByNickname(nickname).addEvent(new ReturnPlayCard(nickname,getPlayerByNickname(nickname).getHand().getDisplayedCards().clone(),getPlayerByNickname(nickname).getCurrentResources()));
@@ -302,10 +301,9 @@ public class Controller {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) null, model.clone()));
 
-                        synchronized (model.lock) {model.waitNumClient++;}
-//                    synchronized (model.controllerLock){
-//                        model.controllerLock.notifyAll();
-//                    }
+                        synchronized (model.lock) {
+                            model.waitNumClient++;
+                        }
                 } catch (WrongPlayException e) {
                     //shouldn't happen
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, "Error in placing starting card", null, false));                }
@@ -314,7 +312,7 @@ public class Controller {
                 passwords.put(event.nickname, ((SetPassword) event).getPassword());
                 getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
                 //String p = passwords.get(event.nickname);
-                synchronized (lock) {wait++;}
+                synchronized (flux_lock) {wait++;}
             }
     }
 
@@ -340,7 +338,7 @@ public class Controller {
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
-        for(String nickname : server.getClients().keySet()) getMVListenerByNickname(server.getClients().get(nickname).getNickname()).addEvent(event);
+        for(String nickname : server.getClients().keySet()) getMVListenerByNickname(nickname).addEvent(event);
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){

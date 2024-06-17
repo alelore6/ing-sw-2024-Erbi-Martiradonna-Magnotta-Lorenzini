@@ -6,6 +6,7 @@ import it.polimi.ingsw.Model.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Model.Position.*;
 import static java.lang.String.join;
@@ -129,8 +130,6 @@ public class TUI extends UI {
 
     public void stop(){
         isActive = false;
-
-        // Do the listeners have to be notified?
     }
 
     private static String inputError(){
@@ -152,7 +151,7 @@ public class TUI extends UI {
             default -> c = "<INVALID COLOR> ";
         }
 
-        return c + string + reset;
+        return reset + c + string + reset;
     }
 
     private String setColorForString(String color, String string, boolean isBright){
@@ -177,7 +176,7 @@ public class TUI extends UI {
 
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
-            printOut("\n| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
+            printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
                     + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
                     "\n\tVisible corners:\n\t\tFRONT:");
             for(Corner corner : card.getFrontCorners()){
@@ -201,10 +200,10 @@ public class TUI extends UI {
 
             if(((PlayableCard) card).getPoints() == 0)  return;
 
-            printOut("\tReward:\t" + ((PlayableCard) card).getPoints() + " points.");
-            if(card instanceof GoldCard && (((GoldCard) card).isRPointsCorner() == true || ((GoldCard) card).getRPoints() != null)){
-                printOut("\t for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner." : ((GoldCard) card).getRPoints().toString()) + ".");
-            }
+            printOut("\tReward:\t" + ((PlayableCard) card).getPoints() + " points" +
+                    ((card instanceof GoldCard && (((GoldCard) card).isRPointsCorner() == true || ((GoldCard) card).getRPoints() != null)) ?
+                    (" for every " + (((GoldCard) card).isRPointsCorner() ? "covered corner" : ((GoldCard) card).getRPoints().toString())) : ""));
+
             // printOut("The back of the card has four (all) empty corners with a resource in the center (of the corresponding color).");
         }
         else if(card instanceof StartingCard){
@@ -457,14 +456,17 @@ public class TUI extends UI {
 
     public final void update(GenericEvent e){
         if(e instanceof ChatMessage){
-            if(e instanceof ChatAck && e.nickname.equals(client.getNickname())){
+            if(e instanceof ChatAck == e.nickname.equals(client.getNickname())){
                 printOut(e.msgOutput());
             }
-            else if(!(e instanceof ChatAck) && !e.nickname.equals(client.getNickname())){
-                printOut(e.msgOutput());
-            }
+            // else ignored
         }
-        else if(e instanceof EndGameTriggered || e instanceof PlayerDisconnected || e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
+        else if(e instanceof FinalRankings){
+            printOut(setColorForString("GREEN", e.msgOutput(), true));
+
+            System.exit(0);
+        }
+        else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
             printOut(e.msgOutput());
         }
         else{
@@ -535,10 +537,25 @@ public class TUI extends UI {
 
                     switch(ev){
                         case DrawCardRequest e :
-                            for(Card card : e.tableCenterView.centerCards){
-                                printCard(card);
+                            boolean[] presentCards = new boolean[4];
+                            for(int i = 1; i <= e.tableCenterView.centerCards.length; i++){
+                                if(e.tableCenterView.centerCards[i-1] != null){
+                                    printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(" + i + ")"), false));
+                                    printCard(e.tableCenterView.centerCards[i-1]);
+                                    presentCards[i] = true;
+                                }
+                                else presentCards[i] = false;
                             }
-                            notifyListener(new DrawCardResponse(chooseInt(0,5),client.getNickname()));
+                            printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left)\n" +
+                                    setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left)\n");
+
+                            n = -1;
+                            do{
+                                if(n != -1) printOut(inputError());
+                                n = chooseInt(1, 6);
+                            } while (!presentCards[n]);
+
+                            notifyListener(new DrawCardResponse(n,client.getNickname()));
                             break;
 
 
@@ -574,8 +591,19 @@ public class TUI extends UI {
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "CURRENT RANKINGS"), false));
                             n = 1;
-                            for(String nickname : e.tableView.scoreTrack.points.keySet()){
-                                printOut(n + ") " + nickname + ": " + e.tableView.scoreTrack.points.get(nickname) + " point" + (e.tableView.scoreTrack.points.get(nickname) == 1 ? "" : "s"));
+                            Map<String, Integer> sortedMap = e.tableView.scoreTrack.points.entrySet()
+                                    .stream()
+                                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
+                                            .thenComparing(Map.Entry.comparingByKey()))
+                                    .collect(Collectors.toMap(
+                                            Map.Entry::getKey,
+                                            Map.Entry::getValue,
+                                            (e1, e2) -> e1,
+                                            LinkedHashMap::new
+                                    ));
+                            for(int i = 0; i < e.tableView.scoreTrack.points.keySet().size(); i++){
+                                String[] nicks = e.tableView.scoreTrack.points.keySet().toArray(new String[e.tableView.scoreTrack.points.size()]);
+                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + e.tableView.scoreTrack.points.get(nicks[i]) + " point" + (e.tableView.scoreTrack.points.get(nicks[i]) == 1 ? "" : "s"), i == 0 ? true : false));
                                 n++;
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR SECRET OBJECTIVE CARD's ID"), false) + "\n" + privateObjectiveCard.getID());
@@ -597,6 +625,7 @@ public class TUI extends UI {
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR HAND"), false));
                             for(Card card : e.playerView.hand.handCards){
                                 printCard(card);
+                                printOut("\n");
                             }
 
                             lastPlayedCards = e.playerView.hand.playedCards;
@@ -615,8 +644,8 @@ public class TUI extends UI {
                             printOut(e.msgOutput2());
                             do{
                                 if(n != -1) printOut(inputError());
-                                n = chooseInt(1,4);
-                            }while(!e.choiceIsValid(n));
+                                n = chooseInt(1, 4);
+                            } while (!e.choiceIsValid(n));
 
                             notifyListener(new SetTokenColorResponse(n, client.getNickname()));
                             break;
@@ -632,7 +661,7 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
                             notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
-                            printOut("\nWaiting for other players...\n");
+                            printOut("\nWaiting for other players...");
                             break;
 
                         case ReconnectionRequest e:

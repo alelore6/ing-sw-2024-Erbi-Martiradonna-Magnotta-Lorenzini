@@ -2,16 +2,15 @@ package it.polimi.ingsw.Events;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Event that represent the end of the game and its final rankings
  */
-public class FinalRankings extends GenericEvent{
+public class FinalRankings extends ServerMessage{
     /**
      * represent a map between every player and his points
      */
-    public final HashMap<String,Integer> Rankings;
+    public final HashMap<String,Integer> rankings;
 
     /**
      * Constructor
@@ -20,19 +19,22 @@ public class FinalRankings extends GenericEvent{
      */
     public FinalRankings(String nickname, HashMap<String,Integer> rankings){
         super("The final rankings are:\n ",nickname);
-        Rankings = rankings;
+        this.rankings = rankings;
         mustBeSentToAll=true;
     }
 
     @Override
     public String msgOutput() {
 
-        int initialSize=Rankings.size();
+        if(rankings == null)
+            return("Since you are the only player left playing, you win!");
+
+        int initialSize= rankings.size();
 
         //create a new hashmap and sort it from the beginning one
         LinkedHashMap<String, Integer> tmp = new LinkedHashMap<>();
         for(int i = 0; i < initialSize; i++){
-            sortHashmap(Rankings, tmp);
+            sortHashmap(rankings, tmp);
         }
 
         String m= message;
@@ -77,6 +79,5 @@ public class FinalRankings extends GenericEvent{
         }
         sorted.put(tmp, maxValue);
         map.remove(tmp);
-        return;
     }
 }
