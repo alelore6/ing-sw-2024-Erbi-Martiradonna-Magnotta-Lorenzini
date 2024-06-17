@@ -60,12 +60,11 @@ class PlayedCardsPanel extends JPanel {
             for (int j = 0; j < size; j++) {
                 if (matrix[i][j] != null) {
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
-                    c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown)));
+                    if (c.getCardID()!=-1) c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown)));
                     cardComponents.add(c);
                 }
             }
         }
-        //TODO aggiungere possible plays
 
         if(playing){
             //per i click per scegliere la posizione dove giocare
@@ -73,14 +72,16 @@ class PlayedCardsPanel extends JPanel {
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     Point clickPoint = e.getPoint();
-                    for (CardComponent c : cardComponents) { //TODO deve essere solo per possible plays
+                    for (CardComponent c : cardComponents) {
                         int x = c.getCol() * (250 - overlapOffset);
                         int y = c.getRow() * (150 - overlapOffset);
                         Rectangle imageBounds = new Rectangle(x, y, 250, 150);
                         if (imageBounds.contains(clickPoint)) {
-                            selectedCard = c;
-                            repaint();
-                            System.out.println("Card clicked: " + c.getCardID());
+                            if(c.getCardID()==-1){
+                                selectedCard = c;
+                                repaint();
+                                //System.out.println("Card clicked: " + c.getCardID());
+                            }
                             break;
                         }
                     }
@@ -101,12 +102,12 @@ class PlayedCardsPanel extends JPanel {
                 //le nuove carte vengono aggiunte
                 if (matrix[i][j] != null && matrix[i][j].getPlayOrder()>numCards) {
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
-                    c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() , matrix[i][j].isFacedown)));
+                    if(c.getCardID()!=-1) c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() , matrix[i][j].isFacedown)));
                     cardComponents.add(c);
                 }
             }
         }
-        //TODO aggiungere possible plays
+
         selectedCard=null;
         repaint();
     }
@@ -135,7 +136,7 @@ class PlayedCardsPanel extends JPanel {
         for (CardComponent c : cardComponents) {
             int x = c.getCol() * (250 - overlapOffset);
             int y = c.getRow() * (150 - overlapOffset);
-            if(c.getCol()*c.getRow()%5==0) g.drawImage(possiblePlayImage, x, y, 250, 150, null); //TODO separare possible plays
+            if(c.getCardID()==-1) g.drawImage(possiblePlayImage, x, y, 250, 150, null);
             else g.drawImage(c.getImage(), x, y, 250, 150, null);
         }
 

@@ -40,24 +40,23 @@ public class PersonalPanel extends JSplitPane {
 
         JPanel rightPanel = new JPanel();
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
-        //TODO mettere effetivamente le carte della player view
         for (int i = 1; i <= 4; i++) {
             JPanel imagePanel = new JPanel(new GridBagLayout());
             GridBagConstraints gbc = new GridBagConstraints();
             gbc.insets = new Insets(2, 2, 2, 2);
 
             JLabel label = new JLabel();
-            int k = ((i - 1) * 25) + 1;
-            label.setIcon(getImageIcon(GUI.getCardPath(k, false)));
+            if(i==1) label.setIcon(getImageIcon(GUI.getCardPath(playerView.objectiveCard.getID(), false)));
+            else label.setIcon(getImageIcon(GUI.getCardPath(playerView.hand.handCards[i-2].getID(), false)));
 
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridheight = 2;
             imagePanel.add(label, gbc);
 
-            if (i != 1) {
+            if (i > 1) {
                 //carte della mano
-                cardsID[i-2]=k;
+                cardsID[i-2]=playerView.hand.handCards[i-2].getID();
                 isFacedown[i-2]=false;
                 labels.add(i-2,label);
                 // Creazione e aggiunta del bottone Flip
@@ -68,7 +67,7 @@ public class PersonalPanel extends JSplitPane {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         isFacedown[index] = !isFacedown[index];
-                        //TODO devo anche girare la carta: playerView.hand.handCards[index].isFacedown=isFacedown[index];
+                        playerView.hand.handCards[index].isFacedown=isFacedown[index];
                         label.setIcon(getImageIcon(GUI.getCardPath(cardsID[index], isFacedown[index])));
                     }
                 });
@@ -140,8 +139,9 @@ public class PersonalPanel extends JSplitPane {
 
     private void confirmPlay(){
         if (playing){
-            if(selectedLabel!=null && playerPanel.getPlayPosition()!=null){
-                int i=JOptionPane.showConfirmDialog(this,"Confirm the play of the card N. "+choice+1+" in the x,y position?\n");
+            CardComponent c=playerPanel.getPlayPosition();
+            if(selectedLabel!=null && c!=null){
+                int i=JOptionPane.showConfirmDialog(this,"Confirm the play of the card N. "+choice+1+" in the position: " + c.getRow()+","+c.getCol()+ " ?\n");
                 if(i==0) {//la giocata viene confermata
                     hidePlayButton();
                     selectedLabel.setBorder(new LineBorder(Color.RED, 4));

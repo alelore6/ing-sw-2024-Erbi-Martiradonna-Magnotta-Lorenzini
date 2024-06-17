@@ -27,7 +27,7 @@ public class PlayerPanel extends JScrollPane {
     PlayerPanel(PlayerView playerView, boolean playing){
         super();
         this.playerView = playerView;
-        this.panel= new PlayedCardsPanel(null, playing); // TODO modificare in playerView.hand.playedCards
+        this.panel= new PlayedCardsPanel(playerView.hand.playedCards, playing);
         setViewportView(panel);
     }
 
