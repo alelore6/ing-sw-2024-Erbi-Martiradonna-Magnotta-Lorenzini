@@ -556,7 +556,7 @@ public class TUI extends UI {
                             do{
                                 if(n != -1) printOut(inputError());
                                 n = chooseInt(1, 6);
-                            } while (!presentCards[n]);
+                            } while (n<=4 &&!presentCards[n-1]);
 
                             notifyListener(new DrawCardResponse(n,client.getNickname()));
                             break;

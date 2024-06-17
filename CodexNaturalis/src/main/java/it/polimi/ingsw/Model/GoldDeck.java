@@ -73,6 +73,6 @@ public class GoldDeck extends Deck{
     }
 
     public CardColor peek(){
-        return cards[0].getColor();
+        return cards[getNCards()-1].getColor();
     }
 }

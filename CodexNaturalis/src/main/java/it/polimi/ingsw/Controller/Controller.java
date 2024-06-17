@@ -223,7 +223,7 @@ public class Controller {
                     try {
                         //TODO collegarsi al tablecenter per fare pescata anche di carte a terra
                         //make the draw
-                        getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition]);
+                        getPlayerByNickname(nickname).getHand().DrawPositionedCard(model.getTablecenter().getCenterCards()[chosenPosition-1]);
                         // send ack
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
 
