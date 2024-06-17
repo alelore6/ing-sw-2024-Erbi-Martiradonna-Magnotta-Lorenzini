@@ -556,7 +556,7 @@ public class TUI extends UI {
                             do{
                                 if(n != -1) printOut(inputError());
                                 n = chooseInt(1, 6);
-                            } while (n<=4 &&!presentCards[n-1]);
+                            } while (n <= 4 && !presentCards[n-1]);
 
                             notifyListener(new DrawCardResponse(n,client.getNickname()));
                             break;
@@ -594,8 +594,7 @@ public class TUI extends UI {
                             n = 1;
                             Map<String, Integer> sortedMap = e.tableView.scoreTrack.points.entrySet()
                                     .stream()
-                                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
-                                            .thenComparing(Map.Entry.comparingByKey()))
+                                    .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
                                     .collect(Collectors.toMap(
                                             Map.Entry::getKey,
                                             Map.Entry::getValue,
@@ -604,7 +603,7 @@ public class TUI extends UI {
                                     ));
                             for(int i = 0; i < e.tableView.scoreTrack.points.keySet().size(); i++){
                                 String[] nicks = e.tableView.scoreTrack.points.keySet().toArray(new String[e.tableView.scoreTrack.points.size()]);
-                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + e.tableView.scoreTrack.points.get(nicks[i]) + " point" + (e.tableView.scoreTrack.points.get(nicks[i]) == 1 ? "" : "s"), i == 0 ? true : false));
+                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + e.tableView.scoreTrack.points.get(nicks[i]) + " point" + (e.tableView.scoreTrack.points.get(nicks[i]) == 1 ? "" : "s"), e.tableView.scoreTrack.points.get(nicks[i]) == e.tableView.scoreTrack.points.get(nicks[0]) ? true : false));
                                 n++;
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR SECRET OBJECTIVE CARD's ID"), false) + "\n" + privateObjectiveCard.getID());

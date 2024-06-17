@@ -458,13 +458,13 @@
             "PLANT": 1
         },
         "frontCorners": [
+            {},
             {
                 "pos": "UP_DX"
             },
             {
                 "pos": "DOWN_SX"
             },
-            {},
             {
                 "pos": "DOWN_DX",
                 "resource": "MANUSCRIPT"
