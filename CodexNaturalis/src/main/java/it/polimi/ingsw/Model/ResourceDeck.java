@@ -63,4 +63,8 @@ public class ResourceDeck extends Deck{
             return temp;
         }
     }
+
+    public CardColor peek() {
+        return cards[0].getColor();
+    }
 }

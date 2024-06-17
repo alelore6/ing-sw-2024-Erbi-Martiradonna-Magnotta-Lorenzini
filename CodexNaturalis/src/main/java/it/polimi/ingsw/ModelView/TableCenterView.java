@@ -2,6 +2,7 @@ package it.polimi.ingsw.ModelView;
 
 import it.polimi.ingsw.Model.*;
 
+import java.awt.*;
 import java.io.Serializable;
 
 /**
@@ -21,6 +22,8 @@ public class TableCenterView implements Serializable {
      */
     public final ScoretrackView scoreTrack;
 
+    public final CardColor topResourceCardColor;
+    public final CardColor topGoldCardColor;
     /**
      * Constructor that works like a clone method
      * @param tableCenter
@@ -29,5 +32,7 @@ public class TableCenterView implements Serializable {
         objCards=tableCenter.getObjCards();
         centerCards=tableCenter.getCenterCards();
         scoreTrack=new ScoretrackView(tableCenter.getScoretrack());
+        this.topResourceCardColor = tableCenter.getGoldDeck().peek();
+        this.topGoldCardColor = tableCenter.getResDeck().peek();
     }
 }
