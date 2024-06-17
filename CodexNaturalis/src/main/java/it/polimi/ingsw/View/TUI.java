@@ -546,8 +546,8 @@ public class TUI extends UI {
                                 }
                                 else presentCards[i] = false;
                             }
-                            printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left)\n" +
-                                    setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left)\n");
+                            printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topResourceCardColor +"\n");
+                                    printOut(setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topGoldCardColor +"\n");
 
                             n = -1;
                             do{
