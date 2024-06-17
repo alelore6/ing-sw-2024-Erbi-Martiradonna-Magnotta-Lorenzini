@@ -201,8 +201,8 @@ public class GUI extends UI{
                         case DrawCardRequest e :
                             //tolgo delle possibilità di scelta in base alle info dell'evento
                             possibilities = new ArrayList<Object>();
-                            if(!((DrawCardRequest) ev).goldDeckEmpty)    possibilities.add("Gold deck");
-                            if(!((DrawCardRequest) ev).resDeckEmpty)    possibilities.add("Resource deck");
+                            if(((DrawCardRequest) ev).goldCardinDeck > 0)    possibilities.add("Gold deck");
+                            if(((DrawCardRequest) ev).resCardinDeck > 0)    possibilities.add("Resource deck");
                             n=1;
                             for (PlayableCard c : ((DrawCardRequest) ev).tableCenterView.centerCards){
                                 if(c!=null) possibilities.add("Card "+n);

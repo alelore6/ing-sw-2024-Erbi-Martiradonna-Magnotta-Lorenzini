@@ -73,6 +73,7 @@
         "color": "RED",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "FUNGI": 3,
             "ANIMAL": 1
@@ -95,6 +96,7 @@
         "color": "RED",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "FUNGI": 3,
             "PLANT": 1
@@ -117,6 +119,7 @@
         "color": "RED",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "FUNGI": 3,
             "INSECT": 1
@@ -283,6 +286,7 @@
         "color": "GREEN",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "PLANT": 3,
             "INSECT": 1
@@ -305,6 +309,7 @@
         "color": "GREEN",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "PLANT": 3,
             "ANIMAL": 1
@@ -327,6 +332,7 @@
         "color": "GREEN",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "PLANT": 3,
             "FUNGI": 1
@@ -493,6 +499,7 @@
         "color": "BLUE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "ANIMAL": 3,
             "INSECT": 1
@@ -515,6 +522,7 @@
         "color": "BLUE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "ANIMAL": 3,
             "FUNGI": 1
@@ -537,6 +545,7 @@
         "color": "BLUE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "ANIMAL": 3,
             "PLANT": 1
@@ -703,6 +712,7 @@
         "color": "PURPLE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "INSECT": 3,
             "ANIMAL": 1
@@ -725,6 +735,7 @@
         "color": "PURPLE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "INSECT": 3,
             "PLANT": 1
@@ -747,6 +758,7 @@
         "color": "PURPLE",
         "points": 2,
         "RPoints": "CORNER",
+        "RPointsCorner": true,
         "req": {
             "INSECT": 3,
             "FUNGI": 1

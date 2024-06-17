@@ -4,6 +4,7 @@ import it.polimi.ingsw.Events.AckResponse;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
+import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -18,13 +19,13 @@ public abstract class Listener {
      * attribute representing the queue of generic events
      * that will be handled by the listener
      */
-    private final Queue<GenericEvent> eventQueue = new LinkedList<GenericEvent>();
+    private final Deque<GenericEvent> eventQueue = new LinkedList<GenericEvent>();
 
     /**
      * method getter for the event queue of this specific listener
      * @return Queue of Generic Events
      */
-    public Queue<GenericEvent> getEventQueue() {
+    public Deque<GenericEvent> getEventQueue() {
         return eventQueue;
     }
 

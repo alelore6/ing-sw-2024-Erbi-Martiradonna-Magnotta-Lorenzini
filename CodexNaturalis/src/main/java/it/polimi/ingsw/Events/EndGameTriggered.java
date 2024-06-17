@@ -16,5 +16,6 @@ public class EndGameTriggered extends GenericEvent{
     public EndGameTriggered(String message, String nickname, GameView gameView) {
         super(message,nickname);
         this.gameView = gameView;
+        mustBeSentToAll = true;
     }
 }

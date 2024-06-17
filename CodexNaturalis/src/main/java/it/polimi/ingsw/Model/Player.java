@@ -2,8 +2,6 @@ package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 
-import java.io.Serializable;
-
 /**
  * Class that contains player's information and game items
  */
@@ -37,7 +35,7 @@ public class Player {
      */
     protected int position;
 
-    protected boolean disconnected;
+    protected boolean isDisconnected;
 
     /**
      * Constructor:
@@ -50,7 +48,7 @@ public class Player {
         this.game = game;
         currentResources= new CurrentResources(this);
         Hand = new Hand(this);
-        disconnected = false;
+        isDisconnected = false;
     }
 
     /**
