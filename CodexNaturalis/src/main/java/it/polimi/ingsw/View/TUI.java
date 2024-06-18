@@ -18,7 +18,7 @@ public class TUI extends UI {
     private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
-    private boolean isReconnecting;
+    private String firstPlayer = "";
     private Card[][] lastPlayedCards = null;
     private final ObjectiveCard[] publicObjCards = new ObjectiveCard[2];
     private boolean objBool = true;
@@ -155,7 +155,7 @@ public class TUI extends UI {
         return reset + c + string + reset;
     }
 
-    private String setColorForString(String color, String string, boolean isBright){
+    public static String setColorForString(String color, String string, boolean isBright){
         String c;
         String temp = isBright ? "9" : "3";
         String resetColor = "\u001B[0m";
@@ -178,7 +178,7 @@ public class TUI extends UI {
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
-                    + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), true) +
+                    + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), false) +
                     "\n\tVisible corners:\n\t\tFRONT:");
             for(Corner corner : card.getFrontCorners()){
                 if(corner.getPosition() != null && corner.isCovered == false)
@@ -225,7 +225,7 @@ public class TUI extends UI {
             }
             printOut("\n\tRESOURCES IN THE BACK:");
             for(Resource resource : ((StartingCard) card).resource){
-                 printOut("\t\t" + resource + "\t\t");
+                 printOut("\t\t" + resource.toString() + "\t\t");
             }
         }
     }
@@ -315,9 +315,9 @@ public class TUI extends UI {
 
         // Renormalization of pathological cases:
         // if the margins are too big, it simply rescales the min and max of rows and columns.
-        if(minRow < 0)   minRow    =      0;
-        if(minColumn < 0)   minColumn =      0;
-        if(maxRow     > 80) maxRow    = 80;
+        if(minRow    < 0)  minRow    =  0;
+        if(minColumn < 0)  minColumn =  0;
+        if(maxRow    > 80) maxRow    = 80;
         if(maxColumn > 80) maxColumn = 80;
 
         // This finds the starting card's coordinates.
@@ -535,8 +535,8 @@ public class TUI extends UI {
                                 }
                                 else presentCards[i-1] = false;
                             }
-                            printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " Resource deck (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topResourceCardColor +"\n");
-                                    printOut(setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " Gold deck (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left). Color: "+e.tableCenterView.topGoldCardColor +"\n");
+                            printOut("\n\n" + setColorForString("BLACK", setColorForBackground("YELLOW", "(5)"), false) + " " +setColorForString(e.tableCenterView.topResourceCardColor.toString(), "Resource deck", false) + " (" + e.resCardinDeck + " card" + (e.resCardinDeck == 1 ? "" : "s") + " left).\n");
+                                    printOut(setColorForString("BLACK", setColorForBackground("YELLOW", "(6)"), false) + " " + setColorForString(e.tableCenterView.topGoldCardColor.toString(), "Gold deck", false) + " (" + e.goldCardinDeck + " card" + (e.goldCardinDeck == 1 ? "" : "s") + " left).\n");
 
                             n = -1;
                             do{
@@ -649,6 +649,10 @@ public class TUI extends UI {
 
                             notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
                             printOut("\nWaiting for other players...");
+                            break;
+
+                        case TurnOrder e :
+                            firstPlayer = e.order.split(" ")[3];
                             break;
 
                         case ReconnectionRequest e:

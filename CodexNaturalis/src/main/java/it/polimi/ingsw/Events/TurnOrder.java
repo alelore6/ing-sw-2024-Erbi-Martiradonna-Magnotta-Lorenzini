@@ -7,6 +7,8 @@ import it.polimi.ingsw.ModelView.GameView;
  */
 public class TurnOrder extends GenericEvent{
 
+    public final String order;
+
     public final GameView gameView;
     /**
      * Constructor
@@ -16,6 +18,7 @@ public class TurnOrder extends GenericEvent{
     public TurnOrder(String nickname, String order, GameView gameView) {
         super("The game turn order is: "+ order, nickname);
         this.gameView = gameView;
+        this.order = order;
         mustBeSentToAll=true;
     }
 
