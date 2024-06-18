@@ -286,10 +286,13 @@ public class TUI extends UI {
     }
 
     private void printGrid(Card[][] playedCards){
-        int minRow = 40;
-        int minColumn = 40;
-        int maxRow = 40;
-        int maxColumn = 40;
+        int minRow = 100;
+        int minColumn = 100;
+        int maxRow = 0;
+        int maxColumn = 0;
+        final int size = playedCards.length;
+        int center_row = -100;
+        int center_column = -100;
         final int GRID_MARGIN = 2;
         final String HORIZONTAL_SPACE = "\t";
         final String FAR_BLOCK = setColorForString("BLACK", "■", false);
@@ -298,45 +301,56 @@ public class TUI extends UI {
 
         // Find the min and max of rows and columns used for a better view:
         // by doing so, every time it prints the used grid and not the entire one of the size of 80x80.
-        for(int i = 0; i < 80; i++){
-            for(int j = 0; j < 80; j++){
-                if(playedCards[i][j] != null){
-                    if(i < minRow)    minRow    = i;
-                    if(i > maxRow)    maxRow    = i;
-                    if(j < minColumn) minColumn = j;
-                    if(j > maxColumn) maxColumn = j;
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                if(playedCards[i][j] != null && playedCards[i][j].getID() != -1){
+                    if(i < minRow)    minRow    = i - GRID_MARGIN;
+                    if(i > maxRow)    maxRow    = i + GRID_MARGIN;
+                    if(j < minColumn) minColumn = j - GRID_MARGIN;
+                    if(j > maxColumn) maxColumn = j + GRID_MARGIN;
                 }
             }
         }
 
         // Renormalization of pathological cases:
         // if the margins are too big, it simply rescales the min and max of rows and columns.
-        if(minRow    - GRID_MARGIN < 0)   minRow    =      GRID_MARGIN;
-        if(minColumn - GRID_MARGIN < 0)   minColumn =      GRID_MARGIN;
-        if(maxRow    + GRID_MARGIN >= 80) maxRow    = 80 - GRID_MARGIN - 1;
-        if(maxColumn + GRID_MARGIN >= 80) maxColumn = 80 - GRID_MARGIN - 1;
+        if(minRow < 0)   minRow    =      0;
+        if(minColumn < 0)   minColumn =      0;
+        if(maxRow     >= size) maxRow    = size - 1;
+        if(maxColumn >= size) maxColumn = size - 1;
+
+        for(int i = minRow + GRID_MARGIN; i <= maxRow - GRID_MARGIN; i++){
+            boolean isFound = false;
+            for(int j = minColumn + GRID_MARGIN; j <= maxColumn - GRID_MARGIN; j++){
+                if(playedCards[i][j] instanceof StartingCard && playedCards[i][j].getID() != -1){
+                    center_row = i;
+                    center_column = j;
+
+                    isFound = true;
+                    break;
+                }
+                if(isFound) break;
+            }
+        }
 
         // It prints the column numbers.
-        for(int j = minColumn - GRID_MARGIN - 40; j <= maxColumn + GRID_MARGIN - 40; j++)
-            grid += HORIZONTAL_SPACE + j;
+        for(int j = minColumn; j <= maxColumn; j++)
+            grid += HORIZONTAL_SPACE + (j - center_column);
 
         // It prints the rest.
-        for(int i = minRow - GRID_MARGIN; i <= maxRow + GRID_MARGIN; i++){
+        for(int i = minRow; i <= maxRow; i++){
             // It prints the row numbers.
-            grid += "\n" + (i - 40 < 0 ? "" : " ") + (i - 40);
+            grid += "\n" + ((i - center_row) < 0 ? "" : " ") + (i - center_row);
 
-            for(int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++){
+            for(int j = minColumn; j <= maxColumn; j++){
                 // If the current element is null, it checks possible adjacent cards and, if it finds at least one,
                 // it marks this position with yellow, else with black.
-                if(playedCards[i][j] == null){
-                    if(checkNear(playedCards, i, j)){
-                        grid += HORIZONTAL_SPACE + NEAR_BLOCK;
-                    }
-                    else{
-                        grid += HORIZONTAL_SPACE + FAR_BLOCK;
-                    }
-                }
-                // If the current element is not null, it simply prints the card's ID located here colored by the corresponding color.
+                if(playedCards[i][j] == null)
+                    grid += HORIZONTAL_SPACE + FAR_BLOCK;
+                else if(playedCards[i][j].getID() == -1)
+                    grid += HORIZONTAL_SPACE + NEAR_BLOCK;
+
+                // If the current element has a valid card, it simply prints the card's ID located here colored by the corresponding color.
                 else{
                     grid += HORIZONTAL_SPACE + setColorForString(playedCards[i][j].getColor().toString(), String.valueOf(playedCards[i][j].getID()), true);
                 }
@@ -344,37 +358,6 @@ public class TUI extends UI {
         }
 
         printOut(grid + "\n");
-    }
-
-    private boolean checkNear(Card[][] playedCards, int x, int y){
-        int check = 0;
-        boolean hasNear = false;
-        if(x-1 >= 0 && y-1 >= 0 && playedCards[x-1][y-1] != null){
-                if(playedCards[x-1][y-1].getCorners()[3].getPosition() != null)
-                    hasNear = true;
-                else
-                    return false;
-        }
-        if(x-1 >= 0 && y+1 <= 80 && playedCards[x-1][y+1] != null){
-                if(playedCards[x-1][y+1].getCorners()[2].getPosition() != null)
-                    hasNear = true;
-                else
-                    return false;
-        }
-        if(x+1 >= 0 && y-1 >= 0 && playedCards[x+1][y-1] != null){
-            if(playedCards[x+1][y-1].getCorners()[1].getPosition() != null)
-                hasNear = true;
-            else
-                return false;
-        }
-        if(x+1 <= 80 && y+1 <= 80 && playedCards[x+1][y+1] != null){
-            if(playedCards[x+1][y+1].getCorners()[0].getPosition() != null)
-                hasNear = true;
-            else
-                return false;
-        }
-
-        return hasNear;
     }
 
     // It returns true if the string is a chat message, and it also sends it.
