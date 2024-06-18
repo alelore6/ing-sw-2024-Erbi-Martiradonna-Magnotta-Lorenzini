@@ -16,45 +16,55 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
- * Class that represent the controller in the MVC pattern.
+ * Class that represents the controller in the MVC pattern.
  * It handles the action of the players on the model.
  */
 public class Controller {
 
+    /**
+     * Hashmap that assigns a password to every player.
+     */
     private HashMap<String, String> passwords = new HashMap<String, String>();
     /**
-     * the server that handles the connections
+     * The server that handles the connections.
      */
     private final ServerImpl server;
     /**
-     * the waiting lobby before the game starts
+     * The waiting lobby before the game starts.
      */
     private Lobby lobby;
     /**
-     * the actual game, represent the model in the MVC pattern.
+     * The actual game. It represents the model in the MVC pattern.
      */
     private Game model = null;
     /**
-     * the listeners that allow the exchange of information between the MVC pattern.
+     * The listeners that allow the exchange of information between the MVC pattern.
      */
     private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
-
+    /**
+     * Boolean that indicates if the creation of the lobby request has been sent.
+     */
     private boolean numPlayersRequestSent = false;
+    /**
+     * Nickname that helps the controller to check if another one already exists.
+     */
     private String newNickname = null;
-
+    /**
+     * Lock on the flux of the game.
+     */
     private final Object flux_lock = new Object();
     private Integer wait=0;
 
     /**
      * Constructor
-     * @param server the server that handles the connections
+     * @param server the server that handles the connections.
      */
     public Controller(ServerImpl server){
         this.server = server;
     }
 
     /**
-     * Creates and starts the actual game
+     * Creates and starts the actual game.
      */
     protected void createGame() throws RemoteException {
         String[] temp = new String[lobby.getNumPlayers()];
@@ -85,11 +95,15 @@ public class Controller {
     }
 
     /**
-     * Create the listener for the client that is trying to connect
-     * if lobby is empty the number of players for the game must be set
-     * Calls lobby.addPlayer() if lobby isn't full
-     * communicate the result of the action to the client through his listener
-     * @param nickname
+     * Creates the listener for the client that is trying to connect.
+     * If the lobby is empty, the number of players for the game must be set.
+     * Calls lobby.addPlayer() if lobby isn't full.
+     * Communicate the result of the action to the client through its listener.
+     * @param nickname the nickname of the player to add.
+     * @param mvListener the listener associated with the nickname
+     * @param oldNickname the old nickname of the user. It may be different from
+     *                    the actual one in case another equal one was found.
+     * @see Lobby
      */
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
         synchronized (this){
@@ -114,7 +128,7 @@ public class Controller {
                         }
                     }
                 }
-                // This is for rejoin a game
+                // This is for rejoining a game
                 else if(model != null){
                     boolean isPresent = false;
                     for(Player player : model.getPlayers()){
@@ -138,7 +152,7 @@ public class Controller {
     }
 
     /**
-     * Getter for the game
+     * Getter for the game.
      * @return the game
      */
     public Game getGame(){
@@ -146,9 +160,11 @@ public class Controller {
     }
 
     /**
-     * Receive an event from the client and act on the model
+     * Receive an event from the client and acts on the model.
      * @param event the event sent from the client
      * @param nickname the player that sent the event
+     * @see GenericEvent
+     * @see Game
      */
     public void updateModel(GenericEvent event, String nickname) throws RemoteException {
 
@@ -317,9 +333,10 @@ public class Controller {
     }
 
     /**
-     * Getter for a specific player in the game
-     * @param nickname the player's nickname
-     * @return the player
+     * Getter for a specific player in the game.
+     * @param nickname the player's nickname.
+     * @return the player.
+     * @see Player
      */
     public Player getPlayerByNickname(String nickname){
         try {
@@ -335,12 +352,24 @@ public class Controller {
         }
     }
 
+    /**
+     * Sends a specific event to all registered listeners.
+     * @param event the event to send.
+     * @throws RemoteException
+     * @see ModelViewListener
+     */
     public void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
         for(String nickname : server.getClients().keySet()) getMVListenerByNickname(nickname).addEvent(event);
     }
 
+    /**
+     * Method to get a listener (if present) associated with a specific nickname.
+     * @param nickname
+     * @return the listener or null if no one with that nickname has been found.
+     * @see ModelViewListener
+     */
     public ModelViewListener getMVListenerByNickname(String nickname){
         try {
             for(int i = MVListeners.size() - 1; i >= 0; i--){
@@ -355,14 +384,26 @@ public class Controller {
         }
     }
 
+    /**
+     * Getter for the list of listeners.
+     * @return the list.
+     * @see ModelViewListener
+     */
     public ArrayList<ModelViewListener> getMVListeners() {
         return MVListeners;
     }
 
+    /**
+     * Method to add and start a listener. Calls handleEvent() into it to make it work.
+     * @param listener the listener to be added.
+     * @throws RemoteException
+     * @see ModelViewListener
+     */
     public void addMVListener(ModelViewListener listener) throws RemoteException {
         MVListeners.add(listener);
         listener.handleEvent();
     }
+
 
     private void nextPlayer() throws RemoteException {
         if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
@@ -373,10 +414,22 @@ public class Controller {
         else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
     }
 
+    /**
+     * Method that disconnects a player by calling the necessary method in Game class.
+     * @param nickname
+     * @see Game
+     */
     public void disconnectPlayer(String nickname){
         model.disconnectPlayer(getPlayerByNickname(nickname));
     }
 
+    /**
+     * Method that completely deletes a client, removing also its listener.
+     * @param client
+     * @throws RemoteException
+     * @see ModelViewListener
+     * @see ServerImpl
+     */
     public void deleteClient(Client client) throws RemoteException {
         ModelViewListener listener = getMVListenerByNickname(client.getNickname());
         listener.isActive = false;

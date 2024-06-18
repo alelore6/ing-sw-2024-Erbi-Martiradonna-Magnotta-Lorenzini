@@ -3,6 +3,7 @@ package it.polimi.ingsw.View;
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
+import it.polimi.ingsw.ModelView.HandView;
 
 import java.io.*;
 import java.util.*;
@@ -293,7 +294,7 @@ public class TUI extends UI {
         final int size = playedCards.length;
         int center_row = -100;
         int center_column = -100;
-        final int GRID_MARGIN = 2;
+        final int GRID_MARGIN = HandView.GRID_MARGIN;
         final String HORIZONTAL_SPACE = "\t";
         final String FAR_BLOCK = setColorForString("BLACK", "■", false);
         final String NEAR_BLOCK = setColorForString("YELLOW", "■", true);
@@ -304,10 +305,10 @@ public class TUI extends UI {
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
                 if(playedCards[i][j] != null && playedCards[i][j].getID() != -1){
-                    if(i < minRow)    minRow    = i - GRID_MARGIN;
-                    if(i > maxRow)    maxRow    = i + GRID_MARGIN;
-                    if(j < minColumn) minColumn = j - GRID_MARGIN;
-                    if(j > maxColumn) maxColumn = j + GRID_MARGIN;
+                    if(i - GRID_MARGIN < minRow)    minRow    = i - GRID_MARGIN;
+                    if(i + GRID_MARGIN > maxRow)    maxRow    = i + GRID_MARGIN;
+                    if(j - GRID_MARGIN < minColumn) minColumn = j - GRID_MARGIN;
+                    if(j + GRID_MARGIN > maxColumn) maxColumn = j + GRID_MARGIN;
                 }
             }
         }
@@ -316,12 +317,13 @@ public class TUI extends UI {
         // if the margins are too big, it simply rescales the min and max of rows and columns.
         if(minRow < 0)   minRow    =      0;
         if(minColumn < 0)   minColumn =      0;
-        if(maxRow     >= size) maxRow    = size - 1;
-        if(maxColumn >= size) maxColumn = size - 1;
+        if(maxRow     > 80) maxRow    = 80;
+        if(maxColumn > 80) maxColumn = 80;
 
-        for(int i = minRow + GRID_MARGIN; i <= maxRow - GRID_MARGIN; i++){
+        // This finds the starting card's coordinates.
+        for(int i = minRow; i <= maxRow; i++){
             boolean isFound = false;
-            for(int j = minColumn + GRID_MARGIN; j <= maxColumn - GRID_MARGIN; j++){
+            for(int j = minColumn; j <= maxColumn; j++){
                 if(playedCards[i][j] instanceof StartingCard && playedCards[i][j].getID() != -1){
                     center_row = i;
                     center_column = j;
@@ -343,9 +345,10 @@ public class TUI extends UI {
             grid += "\n" + ((i - center_row) < 0 ? "" : " ") + (i - center_row);
 
             for(int j = minColumn; j <= maxColumn; j++){
+                boolean isOut = i < 0 || j < 0 || i >= size || j >= size;
                 // If the current element is null, it checks possible adjacent cards and, if it finds at least one,
                 // it marks this position with yellow, else with black.
-                if(playedCards[i][j] == null)
+                if(isOut || playedCards[i][j] == null)
                     grid += HORIZONTAL_SPACE + FAR_BLOCK;
                 else if(playedCards[i][j].getID() == -1)
                     grid += HORIZONTAL_SPACE + NEAR_BLOCK;

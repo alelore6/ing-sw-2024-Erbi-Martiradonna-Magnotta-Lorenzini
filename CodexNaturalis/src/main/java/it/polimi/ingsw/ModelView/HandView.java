@@ -11,6 +11,12 @@ import java.io.Serializable;
  * Represent the hand of a player in a certain moment
  */
 public class HandView implements Serializable {
+
+    /**
+     * the margin for the grid of played cards.
+     */
+    public static final int GRID_MARGIN = 2;
+
     /**
      * the player's hand cards
      */
@@ -39,8 +45,6 @@ public class HandView implements Serializable {
         if(matrix != null && matrix[40] != null && matrix[40][40] == null)
             return null;
 
-        final int GRID_MARGIN = 2;
-
         int n = matrix.length;
         int minRow = n, maxRow = -1, minColumn = n, maxColumn = -1;
 
@@ -63,23 +67,27 @@ public class HandView implements Serializable {
         if(maxColumn + GRID_MARGIN > 80) maxColumn = 80 - GRID_MARGIN;
 
         // Calcola la dimensione della sotto-matrice quadrata
-        int size = 2 * GRID_MARGIN + Math.max(maxRow - minRow + 1, maxColumn - minColumn + 1);
+        int maxUsedSpace = Math.max(Math.abs(maxRow - minRow), Math.abs(maxColumn - minColumn)) + 1;
+        int size;
+
+        if(maxUsedSpace > 81)   size = 81;
+        else                    size = 2 * GRID_MARGIN + maxUsedSpace;
 
         // Estrai la sotto-matrice quadrata
         Card[][] subMatrix = new Card[size][size];
 
         for (int i = minRow - GRID_MARGIN; i <= maxRow + GRID_MARGIN; i++) {
-            for (int j = minRow - GRID_MARGIN; j <= maxRow + GRID_MARGIN; j++) {
+            for (int j = minColumn - GRID_MARGIN; j <= maxColumn + GRID_MARGIN; j++) {
                 // If the current element is null, it checks possible adjacent cards and, if it finds at least one,
                 // it marks this position with yellow, else with black.
                 if(matrix[i][j] == null){
                     if(checkNear(matrix, i, j)){
-                        subMatrix[i - (minRow - GRID_MARGIN)][j - (minRow - GRID_MARGIN)]
+                        subMatrix[i - (minRow - GRID_MARGIN)][j - (minColumn - GRID_MARGIN)]
                                 = new StartingCard(-1);
                     }
                 }
                 else{
-                    subMatrix[i - (minRow - GRID_MARGIN)][j - (minRow - GRID_MARGIN)] = matrix[i][j];
+                    subMatrix[i - (minRow - GRID_MARGIN)][j - (minColumn - GRID_MARGIN)] = matrix[i][j];
                 }
             }
         }
@@ -102,7 +110,7 @@ public class HandView implements Serializable {
             else
                 return false;
         }
-        if(x+1 >= 0 && y-1 >= 0 && playedCards[x+1][y-1] != null){
+        if(x+1 <= 80 && y-1 >= 0 && playedCards[x+1][y-1] != null){
             if(playedCards[x+1][y-1].getCorners()[1].getPosition() != null)
                 hasNear = true;
             else

@@ -4,6 +4,10 @@ import it.polimi.ingsw.Events.GenericEvent;
 
 import java.io.PrintStream;
 
+/**
+ * Class that prints on the server the most important operations such as sending/receiving events
+ * or some warning/failure.
+ */
 public class Logger{
     private final PrintStream out = new PrintStream(System.out, true);
     private final PrintStream outErr = new PrintStream(System.err, true);
