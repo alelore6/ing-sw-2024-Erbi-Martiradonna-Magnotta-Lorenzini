@@ -444,7 +444,7 @@ public class Game{
 
 
             }
-            return minPoints; //aggiungo il punteggio all'array posizionalmente
+            return minPoints*objectiveCard.getPoints(); //aggiungo il punteggio all'array posizionalmente
 
 
         } else {// ObjectiveCard1
@@ -454,19 +454,20 @@ public class Game{
             int totalpoints = 0;
             int rows = 81;
             int columns = 81;
-            for (int k = 0; k < rows - 3; k++) {
-                for (int j = 0; j < columns - 3; j++) {
+            for (int k = 0; k < rows - 2; k++) {
+                for (int j = 0; j < columns - 2; j++) {
                     //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
                     Card[][] subMatrix = getSubmatrix(players[playerPos].getHand().getDisplayedCards(), k, j);
                     boolean found = true;
-                    Card[] savedCards = new Card[3];
-                    //PER OGNI 3X3 MATRICE SVOLGO
-                        for (int index = 0; index < 3; index++) {
+                    Card[] savedCards = new Card[3]; //a che cazzo serve??
+                    int counter = 0;
+                    //PER OGNI 3X3 SOTTOMATRICE SVOLGO
+                        for (int index = 0; index < 3; index++) { //quindi 3 iterazioni (per le 3 carte)
                             int x = 0;
                             int y = 0;
                             //switch case to translate position into matrix position[][]
                             switch (((ObjectiveCard1) objectiveCard).getRequiredPositions()[index]) {
-                                case 1:
+                                case 1: //TODO vedere se case parte da 0 o da 1
                                     x = 0;
                                     y = 0;
                                     break;
@@ -509,8 +510,10 @@ public class Game{
                                 break;
                             }
 
-                            if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) {
+                            if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) { //se il colore corrisponde a quello della required in quella posizione
                                 savedCards[index] = subMatrix[x][y];
+                                counter++;
+
                             } else {
                                 found = false;
                                 break;
@@ -518,8 +521,7 @@ public class Game{
 
 
                         }
-
-                        if(found){
+                        if(found && counter == 3){
                             for(int z = 0; z < 3; z++){
                                 ((PlayableCard)savedCards[z]).isChecked = 1;
 
@@ -529,7 +531,7 @@ public class Game{
                         }
                     }
                 }
-            for(int rowz = 0; rowz < 81; rowz++){
+            for(int rowz = 0; rowz < 81; rowz++){ //serve per resettare i checked a fine partita
                 for(int columnz = 0; columnz < 81; columnz++){
                     if (!(players[playerPos].getHand().getDisplayedCards()[rowz][columnz] instanceof StartingCard) &&
                             players[playerPos].getHand().getDisplayedCards()[rowz][columnz]!= null ) {

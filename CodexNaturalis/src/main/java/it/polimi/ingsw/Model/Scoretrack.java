@@ -36,7 +36,7 @@ public class Scoretrack {
      * @param token the player's token
      */
     protected void addToken(Token token) {
-        points.put(token,0);
+        points.put(token,19); //TODO RISETTARE!!
     }
 
     /**
