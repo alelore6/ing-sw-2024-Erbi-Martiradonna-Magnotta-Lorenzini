@@ -166,7 +166,7 @@ public class Controller {
      * @see GenericEvent
      * @see Game
      */
-    public void updateModel(GenericEvent event, String nickname) throws RemoteException {
+    public void updateModel(GenericEvent event, String nickname) throws RemoteException, InterruptedException {
 
             if(event instanceof NumPlayersResponse){
                 createLobby(((NumPlayersResponse) event).numPlayers);
@@ -399,7 +399,7 @@ public class Controller {
      * @throws RemoteException
      * @see ModelViewListener
      */
-    public void addMVListener(ModelViewListener listener) throws RemoteException {
+    public void addMVListener(ModelViewListener listener) throws RemoteException, InterruptedException {
         MVListeners.add(listener);
         listener.handleEvent();
     }
@@ -432,7 +432,7 @@ public class Controller {
      */
     public void deleteClient(Client client) throws RemoteException {
         ModelViewListener listener = getMVListenerByNickname(client.getNickname());
-        listener.isActive = false;
+        listener.running = false;
         server.getClients().remove(client.getNickname());
         MVListeners.remove(listener);
     }

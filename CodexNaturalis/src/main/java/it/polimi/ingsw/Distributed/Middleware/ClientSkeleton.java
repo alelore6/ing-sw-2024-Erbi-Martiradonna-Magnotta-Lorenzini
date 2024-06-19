@@ -56,7 +56,7 @@ public class ClientSkeleton implements Client {
         //socket: server stub is always reading (same as receive() here)
     }
 
-    public void receive(ServerImpl server) throws RemoteException {
+    public void receive(ServerImpl server) throws RemoteException, InterruptedException {
         //socket: receive from server stub update()
         //not sure of the type
         GenericEvent event;

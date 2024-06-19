@@ -10,6 +10,7 @@ import java.util.Queue;
 
 public abstract class Listener {
 
+    public volatile boolean running = true;
 
     public final Object lock_queue = new Object();
 
@@ -33,7 +34,7 @@ public abstract class Listener {
      * abstract method to be implemented by listener subclasses to handle events
      * @throws RemoteException remote exception for RMI connections
      */
-    public abstract void handleEvent() throws RemoteException;
+    public abstract void handleEvent() throws RemoteException, InterruptedException;
 
     /**
      * method to add an event to the queue of events

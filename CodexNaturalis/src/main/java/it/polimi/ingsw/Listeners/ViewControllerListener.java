@@ -36,11 +36,11 @@ public class ViewControllerListener extends Listener {
      * @throws RemoteException remote exception for RMI connections
      */
     @Override
-    public void handleEvent() throws RemoteException {
-        new Thread() {
+    public void handleEvent() throws RemoteException, InterruptedException {
+        Thread eventThread = new Thread() {
             @Override
             public void run() {
-                while(true) {
+                while(running) {
                     synchronized(lock_queue){
                         if(!getEventQueue().isEmpty()) {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
@@ -48,14 +48,17 @@ public class ViewControllerListener extends Listener {
                             try {
                                 ((ClientImpl) client).sendEvent(currentEvent);
                             } catch (RemoteException e) {
-                                e.printStackTrace();
                                 throw new RuntimeException(e);
+                            }
+                            catch (InterruptedException e) {
+                                running = false;
                             }
                         }
                     }
-
                 }
             }
-        }.start();
+        };
+
+        eventThread.start();
     }
 }

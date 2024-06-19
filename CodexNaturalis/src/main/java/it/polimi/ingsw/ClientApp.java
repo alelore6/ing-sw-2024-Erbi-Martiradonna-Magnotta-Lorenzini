@@ -17,20 +17,23 @@ import it.polimi.ingsw.Distributed.Middleware.ServerStub;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.TUI;
 
-public class ClientApp {
+import static it.polimi.ingsw.Distributed.ServerImpl.PING_INTERVAL;
+import static it.polimi.ingsw.ServerApp.SOCKET_PORT;
 
-    private static final int PING_INTERVAL = 100; // milliseconds
+public class ClientApp{
+
     private volatile boolean running = true;
+    private ClientImpl client;
+    private Server server;
 
-    public static void main(String[] args) throws RemoteException, NotBoundException {
-
+    private ClientApp(String[] args) throws InterruptedException {
         List<String> args_list = Arrays.asList(args);
 
-        final Scanner in = new Scanner(System.in);
-        final int SOCKET_PORT = ServerApp.SOCKET_PORT;
         boolean isRMI   = args_list.contains("-rmi");
         boolean isTUI   = args_list.contains("-tui");
         boolean isLocal = args_list.contains("-local");
+        boolean isConnected;
+        final Scanner in = new Scanner(System.in);
         String ip;
 
         if(isLocal) ip = "localhost";
@@ -40,58 +43,83 @@ public class ClientApp {
         }
 
         if(isRMI){   //RMI
+            do{
+                isConnected = true;
+                try{
+                    Registry registry = LocateRegistry.getRegistry(ip);
 
-            Registry registry = LocateRegistry.getRegistry(ip);
+                    Server server = (Server) registry.lookup("CodexNaturalis_Server");
 
-            Server server = (Server) registry.lookup("CodexNaturalis_Server");
+                    client = new ClientImpl(server, isTUI);
 
-            ClientImpl client = new ClientImpl(server, isTUI);
+                }catch (NotBoundException | RemoteException e) {
+                    System.err.println("Can't connect with RMI.");
+                    isConnected = false;
+                }
+            }while(!isConnected);
 
-            new Thread(){
+            Thread RMIPing = new Thread(){
                 @Override
                 public void run(){
-                    while(true){
+                    while(running){
                         try {
                             sleep(PING_INTERVAL);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
+                            server.ping();
+                        } catch (RemoteException | InterruptedException | NullPointerException e) {
+                            System.err.println("Cannot receive from server.");
+                            System.exit(0);
                         }
-                        // sendPing();
                     }
                 }
-            }; // TODO: inserisci start quando completato
+            };
+
+            RMIPing.start();
+            RMIPing.join();
         }
         else{   //socket
+            do{
+                isConnected = true;
+                try{
+                    server = new ServerStub(ip, SOCKET_PORT);
+                    client = new ClientImpl(server, isTUI);
+                }catch (RemoteException e) {
+                    System.err.println("Can't connect with Socket.");
+                    isConnected = false;
+                }
+            }while (!isConnected);
 
-            ServerStub serverStub = new ServerStub(ip, SOCKET_PORT);
-            ClientImpl client = new ClientImpl(serverStub, isTUI);
-            new Thread(){
-                @Override
-                public void run() {
-                    while (true) {
-                        GenericEvent receivedEvent = null;
-                        try {
-                            receivedEvent = serverStub.receive(client);
-                            if(receivedEvent != null)
-                                client.getUserInterface().update(receivedEvent);
-                        }catch(RemoteException e){
-                            client.getUserInterface().printErr("Cannot receive from server.");
+            Thread socketThread = new Thread(() -> {
+                while (running) {
+                    GenericEvent receivedEvent = null;
+                    try {
+                        receivedEvent = ((ServerStub) server).receive(client);
+                        if(receivedEvent != null)
+                            client.getUserInterface().update(receivedEvent);
+                    }catch(RemoteException e){
+                        System.err.println("Cannot receive from server.");
 
-                            try{
-                                serverStub.close();
-                            }catch(RemoteException ex){
-                                client.getUserInterface().printErr("Cannot close connection with server.");
-                            }
-
+                        try{
+                            ((ServerStub) server).close();
+                        }catch(RemoteException ex){
+                            System.err.println("Fatal error.");
                             System.exit(1);
                         }
+
+                        System.exit(0);
                     }
                 }
-            }.start();
+            });
+
+            socketThread.start();
+            socketThread.join();
         }
     }
 
-    public void stop(){
-        running = false;
+    public static void main(String[] args){
+        try{
+            new ClientApp(args);
+        }catch(InterruptedException e){
+            System.out.println("The program was interrupted.");
+        }
     }
 }

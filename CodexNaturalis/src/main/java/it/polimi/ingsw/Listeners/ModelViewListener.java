@@ -16,7 +16,6 @@ public class ModelViewListener extends Listener {
     private int requestEventIndex = 0;
     public final Client client;
     public String nickname;
-    public volatile boolean isActive = true;
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
     /**
      * the server bound to this specific listener.
@@ -42,11 +41,11 @@ public class ModelViewListener extends Listener {
      * @throws RemoteException remote exception for RMI connection
      */
     @Override
-    public void handleEvent() throws RemoteException {
-        new Thread(){
+    public void handleEvent() throws RemoteException, InterruptedException {
+        Thread eventThread = new Thread(){
             @Override
             public void run() {
-                while(isActive) {
+                while(running) {
                     synchronized (lock_queue) {
 
                         if(!chatMessages.isEmpty()) {
@@ -99,7 +98,9 @@ public class ModelViewListener extends Listener {
                     }
                 }
             }
-        }.start();
+        };
+
+        eventThread.start();
     }
 
     public int getRequestEventIndex() {
