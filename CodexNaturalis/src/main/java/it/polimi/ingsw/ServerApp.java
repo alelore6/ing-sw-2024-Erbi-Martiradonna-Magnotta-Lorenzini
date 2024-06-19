@@ -26,7 +26,6 @@ public class ServerApp {
 
     private static final ServerImpl server;
     private static final Logger logger = new Logger();
-    private static volatile boolean running = true;
 
     static {
         try {
@@ -105,18 +104,14 @@ public class ServerApp {
                                 ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
                                 System.out.println(" (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
-                                while (running)    clientSkeleton.receive(server);
+                                while (true)    clientSkeleton.receive(server);
 
                             }catch(RemoteException e){}
-                            catch (InterruptedException e){
-                                running = false;
-                            }
                             finally{
                                 try {
                                     socket.close();
                                 } catch (IOException e){
-                                    System.err.println("Fatal error.");
-                                    System.exit(1);
+                                    System.err.println("Cannot close socket.");
                                 }
                             }
                         }

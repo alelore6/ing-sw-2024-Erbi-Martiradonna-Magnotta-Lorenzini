@@ -130,7 +130,7 @@ public class TUI extends UI {
     }
 
     public void stop(){
-        running = false;
+        isActive = false;
     }
 
     private static String inputError(){
@@ -363,11 +363,11 @@ public class TUI extends UI {
         printOut(grid + "\n");
     }
 
-    // It returns true if the command is a chat message, and it also sends it.
-    private boolean listenToChat(String command){
-        if(command == null)  return false;
+    // It returns true if the string is a chat message, and it also sends it.
+    private boolean listenToChat(String string){
+        if(string == null)  return false;
 
-        ArrayList<String> words = new ArrayList<String>(Arrays.asList(command.split(" ")));
+        ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
 
         // If not, the chat message has not the correct format in order to be sent.
         if(words.get(0).equalsIgnoreCase("CHAT")){
@@ -406,10 +406,10 @@ public class TUI extends UI {
         return false;
     }
 
-    private boolean listenToCard(String command, Card[][] playedCards){
-        if(command == null)  return false;
+    private boolean listenToCard(String string, Card[][] playedCards){
+        if(string == null)  return false;
 
-        ArrayList<String> words = new ArrayList<String>(Arrays.asList(command.split(" ")));
+        ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
         int ID;
 
         if(words.get(0).equalsIgnoreCase("CARD") && words.size() > 1){
@@ -440,14 +440,6 @@ public class TUI extends UI {
     }
 
     private boolean listenToDisconnection(String command){
-        if(command == null)  return false;
-
-        ArrayList<String> words = new ArrayList<String>(Arrays.asList(command.split(" ")));
-
-        if(words.get(0).equalsIgnoreCase("EXIT")){
-            stop();
-        }
-
 
         return false;
     }
@@ -483,7 +475,7 @@ public class TUI extends UI {
         new Thread(){
             @Override
             public void run() {
-                while(running){
+                while(isActive){
                     String s = null;
                     try {
                         s = in.readLine();
@@ -505,7 +497,7 @@ public class TUI extends UI {
         new Thread(){
             @Override
             public void run() {
-                while(running){
+                while(isActive){
                     GenericEvent ev = null;
 
                     synchronized(lock_events){

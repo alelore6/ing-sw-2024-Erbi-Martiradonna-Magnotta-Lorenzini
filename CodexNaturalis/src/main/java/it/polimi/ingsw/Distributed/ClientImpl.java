@@ -20,7 +20,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
     public final boolean clientFasullo;
     public final boolean isRMI;
 
-    public ClientImpl(Server server, boolean isTUI) throws RemoteException, InterruptedException {
+    public ClientImpl(Server server, boolean isTUI) throws RemoteException {
         super();
 
         isRMI = server instanceof ServerStub ? false : true;
@@ -32,7 +32,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         initialize(server);
     }
 
-    private void initialize(Server server) throws RemoteException, InterruptedException {
+    private void initialize(Server server) throws RemoteException {
         // Socket
         if(server instanceof ServerStub){
             ((ServerStub) server).register(this);
@@ -67,7 +67,7 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         userInterface.update(e);
     }
 
-    public void sendEvent(GenericEvent e) throws RemoteException, InterruptedException {
+    public void sendEvent(GenericEvent e) throws RemoteException {
         server.update(this, e);
     }
 

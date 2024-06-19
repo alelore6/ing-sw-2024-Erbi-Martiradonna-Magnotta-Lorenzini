@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
-    public static final int PING_INTERVAL = 5000; // milliseconds
+    private static final int PING_INTERVAL = 5000; // milliseconds
     public final Controller controller = new Controller(this);
     public final Logger logger;
 
@@ -44,7 +44,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         pong();
     }
 
-    public void register(Client client) throws RemoteException, InterruptedException {
+    public void register(Client client) throws RemoteException{
         boolean isReconnected = false;
 
         synchronized(clients){
@@ -89,8 +89,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             }
         }
     }
-
-    public void ping() throws RemoteException{}
 
     private void pong(){
         // Thread for periodic controls.
@@ -139,7 +137,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     @Override
-    public void update(Client client, GenericEvent event) throws RemoteException, InterruptedException {
+    public void update(Client client, GenericEvent event) throws RemoteException{
         // If client is connected with RMI.
         if(!(client instanceof ClientSkeleton)) logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){

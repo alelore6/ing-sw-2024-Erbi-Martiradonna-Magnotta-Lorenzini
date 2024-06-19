@@ -7,8 +7,6 @@ import java.rmi.RemoteException;
 
 public interface Server extends Remote {
 
-    void ping() throws RemoteException;
-
-    void update(Client client, GenericEvent event) throws RemoteException, InterruptedException;
+    void update(Client client, GenericEvent event) throws RemoteException;
 
 }
