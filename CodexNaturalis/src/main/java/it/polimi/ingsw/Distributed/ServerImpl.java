@@ -19,7 +19,7 @@ import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
-    private static final int PING_INTERVAL = 5000; // milliseconds
+    public static final int PING_INTERVAL = 5000; // milliseconds
     public final Controller controller = new Controller(this);
     public final Logger logger;
 
@@ -43,6 +43,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         this.logger = logger;
         pong();
     }
+
+    public void ping(){}
 
     public void register(Client client) throws RemoteException{
         boolean isReconnected = false;

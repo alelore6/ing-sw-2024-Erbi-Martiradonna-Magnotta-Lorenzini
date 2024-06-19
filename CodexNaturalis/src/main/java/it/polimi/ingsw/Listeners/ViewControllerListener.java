@@ -37,10 +37,10 @@ public class ViewControllerListener extends Listener {
      */
     @Override
     public void handleEvent() throws RemoteException {
-        new Thread() {
+        eventThread = new Thread() {
             @Override
             public void run() {
-                while(true) {
+                while(running) {
                     synchronized(lock_queue){
                         if(!getEventQueue().isEmpty()) {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
@@ -56,6 +56,13 @@ public class ViewControllerListener extends Listener {
 
                 }
             }
-        }.start();
+        };
+
+        eventThread.start();
+    }
+
+    public void stop() throws InterruptedException {
+        running = false;
+        eventThread.interrupt();
     }
 }

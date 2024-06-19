@@ -12,19 +12,17 @@ import it.polimi.ingsw.View.UI;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
-public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
+public class ClientImpl extends UnicastRemoteObject implements Client{
 
     protected UI userInterface;
     private String nickname;
     private Server server;
-    public final boolean clientFasullo;
     public final boolean isRMI;
 
     public ClientImpl(Server server, boolean isTUI) throws RemoteException {
         super();
 
         isRMI = server instanceof ServerStub ? false : true;
-        clientFasullo = false;
         userInterface = isTUI ? new TUI(this) : new GUI(this);
         run();
         nickname = userInterface.chooseNickname();
@@ -54,7 +52,6 @@ public class ClientImpl extends UnicastRemoteObject implements Runnable, Client{
         this.nickname = nickname;
     }
 
-    @Override
     public void run() {
         userInterface.run();
     }

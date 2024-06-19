@@ -47,6 +47,8 @@ public class ServerStub implements Server, Serializable {
         System.out.println("Connected!");
     }
 
+    public void ping(){}
+
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {

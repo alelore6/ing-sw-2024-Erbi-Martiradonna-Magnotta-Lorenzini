@@ -432,7 +432,7 @@ public class Controller {
      */
     public void deleteClient(Client client) throws RemoteException {
         ModelViewListener listener = getMVListenerByNickname(client.getNickname());
-        listener.isActive = false;
+        listener.running = false;
         server.getClients().remove(client.getNickname());
         MVListeners.remove(listener);
     }

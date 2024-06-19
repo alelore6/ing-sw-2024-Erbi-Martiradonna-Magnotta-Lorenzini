@@ -41,6 +41,10 @@ public class GUI extends UI{
         f = new MainFrame( );
     }
 
+    public void stop() {
+
+    }
+
     /**
      * method that allows the player to set his nickname.
      * This method is blocking that means that until the player enter his nickname everything will be waiting (see also run method)

@@ -24,6 +24,7 @@ public class TUI extends UI {
     private boolean objBool = true;
     private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
+    private Thread TUIThread, commandThread;
 
     public TUI(ClientImpl client) {
         super(client);
@@ -45,9 +46,7 @@ public class TUI extends UI {
                 while(lastInputs.isEmpty()){
                     try{
                         lastInputs.wait();
-                    }catch(InterruptedException e){
-                        e.printStackTrace();
-                    }
+                    }catch(InterruptedException ignored){}
                 }
 
                 choice = lastInputs.poll();
@@ -127,10 +126,6 @@ public class TUI extends UI {
 
     public final void printErr(String err){
         outErr.println(err);
-    }
-
-    public void stop(){
-        isActive = false;
     }
 
     private static String inputError(){
@@ -472,10 +467,10 @@ public class TUI extends UI {
         clearConsole();
 
         // Commands input
-        new Thread(){
+        commandThread = new Thread(){
             @Override
             public void run() {
-                while(isActive){
+                while(running){
                     String s = null;
                     try {
                         s = in.readLine();
@@ -491,13 +486,15 @@ public class TUI extends UI {
                     }
                 }
             }
-        }.start();
+        };
+
+        commandThread.start();
 
         // Event's handling thread
-        new Thread(){
+        TUIThread = new Thread(){
             @Override
             public void run() {
-                while(isActive){
+                while(running){
                     GenericEvent ev = null;
 
                     synchronized(lock_events){
@@ -664,6 +661,17 @@ public class TUI extends UI {
                     }
                 }
             }
-        }.start();
+        };
+
+        TUIThread.start();
+    }
+
+    public void stop(){
+        running = false;
+        try{
+            in.close();
+        }catch (IOException ignored){}
+        commandThread.interrupt();
+        TUIThread.interrupt();
     }
 }
