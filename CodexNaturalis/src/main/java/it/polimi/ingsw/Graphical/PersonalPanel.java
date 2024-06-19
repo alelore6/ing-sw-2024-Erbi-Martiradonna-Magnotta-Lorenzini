@@ -26,6 +26,8 @@ public class PersonalPanel extends JSplitPane {
     private boolean[] isFacedown= new boolean[3];
     private JLabel selectedLabel;
     private boolean playing = false;
+    private ImageIcon possiblePlayImage =null;
+
 
     PersonalPanel(PlayerView playerView) {
         super(JSplitPane.HORIZONTAL_SPLIT);
@@ -33,6 +35,13 @@ public class PersonalPanel extends JSplitPane {
         this.playerView = playerView;
         playButtons = new ArrayList<>();
         labels = new ArrayList<>();
+
+        try {
+            BufferedImage img =ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
+            possiblePlayImage= new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         this.playerPanel= new PlayerPanel(playerView, true);
@@ -66,6 +75,7 @@ public class PersonalPanel extends JSplitPane {
                 flipButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if(cardsID[index]<0) return;
                         isFacedown[index] = !isFacedown[index];
                         playerView.hand.handCards[index].isFacedown=isFacedown[index];
                         label.setIcon(getImageIcon(GUI.getCardPath(cardsID[index], isFacedown[index])));
@@ -112,8 +122,10 @@ public class PersonalPanel extends JSplitPane {
     }
 
     private void showPlayButton() {
+        int i=0;
         for(JButton b : playButtons){
-            b.setVisible(true);
+            if(cardsID[i]>0) b.setVisible(true);
+            i++;
         }
     }
 
@@ -153,11 +165,19 @@ public class PersonalPanel extends JSplitPane {
 
     protected void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
-        for (int i=0; i<3; i++) {//Aggiorno le carte nella mano
-            if (cardsID[i]!=playerView.hand.handCards[i].getID()){
-                cardsID[i]=playerView.hand.handCards[i].getID();
+        for (int i=0; i<3; i++) {
+            //Aggiorno le carte nella mano
+            if(playerView.hand.handCards[i]==null){
+                cardsID[i]=-1;
                 isFacedown[i]=false;
-                labels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i],isFacedown[i])));
+                labels.get(i).setIcon(possiblePlayImage);
+            }
+            else {
+                if (cardsID[i]!=playerView.hand.handCards[i].getID()){
+                    cardsID[i]=playerView.hand.handCards[i].getID();
+                    isFacedown[i]=false;
+                    labels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i],isFacedown[i])));
+                }
             }
         }
         //aggiorno le carte giocate
@@ -181,6 +201,6 @@ public class PersonalPanel extends JSplitPane {
         // Visualizzazione del frame
         frame.setVisible(true);
 
-        //panel.update(null,true);
+        panel.update(null,true);
     }
 }
