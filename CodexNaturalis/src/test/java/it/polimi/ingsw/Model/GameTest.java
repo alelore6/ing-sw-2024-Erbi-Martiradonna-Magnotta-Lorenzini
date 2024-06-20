@@ -7,6 +7,7 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,6 @@ private List<Player> playerListeners;
     @Before
     public void setUp() throws Exception {
         game = new Game();
-        mvListeners = new ArrayList<>();
         playerListeners = new ArrayList<>();
         for (int i = 0; i < numberOfPlayers; i++) {
             mvListeners.add(mock(ModelViewListener.class));
@@ -53,6 +53,7 @@ private List<Player> playerListeners;
 
     @Test
     public void addListener() {
+
 
     }
 
@@ -143,7 +144,7 @@ private List<Player> playerListeners;
         verify(mvListeners.get(0), times(1)).addEvent(any(DrawCardRequest.class));
     else
         verify(mvListeners.get(0),never()).addEvent(any(DrawCardRequest.class));
-        assertEquals(1,getTurnCounter();
+        assertEquals(1,getTurnCounter());
         }
 
 

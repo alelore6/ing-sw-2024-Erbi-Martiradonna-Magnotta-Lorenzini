@@ -14,20 +14,21 @@ public class MainFrame extends JFrame {
 
     private JMenuBar menuBar;
     public JPanel mainPanel;
+    public JPanel chatPanel;
+    public JPanel backgorundPanel;
     private TableCenterPanel tableCenterPanel;
     private PersonalPanel myPanel;
     private HashMap<String, PlayerPanel> otherPlayers;
     private String nickname;
     private ImageIcon icon;
 
+
     public MainFrame() {
         super("CodexNaturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); //full screen
         /*setLayout(new BorderLayout());*/
-
-
-
+     mainPanel = new JPanel(new CardLayout());
         try {
             ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
             int width = 800;
@@ -40,7 +41,7 @@ public class MainFrame extends JFrame {
             Image icon = img.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
             this.icon=new ImageIcon(icon);
 
-           mainPanel = new JPanel(){
+           backgorundPanel = new JPanel() {
               @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -50,7 +51,7 @@ public class MainFrame extends JFrame {
                     g.drawImage(resizedIcon.getImage(), x, y, this);
                 }
             };
-
+          mainPanel.add(backgorundPanel, "Backgorund");
         } catch (Exception e) {
             System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
             e.printStackTrace();
@@ -122,18 +123,27 @@ public class MainFrame extends JFrame {
 
     }
 
-    public void switchPanel(String  panel) {
-        //CardLayout layout =(CardLayout) (mainPanel.getLayout());
-        //layout.show(mainPanel, panel);
-        System.out.println("Switching panel: " + panel);
-    }
+    public void switchPanel(String  label) {
+            CardLayout layout = (CardLayout) (mainPanel.getLayout());
+            layout.show(mainPanel, label);
+            mainPanel.repaint();
+            mainPanel.revalidate();
+            System.out.println("Switching panel: " + label);
+        }
 
     public void reactStartGame(GameView gameView){
         this.menuBar=new JMenuBar();
         createGamePanels(gameView);
-        switchPanel("Table center");
+        chatPanel = new JPanel(new BorderLayout());
+        chatPanel.setMinimumSize(new Dimension(300, 500));
+        chatPanel.add(new JScrollPane(new JTextArea(10, 30)), BorderLayout.CENTER);
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, mainPanel, chatPanel);
+        splitPane.setDividerLocation(0.7);
+        getContentPane().add(splitPane, BorderLayout.CENTER);
         this.setJMenuBar(menuBar);
+        switchPanel("Table center");
     }
+
 
    private JComponent getPanelByLabel(String label){
         if(label.equalsIgnoreCase("Table center")) return tableCenterPanel;
