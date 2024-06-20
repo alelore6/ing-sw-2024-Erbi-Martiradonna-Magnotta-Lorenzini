@@ -1,12 +1,11 @@
 package it.polimi.ingsw.Graphical;
 import it.polimi.ingsw.Model.Player;
+import it.polimi.ingsw.Model.StartingCard;
 import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.View.GUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -27,12 +26,14 @@ public class PersonalPanel extends JSplitPane {
     private JLabel selectedLabel;
     private boolean playing = false;
     private ImageIcon possiblePlayImage =null;
+    private final Object lock;
 
 
-    PersonalPanel(PlayerView playerView) {
+    PersonalPanel(PlayerView playerView, Object lock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.nickname = playerView.nickname;
         this.playerView = playerView;
+        this.lock = lock;
         playButtons = new ArrayList<>();
         labels = new ArrayList<>();
 
@@ -55,15 +56,21 @@ public class PersonalPanel extends JSplitPane {
             gbc.insets = new Insets(2, 2, 2, 2);
 
             JLabel label = new JLabel();
-            if(i==1) label.setIcon(getImageIcon(GUI.getCardPath(playerView.objectiveCard.getID(), false)));
-            else label.setIcon(getImageIcon(GUI.getCardPath(playerView.hand.handCards[i-2].getID(), false)));
+            if(i==1) {
+                if(playerView.objectiveCard!=null) label.setIcon(getImageIcon(GUI.getCardPath(playerView.objectiveCard.getID(), false)));
+                else label.setIcon(possiblePlayImage);
+            }
+            else{
+                if(playerView.hand.handCards[i-2]!=null) label.setIcon(getImageIcon(GUI.getCardPath(playerView.hand.handCards[i-2].getID(), false)));
+                else label.setIcon(possiblePlayImage);
+            }
 
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridheight = 2;
             imagePanel.add(label, gbc);
 
-            if (i > 1) {
+            if (i > 1 && playerView.hand.handCards[i-2]!=null) {
                 //carte della mano
                 cardsID[i-2]=playerView.hand.handCards[i-2].getID();
                 isFacedown[i-2]=false;
@@ -145,8 +152,8 @@ public class PersonalPanel extends JSplitPane {
         return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
     }
 
-    public int getChoice() {
-        return choice;
+    public CardComponent getPlayChoice() {
+        return new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow(), playerPanel.getPlayPosition().getCol(),0);
     }
 
     private void confirmPlay(){
@@ -157,6 +164,7 @@ public class PersonalPanel extends JSplitPane {
                 if(i==0) {//la giocata viene confermata
                     hidePlayButton();
                     selectedLabel.setBorder(new LineBorder(Color.RED, 4));
+                    lock.notifyAll();
                 }
             }
         }
@@ -193,7 +201,7 @@ public class PersonalPanel extends JSplitPane {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
 
-        PersonalPanel panel = new PersonalPanel(new PlayerView(new Player("test", null)));
+        PersonalPanel panel = new PersonalPanel(new PlayerView(new Player("test", null)), new Object());
 
         // Aggiunta di JSplitPane al frame
         frame.add(panel);

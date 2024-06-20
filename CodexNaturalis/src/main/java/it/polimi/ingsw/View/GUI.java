@@ -2,6 +2,7 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Graphical.CardComponent;
 import it.polimi.ingsw.Graphical.ImageDialog;
 import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.*;
@@ -117,6 +118,8 @@ public class GUI extends UI{
      */
     @Override
     public void update(GenericEvent e){
+
+        //TODO gestire messaggi chat asincroni
         synchronized (inputEvents) {
             inputEvents.add(e);
             System.out.println("[DEBUG] received: "+ e.getClass().getName());
@@ -222,18 +225,14 @@ public class GUI extends UI{
                             break;
 
                         case PlayCardRequest e :
-                            s=null;
-                            int posx=-1, posy=-1;
-                            while(s==null) {
-                                s = f.showDialog("Play card phase 1: choose card",message, null);
+                            f.update(e.gameView, true);
+                            try {
+                                f.getLock().wait();
+                            } catch (InterruptedException ex) {
+                                throw new RuntimeException(ex);
                             }
-                            while(posx==-1) {
-                                posx = Integer.parseInt( f.showDialog("Play a card phase 2: choose posx",message, null));
-                            }
-                            while(posy==-1) {
-                                posy = Integer.parseInt( f.showDialog("Play a card phase 3: choose posy",message, null));
-                            }
-                            newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[Integer.parseInt(s)-1] ,posx,posy);
+                            CardComponent card= f.getPlayChoice();
+                            newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
                             break;
 
@@ -277,16 +276,16 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            //f.reactStartGame((StartGame) ev);
+                            f.reactStartGame(e.model);
                             break;
 
                         case EndTurn e:
                             //show message + update view
                             JOptionPane.showMessageDialog(f, message);
+                            f.update(e.gameView, false);
                             break;
 
                         case TurnOrder e:
-                            //show message +  update view
                             JOptionPane.showMessageDialog(f, message);
                             break;
 
@@ -299,6 +298,7 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
+                            f.update(e.gameView,false);
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;

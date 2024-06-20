@@ -385,7 +385,7 @@ public class Game{
             for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
-            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), new PlayerView(players[curPlayerPosition]), new TableCenterView(tablecenter));
+            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(),clone());
             getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
 
             //check there are still card on table center

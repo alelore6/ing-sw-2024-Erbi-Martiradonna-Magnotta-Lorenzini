@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 /**
  * describes the cards contained in the PlayedCardsPanel
  */
-class CardComponent {
+public class CardComponent {
     /**
      * the card
      */
@@ -55,14 +55,14 @@ class CardComponent {
      * getter for the x position
      * @return the x position of the card
      */
-    protected int getRow() {
+    public int getRow() {
         return row;
     }
     /**
      * getter for the y position
      * @return the y position of the card
      */
-    protected int getCol() {
+    public int getCol() {
         return col;
     }
 
@@ -86,7 +86,7 @@ class CardComponent {
      * getter for the card id
      * @return the card id
      */
-    protected int getCardID(){
+    public int getCardID(){
         return card.getID();
     }
 }
