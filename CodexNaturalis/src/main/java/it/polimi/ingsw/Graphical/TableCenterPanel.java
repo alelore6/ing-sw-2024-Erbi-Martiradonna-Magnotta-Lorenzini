@@ -3,7 +3,6 @@ package it.polimi.ingsw.Graphical;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.TableCenterView;
 import it.polimi.ingsw.View.GUI;
 
 import javax.imageio.ImageIO;
@@ -72,18 +71,10 @@ public class TableCenterPanel extends JSplitPane {
             }
         };
         rightPanel.setLayout(new BorderLayout());
-/*
-        for (int i = 0; i < 27; i++) {
-            spots[i] = new JButton();
-            spots[i].setBounds(spotXCoords[i], spotYCoords[i], 50, 50);
-            spots[i].setContentAreaFilled(false);
-            spots[i].setBorderPainted(false);
-            rightPanel.add(spots[i]);
-        }*/
+
         setVisible(true);
         return rightPanel;
     }
-
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
@@ -93,8 +84,8 @@ public class TableCenterPanel extends JSplitPane {
         addDeck(leftPanel, "Gold Deck", 6);
         addDeck(leftPanel, "Resource Deck", 5);
 
-        for (int i =0; i < 2; i++) {
-            addCardSpot(leftPanel, "Gold Card " + (i +1), (i+41));
+        for (int i = 0; i < 2; i++) {
+            addCardSpot(leftPanel, "Gold Card " + (i + 1), (i + 41));
         }
 
         for (int i = 1; i <= 2; i++) {
@@ -105,6 +96,7 @@ public class TableCenterPanel extends JSplitPane {
 
         return leftPanel;
     }
+
     private void addObjectiveCardSpot(JPanel panel, String title, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
@@ -129,7 +121,6 @@ public class TableCenterPanel extends JSplitPane {
 
         JButton drawButton = new JButton("Draw");
         drawButton.addActionListener(e -> {
-
             System.out.println("Draw from " + title);
             try {
                 drawCardFromDeck(cardID);
@@ -142,7 +133,7 @@ public class TableCenterPanel extends JSplitPane {
         panel.add(deckPanel);
     }
 
-    private void addCardSpot(JPanel panel, String title,int cardID) {
+    private void addCardSpot(JPanel panel, String title, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createTitledBorder(title));
@@ -156,7 +147,7 @@ public class TableCenterPanel extends JSplitPane {
         drawButton.addActionListener(e -> {
             System.out.println("Draw from " + title);
             try {
-                drawCardFromCardSpot(spotID);
+                drawCardFromCardSpot(cardID);
             } catch (isEmptyException ex) {
                 throw new RuntimeException(ex);
             }
@@ -177,99 +168,96 @@ public class TableCenterPanel extends JSplitPane {
     }
 
     private void drawCardFromDeck(int deckID) throws isEmptyException {
-        if (drawing) {
-            Card drawnCard=null;
-            if (spotID == 5) {
-                drawnCard = resourceDeck.draw();
-            } else if (spotID == 6) {
-                drawnCard = goldDeck.draw();
+        Card drawnCard = null;
+        if (deckID == 5) {
+            drawnCard = resourceDeck.draw();
+            if (drawnCard != null) {
+                updateDeckImage(deckID);
             }
-        if(drawnCard == null) {
-            updateDeckImage(deckID);
-        }
+        } else if (deckID == 6) {
+            drawnCard = goldDeck.draw();
+            if (drawnCard != null) {
+                updateDeckImage(deckID);
+            }
         }
     }
+
     public void drawCardFromCardSpot(int cardID) throws isEmptyException {
-if(drawing) {
-    if (drawing) {
         Card drawnCard = null;
         if (cardID <= 40) {
             drawnCard = resourceDeck.draw();
-        } else if (cardID <= 80) {
+            if (drawnCard != null) {
+                cardsOnTable.put(cardID, drawnCard);
+                updateSpotImage(cardID);
+                updateDeckImage(5); // Update Resource Deck Image
+            }
+        } else if (cardID > 40 && cardID <= 80) {
             drawnCard = goldDeck.draw();
-        }
-        if (drawnCard != null) {
-            cardsOnTable.put(spotID, drawnCard);
-            updateSpotImage(spotID);
+            if (drawnCard != null) {
+                cardsOnTable.put(cardID, drawnCard);
+                updateSpotImage(cardID);
+                updateDeckImage(6); // Update Gold Deck Image
+            }
         }
     }
-}
-    }
 
-
-   public int getDrawChoice(){return drawchoice;}
-
-    //se ID è quello siamo nel caso di goldcard quindi dovresti aggionrare con
-        private void updateSpotImage(int cardID) {
-            JLabel cardLabel = cardLabels.get(cardID);
-            if (cardLabel != null) {
-                Card card = cardsOnTable.get(cardID);
-                if (card != null) {
-                    cardLabel.setIcon(getImageIcon(GUI.getCardPath(card.getID(), false), 300, 180));
-                } else {
-                    cardLabel.setIcon(null);
-                }
-
+    private void updateSpotImage(int cardID) {
+        JLabel cardLabel = cardLabels.get(cardID);
+        if (cardLabel != null) {
+            Card card = cardsOnTable.get(cardID);
+            if (card != null) {
+                cardLabel.setIcon(getImageIcon(GUI.getCardPath(card.getID(), false), 300, 180));
+            } else {
+                cardLabel.setIcon(null);
             }
         }
+    }
 
-
-            private void updateDeckImage ( int deckID){
-                try {
-                    if (deckID == 5) {
-                        ResourceCard nextCard = resourceDeck.peekNextCard();
-                        JLabel deckLabel = cardLabels.get(deckID);
-                        if (deckLabel != null) {
-                            deckLabel.setIcon(getImageIcon(GUI.getCardPath(nextCard.getID(), false), 300, 180));
-                        }
-                    } else if (deckID == 8) {
-                        GoldCard nextCard = goldDeck.peekNextCard();
-                        JLabel deckLabel = cardLabels.get(deckID);
-                        if (deckLabel != null) {
-                            deckLabel.setIcon(getImageIcon(GUI.getCardPath(nextCard.getID(), false), 300, 180));
-                        }
-                    }
-                } catch (isEmptyException ex) {
-                    JLabel deckLabel = cardLabels.get(deckID);
-                    if (deckLabel != null) {
-                        deckLabel.setIcon(null);
-                        deckLabel.setText("No more cards!");
-                    }
+    private void updateDeckImage(int deckID) {
+        try {
+            if (deckID == 5) {
+                ResourceCard nextCard = resourceDeck.peekNextCard();
+                JLabel deckLabel = cardLabels.get(deckID);
+                if (deckLabel != null) {
+                    deckLabel.setIcon(getImageIcon(GUI.getCardPath(nextCard.getID(), false), 300, 180));
+                }
+            } else if (deckID == 6) {
+                GoldCard nextCard = goldDeck.peekNextCard();
+                JLabel deckLabel = cardLabels.get(deckID);
+                if (deckLabel != null) {
+                    deckLabel.setIcon(getImageIcon(GUI.getCardPath(nextCard.getID(), false), 300, 180));
                 }
             }
-
-
-            public void showDrawButton () {
-                for (JButton button : drawButtons) {
-                    button.setVisible(true);
-                }
+        } catch (isEmptyException ex) {
+            JLabel deckLabel = cardLabels.get(deckID);
+            if (deckLabel != null) {
+                deckLabel.setIcon(null);
+                deckLabel.setText("No more cards!");
             }
-            public void hideDrawButton () {
-                for (JButton button : drawButtons) {
-                    button.setVisible(false);
-                }
-            }
+        }
+    }
 
-            public void update (GameView gameView){
-                this.gameView = gameView;
+    public void showDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(true);
+        }
+    }
 
-                if (drawing) {
-                    showDrawButton();
-                } else {
-                    hideDrawButton();
-                }
-            }
+    public void hideDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(false);
+        }
+    }
 
+    public void update(GameView gameView) {
+        this.gameView = gameView;
+
+        if (drawing) {
+            showDrawButton();
+        } else {
+            hideDrawButton();
+        }
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
