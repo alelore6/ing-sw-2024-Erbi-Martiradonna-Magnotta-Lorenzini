@@ -27,6 +27,7 @@ public class PersonalPanel extends JSplitPane {
     private boolean playing = false;
     private ImageIcon possiblePlayImage =null;
     private final Object lock;
+    public boolean playConfirmed = false;
 
 
     PersonalPanel(PlayerView playerView, Object lock) {
@@ -34,8 +35,8 @@ public class PersonalPanel extends JSplitPane {
         this.nickname = playerView.nickname;
         this.playerView = playerView;
         this.lock = lock;
-        playButtons = new ArrayList<>();
-        labels = new ArrayList<>();
+        this.playButtons = new ArrayList<>();
+        this.labels = new ArrayList<>();
 
         try {
             BufferedImage img =ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
@@ -74,7 +75,7 @@ public class PersonalPanel extends JSplitPane {
                 //carte della mano
                 cardsID[i-2]=playerView.hand.handCards[i-2].getID();
                 isFacedown[i-2]=false;
-                labels.add(i-2,label);
+                labels.add(label);
                 // Creazione e aggiunta del bottone Flip
                 JButton flipButton = new JButton("Flip");
                 final int index = i-2;
@@ -164,15 +165,23 @@ public class PersonalPanel extends JSplitPane {
                 if(i==0) {//la giocata viene confermata
                     hidePlayButton();
                     selectedLabel.setBorder(new LineBorder(Color.RED, 4));
+                    playConfirmed=true;
                     lock.notifyAll();
                 }
-            }
+            } else JOptionPane.showMessageDialog(this,"Remember to select a position where to play the card, then click on the chosen card play button");
         }
     }
 
 
     protected void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
+        playConfirmed=false;
+        if (playing) {
+            showPlayButton();
+        }
+        if(playerView==null) return;
+
+        if (selectedLabel!=null) selectedLabel.setBorder(null);
         for (int i=0; i<3; i++) {
             //Aggiorno le carte nella mano
             if(playerView.hand.handCards[i]==null){
@@ -190,9 +199,7 @@ public class PersonalPanel extends JSplitPane {
         }
         //aggiorno le carte giocate
         playerPanel.update(playerView);
-        if (playing) {
-            showPlayButton();
-        }
+
     }
 
     public static void main(String[] args) {

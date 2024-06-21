@@ -394,7 +394,7 @@ public class Game{
             }
             //if both deck are not empty and !empty, a draw will be requested
             if (!tablecenter.getResDeck().AckEmpty || !tablecenter.getGoldDeck().AckEmpty || !empty) {
-                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), new TableCenterView(tablecenter), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
+                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), clone(), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
                 getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(drawCard);
             }
             turnCounter++;

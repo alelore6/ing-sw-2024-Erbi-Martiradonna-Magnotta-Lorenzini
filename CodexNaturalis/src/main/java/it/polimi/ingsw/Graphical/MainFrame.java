@@ -2,7 +2,6 @@ package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.PlayerView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +16,7 @@ public class MainFrame extends JFrame {
     private JPanel chatPanel;
     private JPanel backgroundPanel;
     private TableCenterPanel tableCenterPanel;
-    private PersonalPanel myPanel;
+    public PersonalPanel myPanel;
     private HashMap<String, PlayerPanel> otherPlayers;
     private String nickname;
     private ImageIcon icon;
@@ -61,17 +60,6 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Game model = new Game(4, new String[]{"1111", "2222", "3333", "4444"}, null);
-                MainFrame mainFrame = new MainFrame();
-                mainFrame.setNickname("2222");
-                mainFrame.reactStartGame(model.clone());
-            }
-        });
-    }
 
     private void createGamePanels(GameView gameView) {
         tableCenterPanel = new TableCenterPanel(gameView);
@@ -129,9 +117,24 @@ public class MainFrame extends JFrame {
     }
 
 
-    public void update(GameView gameView, boolean play) {
-        tableCenterPanel.update(gameView);
-        myPanel.update(gameView.getPlayerViewByNickname(nickname), play);
+    public void update(GameView gameView, int playPhase) {
+
+        switch (playPhase){
+            case 1: //playing
+                tableCenterPanel.update(gameView, false);
+                myPanel.update(gameView.getPlayerViewByNickname(nickname), true);
+                switchPanel("myPanel");
+                break;
+            case 2: //drawing
+                tableCenterPanel.update(gameView, true);
+                myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
+                switchPanel("Table center");
+                break;
+            default:
+                tableCenterPanel.update(gameView, false);
+                myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
+                break;
+        }
 
         for (String name : otherPlayers.keySet()) {
             otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
@@ -153,4 +156,21 @@ public class MainFrame extends JFrame {
     public CardComponent getPlayChoice(){
         return myPanel.getPlayChoice();
     }
+
+    public int getDrawChoice(){
+        return tableCenterPanel.getDrawChoice();
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                Game model = new Game(4, new String[]{"1111", "2222", "3333", "4444"}, null);
+                MainFrame mainFrame = new MainFrame();
+                mainFrame.setNickname("2222");
+                mainFrame.reactStartGame(model.clone());
+            }
+        });
+    }
+
 }

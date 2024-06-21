@@ -39,11 +39,12 @@ public class GUI extends UI{
      */
     public GUI(ClientImpl client) {
         super(client);
-        f = new MainFrame( );
+
+        f = new MainFrame();
     }
 
     public void stop() {
-
+        //TODO cosa deve fare?
     }
 
     /**
@@ -68,9 +69,7 @@ public class GUI extends UI{
 
         try {
             return future.get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException |ExecutionException  e) {
             throw new RuntimeException(e);
         } finally {
             executor.shutdown();
@@ -164,7 +163,6 @@ public class GUI extends UI{
 
 
                     switch(ev){
-                        //TODO per eventi di gioco devo anche aggiornare il frame
 
                         case ChooseNickname e:
 
@@ -206,49 +204,38 @@ public class GUI extends UI{
                             break;
 
                         case DrawCardRequest e :
-                            //tolgo delle possibilità di scelta in base alle info dell'evento
-                            possibilities = new ArrayList<Object>();
-                            if(((DrawCardRequest) ev).goldCardinDeck > 0)    possibilities.add("Gold deck");
-                            if(((DrawCardRequest) ev).resCardinDeck > 0)    possibilities.add("Resource deck");
-                            n=1;
-                            for (PlayableCard c : ((DrawCardRequest) ev).tableCenterView.centerCards){
-                                if(c!=null) possibilities.add("Card "+n);
-                                n++;
-                            }
-
-                            while(s==null) {
-                                s = f.showDialog("Draw a card",message, possibilities.toArray());
-                            }
-                            if (s.contains("deck")){
-                                if (s.contains("Resource")) n=4;
-                                else n=5;
-                            }
-                            else n=Integer.parseInt(String.valueOf(s.charAt(s.length()-1)))-1;
-                            newEvent = new DrawCardResponse( n, client.getNickname());
+                            f.update(e.gameView, 2);
+//                            try {
+//                                f.getLock().wait();
+//                            } catch (InterruptedException ex) {
+//                                throw new RuntimeException(ex);
+//                            }
+                            newEvent = new DrawCardResponse( f.getDrawChoice(), client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case PlayCardRequest e :
-                            f.update(e.gameView, true);
-                            try {
-                                f.getLock().wait();
-                            } catch (InterruptedException ex) {
-                                throw new RuntimeException(ex);
-                            }
-                            CardComponent card= f.getPlayChoice();
+                            f.update(e.gameView, 1);
+                            CardComponent card=f.getPlayChoice();
                             newEvent = new PlayCardResponse( client.getNickname(),e.getPlayerView(e.nickname).hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
                             break;
 
                         case SetTokenColorRequest e :
                             possibilities=new ArrayList<Object>();
-                            for(TokenColor c : (((SetTokenColorRequest)ev).availableColors)){
+                            for(TokenColor c : e.availableColors){
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
                                 s = f.showDialog("Choose token color",message, possibilities.toArray());
                             }
-                            newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal()+1 , client.getNickname());
+                            switch (TokenColor.valueOf(s)){
+                                case  TokenColor.RED-> n=1;
+                                case TokenColor.YELLOW -> n=2;
+                                case TokenColor.GREEN -> n=3;
+                                case TokenColor.BLUE -> n=4;
+                            }
+                            newEvent = new SetTokenColorResponse(n , client.getNickname());
                             notifyListener(newEvent);
                             break;
 
@@ -280,17 +267,21 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            f.reactStartGame(e.model);
+                            break;
+                        case StartTurn e:
+                            //show message + update view
+                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case EndTurn e:
                             //show message + update view
                             JOptionPane.showMessageDialog(f, message);
-                            f.update(e.gameView, false);
+                            f.update(e.gameView, 0);
                             break;
 
                         case TurnOrder e:
                             JOptionPane.showMessageDialog(f, message);
+                            f.reactStartGame(e.gameView);
                             break;
 
                         case ReconnectionRequest e:
@@ -301,8 +292,14 @@ public class GUI extends UI{
                             notifyListener(newEvent);
                             break;
 
+                        case ErrorJoinLobby e:
+                            n=JOptionPane.showConfirmDialog(f,e.getMessage()+"\nDo you want to try to connect again?");
+                            if (n == 0)  notifyListener(new ClientRegister(client));
+                            else        System.exit(1);
+                            break;
+
                         case AckResponse e:
-                            f.update(e.gameView,false);
+                            if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) f.update(e.gameView,0);
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
