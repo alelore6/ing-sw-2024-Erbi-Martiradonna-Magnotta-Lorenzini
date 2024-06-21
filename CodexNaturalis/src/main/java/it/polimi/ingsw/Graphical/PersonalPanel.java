@@ -153,7 +153,7 @@ public class PersonalPanel extends JSplitPane {
     }
 
     public CardComponent getPlayChoice() {
-        return new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow(), playerPanel.getPlayPosition().getCol(),0);
+        return new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow()-playerPanel.getCenterRow(), playerPanel.getPlayPosition().getCol()-playerPanel.getCenterCol(),0);
     }
 
     private void confirmPlay(){

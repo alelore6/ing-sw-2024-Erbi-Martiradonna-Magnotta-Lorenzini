@@ -1,10 +1,8 @@
 package it.polimi.ingsw.Graphical;
 
-import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.ModelView.PlayerView;
 
 import javax.swing.*;
-import java.awt.*;
 
 /**
  * panel with scroll bars that contains the playedCardPanel
@@ -45,7 +43,12 @@ public class PlayerPanel extends JScrollPane {
      * @return the card component describing that contains the position
      */
     protected CardComponent getPlayPosition() {
-        return panel.getSelectedCard();
+        return panel.getSelectedPosition();
     }
+
+    protected int getCenterRow(){return panel.getCenter_row();}
+
+    protected int getCenterCol(){return panel.getCenter_col();}
+
 
 }

@@ -2,6 +2,7 @@ package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.ResourceCard;
+import it.polimi.ingsw.Model.StartingCard;
 import it.polimi.ingsw.View.GUI;
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -34,6 +35,8 @@ class PlayedCardsPanel extends JPanel {
      * the selected possible play where a card will be played
      */
     private CardComponent selectedCard=null;
+    private int center_row=-1;
+    private int center_col=-1;
 
     /**
      * Constructor where the cards are positioned for the first time
@@ -53,12 +56,17 @@ class PlayedCardsPanel extends JPanel {
         }
 
         if (matrix==null) return;
-        int size = matrix.length;
+        int row = matrix.length;
+        int col= matrix[0].length;
 
         //prendo le carte nella matrice e le trasformo in card component
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
                 if (matrix[i][j] != null) {
+                    if (matrix[i][j] instanceof StartingCard) {
+                        center_row = i;
+                        center_col = j;
+                    }
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
                     if (c.getCardID()!=-1) c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() + 1, matrix[i][j].isFacedown)));
                     cardComponents.add(c);
@@ -96,9 +104,14 @@ class PlayedCardsPanel extends JPanel {
      */
     protected void update(Card[][] matrix){
         int numCards = cardComponents.size();
-        int size=matrix.length;
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        int row =matrix.length;
+        int col=matrix[0].length;
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                if (matrix[i][j]!=null && matrix[i][j] instanceof StartingCard) {
+                    center_row = i;
+                    center_col = j;
+                }
                 //le nuove carte vengono aggiunte
                 if (matrix[i][j] != null && matrix[i][j].getPlayOrder()>numCards) {
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
@@ -167,11 +180,17 @@ class PlayedCardsPanel extends JPanel {
      * getter for the selected possible play
      * @return the card component that describes the selected image on the panel
      */
-    protected CardComponent getSelectedCard() {
+    protected CardComponent getSelectedPosition() {
         return selectedCard;
     }
 
+    protected int getCenter_row() {
+        return center_row;
+    }
 
+    protected int getCenter_col() {
+        return center_col;
+    }
 
     public static void main(String[] args) {
         Card[][] matrix = new Card[10][10];
