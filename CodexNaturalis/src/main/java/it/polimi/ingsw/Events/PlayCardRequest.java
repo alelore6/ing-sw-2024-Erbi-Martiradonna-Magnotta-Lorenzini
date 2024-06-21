@@ -3,6 +3,7 @@ package it.polimi.ingsw.Events;
 import it.polimi.ingsw.Model.Card;
 import it.polimi.ingsw.Model.CurrentResources;
 import it.polimi.ingsw.Model.PlayableCard;
+import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.ModelView.TableCenterView;
 
@@ -12,6 +13,7 @@ import it.polimi.ingsw.ModelView.TableCenterView;
 public class PlayCardRequest extends GenericRequest {
     public final PlayerView playerView;
     public final TableCenterView tableView;
+    public final GameView gameView;
     /**
      * Constructor
      * @param nickname the player that receives the event
@@ -19,10 +21,11 @@ public class PlayCardRequest extends GenericRequest {
      * @param displayedCards the cards already played by the player
      * @param currentResources the current resources of the player
      */
-    public  PlayCardRequest(String nickname, PlayerView playerView, TableCenterView tableView){
+    public  PlayCardRequest(String nickname, GameView gameView){
         super("Now it's time to play a card. Choose a card from your hand and a position where the card will be played.\n",nickname);
-        this.playerView = playerView;
-        this.tableView = tableView;
+        this.playerView = gameView.getPlayerViewByNickname(nickname);
+        this.tableView = gameView.tableCenterView;
+        this.gameView = gameView;
     }
 
     @Override

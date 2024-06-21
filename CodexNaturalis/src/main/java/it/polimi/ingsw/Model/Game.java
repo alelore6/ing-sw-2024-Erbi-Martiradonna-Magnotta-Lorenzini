@@ -332,7 +332,7 @@ public class Game{
         }
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
-            punteggi[i] = players[i].getToken().getScoreTrackPos();
+            punteggi[i] = tablecenter.getScoretrack().getRankings().get(players[i].getNickname());
 
 
             punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[0], i);
@@ -385,7 +385,7 @@ public class Game{
             for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
-            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), new PlayerView(players[curPlayerPosition]), new TableCenterView(tablecenter));
+            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(),clone());
             getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
 
             //check there are still card on table center
@@ -454,20 +454,21 @@ public class Game{
             int totalpoints = 0;
             int rows = 81;
             int columns = 81;
+            Card[] savedCards = new Card[3];
             for (int k = 0; k < rows - 2; k++) {
                 for (int j = 0; j < columns - 2; j++) {
                     //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
                     Card[][] subMatrix = getSubmatrix(players[playerPos].getHand().getDisplayedCards(), k, j);
                     boolean found = true;
-                    Card[] savedCards = new Card[3]; //a che cazzo serve??
+
                     int counter = 0;
                     //PER OGNI 3X3 SOTTOMATRICE SVOLGO
                         for (int index = 0; index < 3; index++) { //quindi 3 iterazioni (per le 3 carte)
-                            int x = 0;
-                            int y = 0;
+                            int x = 0; //ROWS
+                            int y = 0; //COLUMNS
                             //switch case to translate position into matrix position[][]
                             switch (((ObjectiveCard1) objectiveCard).getRequiredPositions()[index]) {
-                                case 1: //TODO vedere se case parte da 0 o da 1
+                                case 1: //posizioni partono da 1
                                     x = 0;
                                     y = 0;
                                     break;
@@ -510,13 +511,15 @@ public class Game{
                                 break;
                             }
 
-                            if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) { //se il colore corrisponde a quello della required in quella posizione
-                                savedCards[index] = subMatrix[x][y];
-                                counter++;
+                            if (subMatrix[x][y] != null) {
+                                if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) { //se il colore corrisponde a quello della required in quella posizione
+                                    savedCards[index] = subMatrix[x][y];
+                                    counter++;
 
-                            } else {
-                                found = false;
-                                break;
+                                } else {
+                                    found = false;
+                                    break;
+                                }
                             }
 
 
