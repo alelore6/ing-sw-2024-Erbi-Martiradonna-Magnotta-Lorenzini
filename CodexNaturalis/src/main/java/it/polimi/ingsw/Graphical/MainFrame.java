@@ -124,6 +124,7 @@ public class MainFrame extends JFrame {
         menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
         createGamePanels(gameView);
         this.setJMenuBar(menuBar);
+
         switchPanel("Table center");
     }
 

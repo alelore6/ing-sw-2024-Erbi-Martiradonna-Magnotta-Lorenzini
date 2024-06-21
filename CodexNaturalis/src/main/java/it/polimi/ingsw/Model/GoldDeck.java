@@ -75,4 +75,12 @@ public class GoldDeck extends Deck{
     public CardColor peek(){
         return cards[getNCards()-1].getColor();
     }
+
+    public GoldCard peekNextCard() throws isEmptyException {
+        if (getNCards() == 0) {
+            throw new isEmptyException(this);
+        }
+        return cards[getNCards() - 1];
+    }
+
 }
