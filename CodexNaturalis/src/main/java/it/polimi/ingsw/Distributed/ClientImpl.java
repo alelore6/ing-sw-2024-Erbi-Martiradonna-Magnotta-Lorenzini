@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Distributed;
 
 
+import it.polimi.ingsw.ClientApp;
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
 import it.polimi.ingsw.Events.ClientRegister;
 import it.polimi.ingsw.Events.GenericEvent;
@@ -14,33 +15,34 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class ClientImpl extends UnicastRemoteObject implements Client{
 
+    public final ClientApp clientApp;
     protected UI userInterface;
     private String nickname;
-    private Server server;
+    public final Server server;
     public final boolean isRMI;
 
-    public ClientImpl(Server server, boolean isTUI) throws RemoteException {
+    public ClientImpl(ClientApp clientApp, Server server, boolean isTUI) throws RemoteException {
         super();
 
+        this.clientApp = clientApp;
         isRMI = server instanceof ServerStub ? false : true;
         userInterface = isTUI ? new TUI(this) : new GUI(this);
         run();
         nickname = userInterface.chooseNickname();
 
-        initialize(server);
+        this.server = server;
+        initialize();
     }
 
-    private void initialize(Server server) throws RemoteException {
+    private void initialize() throws RemoteException {
         // Socket
         if(server instanceof ServerStub){
             ((ServerStub) server).register(this);
-            this.server = server;
             userInterface.notifyListener(new ClientRegister(this));
             userInterface.getListener().handleEvent();
         }
         // RMI
         else{
-            this.server = server;
             // The RMI registration is already implicitly happened
             userInterface.notifyListener(new ClientRegister(this));
             userInterface.getListener().handleEvent();

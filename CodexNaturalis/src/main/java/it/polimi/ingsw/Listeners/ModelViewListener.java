@@ -82,9 +82,20 @@ public class ModelViewListener extends Listener {
                                         lastRequest = (GenericRequest) currentEvent;
                                         requestEventIndex++;
                                     }
-                                    if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENDING);
-                                    client.update(currentEvent);
-                                    if(!(client instanceof ClientSkeleton)) server.logger.addLog(currentEvent, Severity.SENT);
+                                    if(!(client instanceof ClientSkeleton)){
+                                        server.logger.addLog(currentEvent, Severity.SENDING);
+
+
+                                        client.update(currentEvent);
+
+                                        if(currentEvent instanceof FinalRankings){
+                                            server.notifyEndSent();
+                                        }
+
+                                        server.logger.addLog(currentEvent, Severity.SENT);
+
+                                    }
+                                    else client.update(currentEvent);
 
                                     if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
                                 }
@@ -92,7 +103,7 @@ public class ModelViewListener extends Listener {
                                     getEventQueue().addFirst(currentEvent);
                                 }
                             }catch(RemoteException e) {
-                                throw new RuntimeException(e);
+                                if(!(currentEvent instanceof FinalRankings))    throw new RuntimeException(e);
                             }
                         }
                     }
@@ -115,13 +126,19 @@ public class ModelViewListener extends Listener {
         }
     }
 
+    public void stop(){
+        running = false;
+    }
+
     @Override
-    public void addEvent(GenericEvent event) {
+    public synchronized void addEvent(GenericEvent event) {
         synchronized (lock_queue) {
-            if(event instanceof AckResponse)      ack = (AckResponse) event;
-            else if(event instanceof ChatMessage) chatMessages.add((ChatMessage) event);
+            if(event instanceof AckResponse)        ack = (AckResponse) event;
+            else if(event instanceof ChatMessage)   chatMessages.add((ChatMessage) event);
             else if(event instanceof ServerMessage) getEventQueue().addFirst(event);
-            else                                  getEventQueue().add(event);
+            else                                    getEventQueue().add(event);
         }
+
+        if(event instanceof FinalRankings) server.restart();
     }
 }

@@ -35,32 +35,27 @@ public class ClientApp {
         boolean isRMI   = args_list.contains("-rmi");
         boolean isTUI   = args_list.contains("-tui");
         boolean isLocal = args_list.contains("-local");
-        boolean isConnected;
-        String ip;
+        String ip = null;
 
         if(isRMI){   //RMI
+            try{
+                ip = isLocal ? "localhost" : insertIP();
 
-            do{
-                isConnected = true;
+            }catch(IOException e){
+                System.err.println("Input error. Exiting...");
+                System.exit(1);
+            }
 
-                try{
-                    ip = isLocal ? "localhost" : insertIP();
+            try{
+                Registry registry = LocateRegistry.getRegistry(ip);
 
-                }catch(IOException e){
-                    continue;
-                }
+                server = (Server) registry.lookup("CodexNaturalis_Server");
 
-                try{
-                    Registry registry = LocateRegistry.getRegistry(ip);
-
-                    server = (Server) registry.lookup("CodexNaturalis_Server");
-
-                    client = new ClientImpl(server, isTUI);
-                } catch (RemoteException | NotBoundException e) {
-                    System.err.println("Failed to connect to server. Please, try again.");
-                    isConnected = false;
-                }
-            }while(!isConnected);
+                client = new ClientImpl(this, server, isTUI);
+            } catch (RemoteException | NotBoundException e) {
+                System.err.println("Connection refused. Exiting...");
+                System.exit(0);
+            }
 
             Thread RMIPing = new Thread(){
                 @Override
@@ -75,10 +70,12 @@ public class ClientApp {
                             server.ping();
                         } catch (RemoteException e) {
                             System.err.println("Can't receive from server.");
+                            System.out.println("Insert a comment about your game experience: ");
                             try {
                                 UnicastRemoteObject.unexportObject(server, true);
                             } catch (NoSuchObjectException ignored) {}
                             running = false;
+                            ClientApp.this.stop();
                         }
                     }
                 }
@@ -89,24 +86,21 @@ public class ClientApp {
         }
         else{   //socket
 
-            do{
-                isConnected = true;
+            try{
+                ip = isLocal ? "localhost" : insertIP();
+            }catch(IOException e){
+                System.err.println("Input error. Exiting...");
+                System.exit(1);
+            }
 
-                try{
-                    ip = isLocal ? "localhost" : insertIP();
-                }catch(IOException e){
-                    continue;
-                }
+            server = new ServerStub(ip, SOCKET_PORT);
 
-                server = new ServerStub(ip, SOCKET_PORT);
-
-                try{
-                    client = new ClientImpl(server, isTUI);
-                }catch(RemoteException e){
-                    System.err.println("Failed to connect to server. Please, try again.");
-                    isConnected = false;
-                }
-            }while(!isConnected);
+            try{
+                client = new ClientImpl(this, server, isTUI);
+            }catch(RemoteException e){
+                System.err.println("Connection refused. Exiting...");
+                System.exit(0);
+            }
 
             Thread socketThread = new Thread(){
                 @Override
@@ -118,21 +112,18 @@ public class ClientApp {
                             if(receivedEvent != null)
                                 client.getUserInterface().update(receivedEvent);
                         }catch(RemoteException e){
-                            client.getUserInterface().printErr("Can't receive from server.");
+                            if(!client.getUserInterface().running) System.err.println("Can't receive from server.");
+                            System.out.println("Insert a comment about your game experience: ");
 
                             try{
                                 ((ServerStub) server).close();
                             }catch(RemoteException ex){
-                                client.getUserInterface().printErr("Fatal error. Exiting...");
+                                System.err.println("Fatal error. Exiting...");
                                 System.exit(1);
                             }
 
                             running = false;
-                            try {
-                                client.getUserInterface().stop();
-                                client.getUserInterface().getListener().stop();
-
-                            } catch (InterruptedException ignored) {}
+                            ClientApp.this.stop();
                         }
                     }
                 }
@@ -150,6 +141,13 @@ public class ClientApp {
         }catch(InterruptedException ignored){}
 
         System.exit(0);
+    }
+
+    public void stop(){
+        try {
+            client.getUserInterface().stop();
+            client.getUserInterface().getListener().stop();
+        } catch (InterruptedException ignored) {}
     }
 
     private String insertIP() throws IOException {

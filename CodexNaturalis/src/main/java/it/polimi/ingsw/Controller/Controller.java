@@ -2,10 +2,7 @@ package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Events.*;
-import it.polimi.ingsw.Exceptions.HandFullException;
-import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
-import it.polimi.ingsw.Exceptions.WrongPlayException;
-import it.polimi.ingsw.Exceptions.isEmptyException;
+import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
@@ -66,7 +63,7 @@ public class Controller {
     /**
      * Creates and starts the actual game.
      */
-    protected void createGame() throws RemoteException {
+    protected void createGame() throws RemoteException{
         String[] temp = new String[lobby.getNumPlayers()];
         lobby.getPlayers().toArray(temp);
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
@@ -290,7 +287,7 @@ public class Controller {
             else if(event instanceof PlayCardResponse){
                 try {
                     synchronized (model.controllerLock){
-                        getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
+                        getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, 40 + ((PlayCardResponse)event).posX, 40 + ((PlayCardResponse)event).posY);
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                     }
@@ -405,7 +402,7 @@ public class Controller {
     }
 
 
-    private void nextPlayer() throws RemoteException {
+    private void nextPlayer() throws RemoteException{
         if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
         //end turn event
         EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
@@ -432,7 +429,7 @@ public class Controller {
      */
     public void deleteClient(Client client) throws RemoteException {
         ModelViewListener listener = getMVListenerByNickname(client.getNickname());
-        listener.running = false;
+        listener.stop();
         server.getClients().remove(client.getNickname());
         MVListeners.remove(listener);
     }

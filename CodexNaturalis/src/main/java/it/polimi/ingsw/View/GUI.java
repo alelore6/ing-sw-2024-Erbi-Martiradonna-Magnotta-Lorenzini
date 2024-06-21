@@ -236,7 +236,7 @@ public class GUI extends UI{
                                 throw new RuntimeException(ex);
                             }
                             CardComponent card= f.getPlayChoice();
-                            newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
+                            newEvent = new PlayCardResponse( client.getNickname(),e.getPlayerView(e.nickname).hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
                             break;
 

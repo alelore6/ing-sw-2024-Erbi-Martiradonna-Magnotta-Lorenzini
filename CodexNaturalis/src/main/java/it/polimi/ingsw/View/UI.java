@@ -12,7 +12,7 @@ public abstract class UI implements View{
     protected final Deque<GenericEvent> inputEvents = new LinkedList<>();
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
-    protected volatile boolean running = true;
+    public volatile boolean running = true;
 
     public UI(ClientImpl client) {
         this.client = client;

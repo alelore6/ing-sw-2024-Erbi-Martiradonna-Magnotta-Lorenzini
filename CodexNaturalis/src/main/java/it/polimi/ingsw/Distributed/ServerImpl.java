@@ -4,12 +4,9 @@ import it.polimi.ingsw.Controller.Controller;
 import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
-import it.polimi.ingsw.Events.ClientRegister;
-import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.ReconnectionRequest;
-import it.polimi.ingsw.Events.ReconnectionResponse;
+import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Listeners.ModelViewListener;
-import org.springframework.ui.Model;
+import it.polimi.ingsw.ServerApp;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -19,27 +16,32 @@ import java.util.List;
 
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
-    public static final int PING_INTERVAL = 5000; // milliseconds
+    private final ServerApp serverApp;
+    private volatile int endSent = 0;
+    public static final int PING_INTERVAL = 3000; // milliseconds
     public final Controller controller = new Controller(this);
     public final Logger logger;
 
     // This lock allows to serialize the incoming events from possible multiple clients, e.g:
     // if two clients connect at almost the same time, only one (the first) will have the NumPlayerRequest event.
     private Object lock_update  = new Object();
+    private Object lock_end     = new Object();
 
     private final HashMap<String, Client> clients = new HashMap<>();
     public final List<String> disconnectedClients = new ArrayList<>();
 
     //server constructor with the default rmi port
-    public ServerImpl(Logger logger) throws RemoteException {
+    public ServerImpl(ServerApp serverApp, Logger logger) throws RemoteException {
         super();
+        this.serverApp = serverApp;
         this.logger = logger;
         pong();
     }
 
     //server implementation with a certain RMI port
-    public ServerImpl(Logger logger, int port) throws RemoteException {
+    public ServerImpl(ServerApp serverApp, Logger logger, int port) throws RemoteException {
         super(port);
+        this.serverApp = serverApp;
         this.logger = logger;
         pong();
     }
@@ -108,12 +110,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
                                 ModelViewListener listener = controller.getMVListenerByNickname(nickname);
 
-                                controller.disconnectPlayer(nickname);
+                                listener.stop();
                                 controller.getMVListeners().remove(listener);
+                                clients.remove(nickname);
+                                controller.disconnectPlayer(nickname);
                             }
                         }
-
-                        clients.keySet().removeAll(disconnectedClients);
                     }
                 }
 
@@ -159,5 +161,26 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     public HashMap<String, Client> getClients(){
         return clients;
+    }
+
+    public void notifyEndSent(){
+        synchronized (lock_end){
+            endSent++;
+        }
+    }
+
+    public synchronized void restart(){
+
+        boolean allSent = false;
+
+        while(true){
+            if(endSent >= clients.size()) break;
+        }
+
+        System.exit(0);
+
+        // TODO: se avanza tempo (lavoro già iniziato).
+        // serverApp.restart();
+        // return;
     }
 }

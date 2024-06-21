@@ -4,6 +4,7 @@ import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Controller.Severity;
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
+import it.polimi.ingsw.Events.FinalRankings;
 import it.polimi.ingsw.Events.GenericEvent;
 import it.polimi.ingsw.View.View;
 
@@ -17,6 +18,7 @@ public class ClientSkeleton implements Client {
     private ObjectInputStream in;
     private final Logger logger;
     public final Socket socket;
+    private ServerImpl server;
 
     private String nickname = null;
 
@@ -54,11 +56,16 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send " + e.getClass() +  " to client");
         }
         //socket: server stub is always reading (same as receive() here)
+
+        if(e instanceof FinalRankings && server != null)    server.notifyEndSent();
     }
 
     public void receive(ServerImpl server) throws RemoteException {
+
+        // Saves the server just in case (see the notifyEndSent() call above).
+        this.server = server;
+
         //socket: receive from server stub update()
-        //not sure of the type
         GenericEvent event;
         try {
             logger.addLog((GenericEvent) null, Severity.RECEIVING);

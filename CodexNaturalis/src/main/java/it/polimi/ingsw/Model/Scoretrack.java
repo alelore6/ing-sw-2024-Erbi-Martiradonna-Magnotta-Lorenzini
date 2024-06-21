@@ -1,6 +1,10 @@
 package it.polimi.ingsw.Model;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  *  Class containing the score track on which the tokens will be moving
@@ -36,7 +40,7 @@ public class Scoretrack {
      * @param token the player's token
      */
     protected void addToken(Token token) {
-        points.put(token,19); //TODO RISETTARE!!
+        points.put(token,0);
     }
 
     /**
@@ -49,15 +53,26 @@ public class Scoretrack {
     }
 
     /**
-     * Create a map between players' nicknames and their points
-     * @return a map between players' nicknames and their points
+     * Create a sorted map between players' nicknames and their points.
+     * @return the sorted map between players' nicknames and their points.
      */
     public HashMap<String,Integer> getRankings() {
         HashMap<String,Integer> p = new HashMap<String,Integer>();
         for (Token token : points.keySet()) {
             p.put(token.getPlayer().getNickname(),points.get(token));
         }
-        return p;
+
+        // This is for sorting the hash map
+        return p.entrySet()
+                .stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
+                        .thenComparing(Map.Entry.comparingByKey()))
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        Map.Entry::getValue,
+                        (e1, e2) -> e1,
+                        LinkedHashMap::new
+                ));
     }
 
 }

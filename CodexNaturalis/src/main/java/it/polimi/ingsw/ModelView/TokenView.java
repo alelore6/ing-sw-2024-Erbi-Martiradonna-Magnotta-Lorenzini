@@ -10,6 +10,11 @@ import java.io.Serializable;
  */
 public class TokenView implements Serializable {
     /**
+     * The nickname associated with the token.
+     */
+    public final String nickname;
+
+    /**
      * the color of the token
      */
     public final TokenColor color;
@@ -26,10 +31,12 @@ public class TokenView implements Serializable {
         if (token != null) {
             color = token.getColor();
             position= token.getScoreTrackPos();
+            this.nickname = token.getPlayer().getNickname();
         }
-        else { //TODO perchè qualcuno non dovrebbe avere il token?
+        else {
             color = null;
             position = -1;
+            nickname = null;
         }
     }
 }

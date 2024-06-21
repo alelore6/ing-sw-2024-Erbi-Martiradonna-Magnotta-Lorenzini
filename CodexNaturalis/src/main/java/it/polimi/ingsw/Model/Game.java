@@ -302,7 +302,6 @@ public class Game{
             case 7:
                 isTriggered = true;
                 remainingTurns = 0;
-                    System.out.println("FINISCE");
                 for(int i = 0; i < numPlayers; i++){
                     FinalRankings event = new FinalRankings(players[i].getNickname(), null);
                     if(!players[i].isDisconnected) getMVListenerByNickname(players[i].getNickname()).addEvent(event);
@@ -345,14 +344,11 @@ public class Game{
             rankings.put(players[i].getNickname(), punteggi[i]);  //fill the rankings hashmap
         }
 
-
         //send FinalRankings event to everyone
         FinalRankings event = new FinalRankings(players[curPlayerPosition].getNickname(), rankings);
         for(int i = 0; i < numPlayers; i++){
             if(!players[i].isDisconnected)  getMVListenerByNickname(players[i].getNickname()).addEvent(event);
         }
-
-
     }
 
     /**
@@ -381,7 +377,7 @@ public class Game{
             turnPhase=0;
 
             //send StartTurn event
-            StartTurn startTurn = new StartTurn(players[curPlayerPosition].getNickname(), getCurrentPlayer());
+            StartTurn startTurn = new StartTurn(getCurrentPlayer(), players[curPlayerPosition].getToken().getColor().toString());
             for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
@@ -572,9 +568,7 @@ public class Game{
                 this.wait(timeoutOnePlayer*1000);
             }catch(InterruptedException ignored){}
             if(p.isDisconnected){
-                // Test
                 System.out.println("Game ended: only one player left.");
-
                 endGame(7);
             }
         }
@@ -605,17 +599,4 @@ public class Game{
 
         return null;
     }
-
-    public ArrayList<TokenColor> getAvailableTokens() {
-        return availableTokens;
-    }
 }
-
-
-
-
-
-
-
-
-
