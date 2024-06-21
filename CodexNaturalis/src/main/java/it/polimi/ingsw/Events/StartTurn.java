@@ -14,8 +14,7 @@ public class StartTurn extends GenericEvent{
      * @param turnPlayer the player whose turn is starting
      */
     public StartTurn(String turnPlayer, String color){
-        super("It's " + turnPlayer + "'s turn!", "everyone");
-        mustBeSentToAll=true;
+        super("It's " + turnPlayer + "'s turn!", "every one");
         this.color = color;
         this.turnPlayer = turnPlayer;
     }

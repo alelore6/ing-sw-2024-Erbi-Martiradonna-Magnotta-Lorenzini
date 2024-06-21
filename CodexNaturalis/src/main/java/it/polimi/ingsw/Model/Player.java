@@ -35,7 +35,7 @@ public class Player {
      */
     protected int position;
 
-    protected boolean isDisconnected;
+    protected volatile boolean isDisconnected;
 
     /**
      * Constructor:

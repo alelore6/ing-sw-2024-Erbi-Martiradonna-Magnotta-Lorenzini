@@ -6,7 +6,6 @@ import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.ModelView.TableCenterView;
 
 import java.util.ArrayList;
@@ -16,6 +15,10 @@ import java.util.HashMap;
  * Class that manages the game life cycle, from the start to end.
  */
 public class Game{
+    /**
+     * attribute representing if threads of this class are running.
+     */
+    private volatile boolean running = true;
     /**
      * number of players in the current game
      */
@@ -27,7 +30,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    private int timeoutOnePlayer = 5;
+    private int timeoutOnePlayer = 15; // TODO: risettare a 30.
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -53,7 +56,7 @@ public class Game{
      */
     public TableCenter tablecenter;
 
-    private final ArrayList<ModelViewListener> mvListeners;
+    private final ArrayList<ModelViewListener> MVListeners;
 
     protected final ArrayList<TokenColor> availableTokens;
 
@@ -73,7 +76,7 @@ public class Game{
      * @param nicknames  array of nicknames passed by user, used to create the players classes
      */
     public Game(int numPlayers, String[] nicknames, ArrayList<ModelViewListener> mvListeners) {
-        this.mvListeners =  mvListeners;
+        this.MVListeners =  mvListeners;
         this.numPlayers = numPlayers;
         this.turnCounter = 0;
         this.isFinished = false;
@@ -155,8 +158,7 @@ public class Game{
                 }
             }
         }
-        //cosa bruttissima per chiamare clone dentro al thread
-        Game model=this;
+
         //in un thread perchè si deve aspettare la sincronizzazione dal controller
         new Thread(){
             @Override
@@ -214,21 +216,25 @@ public class Game{
 
 
                 while(true) {
-                        //wait for everyone to complete the start
+                    //wait for everyone to complete the start
                     synchronized (lock){
-                        if (waitNumClient ==numPlayers) break;
+                        if (waitNumClient == getActivePlayers()) break;
                     }
                 }
                 turnPhase=-1;
                 //notify all players on turn order
-                TurnOrder turnOrder=new TurnOrder("everyone",message,model.clone());
-                for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
+                TurnOrder turnOrder=new TurnOrder("every one",message, Game.this.clone());
+                for(ModelViewListener modelViewListener : MVListeners) modelViewListener.addEvent(turnOrder);
                 //devo trovare il giocatore precedente al primo!
                 //perchè next player fa l'avanzamento
                 int p= firstPlayerPos-1;
                 if (p<0) p=numPlayers-1;
                 nextPlayer(players[p]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
+
+                while(running){
+                    if(getActivePlayers() == 1) OPLProcedure();
+                }
             }
         }.start();
     }
@@ -378,7 +384,7 @@ public class Game{
 
             //send StartTurn event
             StartTurn startTurn = new StartTurn(getCurrentPlayer(), players[curPlayerPosition].getToken().getColor().toString());
-            for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
+            for(ModelViewListener modelViewListener : MVListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
             PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(),clone());
@@ -547,51 +553,65 @@ public class Game{
         return new GameView(this);
     }
 
+    /**
+     * the One Player Left procedure is called when it is noted that there's only one active player.
+     */
+    private synchronized void OPLProcedure(){
+        try{
+            // Wait for some seconds.
+            this.wait(timeoutOnePlayer*1000);
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
+
+        if(getActivePlayers() > 1){
+            for(ModelViewListener listener : MVListeners){
+                listener.addEvent(new ServerMessage("The game is resuming...", "every one"));
+            }
+        }
+        else{
+            System.out.println("[END] Game ended: only one player left.");
+
+            endGame(7);
+        }
+    }
+
     public synchronized void disconnectPlayer(Player p){
         p.isDisconnected = true;
-        int pos=-1, count=0;
+        int pos = -1;
 
         for(int i = 0; i < players.length; i++){
             if(!players[i].isDisconnected){
-                // number of players still connected
-                count++;
-            }
-        }
-        for(int i = 0; i < players.length; i++){
-            if(!players[i].isDisconnected){
-                getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), p.getNickname(), count, false));
-            }
-        }
-        if(count==1){
-            try{
-                // Wait for 30 seconds
-                this.wait(timeoutOnePlayer*1000);
-            }catch(InterruptedException ignored){}
-            if(p.isDisconnected){
-                System.out.println("Game ended: only one player left.");
-                endGame(7);
+                getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), p.getNickname(), getActivePlayers(), false));
             }
         }
     }
 
-    public void rejoin(ModelViewListener listener) {
+    private int getActivePlayers(){
+        synchronized (MVListeners){
+            return MVListeners.size();
+        }
+    }
+
+    public void stop(){
+        running = false;
+    }
+
+    public void rejoin(ModelViewListener newListener) {
         int pos = -1;
 
-        for (int i = 0; i < players.length; i++) {
-            if (!players[i].isDisconnected && players[i].getNickname().equals(listener.nickname)) {
-                getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), listener.nickname, -1, true));
-            }
-            if(players[i].getNickname().equals(listener.nickname))
+        for (int i = 0; i < getActivePlayers(); i++) {
+            MVListeners.get(i).addEvent(new PlayerDisconnected(players[i].getNickname(), newListener.nickname, getActivePlayers(), true));
+
+            if(players[i].getNickname().equals(newListener.nickname))
                 pos = i;
         }
 
         players[pos].isDisconnected = false;
-
-        // TODO: ricollegarlo effettivamente.
     }
 
     private ModelViewListener getMVListenerByNickname(String nickname){
-        for(ModelViewListener listener : mvListeners){
+        for(ModelViewListener listener : MVListeners){
             if(listener.nickname.equals(nickname)){
                 return listener;
             }

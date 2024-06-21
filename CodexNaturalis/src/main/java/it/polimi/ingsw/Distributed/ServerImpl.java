@@ -75,14 +75,17 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
             ModelViewListener listener;
 
-            synchronized(disconnectedClients){
+            synchronized(controller.getMVListeners()){
                 listener = new ModelViewListener(this, client);
 
-                // This starts the handle event
-                controller.addMVListener(listener);
-
-                if(isReconnected) listener.addEvent(new ReconnectionRequest(client.getNickname()));
+                if(isReconnected){
+                    // This starts the handle event
+                    controller.addTempMVL(listener);
+                    listener.addEvent(new ReconnectionRequest(client.getNickname()));
+                }
                 else{
+                    // This starts the handle event
+                    controller.addMVListener(listener);
 
                     client.setNickname(temp);
                     clients.replace(temp, client);
@@ -111,10 +114,15 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                                 ModelViewListener listener = controller.getMVListenerByNickname(nickname);
 
                                 listener.stop();
-                                controller.getMVListeners().remove(listener);
-                                clients.remove(nickname);
+
+                                synchronized (controller.getMVListeners()){
+                                    controller.getMVListeners().remove(listener);
+                                }
                                 controller.disconnectPlayer(nickname);
                             }
+                        }
+                        for(String nickname : disconnectedClients){
+                            clients.remove(nickname);
                         }
                     }
                 }
@@ -164,12 +172,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     public void notifyEndSent(){
+        // If I synchronize this method, it simply doesn't work properly:
+        // at the end the server and the clients don't close properly.
         synchronized (lock_end){
             endSent++;
         }
     }
 
     public synchronized void restart(){
+
+        controller.getGame().stop();
 
         boolean allSent = false;
 

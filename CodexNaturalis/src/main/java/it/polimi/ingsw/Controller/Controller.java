@@ -7,6 +7,7 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Model.Player;
+import org.springframework.boot.Banner;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -37,7 +38,11 @@ public class Controller {
     /**
      * The listeners that allow the exchange of information between the MVC pattern.
      */
-    private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
+    private ArrayList<ModelViewListener> MVListeners     = new ArrayList<ModelViewListener>();
+    /**
+     * The listeners of clients that are trying to log in.
+     */
+    private ArrayList<ModelViewListener> tempMVListeners = new ArrayList<ModelViewListener>();
     /**
      * Boolean that indicates if the creation of the lobby request has been sent.
      */
@@ -69,7 +74,7 @@ public class Controller {
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
         // NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        sendEventToAll(new StartGame("everyone", model.clone()));
+        sendEventToAll(new StartGame("every one", model.clone()));
         new Thread(){
             @Override
             public void run() {
@@ -193,10 +198,26 @@ public class Controller {
                         server.disconnectedClients.remove(nickname);
                     }
 
+                    synchronized (MVListeners){
+                        ModelViewListener l = null;
+                        for(ModelViewListener listener : tempMVListeners){
+                            if(listener.nickname.equals(nickname)){
+                                l = listener;
+                                tempMVListeners.remove(listener);
+                                break;
+                            }
+                        }
+
+                        assert l != null;
+
+                        MVListeners.add(l);
+                    }
+
                     getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
 
                     server.register(((ReconnectionResponse) event).client);
                     model.notifyAll();
+                    sendEventToAll(new ServerMessage(nickname + " is reconnected. " + MVListeners.size() + " players left.", "every one"));
                 }
                 else{
                     GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the password is incorrect.", (GenericResponse) event, false);
@@ -397,10 +418,21 @@ public class Controller {
      * @see ModelViewListener
      */
     public void addMVListener(ModelViewListener listener) throws RemoteException {
-        MVListeners.add(listener);
+        synchronized (MVListeners){
+            MVListeners.add(listener);
+        }
         listener.handleEvent();
     }
 
+    /**
+     * Public method to add a temporary listener to the list. The controller will establish if it'll
+     * go to the real one or not by the login.
+     * @param listener the listener to add.
+     */
+    public void addTempMVL(ModelViewListener listener) throws RemoteException {
+        tempMVListeners.add(listener);
+        listener.handleEvent();
+    }
 
     private void nextPlayer() throws RemoteException{
         if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
