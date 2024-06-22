@@ -121,6 +121,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
                                 synchronized (controller.getMVListeners()){
                                     controller.getMVListeners().remove(listener);
+                                    if(controller.getMVListeners().size() == 0) controller.getGame().isFinished = true;
                                 }
                                 controller.disconnectPlayer(nickname);
                             }

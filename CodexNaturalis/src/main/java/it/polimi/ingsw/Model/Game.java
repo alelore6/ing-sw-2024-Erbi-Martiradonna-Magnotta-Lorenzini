@@ -1,12 +1,15 @@
 package it.polimi.ingsw.Model;
 
+import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
+import org.springframework.boot.Banner;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +26,11 @@ public class Game{
      * number of players in the current game
      */
     private final int numPlayers;
+    /**
+     * String that represents the turn order.
+     */
     private String turnOrder = "";
+    private final ServerImpl server;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -35,7 +42,7 @@ public class Game{
     /**
      * boolean that states if the game is either finished or still in act
      */
-    private boolean isFinished;
+    public volatile boolean isFinished;
     /**
      * attribute that keeps count of remaining turns when the ending stage of the game is triggered
      */
@@ -83,6 +90,7 @@ public class Game{
         this.isFinished = false;
         this.remainingTurns = -1;
         this.curPlayerPosition = -1;
+        this.server = mvListeners.get(0).server;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i],this);
@@ -234,7 +242,12 @@ public class Game{
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
                 while(running){
-                    if(getActivePlayers() == 1) OPLProcedure();
+                    if     (getActivePlayers() == 1) OPLProcedure();
+                    else if(getActivePlayers() == 0){
+                        ModelViewListener fakeListener = new ModelViewListener(server);
+
+                        fakeListener.addEvent(new FinalRankings(null, null));
+                    }
                     if(isTurnSkipped){
                         isTurnSkipped = false;
                         if(getRemainingTurns() == 0)        checkWinner();
@@ -583,7 +596,9 @@ public class Game{
             }
         }
         else{
-            System.out.println("[END] Game ended: only one player left.");
+            if     (getActivePlayers() == 1) System.out.println("[END] Game ended: only one player left.");
+            else if(getActivePlayers() == 0)
+                System.out.println("[END] Game ended: no players left.");
 
             endGame(7);
         }
@@ -596,7 +611,7 @@ public class Game{
         synchronized (MVListeners){
             for(int i = 0; i < players.length; i++){
                 if(!players[i].isDisconnected){
-                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), p.getNickname(), getActivePlayers(), false));
+                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected("every one", p.getNickname(), getActivePlayers(), false));
                 }
             }
         }
@@ -651,9 +666,8 @@ public class Game{
         newListener.addEvent(new TurnOrder(newListener.nickname, turnOrder, this.clone()));
 
         // Notify the other players about the rejoining.
-        for (int i = 0; i < getActivePlayers(); i++) {
+        for (int i = 0; i < players.length; i++) {
             if(players[i].getNickname().equals(newListener.nickname)) pos = i;
-            else getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), newListener.nickname, getActivePlayers(), true));
         }
 
         players[pos].isDisconnected = false;

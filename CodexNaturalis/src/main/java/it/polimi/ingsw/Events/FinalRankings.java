@@ -20,7 +20,6 @@ public class FinalRankings extends ServerMessage{
     public FinalRankings(String nickname, HashMap<String,Integer> rankings){
         super("The final rankings are:\n ",nickname);
         this.rankings = rankings;
-        mustBeSentToAll=true;
     }
 
     @Override

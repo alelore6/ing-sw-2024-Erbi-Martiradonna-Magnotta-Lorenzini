@@ -203,11 +203,25 @@ public class Controller {
 
                 assert l != null;
 
+                if(model.isFinished){
+                    GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the game terminated.", (GenericResponse) event, false);
+
+                    l.addEvent(ack);
+
+                    // wait until the ack is sent
+                    while(!l.getPendingAck().equals(ack)){
+                    }
+
+                    return;
+                }
+
                 // The password is correct.
                 if(((ReconnectionResponse) event).getPassword().equals(passwords.get(nickname))){
                     synchronized (server.disconnectedClients){
                         server.disconnectedClients.remove(nickname);
                     }
+
+                    sendEventToAll(new PlayerDisconnected("every one", nickname, MVListeners.size(), true));
 
                     synchronized (MVListeners){
                         MVListeners.add(l);

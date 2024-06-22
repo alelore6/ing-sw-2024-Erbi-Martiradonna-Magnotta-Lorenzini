@@ -11,7 +11,6 @@ import java.util.Queue;
 
 public class ModelViewListener extends Listener {
 
-
     private GenericRequest lastRequest;
     private int requestEventIndex = 0;
     public final Client client;
@@ -21,9 +20,11 @@ public class ModelViewListener extends Listener {
      * the server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client
      */
-    private final ServerImpl server;
+    public final ServerImpl server;
 
     /**
+     * Constructor
+     *
      * Class that represents the listener situated between the Model and the View.
      * This listener will receive updates from the model and will pass them to the specific view, which will be updated aswell.
      * @param server the server that will receive the updates from this listener
@@ -32,6 +33,16 @@ public class ModelViewListener extends Listener {
         this.server = server;
         this.client = client;
         this.nickname = client.getNickname();
+    }
+
+    /**
+     * This constructor is only for stopping the server when no one is playing anymore.
+     * In fact, it receives the FinalRankings event that restarts the server.
+     */
+    public ModelViewListener(ServerImpl server){
+        this.server = server;
+        this.client = null;
+        this.nickname = null;
     }
 
     /**
@@ -85,7 +96,6 @@ public class ModelViewListener extends Listener {
                                     if(!(client instanceof ClientSkeleton)){
                                         server.logger.addLog(currentEvent, Severity.SENDING);
 
-
                                         client.update(currentEvent);
 
                                         if(currentEvent instanceof FinalRankings){
@@ -103,7 +113,7 @@ public class ModelViewListener extends Listener {
                                     getEventQueue().addFirst(currentEvent);
                                 }
                             }catch(RemoteException e) {
-                                if(!(currentEvent instanceof FinalRankings))    throw new RuntimeException(e);
+                                if(!(currentEvent instanceof FinalRankings)) System.err.println("Can't communicate with " + nickname + ".");
                             }
                         }
                     }
