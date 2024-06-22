@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.isEmptyException;
-import jdk.incubator.vector.VectorShuffle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
