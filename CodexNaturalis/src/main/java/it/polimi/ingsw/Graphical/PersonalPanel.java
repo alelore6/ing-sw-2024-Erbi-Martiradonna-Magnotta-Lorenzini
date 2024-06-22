@@ -1,12 +1,11 @@
 package it.polimi.ingsw.Graphical;
 import it.polimi.ingsw.Model.Player;
+import it.polimi.ingsw.Model.StartingCard;
 import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.View.GUI;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -26,13 +25,24 @@ public class PersonalPanel extends JSplitPane {
     private boolean[] isFacedown= new boolean[3];
     private JLabel selectedLabel;
     private boolean playing = false;
+    private ImageIcon possiblePlayImage =null;
+    private final Object lock;
 
-    PersonalPanel(PlayerView playerView) {
+
+    PersonalPanel(PlayerView playerView, Object lock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.nickname = playerView.nickname;
         this.playerView = playerView;
-        playButtons = new ArrayList<>();
-        labels = new ArrayList<>();
+        this.lock = lock;
+        this.playButtons = new ArrayList<>();
+        this.labels = new ArrayList<>();
+
+        try {
+            BufferedImage img =ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
+            possiblePlayImage= new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         JPanel leftPanel = new JPanel(new BorderLayout());
         this.playerPanel= new PlayerPanel(playerView, true);
@@ -46,19 +56,25 @@ public class PersonalPanel extends JSplitPane {
             gbc.insets = new Insets(2, 2, 2, 2);
 
             JLabel label = new JLabel();
-            if(i==1) label.setIcon(getImageIcon(GUI.getCardPath(playerView.objectiveCard.getID(), false)));
-            else label.setIcon(getImageIcon(GUI.getCardPath(playerView.hand.handCards[i-2].getID(), false)));
+            if(i==1) {
+                if(playerView.objectiveCard!=null) label.setIcon(getImageIcon(GUI.getCardPath(playerView.objectiveCard.getID(), false)));
+                else label.setIcon(possiblePlayImage);
+            }
+            else{
+                if(playerView.hand.handCards[i-2]!=null) label.setIcon(getImageIcon(GUI.getCardPath(playerView.hand.handCards[i-2].getID(), false)));
+                else label.setIcon(possiblePlayImage);
+            }
 
             gbc.gridx = 0;
             gbc.gridy = 0;
             gbc.gridheight = 2;
             imagePanel.add(label, gbc);
 
-            if (i > 1) {
+            if (i > 1 && playerView.hand.handCards[i-2]!=null) {
                 //carte della mano
                 cardsID[i-2]=playerView.hand.handCards[i-2].getID();
                 isFacedown[i-2]=false;
-                labels.add(i-2,label);
+                labels.add(label);
                 // Creazione e aggiunta del bottone Flip
                 JButton flipButton = new JButton("Flip");
                 final int index = i-2;
@@ -66,8 +82,9 @@ public class PersonalPanel extends JSplitPane {
                 flipButton.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        if(cardsID[index]<0) return;
                         isFacedown[index] = !isFacedown[index];
-                        playerView.hand.handCards[index].isFacedown=isFacedown[index];
+                        ///playerView.hand.handCards[index].isFacedown=isFacedown[index];
                         label.setIcon(getImageIcon(GUI.getCardPath(cardsID[index], isFacedown[index])));
                     }
                 });
@@ -112,8 +129,10 @@ public class PersonalPanel extends JSplitPane {
     }
 
     private void showPlayButton() {
+        int i=0;
         for(JButton b : playButtons){
-            b.setVisible(true);
+            if(cardsID[i]>0) b.setVisible(true);
+            i++;
         }
     }
 
@@ -133,8 +152,10 @@ public class PersonalPanel extends JSplitPane {
         return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
     }
 
-    public int getChoice() {
-        return choice;
+    public CardComponent getPlayChoice() {
+        CardComponent c=new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow()-playerPanel.getCenterRow(), playerPanel.getPlayPosition().getCol()-playerPanel.getCenterCol(),0);
+        c.setFlipped(isFacedown[choice]);
+        return c;
     }
 
     private void confirmPlay(){
@@ -145,26 +166,39 @@ public class PersonalPanel extends JSplitPane {
                 if(i==0) {//la giocata viene confermata
                     hidePlayButton();
                     selectedLabel.setBorder(new LineBorder(Color.RED, 4));
+                    synchronized (lock){lock.notifyAll();}
                 }
-            }
+            } else JOptionPane.showMessageDialog(this,"Remember to select a position where to play the card, then click on the chosen card play button");
         }
     }
 
 
     protected void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
-        for (int i=0; i<3; i++) {//Aggiorno le carte nella mano
-            if (cardsID[i]!=playerView.hand.handCards[i].getID()){
-                cardsID[i]=playerView.hand.handCards[i].getID();
+        if (playing) {
+            showPlayButton();
+        }
+        if(playerView==null) return;
+
+        if (selectedLabel!=null) selectedLabel.setBorder(null);
+        for (int i=0; i<3; i++) {
+            //Aggiorno le carte nella mano
+            if(playerView.hand.handCards[i]==null){
+                cardsID[i]=-1;
                 isFacedown[i]=false;
-                labels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i],isFacedown[i])));
+                labels.get(i).setIcon(possiblePlayImage);
+            }
+            else {
+                if (cardsID[i]!=playerView.hand.handCards[i].getID()){
+                    cardsID[i]=playerView.hand.handCards[i].getID();
+                    isFacedown[i]=false;
+                    labels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i],isFacedown[i])));
+                }
             }
         }
         //aggiorno le carte giocate
         playerPanel.update(playerView);
-        if (playing) {
-            showPlayButton();
-        }
+
     }
 
     public static void main(String[] args) {
@@ -173,7 +207,7 @@ public class PersonalPanel extends JSplitPane {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
 
-        PersonalPanel panel = new PersonalPanel(new PlayerView(new Player("test", null)));
+        PersonalPanel panel = new PersonalPanel(new PlayerView(new Player("test", null)), new Object());
 
         // Aggiunta di JSplitPane al frame
         frame.add(panel);
@@ -181,6 +215,6 @@ public class PersonalPanel extends JSplitPane {
         // Visualizzazione del frame
         frame.setVisible(true);
 
-        //panel.update(null,true);
+        panel.update(null,true);
     }
 }

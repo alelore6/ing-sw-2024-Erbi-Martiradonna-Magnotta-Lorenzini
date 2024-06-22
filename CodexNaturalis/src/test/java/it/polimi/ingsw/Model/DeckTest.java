@@ -1,7 +1,6 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Exceptions.isEmptyException;
-import jdk.incubator.vector.VectorShuffle;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,12 +22,12 @@ public class DeckTest {
     @Before
     public void setUp() throws Exception {
         card1= Mockito.mock(Card.class);
-        card2= Mockito.mock(Card.class);
+        card2=Mockito.mock(Card.class);
         card3= Mockito.mock(Card.class);
-         deck=Mockito.mock(Deck.class);
-         originaldeck=Mockito.mock(Card[].class);
-         deckshuffled=Mockito.mock(Card[].class);
-         hand=Mockito.mock(Hand.class);
+       hand = Mockito.mock(Hand.class);
+         originaldeck=new Card[]{card1,card2,card3};
+         deckshuffled= new Card[]{card1,card2,card3};
+
     }
 
     @After

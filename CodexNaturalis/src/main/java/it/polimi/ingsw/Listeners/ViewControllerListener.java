@@ -37,25 +37,34 @@ public class ViewControllerListener extends Listener {
      */
     @Override
     public void handleEvent() throws RemoteException {
-        new Thread() {
+        eventThread = new Thread() {
             @Override
             public void run() {
-                while(true) {
+                while(running) {
                     synchronized(lock_queue){
                         if(!getEventQueue().isEmpty()) {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
-                            //System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
+                            // System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
                             try {
                                 ((ClientImpl) client).sendEvent(currentEvent);
                             } catch (RemoteException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e);
+                                if(((ClientImpl) client).getUserInterface().running){
+                                    e.printStackTrace();
+                                    throw new RuntimeException(e);
+                                }
                             }
                         }
                     }
 
                 }
             }
-        }.start();
+        };
+
+        eventThread.start();
+    }
+
+    public void stop() throws InterruptedException {
+        running = false;
+        eventThread.interrupt();
     }
 }

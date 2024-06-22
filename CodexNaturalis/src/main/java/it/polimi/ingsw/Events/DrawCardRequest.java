@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Events;
 
 import it.polimi.ingsw.Model.PlayableCard;
+import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.ModelView.TableCenterView;
 
 /**
@@ -8,7 +9,7 @@ import it.polimi.ingsw.ModelView.TableCenterView;
  */
 public class DrawCardRequest extends GenericRequest{
 
-
+    public final GameView gameView;
     public final TableCenterView tableCenterView;
 
     public final int resCardinDeck;
@@ -21,9 +22,10 @@ public class DrawCardRequest extends GenericRequest{
      * @param goldDeckEmpty represent if the gold deck is empty
      * @param resDeckEmpty represent if the resource deck is empty
      */
-    public DrawCardRequest(String nickname, TableCenterView tableCenterView, int resCardsinDeck, int goldCardinDeck){
+    public DrawCardRequest(String nickname, GameView gameView, int resCardsinDeck, int goldCardinDeck){
         super("Now it's time to draw a card: choose a source to draw from.",nickname);
-        this.tableCenterView = tableCenterView;
+        this.tableCenterView = gameView.tableCenterView;
+        this.gameView = gameView;
         this.resCardinDeck = resCardsinDeck;
         this.goldCardinDeck = goldCardinDeck;
     }

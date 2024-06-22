@@ -10,6 +10,8 @@ import java.util.Queue;
 
 public abstract class Listener {
 
+    public volatile boolean running = true;
+    protected Thread eventThread = null;
 
     public final Object lock_queue = new Object();
 

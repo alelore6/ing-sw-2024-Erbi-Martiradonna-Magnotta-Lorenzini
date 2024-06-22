@@ -17,9 +17,19 @@ import java.util.HashMap;
  */
 public class Game{
     /**
+     * attribute representing if threads of this class are running.
+     */
+    private volatile boolean running = true;
+    private volatile boolean isTurnSkipped = false;
+    /**
      * number of players in the current game
      */
     private final int numPlayers;
+    /**
+     * String that represents the turn order.
+     */
+    private String turnOrder = "";
+    private final ServerImpl server;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -27,11 +37,11 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    private int timeoutOnePlayer = 5;
+    private int timeoutOnePlayer = 15; // TODO: risettare a 30.
     /**
      * boolean that states if the game is either finished or still in act
      */
-    boolean isFinished;
+    public volatile boolean isFinished;
     /**
      * attribute that keeps count of remaining turns when the ending stage of the game is triggered
      */
@@ -44,6 +54,7 @@ public class Game{
     public void setCurPlayerPosition(int curPlayerPosition) {
         this.curPlayerPosition = curPlayerPosition;
     }
+
 
     /**
      * The starting cards deck
@@ -68,8 +79,8 @@ public class Game{
 
     public boolean isTriggered = false; //to see if endgame is triggered
 
-    public final Object controllerLock = new Object();
-    public Object lock = new Object();
+    public final Object lock           = new Object();
+    public final Object OPLLock        = new Object();
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -84,6 +95,7 @@ public class Game{
         this.isFinished = false;
         this.remainingTurns = -1;
         this.curPlayerPosition = -1;
+        this.server = mvListeners.get(0).server;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i],this);
@@ -126,8 +138,8 @@ public class Game{
      */
     public int getTurnCounter() {return turnCounter;}
 
-    public String getCurrentPlayer(){
-        return players[curPlayerPosition].getNickname();
+    public String getCurrentPlayerNickname(){
+        return curPlayerPosition != -1 ? players[curPlayerPosition].getNickname() : null;
     }
 
     public int getCurPlayerPosition() {
@@ -160,8 +172,7 @@ public class Game{
                 }
             }
         }
-        //cosa bruttissima per chiamare clone dentro al thread
-        Game model=this;
+
         //in un thread perchè si deve aspettare la sincronizzazione dal controller
         new Thread(){
             @Override
@@ -211,29 +222,43 @@ public class Game{
                     order[i]=players[j].getNickname();
                     j++;
                 }
-                String message="";
+
                 for (int i=0; i<order.length;i++) {
                     int x=i+1;
-                    message=message.concat(" | "+ x+". "+order[i]+" ");
+                    turnOrder = turnOrder.concat(" | "+ x + ". " + order[i] + " ");
                 }
 
 
                 while(true) {
-                        //wait for everyone to complete the start
+                    //wait for everyone to complete the start
                     synchronized (lock){
-                        if (waitNumClient ==numPlayers) break;
+                        if (waitNumClient == getActivePlayers()) break;
                     }
                 }
                 turnPhase=-1;
                 //notify all players on turn order
-                TurnOrder turnOrder=new TurnOrder("everyone",message,model.clone());
-                for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(turnOrder);
+                TurnOrder event = new TurnOrder("every one", turnOrder, Game.this.clone());
+                for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(event);
                 //devo trovare il giocatore precedente al primo!
                 //perchè next player fa l'avanzamento
                 int p= firstPlayerPos-1;
                 if (p<0) p=numPlayers-1;
                 nextPlayer(players[p]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
+
+                while(running){
+                    if     (getActivePlayers() == 1) OPLProcedure();
+                    else if(getActivePlayers() == 0){
+                        ModelViewListener fakeListener = new ModelViewListener(server);
+
+                        fakeListener.addEvent(new FinalRankings(null, null));
+                    }
+                    if(isTurnSkipped){
+                        isTurnSkipped = false;
+                        if(getRemainingTurns() == 0)        checkWinner();
+                        else if(getCurrentPlayerNickname() != null) nextPlayer(players[getCurPlayerPosition()]);
+                    }
+                }
             }
         }.start();
     }
@@ -307,10 +332,12 @@ public class Game{
             case 7:
                 isTriggered = true;
                 remainingTurns = 0;
-                    System.out.println("FINISCE");
                 for(int i = 0; i < numPlayers; i++){
                     FinalRankings event = new FinalRankings(players[i].getNickname(), null);
-                    if(!players[i].isDisconnected) getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                    if(!players[i].isDisconnected){
+                        ModelViewListener listener = getMVListenerByNickname(players[i].getNickname());
+                        if(listener != null) listener.addEvent(event);
+                    }
                 }
                 break;
         }
@@ -392,11 +419,11 @@ public class Game{
             turnPhase=0;
 
             //send StartTurn event
-            StartTurn startTurn = new StartTurn(players[curPlayerPosition].getNickname(), getCurrentPlayer());
+            StartTurn startTurn = new StartTurn(getCurrentPlayerNickname(), players[curPlayerPosition].getToken().getColor().toString(), clone());
             for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
-            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayer(), new PlayerView(players[curPlayerPosition]), new TableCenterView(tablecenter));
+            PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayerNickname(),clone());
             getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
 
             //check there are still card on table center
@@ -409,7 +436,7 @@ public class Game{
             }
             //if both deck are not empty and !empty, a draw will be requested
             if (!tablecenter.getResDeck().AckEmpty || !tablecenter.getGoldDeck().AckEmpty || !empty) {
-                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), new TableCenterView(tablecenter), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
+                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), clone(), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
                 getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(drawCard);
             }
             turnCounter++;
@@ -562,44 +589,99 @@ public class Game{
         return new GameView(this);
     }
 
-    public synchronized void disconnectPlayer(Player p){
-        p.isDisconnected = true;
-        int pos=-1, count=0;
+    /**
+     * the One Player Left procedure is called when it is noted that there's only one active player.
+     */
+    private synchronized void OPLProcedure(){
+        try{
+            // Wait for some seconds.
+            synchronized (OPLLock){
+                OPLLock.wait(timeoutOnePlayer*1000);
+            }
+        }catch(InterruptedException e){
+            e.printStackTrace();
+        }
 
-        for(int i = 0; i < players.length; i++){
-            if(!players[i].isDisconnected){
-                // number of players still connected
-                count++;
+        if(getActivePlayers() > 1){
+            synchronized (mvListeners){
+                for(int i = 0; i < mvListeners.size(); i++){
+                    mvListeners.get(i).addEvent(new ServerMessage("The game is resuming...", "every one"));
+                }
             }
         }
-        for(int i = 0; i < players.length; i++){
-            if(!players[i].isDisconnected){
-                getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), p.getNickname(), count, false));
-            }
-        }
-        if(count==1){
-            try{
-                // Wait for 30 seconds
-                this.wait(timeoutOnePlayer*1000);
-            }catch(InterruptedException ignored){}
-            if(p.isDisconnected){
-                // Test
-                System.out.println("Game ended: only one player left.");
+        else{
+            if     (getActivePlayers() == 1) System.out.println("[END] Game ended: only one player left.");
+            else if(getActivePlayers() == 0)
+                System.out.println("[END] Game ended: no players left.");
 
-                endGame(7);
-            }
+            endGame(7);
         }
     }
 
-    public void rejoin(ModelViewListener listener) {
+    public void disconnectPlayer(Player p){
+        p.isDisconnected = true;
         int pos = -1;
 
-        for (int i = 0; i < players.length; i++) {
-            if (!players[i].isDisconnected && players[i].getNickname().equals(listener.nickname)) {
-                getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected(players[i].getNickname(), listener.nickname, -1, true));
+        synchronized (mvListeners){
+            for(int i = 0; i < players.length; i++){
+                if(!players[i].isDisconnected){
+                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected("every one", p.getNickname(), getActivePlayers(), false));
+                }
             }
-            if(players[i].getNickname().equals(listener.nickname))
-                pos = i;
+        }
+
+        // If it's the disconnected player's turn, simply skips it and go to the next player.
+        if(getCurrentPlayerNickname().equals(p.getNickname())){
+            if(turnPhase == 0){
+                // Skips the turn.
+            }
+            else if(turnPhase == 1){
+                PlayableCard newCard = null;
+
+                // Draws the first card on the table.
+                for(PlayableCard card : tablecenter.getCenterCards()){
+                    newCard = card;
+                    break;
+                }
+
+                try{
+                    p.getHand().DrawPositionedCard(newCard);
+                }catch (HandFullException ignored){}
+                catch (isEmptyException e){
+                    // TODO: bisogna gestirla?
+                }
+            }
+            else if(turnPhase == 2){
+                // Skips the turn.
+            }
+
+            if(getCurrentPlayerNickname() != null){
+                for(ModelViewListener listener : MVListeners){
+                    listener.addEvent(new EndTurn(getCurrentPlayerNickname(), players[getCurPlayerPosition()].getNickname(), clone()));
+                }
+            }
+
+            isTurnSkipped = true;
+        }
+    }
+
+    private int getActivePlayers(){
+        return mvListeners.size();
+    }
+
+    public void stop(){
+        running = false;
+    }
+
+    public synchronized void rejoin(ModelViewListener newListener) {
+        int pos = -1;
+
+        // Notify the rejoined player about the current situation.
+        newListener.addEvent(new TurnOrder(newListener.nickname, turnOrder, this.clone()));
+
+        // Notify the other players about the rejoining.
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].getNickname().equals(newListener.nickname)) pos = i;
         }
 
         players[pos].isDisconnected = false;
@@ -608,7 +690,7 @@ public class Game{
     }
 
     private ModelViewListener getMVListenerByNickname(String nickname){
-        for(ModelViewListener listener : mvListeners){
+        for(ModelViewListener listener : MVListeners){
             if(listener.nickname.equals(nickname)){
                 return listener;
             }
@@ -623,7 +705,7 @@ public class Game{
 }
 
 
-//TODO testare STARTGAME(), ENDGAME(), CHECKWINNER(), NEXTPLAYER(), DISCONNECTPLAYER(), REJOIN(), CHECKOBJECTIVEPOINTS()
+
 
 
 

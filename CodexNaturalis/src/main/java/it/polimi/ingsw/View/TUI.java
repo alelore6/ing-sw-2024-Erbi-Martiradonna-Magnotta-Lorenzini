@@ -4,8 +4,10 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.HandView;
+import it.polimi.ingsw.ModelView.PlayerView;
 
 import java.io.*;
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +26,7 @@ public class TUI extends UI {
     private boolean objBool = true;
     private ObjectiveCard privateObjectiveCard = null;
     private Object lock_events = new Object();
+    private Thread TUIThread, commandThread;
 
     public TUI(ClientImpl client) {
         super(client);
@@ -45,9 +48,7 @@ public class TUI extends UI {
                 while(lastInputs.isEmpty()){
                     try{
                         lastInputs.wait();
-                    }catch(InterruptedException e){
-                        e.printStackTrace();
-                    }
+                    }catch(InterruptedException ignored){}
                 }
 
                 choice = lastInputs.poll();
@@ -129,12 +130,8 @@ public class TUI extends UI {
         outErr.println(err);
     }
 
-    public void stop(){
-        isActive = false;
-    }
-
-    private static String inputError(){
-        return "Input not allowed. Please try again";
+    private String inputError(){
+        return running ? "Input not allowed. Please try again" : "";
     }
 
     private String setColorForBackground(String color, String string){
@@ -453,11 +450,16 @@ public class TUI extends UI {
         }
         else if(e instanceof FinalRankings){
             printOut(setColorForString("GREEN", e.msgOutput(), true));
+            printOut("Insert a comment about your game experience: ");
 
-            System.exit(0);
+            // TODO: non lo fa fare: si blocca in in.close() in stop() qua.
+            client.clientApp.stop();
+        }
+        else if(e instanceof StartTurn){
+            printOut("It's " + setColorForString(((StartTurn) e).color, ((StartTurn) e).turnPlayer, true) + "'s turn.");
         }
         else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
-            printOut(e.msgOutput());
+            if(e.msgOutput() != null) printOut(e.msgOutput());
         }
         else{
             synchronized(lock_events){
@@ -472,10 +474,10 @@ public class TUI extends UI {
         clearConsole();
 
         // Commands input
-        new Thread(){
+        commandThread = new Thread(){
             @Override
             public void run() {
-                while(isActive){
+                while(running){
                     String s = null;
                     try {
                         s = in.readLine();
@@ -491,13 +493,15 @@ public class TUI extends UI {
                     }
                 }
             }
-        }.start();
+        };
+
+        commandThread.start();
 
         // Event's handling thread
-        new Thread(){
+        TUIThread = new Thread(){
             @Override
             public void run() {
-                while(isActive){
+                while(running){
                     GenericEvent ev = null;
 
                     synchronized(lock_events){
@@ -552,7 +556,7 @@ public class TUI extends UI {
                                     "(1) for yes, (2) for no:");
                             n = chooseInt(1,2);
                             if(n == 1)  notifyListener(new ClientRegister(client));
-                            else        System.exit(1);
+                            else        System.exit(0);
                             break;
 
                         case ChooseObjectiveRequest e :
@@ -571,35 +575,30 @@ public class TUI extends UI {
                         case PlayCardRequest e :
                             String STATS_COLOR = "CYAN";
                             if(objBool){
-                                publicObjCards[0] = e.tableView.objCards[0];
-                                publicObjCards[1] = e.tableView.objCards[1];
+                                publicObjCards[0] = e.getTableView().objCards[0];
+                                publicObjCards[1] = e.getTableView().objCards[1];
 
                                 objBool = false;
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "CURRENT RANKINGS"), false));
                             n = 1;
-                            Map<String, Integer> sortedMap = e.tableView.scoreTrack.points.entrySet()
-                                    .stream()
-                                    .sorted(Map.Entry.<String, Integer>comparingByValue(Comparator.reverseOrder())
-                                            .thenComparing(Map.Entry.comparingByKey()))
-                                    .collect(Collectors.toMap(
-                                            Map.Entry::getKey,
-                                            Map.Entry::getValue,
-                                            (e1, e2) -> e1,
-                                            LinkedHashMap::new
-                                    ));
-                            for(int i = 0; i < sortedMap.keySet().size(); i++){
-                                String[] nicks = sortedMap.keySet().toArray(new String[sortedMap.size()]);
-                                printOut(setColorForString("WHITE", n + ") " + nicks[i] + ": " + sortedMap.get(nicks[i]) + " point" + (sortedMap.get(nicks[i]) == 1 ? "" : "s"), sortedMap.get(nicks[i]) == sortedMap.get(nicks[0]) ? true : false));
+
+                            HashMap<String, Integer> map = e.getTableView().scoreTrack.points;
+
+                            String nick0 = null;
+                            for(int i = 0; i < map.keySet().size(); i++){
+                                String nick = e.getTableView().scoreTrack.nickToString(i);
+                                if(i == 0)  nick0 = nick;
+                                printOut(setColorForString("WHITE", n + ") " + nick + ": " + map.get(nick) + " point" + (map.get(nick) == 1 ? "" : "s"), map.get(nick) == map.get(nick0) ? true : false));
                                 n++;
                             }
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR SECRET OBJECTIVE CARD's ID"), false) + "\n" + privateObjectiveCard.getID());
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "PUBLIC OBJECTIVE CARDS"), false) + "\n" + publicObjCards[0].getID() + ", " + publicObjCards[1].getID());
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR CURRENT RESOURCES"), false));
                             boolean isAny = false;
-                            for(Resource resource : e.playerView.currentResources.keySet()){
-                                if(e.playerView.currentResources.get(resource) > 0){
-                                    printOut("\t" + resource.toString() + " x " + e.playerView.currentResources.get(resource));
+                            for(Resource resource : e.getPlayerView(e.nickname).currentResources.keySet()){
+                                if(e.getPlayerView(e.nickname).currentResources.get(resource) > 0){
+                                    printOut("\t" + resource.toString() + " x " + e.getPlayerView(e.nickname).currentResources.get(resource));
                                     isAny = true;
                                 }
                             }
@@ -607,23 +606,23 @@ public class TUI extends UI {
                             if(!isAny)  printOut("\tnone");
 
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR PLAYED CARDS"), false));
-                            printGrid(e.playerView.hand.playedCards);
+                            printGrid(e.getPlayerView(e.nickname).hand.playedCards);
 
                             printOut(setColorForString("BLACK", setColorForBackground(STATS_COLOR, "YOUR HAND"), false));
-                            for(Card card : e.playerView.hand.handCards){
+                            for(Card card : e.getPlayerView(e.nickname).hand.handCards){
                                 printCard(card);
                                 printOut("\n");
                             }
 
-                            lastPlayedCards = e.playerView.hand.playedCards;
+                            lastPlayedCards = e.getPlayerView(e.nickname).hand.playedCards;
 
                             n = chooseInt(1,3);
 
                             printOut(e.msgOutput2());
-                            if(chooseInt(1,2) == 2) e.playerView.hand.handCards[n-1].isFacedown = true;
+                            if(chooseInt(1,2) == 2) e.getPlayerView(e.nickname).hand.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            notifyListener(new PlayCardResponse(client.getNickname(), e.playerView.hand.handCards[n-1], 40 + chooseInt(-40, 40), 40 + chooseInt(-40, 40)));
+                            notifyListener(new PlayCardResponse(client.getNickname(), e.getPlayerView(e.nickname).hand.handCards[n-1], chooseInt(-40, 40), chooseInt(-40, 40)));
                             break;
 
                         case SetTokenColorRequest e :
@@ -653,6 +652,20 @@ public class TUI extends UI {
 
                         case TurnOrder e :
                             firstPlayer = e.order.split(" ")[3];
+
+                            PlayerView p = null;
+
+                            for(PlayerView player : e.gameView.players){
+                                if(player.nickname.equals(client.getNickname())){
+                                    p = player;
+                                    break;
+                                }
+                            }
+
+                            assert p != null;
+
+                            privateObjectiveCard = p.objectiveCard;
+
                             break;
 
                         case ReconnectionRequest e:
@@ -664,6 +677,21 @@ public class TUI extends UI {
                     }
                 }
             }
-        }.start();
+        };
+
+        TUIThread.start();
+    }
+
+    public void stop(){
+        running = false;
+
+        try{
+            in.close();
+        }catch (IOException ignored){
+            ignored.printStackTrace();
+        }
+
+        commandThread.interrupt();
+        TUIThread.interrupt();
     }
 }

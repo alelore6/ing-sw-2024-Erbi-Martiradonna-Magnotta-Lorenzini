@@ -6,5 +6,6 @@ public class StartingCard extends Card{
 
     public StartingCard(int fake_ID) {
         this.ID = fake_ID;
+        this.playOrder=100;
     }
 }

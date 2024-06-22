@@ -1,128 +1,182 @@
 package it.polimi.ingsw.Graphical;
 
-
-import it.polimi.ingsw.Model.Game;
+import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.View.GUI;
+import it.polimi.ingsw.Model.ConverterCardColorInt;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.awt.Dimension;
+import javax.swing.border.EmptyBorder;
 
 public class TableCenterPanel extends JSplitPane {
-    private final GameView gameView;
+    private GameView gameView;
+    private ArrayList<JLabel> cardLabels;
+    private JLabel[] deckLabels;
+    private int[] cardsID;
+    private int drawChoice;
+    private boolean drawing = false;
+    private JButton[] spots;
+    private int[] spotXCoords = {/* coordinate */};
+    private int[] spotYCoords = { /* coordinate */};
+    private ArrayList<JButton> drawButtons;
+    private JLabel cardLabel;
+    private ImageIcon possiblePlayImage = null;
+    private final Object drawLock;
 
-
-    public TableCenterPanel(GameView gameView) {
+    public TableCenterPanel(GameView gameView, Object drawLock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
-
+        this.drawLock = drawLock;
+        this.cardLabels = new ArrayList<>();
+        this.deckLabels = new JLabel[2];
+        this.cardsID = new int[4];
+        this.spots = new JButton[27];
+        this.drawButtons = new ArrayList<>();
+        try {
+            BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
+            possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         this.setLeftComponent(createLeftPanel());
         this.setRightComponent(createRightPanel());
 
-        this.setDividerLocation(1140);
-        createRightPanel().setMinimumSize(new Dimension(390, 300));
-        createLeftPanel().setMinimumSize(new Dimension(1000, 300));
+        this.setDividerLocation(1000);
     }
 
     private JPanel createRightPanel() {
-
         ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
         int originalWidth = img.getIconWidth();
         int originalHeight = img.getIconHeight();
         int width = 900;
         int height = 700;
-        double widthproportion = (double) width / originalWidth;
-        double heightproportion = (double) height / originalHeight;
-        double proportion =Math.min(widthproportion,heightproportion);
+        double widthProportion = (double) width / originalWidth;
+        double heightProportion = (double) height / originalHeight;
+        double proportion = Math.min(widthProportion, heightProportion);
 
-        double finalwidth =  proportion * originalWidth;
-        double finalheight =  proportion * originalHeight;
+        double finalWidth = proportion * originalWidth;
+        double finalHeight = proportion * originalHeight;
 
-
-        Image imgResized = img.getImage().getScaledInstance((int) finalwidth, (int) finalheight,Image.SCALE_DEFAULT);
+        Image imgResized = img.getImage().getScaledInstance((int) finalWidth, (int) finalHeight, Image.SCALE_DEFAULT);
         ImageIcon resizedIcon = new ImageIcon(imgResized);
-        JPanel rightPanel = new JPanel(){
+        JPanel rightPanel = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                int  x= (int) ((getWidth()- finalwidth)/2);
-                int  y  = (int) ((getHeight()- finalheight)/2);
-                g.drawImage(resizedIcon.getImage(), x,y, this);
+                int x = (int) ((getWidth() - finalWidth) / 2);
+                int y = (int) ((getHeight() - finalHeight) / 2);
+                g.drawImage(resizedIcon.getImage(), x, y, this);
             }
         };
         rightPanel.setLayout(new BorderLayout());
 
         setVisible(true);
-
+        hideDrawButton();
         return rightPanel;
     }
 
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
-        leftPanel.setLayout(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns
+        leftPanel.setLayout(new GridLayout(4, 1, 10, 10));
 
         // Decks
-        addDeck(leftPanel, "Gold Deck", 40);
-        addDeck(leftPanel, "Resource Deck", 5);
+        addDeck(leftPanel, "Gold Deck", gameView.tableCenterView.topGoldCardColor, 0);
+        addDeck(leftPanel, "Resource Deck", gameView.tableCenterView.topResourceCardColor, 1);
 
-        // Gold Cards
-        for (int i = 0; i < 2; i++) {
-            addCardSpot(leftPanel, "Gold Card ", 40 + i);
+        for (int i = 0; i < 4; i++) {
+            if (gameView.tableCenterView.centerCards[i] != null) {
+                addCardSpot(leftPanel, i, gameView.tableCenterView.centerCards[i].getID());
+            } else {
+                addCardSpot(leftPanel, i, -1);
+            }
         }
 
-        // Resource Cards
-        for (int i = 0; i < 2; i++) {
-            addCardSpot(leftPanel, "Resource Card ", 5 + i);
+        if (gameView.tableCenterView.objCards[0] != null) {
+            addObjectiveCardSpot(leftPanel, "Objective Card 1", gameView.tableCenterView.objCards[0].getID());
+        } else {
+            addObjectiveCardSpot(leftPanel, "Objective Card 1", -1);
+        }
+
+        if (gameView.tableCenterView.objCards[1] != null) {
+            addObjectiveCardSpot(leftPanel, "Objective Card 2", gameView.tableCenterView.objCards[1].getID());
+        } else {
+            addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
         }
 
         return leftPanel;
     }
 
-    private void addDeck(JPanel panel, String title,int cardID) {
-        JPanel deckPanel = new JPanel();
-        deckPanel.setLayout(new BorderLayout());
-        deckPanel.setBorder(BorderFactory.createTitledBorder(title));
-
-        JLabel deckLabel = new JLabel();
-        deckLabel.setHorizontalAlignment(JLabel.CENTER);
-        deckLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
-
-        deckPanel.add(deckLabel, BorderLayout.CENTER);
-
-        JButton drawButton = new JButton("Draw");
-        drawButton.addActionListener(e -> {
-
-            System.out.println("Draw from " + title);
-        });
-
-        deckPanel.add(drawButton, BorderLayout.SOUTH);
-
-        panel.add(deckPanel);
-    }
-
-    private void addCardSpot(JPanel panel, String title, int cardID) {
+    private void addObjectiveCardSpot(JPanel panel, String title, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
         cardPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JLabel cardLabel = new JLabel();
-        cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
-
+        if (cardID > 0) {
+            cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
+        } else {
+            cardLabel.setIcon(possiblePlayImage);
+        }
         cardPanel.add(cardLabel, BorderLayout.CENTER);
-      JButton drawButton = new JButton("Draw");
-      drawButton.addActionListener(e ->{
-          System.out.println("Draw from " + title);
-              });
-      cardPanel.add(drawButton, BorderLayout.SOUTH);
+
 
         panel.add(cardPanel);
     }
 
+    public void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
+        JPanel deckPanel = new JPanel();
+        deckPanel.setLayout(new BorderLayout());
+        deckPanel.setBorder(BorderFactory.createTitledBorder(title));
+
+        JLabel deckLabel = new JLabel();
+        int colorId = ConverterCardColorInt.getCardColorId(cardColor);
+        deckLabel.setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+        deckLabels[deckIndex] = deckLabel;
+        deckPanel.add(deckLabel, BorderLayout.CENTER);
+
+        JButton drawButton = new JButton("Draw");
+        drawButton.setPreferredSize(new Dimension(100, 10));
+        drawButton.setMargin(new Insets(2, 2, 2, 2));
+        drawButton.addActionListener(e -> {
+            System.out.println("Draw from " + title);
+            drawCard(deckIndex + 1);
+        });
+        drawButtons.add(drawButton);
+        deckPanel.add(drawButton, BorderLayout.EAST);
+        panel.add(deckPanel);
+    }
+    private void addCardSpot(JPanel panel, int index, int cardID) {
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BorderLayout());
+        cardPanel.setBorder(BorderFactory.createTitledBorder("Card " + (index + 1)));
+
+        JLabel cardLabel = new JLabel();
+        if (cardID > 0) {
+            cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
+        } else {
+            cardLabel.setIcon(possiblePlayImage);
+        }
+        cardLabels.add(cardLabel);
+        cardsID[index] = cardID;
+        cardPanel.add(cardLabel, BorderLayout.CENTER);
+
+        JButton drawButton = new JButton("Draw");
+        drawButton.setPreferredSize(new Dimension(100, 1));
+        drawButton.setMargin(new Insets(2, 1, 5, 1));
+        drawButton.addActionListener(e -> {
+            System.out.println("Draw card " + (index + 1));
+            drawCard(index + 1);
+        });
+        drawButtons.add(drawButton);
+        cardPanel.add(drawButton, BorderLayout.EAST);
+        panel.add(cardPanel);
+    }
 
     private ImageIcon getImageIcon(String path, int scaleX, int scaleY) {
         BufferedImage img = null;
@@ -131,23 +185,80 @@ public class TableCenterPanel extends JSplitPane {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+        return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_SMOOTH));
+    }
+
+    private void drawCard(int spotID) {
+        if (drawing) {
+            this.drawChoice = spotID;
+            hideDrawButton();
+            synchronized (drawLock) {
+                drawLock.notifyAll();
+            }
+        }
+    }
+
+    public int getDrawChoice() {
+        return drawChoice;
+    }
+
+    private void updateCards() {
+        for (int i = 0; i < 4; i++) {
+            if (gameView.tableCenterView.centerCards[i] == null) {
+                cardLabels.get(i).setIcon(possiblePlayImage);
+                cardsID[i] = -1;
+            } else if (cardsID[i] != gameView.tableCenterView.centerCards[i].getID()) {
+                cardsID[i] = gameView.tableCenterView.centerCards[i].getID();
+                cardLabels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i], false), 0, 0));
+            }
+        }
+    }
+
+    private void updateDeck() {
+        for (int i = 0; i < 2; i++) {
+            CardColor deckCardColor;
+            if (i == 0) {
+                deckCardColor = gameView.tableCenterView.topGoldCardColor;
+            } else {
+                deckCardColor = gameView.tableCenterView.topResourceCardColor;
+            }
+            int colorId = ConverterCardColorInt.getCardColorId(deckCardColor);
+            deckLabels[i].setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+        }
+    }
+
+    public void showDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(true);
+        }
+    }
+
+    private void hideDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(false);
+        }
+    }
+    public void update(GameView gameView, boolean drawing) {
+        this.gameView = gameView;
+        this.drawing = drawing;
+        updateDeck();
+        updateCards();
+        if (drawing) {
+            showDrawButton();
+        }
     }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);// full screen
-        String[] playerNames = {"1","2","3","4"};
-       Game game =new Game(4,playerNames,null);
-        GameView gameView= new GameView(game);
-        TableCenterPanel panel= new TableCenterPanel(gameView);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
+        String[] playerNames = {"1", "2", "3", "4"};
+        Game game = new Game(4, playerNames, null);
+        GameView gameView = new GameView(game);
+        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
 
         frame.add(panel);
         frame.setVisible(true);
     }
-
-    public void update(GameView gameView) {
-
-    }
 }
+

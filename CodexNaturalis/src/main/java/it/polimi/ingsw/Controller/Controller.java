@@ -2,10 +2,7 @@ package it.polimi.ingsw.Controller;
 
 import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Events.*;
-import it.polimi.ingsw.Exceptions.HandFullException;
-import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
-import it.polimi.ingsw.Exceptions.WrongPlayException;
-import it.polimi.ingsw.Exceptions.isEmptyException;
+import it.polimi.ingsw.Exceptions.*;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.Distributed.ServerImpl;
@@ -40,7 +37,11 @@ public class Controller {
     /**
      * The listeners that allow the exchange of information between the MVC pattern.
      */
-    private ArrayList<ModelViewListener> MVListeners = new ArrayList<ModelViewListener>();
+    private ArrayList<ModelViewListener> MVListeners     = new ArrayList<ModelViewListener>();
+    /**
+     * The listeners of clients that are trying to log in.
+     */
+    private ArrayList<ModelViewListener> tempMVListeners = new ArrayList<ModelViewListener>();
     /**
      * Boolean that indicates if the creation of the lobby request has been sent.
      */
@@ -66,13 +67,13 @@ public class Controller {
     /**
      * Creates and starts the actual game.
      */
-    protected void createGame() throws RemoteException {
+    protected void createGame() throws RemoteException{
         String[] temp = new String[lobby.getNumPlayers()];
         lobby.getPlayers().toArray(temp);
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
 
         // NOTIFY ALL LISTENERS OF STARTGAME EVENT
-        sendEventToAll(new StartGame("everyone", model.clone()));
+        sendEventToAll(new StartGame("every one", model.clone()));
         new Thread(){
             @Override
             public void run() {
@@ -190,27 +191,58 @@ public class Controller {
                 }
             }
             else if(event instanceof ReconnectionResponse){
+
+                ModelViewListener l = null;
+                for(ModelViewListener listener : tempMVListeners){
+                    if(listener.nickname.equals(nickname)){
+                        l = listener;
+                        tempMVListeners.remove(listener);
+                        break;
+                    }
+                }
+
+                assert l != null;
+
+                if(model.isFinished){
+                    GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the game terminated.", (GenericResponse) event, false);
+
+                    l.addEvent(ack);
+
+                    // wait until the ack is sent
+                    while(!l.getPendingAck().equals(ack)){
+                    }
+
+                    return;
+                }
+
                 // The password is correct.
                 if(((ReconnectionResponse) event).getPassword().equals(passwords.get(nickname))){
                     synchronized (server.disconnectedClients){
                         server.disconnectedClients.remove(nickname);
                     }
 
-                    getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, (GenericResponse) event, true));
+                    sendEventToAll(new PlayerDisconnected("every one", nickname, MVListeners.size(), true));
+
+                    synchronized (MVListeners){
+                        MVListeners.add(l);
+                    }
+
+                    l.addEvent(new AckResponse(nickname, null, (ReconnectionResponse) event, true));
+
+                    synchronized (model.OPLLock){
+                        model.OPLLock.notifyAll();
+                    }
 
                     server.register(((ReconnectionResponse) event).client);
-                    model.notifyAll();
                 }
                 else{
                     GenericResponse ack = new AckResponse(event.nickname, "Can't rejoin: the password is incorrect.", (GenericResponse) event, false);
-                    ModelViewListener listener = getMVListenerByNickname(event.nickname);
-                    listener.addEvent(ack);
+
+                    l.addEvent(ack);
 
                     // wait until the ack is sent
-                    while(!listener.getPendingAck().equals(ack)){
+                    while(!l.getPendingAck().equals(ack)){
                     }
-
-                    MVListeners.remove(listener);
                 }
             }
             else if(event instanceof ChatMessage){
@@ -289,8 +321,8 @@ public class Controller {
 
             else if(event instanceof PlayCardResponse){
                 try {
-                    synchronized (model.controllerLock){
-                        getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, ((PlayCardResponse)event).posX, ((PlayCardResponse)event).posY);
+                    synchronized (model.lock){
+                        getPlayerByNickname(nickname).getHand().playCard(((PlayCardResponse)event).card, 40 + ((PlayCardResponse)event).posX, 40 + ((PlayCardResponse)event).posY);
                         getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) event, model.clone()));
                         model.turnPhase++;
                     }
@@ -315,7 +347,7 @@ public class Controller {
             else if(event instanceof PlaceStartingCard){
                 try {
                         getPlayerByNickname(nickname).placeStartingCard(((PlaceStartingCard) event).startingCard);
-                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, (GenericResponse) null, model.clone()));
+                        getMVListenerByNickname(nickname).addEvent(new AckResponse(nickname, null, model.clone()));
 
                         synchronized (model.lock) {
                             model.waitNumClient++;
@@ -367,21 +399,18 @@ public class Controller {
     /**
      * Method to get a listener (if present) associated with a specific nickname.
      * @param nickname
-     * @return the listener or null if no one with that nickname has been found.
+     * @return the listener or null if none of them with that nickname has been found.
      * @see ModelViewListener
      */
     public ModelViewListener getMVListenerByNickname(String nickname){
-        try {
-            for(int i = MVListeners.size() - 1; i >= 0; i--){
-                if(MVListeners.get(i).nickname.equals(nickname)){
-                    return MVListeners.get(i);
-               }
-            }
-            throw new RuntimeException();
-        } catch (NullPointerException e) { //SHOULDN'T HAPPEN
-            server.logger.addLog("MVListener not found", Severity.FAILURE);
-            return null;
+        for(int i = MVListeners.size() - 1; i >= 0; i--){
+            if(MVListeners.get(i).nickname.equals(nickname)){
+                return MVListeners.get(i);
+           }
         }
+
+        server.logger.addLog("MVListener not found", Severity.WARNING);
+        return null;
     }
 
     /**
@@ -400,15 +429,26 @@ public class Controller {
      * @see ModelViewListener
      */
     public void addMVListener(ModelViewListener listener) throws RemoteException {
-        MVListeners.add(listener);
+        synchronized (MVListeners){
+            MVListeners.add(listener);
+        }
         listener.handleEvent();
     }
 
+    /**
+     * Public method to add a temporary listener to the list. The controller will establish if it'll
+     * go to the real one or not by the login.
+     * @param listener the listener to add.
+     */
+    public void addTempMVL(ModelViewListener listener) throws RemoteException {
+        tempMVListeners.add(listener);
+        listener.handleEvent();
+    }
 
-    private void nextPlayer() throws RemoteException {
+    private void nextPlayer() throws RemoteException{
         if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
         //end turn event
-        EndTurn endTurn=new EndTurn(model.getCurrentPlayer(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
+        EndTurn endTurn=new EndTurn(model.getCurrentPlayerNickname(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
         sendEventToAll(endTurn);
         if(model.getRemainingTurns() == 0) model.checkWinner();
         else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
@@ -432,7 +472,7 @@ public class Controller {
      */
     public void deleteClient(Client client) throws RemoteException {
         ModelViewListener listener = getMVListenerByNickname(client.getNickname());
-        listener.isActive = false;
+        listener.stop();
         server.getClients().remove(client.getNickname());
         MVListeners.remove(listener);
     }

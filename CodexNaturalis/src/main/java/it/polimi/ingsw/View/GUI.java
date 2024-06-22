@@ -2,13 +2,13 @@ package it.polimi.ingsw.View;
 
 import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Graphical.CardComponent;
 import it.polimi.ingsw.Graphical.ImageDialog;
 import it.polimi.ingsw.Graphical.MainFrame;
 import it.polimi.ingsw.Model.*;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -38,7 +38,15 @@ public class GUI extends UI{
      */
     public GUI(ClientImpl client) {
         super(client);
-        f = new MainFrame( );
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+                f = new MainFrame();
+//            }});
+    }
+
+    public void stop() {
+        //TODO cosa deve fare?
     }
 
     /**
@@ -63,9 +71,7 @@ public class GUI extends UI{
 
         try {
             return future.get();
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        } catch (ExecutionException e) {
+        } catch (InterruptedException |ExecutionException  e) {
             throw new RuntimeException(e);
         } finally {
             executor.shutdown();
@@ -117,9 +123,14 @@ public class GUI extends UI{
      */
     @Override
     public void update(GenericEvent e){
+
+        //TODO gestire messaggi chat asincroni
         synchronized (inputEvents) {
-            inputEvents.add(e);
-            System.out.println("[DEBUG] received: "+ e.getClass().getName());
+            //TODO perchè i ping arrivano qui?
+            if (!(e instanceof PingMessage)) {
+                inputEvents.add(e);
+                System.out.println("[DEBUG] received: "+ e.getClass().getName());
+            }
         }
     }
 
@@ -138,16 +149,16 @@ public class GUI extends UI{
      */
     @Override
     public void run() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
 
-                while(true){
+        Thread GUI = new Thread(){
+            @Override
+            public void run(){
+        while(true){
                     synchronized (inputEvents) {
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") ) continue;
+                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") && !ev.nickname.equals("every one") ) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -157,13 +168,11 @@ public class GUI extends UI{
 
 
                     switch(ev){
-                        //TODO per eventi di gioco devo anche aggiornare il frame
 
                         case ChooseNickname e:
-
                             synchronized(lock) {
                                 while (nickname == null || nickname.length() < 4 || nickname.contains(" ")) {
-                                    nickname = f.showDialog("Choose nickname", "Enter your nickname: \n At least 4 characters and no space allowed.", null);
+                                    nickname = f.showInputDialog("Choose nickname", "Enter your nickname: \n At least 4 characters and no space allowed.", null);
                                 }
                                 lock.notifyAll();
                             }
@@ -175,7 +184,7 @@ public class GUI extends UI{
                             possibilities.add("3");
                             possibilities.add("4");
                             while(s==null) {
-                                s = f.showDialog("Number of players",message, possibilities.toArray());
+                                s = f.showInputDialog("Number of players",message, possibilities.toArray());
                             }
                             newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
@@ -199,59 +208,55 @@ public class GUI extends UI{
                             break;
 
                         case DrawCardRequest e :
-                            //tolgo delle possibilità di scelta in base alle info dell'evento
-                            possibilities = new ArrayList<Object>();
-                            if(((DrawCardRequest) ev).goldCardinDeck > 0)    possibilities.add("Gold deck");
-                            if(((DrawCardRequest) ev).resCardinDeck > 0)    possibilities.add("Resource deck");
-                            n=1;
-                            for (PlayableCard c : ((DrawCardRequest) ev).tableCenterView.centerCards){
-                                if(c!=null) possibilities.add("Card "+n);
-                                n++;
+                            f.update(e.gameView, 2);
+                            JOptionPane.showMessageDialog(f, message);
+                            synchronized(f.getLock()) {
+                                try {
+                                    f.getLock().wait();
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
                             }
-
-                            while(s==null) {
-                                s = f.showDialog("Draw a card",message, possibilities.toArray());
-                            }
-                            if (s.contains("deck")){
-                                if (s.contains("Resource")) n=4;
-                                else n=5;
-                            }
-                            else n=Integer.parseInt(String.valueOf(s.charAt(s.length()-1)))-1;
-                            newEvent = new DrawCardResponse( n, client.getNickname());
+                            newEvent = new DrawCardResponse( f.getDrawChoice(), client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case PlayCardRequest e :
-                            s=null;
-                            int posx=-1, posy=-1;
-                            while(s==null) {
-                                s = f.showDialog("Play card phase 1: choose card",message, null);
+                            f.update(e.gameView, 1);
+                            synchronized(f.getLock()) {
+                                try {
+                                    f.getLock().wait();
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
                             }
-                            while(posx==-1) {
-                                posx = Integer.parseInt( f.showDialog("Play a card phase 2: choose posx",message, null));
-                            }
-                            while(posy==-1) {
-                                posy = Integer.parseInt( f.showDialog("Play a card phase 3: choose posy",message, null));
-                            }
-                            newEvent = new PlayCardResponse( client.getNickname(),e.playerView.hand.handCards[Integer.parseInt(s)-1] ,posx,posy);
+                            CardComponent card=f.getPlayChoice();
+                            if (card.isFlipped()) e.getPlayerView(e.nickname).hand.handCards[card.getCardID()].isFacedown=true;
+                            newEvent = new PlayCardResponse( client.getNickname(),e.getPlayerView(e.nickname).hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
                             break;
 
                         case SetTokenColorRequest e :
                             possibilities=new ArrayList<Object>();
-                            for(TokenColor c : (((SetTokenColorRequest)ev).availableColors)){
+                            for(TokenColor c : e.availableColors){
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
-                                s = f.showDialog("Choose token color",message, possibilities.toArray());
+                                s = f.showInputDialog("Choose token color",message, possibilities.toArray());
                             }
-                            newEvent = new SetTokenColorResponse(TokenColor.valueOf(s).ordinal()+1 , client.getNickname());
+                            switch (TokenColor.valueOf(s)){
+                                case  TokenColor.RED-> n=1;
+                                case TokenColor.YELLOW -> n=2;
+                                case TokenColor.GREEN -> n=3;
+                                case TokenColor.BLUE -> n=4;
+                            }
+                            newEvent = new SetTokenColorResponse(n , client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case JoinLobby e :
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = f.showDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
+                                s = f.showInputDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
                             }
                             f.setNickname(e.getNewNickname());
                             newEvent = new SetPassword( e.getNewNickname(),s.trim());
@@ -277,39 +282,56 @@ public class GUI extends UI{
                         case StartGame e:
                             //switch to game frame
                             JOptionPane.showMessageDialog(f, message);
-                            //f.reactStartGame((StartGame) ev);
+                            break;
+                        case StartTurn e:
+                            //show message + update view
+                            f.update(e.gameView,0);
+                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case EndTurn e:
                             //show message + update view
+                            f.update(e.gameView, 0);
                             JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case TurnOrder e:
-                            //show message +  update view
+                            f.reactStartGame(e.gameView);
                             JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case ReconnectionRequest e:
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = f.showDialog("Reconnection",message, null);
+                                s = f.showInputDialog("Reconnection",message, null);
                             }
                             newEvent = new ReconnectionResponse( client.getNickname(),s.trim());
                             notifyListener(newEvent);
                             break;
 
+                        case ErrorJoinLobby e:
+                            n=JOptionPane.showConfirmDialog(f,e.getMessage()+"\nDo you want to try to connect again?");
+                            if (n == 0)  notifyListener(new ClientRegister(client));
+                            else        System.exit(1);
+                            break;
+
                         case AckResponse e:
+                            if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) {
+                                if(e.ok) f.update(e.gameView,0);
+                                else JOptionPane.showMessageDialog(f, message);
+
+                            }
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
 
                         default:
-                            //show message
-                            JOptionPane.showMessageDialog(f, message);
+                            //do nothing
+                            break;
                     }
 
                 }
-            }
-        });
+
+            }};
+        GUI.start();
     }
 }

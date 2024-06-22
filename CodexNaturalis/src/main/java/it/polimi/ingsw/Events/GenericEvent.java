@@ -24,6 +24,7 @@ public abstract class GenericEvent implements Serializable {
     public GenericEvent(String message, String nickname) {
         this.message = message;
         this.nickname = nickname;
+        if(nickname == null || nickname.equals("every one")) mustBeSentToAll = true;
     }
 
     /**

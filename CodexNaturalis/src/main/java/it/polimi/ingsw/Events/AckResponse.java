@@ -40,14 +40,6 @@ public class AckResponse extends GenericResponse{
         this.gameView = null;
     }
 
-    public AckResponse(String nickname, String errorMessage, GameView gameView){
-        //solo per esito negativo
-        super(errorMessage, nickname);
-        this.ok = false;
-        this.response = null;
-        mustBeSentToAll=true;
-        this.gameView = gameView;
-    }
 
     @Override
     public String msgOutput(){
