@@ -8,6 +8,7 @@ import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.ModelView.PlayerView;
 import it.polimi.ingsw.ModelView.TableCenterView;
+import it.polimi.ingsw.Distributed.ServerImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -656,7 +657,7 @@ public class Game{
             }
 
             if(getCurrentPlayerNickname() != null){
-                for(ModelViewListener listener : MVListeners){
+                for(ModelViewListener listener : mvListeners){
                     listener.addEvent(new EndTurn(getCurrentPlayerNickname(), players[getCurPlayerPosition()].getNickname(), clone()));
                 }
             }
@@ -690,7 +691,7 @@ public class Game{
     }
 
     private ModelViewListener getMVListenerByNickname(String nickname){
-        for(ModelViewListener listener : MVListeners){
+        for(ModelViewListener listener : mvListeners){
             if(listener.nickname.equals(nickname)){
                 return listener;
             }
