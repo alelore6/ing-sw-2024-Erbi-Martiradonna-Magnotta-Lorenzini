@@ -19,7 +19,7 @@ public class EndTurn extends GenericEvent{
      * @param points current rankings
      */
     public EndTurn(String turnPlayer, String nickname, GameView gameView) {
-        super(turnPlayer+"'s turn is over.\n", nickname);
+        super(turnPlayer+"'s turn is over.", nickname);
         this.gameView = gameView;
         mustBeSentToAll=true;
     }

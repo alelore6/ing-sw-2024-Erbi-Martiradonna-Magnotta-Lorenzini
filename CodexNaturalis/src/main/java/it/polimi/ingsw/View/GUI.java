@@ -38,11 +38,7 @@ public class GUI extends UI{
      */
     public GUI(ClientImpl client) {
         super(client);
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-                f = new MainFrame();
-//            }});
+        f = new MainFrame(this);
     }
 
     public void stop() {
@@ -123,16 +119,20 @@ public class GUI extends UI{
      */
     @Override
     public void update(GenericEvent e){
-
-        //TODO gestire messaggi chat asincroni
-        synchronized (inputEvents) {
-            //TODO perchè i ping arrivano qui?
-            if (!(e instanceof PingMessage)) {
+        if (e instanceof PingMessage) return;
+        if (e instanceof ChatMessage){ if(!e.nickname.equals(nickname))f.addChatMessage(e.nickname,e.getMessage());}
+        else if (e instanceof ChatAck){ if(!((ChatAck) e).isOk) f.addChatMessage("game", "error sending the chat message");}
+        else if (e instanceof FinalRankings) JOptionPane.showMessageDialog(f,e.getMessage());
+        else synchronized (inputEvents) {
                 inputEvents.add(e);
                 System.out.println("[DEBUG] received: "+ e.getClass().getName());
-            }
         }
     }
+
+    public void sendChatMessage(String message){
+        listener.addEvent(new ChatMessage(message,nickname,null));
+    }
+
 
     /**
      * Every time the player make a play action the listener is notified
@@ -285,19 +285,20 @@ public class GUI extends UI{
                             break;
                         case StartTurn e:
                             //show message + update view
+                            if(e.turnPlayer.equals(nickname)) JOptionPane.showMessageDialog(f, message);
+                            else f.addChatMessage("game", e.getMessage());
                             f.update(e.gameView,0);
-                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case EndTurn e:
                             //show message + update view
+                            f.addChatMessage("game", e.getMessage());
                             f.update(e.gameView, 0);
-                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case TurnOrder e:
+                            f.addChatMessage("game", e.getMessage());
                             f.reactStartGame(e.gameView);
-                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case ReconnectionRequest e:

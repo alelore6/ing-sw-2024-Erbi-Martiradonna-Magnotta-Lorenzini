@@ -47,7 +47,7 @@ public class TableCenterPanel extends JSplitPane {
         this.setLeftComponent(createLeftPanel());
         this.setRightComponent(createRightPanel());
 
-        this.setDividerLocation(1000);
+        this.setDividerLocation(860);
     }
 
     private JPanel createRightPanel() {
@@ -77,7 +77,8 @@ public class TableCenterPanel extends JSplitPane {
         rightPanel.setLayout(new BorderLayout());
 
         setVisible(true);
-        hideDrawButton();
+        rightPanel.setMinimumSize(new Dimension(350, 300));
+
         return rightPanel;
     }
 
@@ -108,7 +109,7 @@ public class TableCenterPanel extends JSplitPane {
         } else {
             addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
         }
-
+        hideDrawButton();
         return leftPanel;
     }
 
@@ -145,7 +146,7 @@ public class TableCenterPanel extends JSplitPane {
         drawButton.setMargin(new Insets(2, 2, 2, 2));
         drawButton.addActionListener(e -> {
             System.out.println("Draw from " + title);
-            drawCard(deckIndex + 1);
+            drawCard(deckIndex + 5);
         });
         drawButtons.add(drawButton);
         deckPanel.add(drawButton, BorderLayout.EAST);

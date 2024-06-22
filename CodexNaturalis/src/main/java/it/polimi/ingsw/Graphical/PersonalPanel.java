@@ -121,10 +121,9 @@ public class PersonalPanel extends JSplitPane {
         add(leftPanel, JSplitPane.LEFT);
         add(rightPanel, JSplitPane.RIGHT);
 
-        setDividerLocation(1140); // Imposta la posizione iniziale del divisore
+        setDividerLocation(820); // Imposta la posizione iniziale del divisore
 
-        // Impostazione della larghezza minima e massima dei pannelli
-        leftPanel.setMinimumSize(new Dimension(900, 300));
+        // Impostazione della larghezza minima del pannello
         rightPanel.setMinimumSize(new Dimension(390, 300));
     }
 

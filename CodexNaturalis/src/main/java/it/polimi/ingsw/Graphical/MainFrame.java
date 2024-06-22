@@ -2,6 +2,7 @@ package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Game;
 import it.polimi.ingsw.ModelView.GameView;
+import it.polimi.ingsw.View.GUI;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,23 +11,31 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 
 public class MainFrame extends JFrame {
-
+    private GUI gui;
     private JMenuBar menuBar;
     private JPanel mainPanel;
     private JPanel backgroundPanel;
     private TableCenterPanel tableCenterPanel;
     public PersonalPanel myPanel;
+    private ChatPanel chatPanel;
     private HashMap<String, PlayerPanel> otherPlayers;
     private String nickname;
     private ImageIcon icon;
     private JPanel temp;
     private Object playLock=new Object();
 
-    public MainFrame() {
-
+    public MainFrame(GUI gui) {
         super("CodexNaturalis");
+        this.gui=gui;
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
+        setExtendedState(JFrame.MAXIMIZED_BOTH);// full screen
+
+
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        this.chatPanel=new ChatPanel(this);
+        splitPane.add(chatPanel, JSplitPane.LEFT);
+        splitPane.setDividerLocation(300); // Imposta la posizione iniziale del divisore
+
         mainPanel = new JPanel(new CardLayout());
         try {
             ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/rulebook/01.png"));
@@ -55,7 +64,8 @@ public class MainFrame extends JFrame {
             System.out.println("Errore nel caricamento dell'immagine: " + e.getMessage());
             e.printStackTrace();
         }
-        add(mainPanel, BorderLayout.CENTER);
+        splitPane.add(mainPanel, JSplitPane.RIGHT);
+        add(splitPane, BorderLayout.CENTER);
 
         setVisible(true);
     }
@@ -115,7 +125,7 @@ public class MainFrame extends JFrame {
                 menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
                 createGamePanels(gameView);
                 setJMenuBar(menuBar);
-
+                revalidate();
                 switchPanel("Table center");
             }});
     }
@@ -133,8 +143,7 @@ public class MainFrame extends JFrame {
                         break;
                     case 2: //drawing
                         tableCenterPanel.update(gameView, true);
-                        //myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
-                        switchPanel("Table center");
+                        //switchPanel("Table center");
                         break;
                     default:
                         tableCenterPanel.update(gameView, false);
@@ -159,6 +168,19 @@ public class MainFrame extends JFrame {
         JOptionPane.showMessageDialog(mainPanel,message);}});
     }
 
+    public void addChatMessage(String nickname, String message){
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+                chatPanel.addChatMessage(message,nickname);
+//            }
+//        });
+    }
+
+    protected void sendChatMessage(String message){
+        gui.sendChatMessage(message);
+    }
+
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -180,9 +202,12 @@ public class MainFrame extends JFrame {
             @Override
             public void run() {
                 Game model = new Game(4, new String[]{"1111", "2222", "3333", "4444"}, null);
-                MainFrame mainFrame = new MainFrame();
+                MainFrame mainFrame = new MainFrame(null);
                 mainFrame.setNickname("2222");
                 mainFrame.reactStartGame(model.clone());
+                mainFrame.addChatMessage("test", "test");
+                mainFrame.addChatMessage("game", "test");
+
             }
         });
     }
