@@ -76,7 +76,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
             ModelViewListener listener;
 
             synchronized(controller.getMVListeners()){
-                listener = new ModelViewListener(this, client);
+                // If the client is not rejoining, but it's joining for the first time
+                if(controller.getMVListenerByNickname(client.getNickname()) == null)
+                     listener = new ModelViewListener(this, client);
+                else listener = controller.getMVListenerByNickname(client.getNickname());
 
                 if(isReconnected){
                     // This starts the handle event
@@ -85,7 +88,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 }
                 else{
                     // This starts the handle event
-                    controller.addMVListener(listener);
+                    if(!controller.getMVListeners().contains(listener))
+                        controller.addMVListener(listener);
 
                     client.setNickname(temp);
                     clients.replace(temp, client);
@@ -151,7 +155,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
         // If client is connected with RMI.
-        if(!(client instanceof ClientSkeleton)) logger.addLog(event, Severity.RECEIVED);
+        if(!(client instanceof ClientSkeleton))
+            logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){
             if(event instanceof ClientRegister){
                 client.setNickname(((ClientRegister) event).getNickname());
@@ -186,7 +191,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         boolean allSent = false;
 
         while(true){
-            if(endSent >= clients.size()) break;
+            if(endSent >= controller.getMVListeners().size()) break;
         }
 
         System.exit(0);

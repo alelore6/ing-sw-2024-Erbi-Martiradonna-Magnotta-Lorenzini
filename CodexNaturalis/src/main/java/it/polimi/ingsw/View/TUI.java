@@ -4,6 +4,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.HandView;
+import it.polimi.ingsw.ModelView.PlayerView;
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -651,6 +652,20 @@ public class TUI extends UI {
 
                         case TurnOrder e :
                             firstPlayer = e.order.split(" ")[3];
+
+                            PlayerView p = null;
+
+                            for(PlayerView player : e.gameView.players){
+                                if(player.nickname.equals(client.getNickname())){
+                                    p = player;
+                                    break;
+                                }
+                            }
+
+                            assert p != null;
+
+                            privateObjectiveCard = p.objectiveCard;
+
                             break;
 
                         case ReconnectionRequest e:

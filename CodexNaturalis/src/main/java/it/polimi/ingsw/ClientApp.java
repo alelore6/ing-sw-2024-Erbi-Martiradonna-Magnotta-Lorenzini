@@ -72,7 +72,6 @@ public class ClientApp {
                             server.ping();
                         } catch (RemoteException e) {
                             if(client.getUserInterface().running) System.err.println("Can't receive from server.");
-                            System.out.println("Insert a comment about your game experience: ");
                             try {
                                 UnicastRemoteObject.unexportObject(server, true);
                             } catch (NoSuchObjectException e1) {

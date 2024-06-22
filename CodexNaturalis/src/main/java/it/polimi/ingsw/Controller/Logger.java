@@ -22,7 +22,7 @@ public class Logger{
         }
         else if(s == Severity.FAILURE)   outErr.println("[FAILURE] " + event.nickname + "'s " + event.getClass().getName() + " event: " + event.msgOutput() + "\n");
         else{
-            out.println("[" + s + "] " + event.nickname + "'s " + event.getClass().getName());
+            out.println("[" + s + "] " + event.nickname + "'s " + event.getClass().getName().split("\\.")[event.getClass().getName().split("\\.").length - 1] + ".");
         }
     }
 
