@@ -3,6 +3,7 @@ package it.polimi.ingsw.Graphical;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.View.GUI;
+import it.polimi.ingsw.Model.ConverterCardColorInt;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,33 +11,36 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.awt.Dimension;
+import javax.swing.border.EmptyBorder;
 
 public class TableCenterPanel extends JSplitPane {
     private GameView gameView;
     private ArrayList<JLabel> cardLabels;
+    private JLabel[] deckLabels;
     private int[] cardsID;
     private int drawChoice;
     private boolean drawing = false;
     private JButton[] spots;
-    private int[] spotXCoords = {/* coordinate*/};
-    private int[] spotYCoords = { /*coordinate*/};
+    private int[] spotXCoords = {/* coordinate */};
+    private int[] spotYCoords = { /* coordinate */};
     private ArrayList<JButton> drawButtons;
     private JLabel cardLabel;
-    private ImageIcon possiblePlayImage =null;
+    private ImageIcon possiblePlayImage = null;
     private final Object drawLock;
-
 
     public TableCenterPanel(GameView gameView, Object drawLock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
         this.drawLock = drawLock;
-        this.cardLabels = new ArrayList<JLabel>();
+        this.cardLabels = new ArrayList<>();
+        this.deckLabels = new JLabel[2];
         this.cardsID = new int[4];
         this.spots = new JButton[27];
         this.drawButtons = new ArrayList<>();
         try {
-            BufferedImage img =ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
-            possiblePlayImage= new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+            BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
+            possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,39 +75,39 @@ public class TableCenterPanel extends JSplitPane {
             }
         };
         rightPanel.setLayout(new BorderLayout());
-/*
-        for (int i = 0; i < 27; i++) {
-            spots[i] = new JButton();
-            spots[i].setBounds(spotXCoords[i], spotYCoords[i], 50, 50);
-            spots[i].setContentAreaFilled(false);
-            spots[i].setBorderPainted(false);
-            rightPanel.add(spots[i]);
-        }*/
+
         setVisible(true);
         hideDrawButton();
         return rightPanel;
     }
 
-
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new GridLayout(4, 1, 10, 10));
-        //TODO sistemare la carta da mostrare del deck
 
         // Decks
-        addDeck(leftPanel, "Gold Deck", 6);
-        addDeck(leftPanel, "Resource Deck", 5);
+        addDeck(leftPanel, "Gold Deck", gameView.tableCenterView.topGoldCardColor, 0);
+        addDeck(leftPanel, "Resource Deck", gameView.tableCenterView.topResourceCardColor, 1);
 
-        for (int i =0; i < 4; i++) {
-            if(gameView.tableCenterView.centerCards[i]!=null) addCardSpot(leftPanel, i, gameView.tableCenterView.centerCards[i].getID());
-            else addCardSpot(leftPanel, i, -1);
+        for (int i = 0; i < 4; i++) {
+            if (gameView.tableCenterView.centerCards[i] != null) {
+                addCardSpot(leftPanel, i, gameView.tableCenterView.centerCards[i].getID());
+            } else {
+                addCardSpot(leftPanel, i, -1);
+            }
         }
 
-        if (gameView.tableCenterView.objCards[0]!=null) addObjectiveCardSpot(leftPanel, "Objective Card 1", gameView.tableCenterView.objCards[0].getID());
-        else addObjectiveCardSpot(leftPanel, "Objective Card 1", -1);
+        if (gameView.tableCenterView.objCards[0] != null) {
+            addObjectiveCardSpot(leftPanel, "Objective Card 1", gameView.tableCenterView.objCards[0].getID());
+        } else {
+            addObjectiveCardSpot(leftPanel, "Objective Card 1", -1);
+        }
 
-        if (gameView.tableCenterView.objCards[1]!=null) addObjectiveCardSpot(leftPanel, "Objective Card 2", gameView.tableCenterView.objCards[1].getID());
-        else addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
+        if (gameView.tableCenterView.objCards[1] != null) {
+            addObjectiveCardSpot(leftPanel, "Objective Card 2", gameView.tableCenterView.objCards[1].getID());
+        } else {
+            addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
+        }
 
         return leftPanel;
     }
@@ -114,51 +118,63 @@ public class TableCenterPanel extends JSplitPane {
         cardPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JLabel cardLabel = new JLabel();
-        if (cardID>0)cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
-        else cardLabel.setIcon(possiblePlayImage);
+        if (cardID > 0) {
+            cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
+        } else {
+            cardLabel.setIcon(possiblePlayImage);
+        }
         cardPanel.add(cardLabel, BorderLayout.CENTER);
+
 
         panel.add(cardPanel);
     }
 
-    public void addDeck(JPanel panel, String title, int cardID) {
+    public void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
         JPanel deckPanel = new JPanel();
         deckPanel.setLayout(new BorderLayout());
         deckPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JLabel deckLabel = new JLabel();
-        deckLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, true), 0, 0));
+        int colorId = ConverterCardColorInt.getCardColorId(cardColor);
+        deckLabel.setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+        deckLabels[deckIndex] = deckLabel;
         deckPanel.add(deckLabel, BorderLayout.CENTER);
 
         JButton drawButton = new JButton("Draw");
+        drawButton.setPreferredSize(new Dimension(100, 10));
+        drawButton.setMargin(new Insets(2, 2, 2, 2));
         drawButton.addActionListener(e -> {
             System.out.println("Draw from " + title);
-            drawCard(cardID);
+            drawCard(deckIndex + 1);
         });
         drawButtons.add(drawButton);
-        deckPanel.add(drawButton, BorderLayout.SOUTH);
+        deckPanel.add(drawButton, BorderLayout.EAST);
         panel.add(deckPanel);
     }
-
-    private void addCardSpot(JPanel panel, int index,int cardID) {
+    private void addCardSpot(JPanel panel, int index, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
-        cardPanel.setBorder(BorderFactory.createTitledBorder("Card "+(index+1)));
+        cardPanel.setBorder(BorderFactory.createTitledBorder("Card " + (index + 1)));
 
         JLabel cardLabel = new JLabel();
-        if(cardID>0) cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
-        else cardLabel.setIcon(possiblePlayImage);
+        if (cardID > 0) {
+            cardLabel.setIcon(getImageIcon(GUI.getCardPath(cardID, false), 0, 0));
+        } else {
+            cardLabel.setIcon(possiblePlayImage);
+        }
         cardLabels.add(cardLabel);
-        cardsID[index]=cardID;
+        cardsID[index] = cardID;
         cardPanel.add(cardLabel, BorderLayout.CENTER);
 
         JButton drawButton = new JButton("Draw");
+        drawButton.setPreferredSize(new Dimension(100, 1));
+        drawButton.setMargin(new Insets(2, 1, 5, 1));
         drawButton.addActionListener(e -> {
-            System.out.println("Draw card" + index+1);
-            drawCard(index+1);
+            System.out.println("Draw card " + (index + 1));
+            drawCard(index + 1);
         });
         drawButtons.add(drawButton);
-        cardPanel.add(drawButton, BorderLayout.SOUTH);
+        cardPanel.add(drawButton, BorderLayout.EAST);
         panel.add(cardPanel);
     }
 
@@ -174,59 +190,63 @@ public class TableCenterPanel extends JSplitPane {
 
     private void drawCard(int spotID) {
         if (drawing) {
-            this.drawChoice=spotID;
+            this.drawChoice = spotID;
             hideDrawButton();
-            synchronized (drawLock){ drawLock.notifyAll();}
+            synchronized (drawLock) {
+                drawLock.notifyAll();
+            }
         }
     }
 
+    public int getDrawChoice() {
+        return drawChoice;
+    }
 
-
-
-   public int getDrawChoice(){return drawChoice;}
-
-        private void updateCards() {
-        for(int i=0; i<4; i++){
-            if(gameView.tableCenterView.centerCards[i]==null){
+    private void updateCards() {
+        for (int i = 0; i < 4; i++) {
+            if (gameView.tableCenterView.centerCards[i] == null) {
                 cardLabels.get(i).setIcon(possiblePlayImage);
-                cardsID[i]=-1;
-            }
-            else if(cardsID[i]!=gameView.tableCenterView.centerCards[i].getID()){
-                cardsID[i]=gameView.tableCenterView.centerCards[i].getID();
+                cardsID[i] = -1;
+            } else if (cardsID[i] != gameView.tableCenterView.centerCards[i].getID()) {
+                cardsID[i] = gameView.tableCenterView.centerCards[i].getID();
                 cardLabels.get(i).setIcon(getImageIcon(GUI.getCardPath(cardsID[i], false), 0, 0));
             }
         }
+    }
 
+    private void updateDeck() {
+        for (int i = 0; i < 2; i++) {
+            CardColor deckCardColor;
+            if (i == 0) {
+                deckCardColor = gameView.tableCenterView.topGoldCardColor;
+            } else {
+                deckCardColor = gameView.tableCenterView.topResourceCardColor;
+            }
+            int colorId = ConverterCardColorInt.getCardColorId(deckCardColor);
+            deckLabels[i].setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
         }
+    }
 
+    public void showDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(true);
+        }
+    }
 
-            private void updateDeck (){
-                //TODO update deck
-            }
-
-
-            public void showDrawButton () {
-                for (JButton button : drawButtons) {
-                    button.setVisible(true);
-                }
-            }
-            public void hideDrawButton () {
-                for (JButton button : drawButtons) {
-                    button.setVisible(false);
-                }
-            }
-
-            public void update (GameView gameView, boolean drawing){
-                this.gameView = gameView;
-                this.drawing = drawing;
-                updateDeck();
-                updateCards();
-                //TODO collegare update
-                if (drawing) {
-                    showDrawButton();
-                }
-            }
-
+    private void hideDrawButton() {
+        for (JButton button : drawButtons) {
+            button.setVisible(false);
+        }
+    }
+    public void update(GameView gameView, boolean drawing) {
+        this.gameView = gameView;
+        this.drawing = drawing;
+        updateDeck();
+        updateCards();
+        if (drawing) {
+            showDrawButton();
+        }
+    }
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
@@ -235,9 +255,10 @@ public class TableCenterPanel extends JSplitPane {
         String[] playerNames = {"1", "2", "3", "4"};
         Game game = new Game(4, playerNames, null);
         GameView gameView = new GameView(game);
-        TableCenterPanel panel = new TableCenterPanel(gameView,new Object());
+        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
 
         frame.add(panel);
         frame.setVisible(true);
     }
 }
+
