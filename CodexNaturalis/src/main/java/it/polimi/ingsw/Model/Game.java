@@ -31,7 +31,7 @@ public class Game{
     /**
      * boolean that states if the game is either finished or still in act
      */
-    private boolean isFinished;
+    boolean isFinished;
     /**
      * attribute that keeps count of remaining turns when the ending stage of the game is triggered
      */
@@ -40,6 +40,11 @@ public class Game{
      * integer representing the current player position in the array of players
      */
      private int curPlayerPosition;
+
+    public void setCurPlayerPosition(int curPlayerPosition) {
+        this.curPlayerPosition = curPlayerPosition;
+    }
+
     /**
      * The starting cards deck
      */
@@ -332,7 +337,13 @@ public class Game{
         }
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
-            punteggi[i] = tablecenter.getScoretrack().getRankings().get(players[i].getNickname());
+
+            Integer punti = rankings.get(players[i].getNickname());
+            if (punti!=null) {
+                punteggi[i] = punti;
+            }else{
+                punteggi[i] = 0;
+            }
 
 
             punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[0], i);
@@ -436,7 +447,7 @@ public class Game{
                 //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
                 //avrà totalizzato
 
-                if (required != 0) {
+                if (required != 0 && players[playerPos].getCurrentResources().currentResources!=null) {
                     if ((players[playerPos].getCurrentResources().currentResources.get(resource) / required) < minPoints) {
                         minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
                     }
@@ -612,7 +623,7 @@ public class Game{
 }
 
 
-
+//TODO testare STARTGAME(), ENDGAME(), CHECKWINNER(), NEXTPLAYER(), DISCONNECTPLAYER(), REJOIN(), CHECKOBJECTIVEPOINTS()
 
 
 
