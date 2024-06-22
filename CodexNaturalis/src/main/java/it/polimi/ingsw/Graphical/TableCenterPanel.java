@@ -21,14 +21,15 @@ public class TableCenterPanel extends JSplitPane {
     private int[] spotXCoords = {/* coordinate*/};
     private int[] spotYCoords = { /*coordinate*/};
     private ArrayList<JButton> drawButtons;
-    public int spotID;
     private JLabel cardLabel;
     private ImageIcon possiblePlayImage =null;
+    private final Object drawLock;
 
 
-    public TableCenterPanel(GameView gameView) {
+    public TableCenterPanel(GameView gameView, Object drawLock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
+        this.drawLock = drawLock;
         this.cardLabels = new ArrayList<JLabel>();
         this.cardsID = new int[4];
         this.spots = new JButton[27];
@@ -79,6 +80,7 @@ public class TableCenterPanel extends JSplitPane {
             rightPanel.add(spots[i]);
         }*/
         setVisible(true);
+        hideDrawButton();
         return rightPanel;
     }
 
@@ -153,7 +155,7 @@ public class TableCenterPanel extends JSplitPane {
         JButton drawButton = new JButton("Draw");
         drawButton.addActionListener(e -> {
             System.out.println("Draw card" + index+1);
-            drawCard(index);
+            drawCard(index+1);
         });
         drawButtons.add(drawButton);
         cardPanel.add(drawButton, BorderLayout.SOUTH);
@@ -172,8 +174,9 @@ public class TableCenterPanel extends JSplitPane {
 
     private void drawCard(int spotID) {
         if (drawing) {
-            this.spotID=spotID;
-            //TODO confermare l'evento alla gui
+            this.drawChoice=spotID;
+            hideDrawButton();
+            synchronized (drawLock){ drawLock.notifyAll();}
         }
     }
 
@@ -232,7 +235,7 @@ public class TableCenterPanel extends JSplitPane {
         String[] playerNames = {"1", "2", "3", "4"};
         Game game = new Game(4, playerNames, null);
         GameView gameView = new GameView(game);
-        TableCenterPanel panel = new TableCenterPanel(gameView);
+        TableCenterPanel panel = new TableCenterPanel(gameView,new Object());
 
         frame.add(panel);
         frame.setVisible(true);

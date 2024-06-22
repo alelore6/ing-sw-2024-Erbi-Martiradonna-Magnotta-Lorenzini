@@ -27,7 +27,6 @@ public class PersonalPanel extends JSplitPane {
     private boolean playing = false;
     private ImageIcon possiblePlayImage =null;
     private final Object lock;
-    public boolean playConfirmed = false;
 
 
     PersonalPanel(PlayerView playerView, Object lock) {
@@ -165,8 +164,7 @@ public class PersonalPanel extends JSplitPane {
                 if(i==0) {//la giocata viene confermata
                     hidePlayButton();
                     selectedLabel.setBorder(new LineBorder(Color.RED, 4));
-                    playConfirmed=true;
-                    lock.notifyAll();
+                    synchronized (lock){lock.notifyAll();}
                 }
             } else JOptionPane.showMessageDialog(this,"Remember to select a position where to play the card, then click on the chosen card play button");
         }
@@ -175,7 +173,6 @@ public class PersonalPanel extends JSplitPane {
 
     protected void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
-        playConfirmed=false;
         if (playing) {
             showPlayButton();
         }

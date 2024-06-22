@@ -9,7 +9,6 @@ import it.polimi.ingsw.Model.*;
 
 import javax.swing.*;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.*;
@@ -39,8 +38,11 @@ public class GUI extends UI{
      */
     public GUI(ClientImpl client) {
         super(client);
-
-        f = new MainFrame();
+//        SwingUtilities.invokeLater(new Runnable() {
+//            @Override
+//            public void run() {
+                f = new MainFrame();
+//            }});
     }
 
     public void stop() {
@@ -54,7 +56,7 @@ public class GUI extends UI{
      */
     public String chooseNickname() {
         //mando l'evento per gestirlo dentro run con swingUtilities.invokeLater
-        update(new ChooseNickname("message","every one"));
+        update(new ChooseNickname("message","everyone"));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         //thread speciale che aspetta l'input
@@ -124,8 +126,11 @@ public class GUI extends UI{
 
         //TODO gestire messaggi chat asincroni
         synchronized (inputEvents) {
-            inputEvents.add(e);
-            System.out.println("[DEBUG] received: "+ e.getClass().getName());
+            //TODO perchè i ping arrivano qui?
+            if (!(e instanceof PingMessage)) {
+                inputEvents.add(e);
+                System.out.println("[DEBUG] received: "+ e.getClass().getName());
+            }
         }
     }
 
@@ -144,16 +149,16 @@ public class GUI extends UI{
      */
     @Override
     public void run() {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
 
-                while(true){
+        Thread GUI = new Thread(){
+            @Override
+            public void run(){
+        while(true){
                     synchronized (inputEvents) {
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") ) continue;
+                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") && !ev.nickname.equals("every one") ) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -165,10 +170,9 @@ public class GUI extends UI{
                     switch(ev){
 
                         case ChooseNickname e:
-
                             synchronized(lock) {
                                 while (nickname == null || nickname.length() < 4 || nickname.contains(" ")) {
-                                    nickname = f.showDialog("Choose nickname", "Enter your nickname: \n At least 4 characters and no space allowed.", null);
+                                    nickname = f.showInputDialog("Choose nickname", "Enter your nickname: \n At least 4 characters and no space allowed.", null);
                                 }
                                 lock.notifyAll();
                             }
@@ -180,7 +184,7 @@ public class GUI extends UI{
                             possibilities.add("3");
                             possibilities.add("4");
                             while(s==null) {
-                                s = f.showDialog("Number of players",message, possibilities.toArray());
+                                s = f.showInputDialog("Number of players",message, possibilities.toArray());
                             }
                             newEvent = new NumPlayersResponse(Integer.parseInt(s) , client.getNickname());
                             notifyListener(newEvent);
@@ -205,17 +209,26 @@ public class GUI extends UI{
 
                         case DrawCardRequest e :
                             f.update(e.gameView, 2);
-//                            try {
-//                                f.getLock().wait();
-//                            } catch (InterruptedException ex) {
-//                                throw new RuntimeException(ex);
-//                            }
+                            synchronized(f.getLock()) {
+                                try {
+                                    f.getLock().wait();
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
                             newEvent = new DrawCardResponse( f.getDrawChoice(), client.getNickname());
                             notifyListener(newEvent);
                             break;
 
                         case PlayCardRequest e :
                             f.update(e.gameView, 1);
+                            synchronized(f.getLock()) {
+                                try {
+                                    f.getLock().wait();
+                                } catch (InterruptedException ex) {
+                                    throw new RuntimeException(ex);
+                                }
+                            }
                             CardComponent card=f.getPlayChoice();
                             newEvent = new PlayCardResponse( client.getNickname(),e.getPlayerView(e.nickname).hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
@@ -227,7 +240,7 @@ public class GUI extends UI{
                                 possibilities.add(c.name());
                             }
                             while(s==null) {
-                                s = f.showDialog("Choose token color",message, possibilities.toArray());
+                                s = f.showInputDialog("Choose token color",message, possibilities.toArray());
                             }
                             switch (TokenColor.valueOf(s)){
                                 case  TokenColor.RED-> n=1;
@@ -241,7 +254,7 @@ public class GUI extends UI{
 
                         case JoinLobby e :
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = f.showDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
+                                s = f.showInputDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
                             }
                             f.setNickname(e.getNewNickname());
                             newEvent = new SetPassword( e.getNewNickname(),s.trim());
@@ -270,23 +283,24 @@ public class GUI extends UI{
                             break;
                         case StartTurn e:
                             //show message + update view
+                            f.update(e.gameView,0);
                             JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case EndTurn e:
                             //show message + update view
-                            JOptionPane.showMessageDialog(f, message);
                             f.update(e.gameView, 0);
+                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case TurnOrder e:
-                            JOptionPane.showMessageDialog(f, message);
                             f.reactStartGame(e.gameView);
+                            JOptionPane.showMessageDialog(f, message);
                             break;
 
                         case ReconnectionRequest e:
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = f.showDialog("Reconnection",message, null);
+                                s = f.showInputDialog("Reconnection",message, null);
                             }
                             newEvent = new ReconnectionResponse( client.getNickname(),s.trim());
                             notifyListener(newEvent);
@@ -299,18 +313,19 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) f.update(e.gameView,0);
+                            if ((e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse)&& e.ok) f.update(e.gameView,0);
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
 
                         default:
-                            //show message
-                            JOptionPane.showMessageDialog(f, message);
+                            //do nothing
+                            break;
                     }
 
                 }
-            }
-        });
+
+            }};
+        GUI.start();
     }
 }

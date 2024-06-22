@@ -38,6 +38,7 @@ class PlayedCardsPanel extends JPanel {
     private int center_row=1;
     private int center_col=1;
     private boolean playing=false;
+    private int numCards=0;
 
     /**
      * Constructor where the cards are positioned for the first time
@@ -68,10 +69,12 @@ class PlayedCardsPanel extends JPanel {
                     if(matrix[i][j] instanceof StartingCard && matrix[i][j].getID()>0){
                         center_row=i;
                         center_col=j;
-                        System.out.println("Center position: "+center_row+" "+center_col);
                     }
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
-                    if (c.getCardID()!=-1) c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID(), matrix[i][j].isFacedown)));
+                    if (c.getCardID()!=-1) {
+                        c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID(), matrix[i][j].isFacedown)));
+                        numCards++;
+                    }
                     cardComponents.add(c);
                 }
             }
@@ -106,9 +109,10 @@ class PlayedCardsPanel extends JPanel {
      * @param matrix the player's played cards
      */
     protected void update(Card[][] matrix){
-        int numCards = cardComponents.size();
         int row =matrix.length;
         int col=matrix[0].length;
+        removeAll(); // Rimuove tutti i componenti presenti nel JPanel
+        cardComponents.clear();
         for (int i = 0; i < row; i++) {
             for (int j = 0; j < col; j++) {
                 if (matrix[i][j]!=null && matrix[i][j] instanceof StartingCard && matrix[i][j].getID()>0) {
@@ -116,15 +120,19 @@ class PlayedCardsPanel extends JPanel {
                     center_col = j;
                 }
                 //le nuove carte vengono aggiunte
-                if (matrix[i][j] != null && matrix[i][j].getPlayOrder()>numCards) {
+                if (matrix[i][j] != null /*&& matrix[i][j].getPlayOrder()>numCards-1*/) {
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
-                    if(c.getCardID()!=-1) c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID() , matrix[i][j].isFacedown)));
+                    if(c.getCardID()!=-1) {
+                        c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID(), matrix[i][j].isFacedown)));
+                        numCards++;
+                    }
                     cardComponents.add(c);
                 }
             }
         }
 
         selectedCard=null;
+        revalidate();
         repaint();
     }
 

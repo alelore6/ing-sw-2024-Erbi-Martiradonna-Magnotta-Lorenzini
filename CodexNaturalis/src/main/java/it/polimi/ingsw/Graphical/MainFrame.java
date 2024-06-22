@@ -23,6 +23,7 @@ public class MainFrame extends JFrame {
     private Object playLock=new Object();
 
     public MainFrame() {
+
         super("CodexNaturalis");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
@@ -61,7 +62,7 @@ public class MainFrame extends JFrame {
 
 
     private void createGamePanels(GameView gameView) {
-        tableCenterPanel = new TableCenterPanel(gameView);
+        tableCenterPanel = new TableCenterPanel(gameView,playLock);
         addToMenuBar("Table center");
         mainPanel.add(tableCenterPanel, "Table center");
         addToMenuBar("My panel");
@@ -107,41 +108,55 @@ public class MainFrame extends JFrame {
     }
 
     public void reactStartGame(GameView gameView) {
-        this.menuBar = new JMenuBar();
-        menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
-        createGamePanels(gameView);
-        this.setJMenuBar(menuBar);
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                menuBar = new JMenuBar();
+                menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
+                createGamePanels(gameView);
+                setJMenuBar(menuBar);
 
-        switchPanel("Table center");
+                switchPanel("Table center");
+            }});
     }
 
 
     public void update(GameView gameView, int playPhase) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                switch (playPhase) {
+                    case 1: //playing
+                        tableCenterPanel.update(gameView, false);
+                        myPanel.update(gameView.getPlayerViewByNickname(nickname), true);
+                        switchPanel("My Panel");
+                        break;
+                    case 2: //drawing
+                        tableCenterPanel.update(gameView, true);
+                        myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
+                        switchPanel("Table center");
+                        break;
+                    default:
+                        tableCenterPanel.update(gameView, false);
+                        myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
+                        break;
+                }
 
-        switch (playPhase){
-            case 1: //playing
-                tableCenterPanel.update(gameView, false);
-                myPanel.update(gameView.getPlayerViewByNickname(nickname), true);
-                switchPanel("myPanel");
-                break;
-            case 2: //drawing
-                tableCenterPanel.update(gameView, true);
-                myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
-                switchPanel("Table center");
-                break;
-            default:
-                tableCenterPanel.update(gameView, false);
-                myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
-                break;
-        }
-
-        for (String name : otherPlayers.keySet()) {
-            otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
-        }
+                for (String name : otherPlayers.keySet()) {
+                    otherPlayers.get(name).update(gameView.getPlayerViewByNickname(name));
+                }
+            }});
     }
 
-    public String showDialog(String title, String message, Object[] possibilities) {
+    public String showInputDialog(String title, String message, Object[] possibilities) {
         return (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
+    }
+
+    public void showMessageDialog(String message){
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+        JOptionPane.showMessageDialog(mainPanel,message);}});
     }
 
     public void setNickname(String nickname) {

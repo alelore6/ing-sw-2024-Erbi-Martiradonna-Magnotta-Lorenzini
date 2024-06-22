@@ -383,7 +383,7 @@ public class Game{
             turnPhase=0;
 
             //send StartTurn event
-            StartTurn startTurn = new StartTurn(getCurrentPlayer(), players[curPlayerPosition].getToken().getColor().toString());
+            StartTurn startTurn = new StartTurn(getCurrentPlayer(), players[curPlayerPosition].getToken().getColor().toString(), clone());
             for(ModelViewListener modelViewListener : MVListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
