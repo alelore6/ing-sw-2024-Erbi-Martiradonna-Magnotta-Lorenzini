@@ -449,15 +449,16 @@ public class TUI extends UI {
         }
         else if(e instanceof FinalRankings){
             printOut(setColorForString("GREEN", e.msgOutput(), true));
+            printOut("Insert a comment about your game experience: ");
 
             // TODO: non lo fa fare: si blocca in in.close() in stop() qua.
-            // client.clientApp.stop();
+            client.clientApp.stop();
         }
         else if(e instanceof StartTurn){
             printOut("It's " + setColorForString(((StartTurn) e).color, ((StartTurn) e).turnPlayer, true) + "'s turn.");
         }
         else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
-            printOut(e.msgOutput());
+            if(e.msgOutput() != null) printOut(e.msgOutput());
         }
         else{
             synchronized(lock_events){
@@ -554,7 +555,7 @@ public class TUI extends UI {
                                     "(1) for yes, (2) for no:");
                             n = chooseInt(1,2);
                             if(n == 1)  notifyListener(new ClientRegister(client));
-                            else        System.exit(1);
+                            else        System.exit(0);
                             break;
 
                         case ChooseObjectiveRequest e :

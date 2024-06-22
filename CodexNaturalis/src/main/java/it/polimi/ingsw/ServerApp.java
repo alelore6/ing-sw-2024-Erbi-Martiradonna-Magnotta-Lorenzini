@@ -69,18 +69,18 @@ public class ServerApp {
     private void startRMI () throws RemoteException, AlreadyBoundException {
 
         if(registry == null){
-            // Get the public address
-            BufferedReader in = null;
-            String ip = null;
-            try {
-                URL whatismyip = new URL("https://checkip.amazonaws.com");
-                in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-                ip = in.readLine();
-                if(in != null) in.close();
-            }
-            catch(IOException e){e.printStackTrace();}
-
-            System.setProperty("java.rmi.server.hostname", ip);
+//            // Get the public address
+//            BufferedReader in = null;
+//            String ip = null;
+//            try {
+//                URL whatismyip = new URL("https://checkip.amazonaws.com");
+//                in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
+//                ip = in.readLine();
+//                if(in != null) in.close();
+//            }
+//            catch(IOException e){e.printStackTrace();}
+//
+//            System.setProperty("java.rmi.server.hostname", ip);
             registry = LocateRegistry.createRegistry(1099);
         }
 
@@ -106,14 +106,7 @@ public class ServerApp {
 
                                 while (running)    clientSkeleton.receive(server);
 
-                            }catch(RemoteException e){}
-                            finally{
-                                try {
-                                    socket.close();
-                                } catch (IOException e){
-                                    System.err.println("Cannot close socket.");
-                                }
-                            }
+                            }catch(RemoteException ignored){}
                         }
                     }.start();
                 } catch (IOException e) {

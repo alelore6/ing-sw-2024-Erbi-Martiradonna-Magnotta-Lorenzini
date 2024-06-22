@@ -54,7 +54,7 @@ public class GUI extends UI{
      */
     public String chooseNickname() {
         //mando l'evento per gestirlo dentro run con swingUtilities.invokeLater
-        update(new ChooseNickname("message","everyone"));
+        update(new ChooseNickname("message","every one"));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         //thread speciale che aspetta l'input

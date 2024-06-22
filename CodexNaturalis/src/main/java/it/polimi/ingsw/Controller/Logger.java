@@ -20,9 +20,9 @@ public class Logger{
             // useless for me
             // out.println("[" + s + "] listening for an event...");
         }
-        else if(s == Severity.FAILURE)   outErr.println("[FAILURE] " + event.nickname + "'s " + event.getClass() + " event: " + event.msgOutput() + "\n");
+        else if(s == Severity.FAILURE)   outErr.println("[FAILURE] " + event.nickname + "'s " + event.getClass().getName() + " event: " + event.msgOutput() + "\n");
         else{
-            out.println("[" + s + "] " + event.nickname + "'s " + event.getClass());
+            out.println("[" + s + "] " + event.nickname + "'s " + event.getClass().getName());
         }
     }
 

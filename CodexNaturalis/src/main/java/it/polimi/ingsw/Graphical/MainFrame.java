@@ -13,7 +13,6 @@ public class MainFrame extends JFrame {
 
     private JMenuBar menuBar;
     private JPanel mainPanel;
-    private JPanel chatPanel;
     private JPanel backgroundPanel;
     private TableCenterPanel tableCenterPanel;
     public PersonalPanel myPanel;

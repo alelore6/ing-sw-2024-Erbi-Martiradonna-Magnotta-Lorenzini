@@ -30,6 +30,7 @@ public class ServerStub implements Server, Serializable {
     public void register(Client client) throws RemoteException {
         try{
             this.socket = new Socket(ip, port);
+            socket.setKeepAlive(true);
             try{
                 this.out = new ObjectOutputStream(socket.getOutputStream());
             }catch(IOException e) {

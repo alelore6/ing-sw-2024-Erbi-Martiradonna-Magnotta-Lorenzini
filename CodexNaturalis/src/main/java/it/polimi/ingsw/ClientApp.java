@@ -42,6 +42,8 @@ public class ClientApp {
                 ip = isLocal ? "localhost" : insertIP();
 
             }catch(IOException e){
+                // TODO: se avanza tempo, capire perché se richiedo l'inserimento di un IP
+                //  dopo l'errato inserimento, non prende l'input per una volta.
                 System.err.println("Input error. Exiting...");
                 System.exit(1);
             }
@@ -54,7 +56,7 @@ public class ClientApp {
                 client = new ClientImpl(this, server, isTUI);
             } catch (RemoteException | NotBoundException e) {
                 System.err.println("Connection refused. Exiting...");
-                System.exit(0);
+                System.exit(1);
             }
 
             Thread RMIPing = new Thread(){
@@ -69,11 +71,13 @@ public class ClientApp {
                         try {
                             server.ping();
                         } catch (RemoteException e) {
-                            System.err.println("Can't receive from server.");
+                            if(client.getUserInterface().running) System.err.println("Can't receive from server.");
                             System.out.println("Insert a comment about your game experience: ");
                             try {
                                 UnicastRemoteObject.unexportObject(server, true);
-                            } catch (NoSuchObjectException ignored) {}
+                            } catch (NoSuchObjectException e1) {
+                                // TODO: gestire l'eccezione (viene lanciata).
+                            }
                             running = false;
                             ClientApp.this.stop();
                         }
@@ -99,7 +103,7 @@ public class ClientApp {
                 client = new ClientImpl(this, server, isTUI);
             }catch(RemoteException e){
                 System.err.println("Connection refused. Exiting...");
-                System.exit(0);
+                System.exit(1);
             }
 
             Thread socketThread = new Thread(){
@@ -112,8 +116,7 @@ public class ClientApp {
                             if(receivedEvent != null)
                                 client.getUserInterface().update(receivedEvent);
                         }catch(RemoteException e){
-                            if(!client.getUserInterface().running) System.err.println("Can't receive from server.");
-                            System.out.println("Insert a comment about your game experience: ");
+                            if(client.getUserInterface().running) System.err.println("Can't receive from server.");
 
                             try{
                                 ((ServerStub) server).close();
@@ -147,7 +150,9 @@ public class ClientApp {
         try {
             client.getUserInterface().stop();
             client.getUserInterface().getListener().stop();
-        } catch (InterruptedException ignored) {}
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private String insertIP() throws IOException {

@@ -44,12 +44,14 @@ public class ViewControllerListener extends Listener {
                     synchronized(lock_queue){
                         if(!getEventQueue().isEmpty()) {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
-                            //System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
+                            // System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
                             try {
                                 ((ClientImpl) client).sendEvent(currentEvent);
                             } catch (RemoteException e) {
-                                e.printStackTrace();
-                                throw new RuntimeException(e);
+                                if(((ClientImpl) client).getUserInterface().running){
+                                    e.printStackTrace();
+                                    throw new RuntimeException(e);
+                                }
                             }
                         }
                     }
