@@ -136,7 +136,8 @@ public class Hand {
         }
         else{
             displayedCards[40][40]=card;
-
+            card.playOrder=NcardsPlayed;
+            NcardsPlayed++;
             player.getCurrentResources().update(card, null);
             return;
         }

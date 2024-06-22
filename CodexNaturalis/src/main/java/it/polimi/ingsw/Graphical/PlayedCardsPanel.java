@@ -22,7 +22,7 @@ class PlayedCardsPanel extends JPanel {
     /**
      * the constant that describes the overlapping of the images
      */
-    private final int overlapOffset = 40;
+    private final int overlapOffset = 50;
     /**
      * the list of the cards info contained in the panel
      */
@@ -120,7 +120,7 @@ class PlayedCardsPanel extends JPanel {
                     center_col = j;
                 }
                 //le nuove carte vengono aggiunte
-                if (matrix[i][j] != null /*&& matrix[i][j].getPlayOrder()>numCards-1*/) {
+                if (matrix[i][j] != null) {
                     CardComponent c=new CardComponent(matrix[i][j], i, j,matrix[i][j].getPlayOrder());
                     if(c.getCardID()!=-1) {
                         c.setImage(getImage(GUI.getCardPath(matrix[i][j].getID(), matrix[i][j].isFacedown)));

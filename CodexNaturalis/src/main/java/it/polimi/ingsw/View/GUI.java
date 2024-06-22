@@ -209,6 +209,7 @@ public class GUI extends UI{
 
                         case DrawCardRequest e :
                             f.update(e.gameView, 2);
+                            JOptionPane.showMessageDialog(f, message);
                             synchronized(f.getLock()) {
                                 try {
                                     f.getLock().wait();
@@ -230,6 +231,7 @@ public class GUI extends UI{
                                 }
                             }
                             CardComponent card=f.getPlayChoice();
+                            if (card.isFlipped()) e.getPlayerView(e.nickname).hand.handCards[card.getCardID()].isFacedown=true;
                             newEvent = new PlayCardResponse( client.getNickname(),e.getPlayerView(e.nickname).hand.handCards[card.getCardID()] ,card.getRow(),card.getCol());
                             notifyListener(newEvent);
                             break;
@@ -313,7 +315,11 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            if ((e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse)&& e.ok) f.update(e.gameView,0);
+                            if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) {
+                                if(e.ok) f.update(e.gameView,0);
+                                else JOptionPane.showMessageDialog(f, message);
+
+                            }
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;

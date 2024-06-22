@@ -84,7 +84,7 @@ public class PersonalPanel extends JSplitPane {
                     public void actionPerformed(ActionEvent e) {
                         if(cardsID[index]<0) return;
                         isFacedown[index] = !isFacedown[index];
-                        playerView.hand.handCards[index].isFacedown=isFacedown[index];
+                        ///playerView.hand.handCards[index].isFacedown=isFacedown[index];
                         label.setIcon(getImageIcon(GUI.getCardPath(cardsID[index], isFacedown[index])));
                     }
                 });
@@ -153,7 +153,9 @@ public class PersonalPanel extends JSplitPane {
     }
 
     public CardComponent getPlayChoice() {
-        return new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow()-playerPanel.getCenterRow(), playerPanel.getPlayPosition().getCol()-playerPanel.getCenterCol(),0);
+        CardComponent c=new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow()-playerPanel.getCenterRow(), playerPanel.getPlayPosition().getCol()-playerPanel.getCenterCol(),0);
+        c.setFlipped(isFacedown[choice]);
+        return c;
     }
 
     private void confirmPlay(){

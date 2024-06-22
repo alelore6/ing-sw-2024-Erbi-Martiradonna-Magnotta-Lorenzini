@@ -129,11 +129,11 @@ public class MainFrame extends JFrame {
                     case 1: //playing
                         tableCenterPanel.update(gameView, false);
                         myPanel.update(gameView.getPlayerViewByNickname(nickname), true);
-                        switchPanel("My Panel");
+                        switchPanel("My panel");
                         break;
                     case 2: //drawing
                         tableCenterPanel.update(gameView, true);
-                        myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
+                        //myPanel.update(gameView.getPlayerViewByNickname(nickname), false);
                         switchPanel("Table center");
                         break;
                     default:

@@ -28,6 +28,7 @@ public class CardComponent {
      * the play order of the card so that overlapping corners are correct
      */
     private final int positionOrder;
+    private boolean flipped;
 
     /**
      * Constructor
@@ -89,4 +90,10 @@ public class CardComponent {
     public int getCardID(){
         return card.getID();
     }
+
+    public void setFlipped(boolean flipped) {
+        this.flipped = flipped;
+    }
+
+    public boolean isFlipped() {return flipped;}
 }
