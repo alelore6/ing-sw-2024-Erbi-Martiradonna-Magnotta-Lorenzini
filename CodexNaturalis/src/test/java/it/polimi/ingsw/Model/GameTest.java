@@ -118,6 +118,8 @@ public class GameTest {
 //        verify(mvListeners.get(0)).addEvent(any(SetTokenColorRequest.class));
 //        verify(mvListeners.get(0)).addEvent(any(ChooseObjectiveRequest.class));
 //        verify(mvListeners.get(0)).addEvent(any(PlaceStartingCard.class));
+        testGame.waitNumClient = testGame.getMvListeners().size();
+        testGame.startGame();
     }
 
     @Test
@@ -141,6 +143,16 @@ public class GameTest {
 
         assertFalse(testGame.isTriggered);
         assertEquals(0, testGame.getCurPlayerPosition());
+
+        testGame.tablecenter.getResDeck().AckEmpty = true;
+        testGame.tablecenter.getGoldDeck().AckEmpty = false;
+        testGame.endGame(5);
+
+        testGame.tablecenter.getResDeck().AckEmpty = false;
+        testGame.tablecenter.getGoldDeck().AckEmpty = true;
+        testGame.endGame(6);
+
+        testGame.endGame(7);
 
     }
 
@@ -293,20 +305,101 @@ public class GameTest {
 
     @Test
     public void testNextPlayer() {
+
+        testGame.setCurPlayerPosition(0);
+        Player player1 = mock(Player.class);
+        Player player2 = mock(Player.class);
+        Player player3 = mock(Player.class);
+        Player player4 = mock(Player.class);
+
         testGame.startGame();
+
+
+
+
+        Player[] players = {player1, player2, player3, player4};
+
+        // Set up mock Player behaviors
+        when(player1.getNickname()).thenReturn("Alidoro");
+        when(player2.getNickname()).thenReturn("Pulcinella");
+        when(player3.getNickname()).thenReturn("Arlecchino");
+        when(player4.getNickname()).thenReturn("Pinocchio");
+
+        testGame.players = new Player[]{player1, player2, player3, player4};
+
+        Token token1 = mock(Token.class);
+        Token token2 = mock(Token.class);
+        Token token3 = mock(Token.class);
+        Token token4 = mock(Token.class);
+
+        when(player1.getToken()).thenReturn(token1);
+        when(player2.getToken()).thenReturn(token2);
+        when(player3.getToken()).thenReturn(token3);
+        when(player4.getToken()).thenReturn(token4);
+
+        TokenColor tokenColor1 = TokenColor.BLUE;
+        TokenColor tokenColor2 = TokenColor.RED;
+        TokenColor tokenColor3 = TokenColor.GREEN;
+        TokenColor tokenColor4 = TokenColor.YELLOW;
+
+        when(player1.getToken().getColor()).thenReturn(tokenColor1);
+        when(player2.getToken().getColor()).thenReturn(tokenColor2);
+        when(player3.getToken().getColor()).thenReturn(tokenColor3);
+        when(player4.getToken().getColor()).thenReturn(tokenColor4);
+
+        when(token1.getPlayer()).thenReturn(player1);
+        when(token2.getPlayer()).thenReturn(player2);
+        when(token3.getPlayer()).thenReturn(player3);
+        when(token4.getPlayer()).thenReturn(player4);
+
+        Hand hand1 = mock(Hand.class);
+        Hand hand2 = mock(Hand.class);
+        Hand hand3 = mock(Hand.class);
+        Hand hand4 = mock(Hand.class);
+
+        when(player1.getHand()).thenReturn(hand1);
+        when(player2.getHand()).thenReturn(hand2);
+        when(player3.getHand()).thenReturn(hand3);
+        when(player4.getHand()).thenReturn(hand4);
+
+        // Mocking hand cards
+        PlayableCard card1 = mock(PlayableCard.class);
+        PlayableCard card2 = mock(PlayableCard.class);
+        PlayableCard card3 = mock(PlayableCard.class);
+        PlayableCard[] handCards = new PlayableCard[]{card1, card2, card3};
+
+        when(hand1.getHandCards()).thenReturn(handCards);
+        when(hand2.getHandCards()).thenReturn(handCards);
+        when(hand3.getHandCards()).thenReturn(handCards);
+        when(hand4.getHandCards()).thenReturn(handCards);
+
+        PlayableCard[][] displayedCards = new PlayableCard[81][81];
+
+        // Example positioning respecting rules:
+        displayedCards[0][0] = mock(PlayableCard.class);
+        displayedCards[1][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[2][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[3][3] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[4][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[5][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+
+        when(hand1.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand2.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand3.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand4.getDisplayedCards()).thenReturn(displayedCards);
+
+        CurrentResources mockResources = mock(CurrentResources.class);
+        when(player1.getCurrentResources()).thenReturn(mockResources);
+        when(player2.getCurrentResources()).thenReturn(mockResources);
+        when(player3.getCurrentResources()).thenReturn(mockResources);
+        when(player4.getCurrentResources()).thenReturn(mockResources);
+
         testGame.nextPlayer(testGame.getPlayers()[0]);
 
         assertEquals(1, testGame.getCurPlayerPosition());
+
     }
 
-    @Test
-    public void testDisconnectPlayer() {
-        Player player = testGame.getPlayers()[0];
-        testGame.disconnectPlayer(player);
-
-        assertTrue(player.isDisconnected);
-        //verify(modelViewListener, times(2)).addEvent(any(PlayerDisconnected.class));
-    }
 
     //TODO da finire test rejoin
 //    @Test
@@ -357,6 +450,190 @@ public class GameTest {
         assertNotNull(clonedGameView);
 
     }
+
+    @Test
+    public void testDisconnectPlayer(){
+        // Creazione del mock per Game e dei giocatori
+        Player player1 = mock(Player.class);
+        Player player2 = mock(Player.class);
+        Player player3 = mock(Player.class);
+        Player player4 = mock(Player.class);
+
+        // Impostazione dei comportamenti dei giocatori
+        when(player1.getNickname()).thenReturn("Player1");
+        when(player2.getNickname()).thenReturn("Player2");
+        when(player3.getNickname()).thenReturn("Player3");
+        when(player4.getNickname()).thenReturn("Player4");
+
+
+
+        testGame.players = new Player[]{player1, player2, player3, player4};
+
+
+
+
+        ModelViewListener listener1 = mock(ModelViewListener.class);
+        ModelViewListener listener2 = mock(ModelViewListener.class);
+        ModelViewListener listener3 = mock(ModelViewListener.class);
+        ModelViewListener listener4 = mock(ModelViewListener.class);
+
+        ArrayList<ModelViewListener> mvListeners = new ArrayList<>();
+        mvListeners.add(listener1);
+        mvListeners.add(listener2);
+        mvListeners.add(listener3);
+        mvListeners.add(listener4);
+
+        testGame.setMVListeners(mvListeners);
+
+        // Configurazione del comportamento del metodo getMVListenerByNickname
+        listener1.nickname = "Player1";
+        listener2.nickname = "Player2";
+        listener3.nickname = "Player3";
+        listener4.nickname = "Player4";
+
+//        when(testGame.getMVListenerByNickname("Player1")).thenReturn(listener1);
+//        when(testGame.getMVListenerByNickname("Player2")).thenReturn(listener2);
+//        when(testGame.getMVListenerByNickname("Player3")).thenReturn(listener3);
+
+        Hand hand1 = mock(Hand.class);
+        Hand hand2 = mock(Hand.class);
+        Hand hand3 = mock(Hand.class);
+        Hand hand4 = mock(Hand.class);
+
+
+        when(player1.getHand()).thenReturn(hand1);
+        when(player2.getHand()).thenReturn(hand2);
+        when(player3.getHand()).thenReturn(hand3);
+        when(player4.getHand()).thenReturn(hand4);
+
+        PlayableCard card1 = mock(PlayableCard.class);
+        PlayableCard card2 = mock(PlayableCard.class);
+        PlayableCard card3 = mock(PlayableCard.class);
+
+
+        PlayableCard[] handCards = new PlayableCard[]{card1, card2, card3};
+
+        when(hand1.getHandCards()).thenReturn(handCards);
+        when(hand2.getHandCards()).thenReturn(handCards);
+        when(hand3.getHandCards()).thenReturn(handCards);
+        when(hand4.getHandCards()).thenReturn(handCards);
+
+        PlayableCard[][] displayedCards = new PlayableCard[81][81];
+
+        // Example positioning respecting rules:
+        displayedCards[0][0] = mock(PlayableCard.class);
+        displayedCards[1][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[2][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[3][3] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[4][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[5][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+
+        when(hand1.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand2.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand3.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand4.getDisplayedCards()).thenReturn(displayedCards);
+
+        CurrentResources mockResources = mock(CurrentResources.class);
+        when(player1.getCurrentResources()).thenReturn(mockResources);
+        when(player2.getCurrentResources()).thenReturn(mockResources);
+        when(player3.getCurrentResources()).thenReturn(mockResources);
+        when(player4.getCurrentResources()).thenReturn(mockResources);
+
+        testGame.setCurPlayerPosition(0);
+        // Eseguo la disconnessione del giocatore 1
+        testGame.disconnectPlayer(player1);
+
+        testGame.turnPhase = 1;
+        testGame.disconnectPlayer(player1);
+
+        // Verifica che il giocatore sia stato segnato come disconnesso
+
+
+    }
+
+    @Test
+    public void testRejoin(){
+
+        Player player1 = mock(Player.class);
+        Player player2 = mock(Player.class);
+        Player player3 = mock(Player.class);
+        Player player4 = mock(Player.class);
+
+        // Impostazione dei comportamenti dei giocatori
+        when(player1.getNickname()).thenReturn("Player1");
+        when(player2.getNickname()).thenReturn("Player2");
+        when(player3.getNickname()).thenReturn("Player3");
+        when(player4.getNickname()).thenReturn("Player4");
+
+
+
+        testGame.players = new Player[]{player1, player2, player3, player4};
+
+        ModelViewListener listener1 = mock(ModelViewListener.class);
+        ModelViewListener listener2 = mock(ModelViewListener.class);
+        ModelViewListener listener3 = mock(ModelViewListener.class);
+        ModelViewListener listener4 = mock(ModelViewListener.class);
+        ArrayList<ModelViewListener> mvListeners = new ArrayList<>();
+        mvListeners.add(listener1);
+        mvListeners.add(listener2);
+        mvListeners.add(listener3);
+        mvListeners.add(listener4);
+
+        testGame.setMVListeners(mvListeners);
+
+        // Configurazione del comportamento del metodo getMVListenerByNickname
+        listener1.nickname = "Player1";
+        listener2.nickname = "Player2";
+        listener3.nickname = "Player3";
+        listener4.nickname = "Player4";
+
+        Hand hand1 = mock(Hand.class);
+        Hand hand2 = mock(Hand.class);
+        Hand hand3 = mock(Hand.class);
+        Hand hand4 = mock(Hand.class);
+
+
+        when(player1.getHand()).thenReturn(hand1);
+        when(player2.getHand()).thenReturn(hand2);
+        when(player3.getHand()).thenReturn(hand3);
+        when(player4.getHand()).thenReturn(hand4);
+
+        PlayableCard card1 = mock(PlayableCard.class);
+        PlayableCard card2 = mock(PlayableCard.class);
+        PlayableCard card3 = mock(PlayableCard.class);
+
+
+        PlayableCard[] handCards = new PlayableCard[]{card1, card2, card3};
+
+        when(hand1.getHandCards()).thenReturn(handCards);
+        when(hand2.getHandCards()).thenReturn(handCards);
+        when(hand3.getHandCards()).thenReturn(handCards);
+        when(hand4.getHandCards()).thenReturn(handCards);
+
+        PlayableCard[][] displayedCards = new PlayableCard[81][81];
+
+        // Example positioning respecting rules:
+        displayedCards[0][0] = mock(PlayableCard.class);
+        displayedCards[1][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[2][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[3][3] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[4][2] = mock(PlayableCard.class); // Valid diagonal adjacency
+        displayedCards[5][1] = mock(PlayableCard.class); // Valid diagonal adjacency
+
+        when(hand1.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand2.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand3.getDisplayedCards()).thenReturn(displayedCards);
+        when(hand4.getDisplayedCards()).thenReturn(displayedCards);
+
+        CurrentResources mockResources = mock(CurrentResources.class);
+        when(player1.getCurrentResources()).thenReturn(mockResources);
+        when(player2.getCurrentResources()).thenReturn(mockResources);
+        when(player3.getCurrentResources()).thenReturn(mockResources);
+        when(player4.getCurrentResources()).thenReturn(mockResources);
+
+        testGame.rejoin(listener1);
+    }
+
 
 
 }

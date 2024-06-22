@@ -70,7 +70,11 @@ public class Game{
      */
     public TableCenter tablecenter;
 
-    private final ArrayList<ModelViewListener> mvListeners;
+    public ArrayList<ModelViewListener> getMvListeners() {
+        return mvListeners;
+    }
+
+    private ArrayList<ModelViewListener> mvListeners;
 
     protected final ArrayList<TokenColor> availableTokens;
 
@@ -690,7 +694,7 @@ public class Game{
         // TODO: ricollegarlo effettivamente.
     }
 
-    private ModelViewListener getMVListenerByNickname(String nickname){
+    public ModelViewListener getMVListenerByNickname(String nickname){
         for(ModelViewListener listener : mvListeners){
             if(listener.nickname.equals(nickname)){
                 return listener;
@@ -703,6 +707,11 @@ public class Game{
     public ArrayList<TokenColor> getAvailableTokens() {
         return availableTokens;
     }
+
+    public void setMVListeners(ArrayList<ModelViewListener> mvListeners) {
+        this.mvListeners = mvListeners;
+    }
+
 }
 
 
