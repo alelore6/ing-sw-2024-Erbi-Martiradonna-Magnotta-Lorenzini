@@ -162,7 +162,7 @@ public class GUI extends UI{
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();
                     // Ignore all other player's events
-                    if(!ev.nickname.equals(client.getNickname()) && !ev.nickname.equals("everyone") && !ev.nickname.equals("every one") ) continue;
+                    if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
 
                     int n=0;
                     GenericEvent newEvent=null;
@@ -290,7 +290,6 @@ public class GUI extends UI{
                         case StartTurn e:
                             //show message + update view
                             f.addChatMessage("game",e.gameView.tableCenterView.scoreTrack.points.toString());
-
                             if(e.turnPlayer.equals(nickname)) JOptionPane.showMessageDialog(f, message);
                             else f.addChatMessage("game", e.getMessage());
                             f.update(e.gameView,0);

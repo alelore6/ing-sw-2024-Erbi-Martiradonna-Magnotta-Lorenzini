@@ -11,5 +11,6 @@ public class ChooseNickname extends GenericEvent{
      */
     public ChooseNickname(String message, String nickname) {
         super(message, nickname);
+        mustBeSentToAll=true;
     }
 }
