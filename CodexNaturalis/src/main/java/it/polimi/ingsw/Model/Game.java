@@ -38,7 +38,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    private int timeoutOnePlayer = 15; // TODO: risettare a 30.
+    private int timeoutOnePlayer = 60; // TODO: risettare a 30.
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -370,7 +370,7 @@ public class Game{
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
 
-            Integer punti = rankings.get(players[i].getNickname());
+            Integer punti = tablecenter.getScoretrack().getRankings().get(players[i].getNickname());
             if (punti!=null) {
                 punteggi[i] = punti;
             }else{
@@ -390,7 +390,8 @@ public class Game{
 
 
         //send FinalRankings event to everyone
-        FinalRankings event = new FinalRankings(players[curPlayerPosition].getNickname(), rankings);
+        FinalRankings event = new FinalRankings("everyone", rankings);
+        event.mustBeSentToAll = true;
         for(int i = 0; i < numPlayers; i++){
             if(!players[i].isDisconnected)  getMVListenerByNickname(players[i].getNickname()).addEvent(event);
         }
