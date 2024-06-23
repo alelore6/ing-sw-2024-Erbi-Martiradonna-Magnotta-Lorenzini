@@ -127,6 +127,10 @@ public class GUI extends UI{
             f.addChatMessage("game", e.getMessage());
             JOptionPane.showMessageDialog(f,e.getMessage());
         }
+        else if(e instanceof EndGameTriggered){
+                f.addChatMessage("game", e.getMessage());
+                JOptionPane.showMessageDialog(f, e.getMessage());
+        }
         else synchronized (inputEvents) {
                 inputEvents.add(e);
                 System.out.println("[DEBUG] received: "+ e.getClass().getName());
@@ -324,14 +328,10 @@ public class GUI extends UI{
                             if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) {
                                 if(e.ok) f.update(e.gameView,0);
                                 else JOptionPane.showMessageDialog(f, message);
-
                             }
+                            if(e.response instanceof ReconnectionResponse) f.addChatMessage("game", e.response.getMessage());
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
-                            break;
-                        case EndGameTriggered e:
-                            f.addChatMessage("game", e.getMessage());
-                            JOptionPane.showMessageDialog(f, message);
                             break;
                         default:
                             //do nothing

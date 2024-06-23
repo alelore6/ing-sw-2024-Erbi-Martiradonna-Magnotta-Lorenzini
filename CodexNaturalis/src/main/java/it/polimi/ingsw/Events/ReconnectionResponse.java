@@ -23,4 +23,8 @@ public class ReconnectionResponse extends GenericResponse{
         return password;
     }
 
+    @Override
+    public String getMessage() {
+        return nickname +" has reconnected to the game";
+    }
 }
