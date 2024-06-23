@@ -121,12 +121,16 @@ public class GUI extends UI{
     public void update(GenericEvent e){
         if (e instanceof PingMessage) return;
         if (e instanceof ChatMessage){ if(!e.nickname.equals(nickname))f.addChatMessage(e.nickname,e.getMessage());}
-        else if (e instanceof ChatAck){ if(!((ChatAck) e).isOk) f.addChatMessage("game", "error sending the chat message");}
-        else if (e instanceof FinalRankings) JOptionPane.showMessageDialog(f,e.getMessage());
+        else {if (e instanceof ChatAck){
+            if(!((ChatAck) e).isOk)     f.addChatMessage("game", "error sending the chat message");}
+        else if (e instanceof FinalRankings) {
+            f.addChatMessage("game", e.getMessage());
+            JOptionPane.showMessageDialog(f,e.getMessage());
+        }
         else synchronized (inputEvents) {
                 inputEvents.add(e);
                 System.out.println("[DEBUG] received: "+ e.getClass().getName());
-        }
+        }}
     }
 
     public void sendChatMessage(String message){
@@ -285,6 +289,8 @@ public class GUI extends UI{
                             break;
                         case StartTurn e:
                             //show message + update view
+                            f.addChatMessage("game",e.gameView.tableCenterView.scoreTrack.points.toString());
+
                             if(e.turnPlayer.equals(nickname)) JOptionPane.showMessageDialog(f, message);
                             else f.addChatMessage("game", e.getMessage());
                             f.update(e.gameView,0);
@@ -324,7 +330,10 @@ public class GUI extends UI{
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
-
+                        case EndGameTriggered e:
+                            f.addChatMessage("game", e.getMessage());
+                            JOptionPane.showMessageDialog(f, message);
+                            break;
                         default:
                             //do nothing
                             break;
