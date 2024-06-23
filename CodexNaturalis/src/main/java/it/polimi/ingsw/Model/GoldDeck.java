@@ -55,6 +55,7 @@ public class GoldDeck extends Deck{
         cards = (GoldCard[]) shuffle(cards);
     }
 
+
     public GoldCard draw() throws isEmptyException {
         if(getNCards() == 0){
             throw new isEmptyException(this);
@@ -76,11 +77,5 @@ public class GoldDeck extends Deck{
         return cards[getNCards()-1].getColor();
     }
 
-    public GoldCard peekNextCard() throws isEmptyException {
-        if (getNCards() == 0) {
-            throw new isEmptyException(this);
-        }
-        return cards[getNCards() - 1];
-    }
 
 }

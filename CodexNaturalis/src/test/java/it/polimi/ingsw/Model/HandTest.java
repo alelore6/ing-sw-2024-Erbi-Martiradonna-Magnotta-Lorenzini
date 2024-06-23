@@ -1,105 +1,151 @@
-//import it.polimi.ingsw.Exceptions.HandFullException;
-//import it.polimi.ingsw.Exceptions.isEmptyException;
-//import it.polimi.ingsw.Model.*;
-//
-//import org.junit.After;
-//import org.junit.Before;
-//import org.junit.Test;
-//import org.mockito.Mockito;
-//
-//import static org.junit.Assert.*;
-//import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-//
-//public class HandTest {
-//    public Hand hand;
-//    public Player player;
-//    public Card cars;
-//    public Deck deck;
-//   public TableCenter tableCenter;
-//    @Before
-//    public void setUp() throws Exception {
-//        player =  Mockito.mock(Player.class);
-//        deck = Mockito.mock(Deck.class);
-//        hand = Mockito.mock(Hand.class);
-//        tableCenter = Mockito.mock(TableCenter.class);
-//    }
-//
-//    @After
-//    public void tearDown() throws Exception {
-//    }
-//
-//    @Test
-//    public void getDisplayedCards() {
-//        assertNotNull(hand.getDisplayedCards());
-//    }
-//
-//    @Test
-//    public void drawFromDeck() {
-//
-//        try {
-//            hand.(deck);
-//            fail("Expected HandFullException");
-//        } catch (HandFullException e) {
-//
-//        } catch (isEmptyException e) {
-//            fail("Unexpected isEmptyException");
-//        }
-//        try {
-//            Deck emptyDeck = new Deck();
-//            hand.DrawFromDeck(emptyDeck);
-//            fail("Expected isEmptyException");
-//        } catch (isEmptyException e) {
-//        } catch (HandFullException e) {
-//            fail("Unexpected HandFullException");
-//        }
-//
-//
-//        }
-//
-//    @Test
-//    public void drawPositionedCard() {
-//
-//
-//
-//        player.game = new Game( 2, null, null);
-//
-//        PlayableCard mockCard = new PlayableCard();
-//        tableCenter.drawAndPosition(mockCard);
-//        //created a mock to simulate the game//
-//        assertDoesNotThrow(() -> hand.DrawPositionedCard(mockCard));
-//        // verify there aren't exception//
-//        assertNotNull(hand.getHandCard(0));
-//        assertEquals(mockCard, hand.getHandCard(0));
-//        //verify drawn card has been added to the hand//
-//    }
-//
-//    @Test
-//    public void getHandCard() {
-//    }
-//
-//    @Test
-//    public void testplayCard() {
-//    player = new Player("Test Player.");
-//    hand = new Hand(player);
-//
-//    Card cardtoplay= new ResourceCard(); // i choose Resource Card as an example//
-//         Card[][] displayedCards = new Card[81][81];
-//
-//        assertDoesNotThrow(() -> hand.playCard(cardtoplay, 10, 45)); // 10,45 as a possible position where a card can be positioned//
-//        assertEquals(cardtoplay, displayedCards[10][45]);t
-//
-//    }
-//
-//    @Test
-//    public void testGetDisplayedCards() {
-//    }
-//
-//
-//    @Test
-//    public void testGetHandCard() {
-//        assertNotNull(hand.getHandCard(0));
-//    }
-//
-//
-//    4
-//}
+import it.polimi.ingsw.Exceptions.*;
+import it.polimi.ingsw.Model.*;
+import org.junit.*;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
+
+public class HandTest {
+    private Hand hand;
+    private Player player;
+    private Deck deck;
+    private TableCenter tableCenter;
+    private PlayableCard card;
+    private Game game;
+
+    @Before
+    public void setUp() throws Exception {
+        player =  mock(Player.class);
+        tableCenter = mock(TableCenter.class);
+        deck = mock(Deck.class);
+        card= mock(PlayableCard.class);
+        game=mock(Game.class);
+        tableCenter = mock(TableCenter.class);
+        game.tablecenter=tableCenter;
+        player.game=game;
+
+        hand= new Hand(player);
+
+    }
+
+
+    @Test
+    public void testDrawFromDeckFillHand() {
+        try {
+            when(deck.draw()).thenReturn(card);
+            hand.DrawFromDeck(deck);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertNull(hand.getHandCards()[1]);
+        assertNull(hand.getHandCards()[2]);
+
+        try {
+            hand.DrawFromDeck(deck);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertNull(hand.getHandCards()[2]);
+
+        try {
+            hand.DrawFromDeck(deck);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertEquals(hand.getHandCards()[2], card);
+    }
+
+    @Test
+    public void testDrawFromDeckThrowsHandFullException() {
+        try {
+            when(deck.draw()).thenReturn(card);
+            hand.DrawFromDeck(deck);
+            hand.DrawFromDeck(deck);
+            hand.DrawFromDeck(deck);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertEquals(hand.getHandCards()[2], card);
+        assertThrows(HandFullException.class, ()->hand.DrawFromDeck(deck));
+    }
+
+    @Test
+    public void testDrawFromDeckThrowsIsEmptyException() throws isEmptyException {
+        when(deck.draw()).thenThrow(isEmptyException.class);
+        assertThrows(isEmptyException.class,()->hand.DrawFromDeck(deck));
+        assertNull(hand.getHandCards()[0]);
+        assertNull(hand.getHandCards()[1]);
+        assertNull(hand.getHandCards()[2]);
+    }
+
+    @Test
+    public void testDrawPositionedCardFillHand() {
+        when(tableCenter.drawAndPosition(card)).thenReturn(0);
+        try {
+            hand.DrawPositionedCard(card);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertNull(hand.getHandCards()[1]);
+        assertNull(hand.getHandCards()[2]);
+
+        try {
+            hand.DrawPositionedCard(card);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertNull(hand.getHandCards()[2]);
+
+        try {
+            hand.DrawPositionedCard(card);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertEquals(hand.getHandCards()[2], card);
+    }
+
+    @Test
+    public void testDrawPositionedCardThrowsHandFullException(){
+        when(tableCenter.drawAndPosition(card)).thenReturn(0);
+        try {
+            hand.DrawPositionedCard(card);
+            hand.DrawPositionedCard(card);
+            hand.DrawPositionedCard(card);
+        } catch (HandFullException | isEmptyException e ) {
+            fail("SHOULD NOT THROW: "+e.getMessage());
+        }
+        assertEquals(hand.getHandCards()[0], card);
+        assertEquals(hand.getHandCards()[1], card);
+        assertEquals(hand.getHandCards()[2], card);
+        assertThrows(HandFullException.class, ()->hand.DrawPositionedCard(card));
+    }
+
+    @Test
+    public void testDrawPositionedCardThrowsIsEmptyExceptionCaseBothDeckEmpty(){
+        when(tableCenter.drawAndPosition(card)).thenReturn(-1);
+        assertThrows(isEmptyException.class,()->hand.DrawPositionedCard(card));
+        assertNull(hand.getHandCards()[0]);
+        assertNull(hand.getHandCards()[1]);
+        assertNull(hand.getHandCards()[2]);
+       }
+
+    @Test
+    public void testDrawPositionedCardThrowsIsEmptyExceptionCaseOneDeckEmpty(){
+        when(tableCenter.drawAndPosition(card)).thenReturn(1);
+        assertThrows(isEmptyException.class,()->hand.DrawPositionedCard(card));
+        assertEquals(hand.getHandCards()[0],card);
+        assertNull(hand.getHandCards()[1]);
+        assertNull(hand.getHandCards()[2]);
+    }
+}

@@ -68,11 +68,5 @@ public class ResourceDeck extends Deck{
         return cards[getNCards()-1].getColor();
     }
 
-    public ResourceCard peekNextCard() throws isEmptyException {
-        if (getNCards() == 0) {
-            throw new isEmptyException(this);
-        }
-        return cards[getNCards() - 1];
-    }
 
 }

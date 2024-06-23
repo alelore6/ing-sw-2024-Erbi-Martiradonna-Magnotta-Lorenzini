@@ -16,7 +16,7 @@ import java.util.concurrent.*;
 import static java.lang.String.valueOf;
 
 /**
- * Represent the logic behind the connection between the server and the client's interface
+ * Represent the logic behind the connection between the server and the client's  graphic interface
  */
 public class GUI extends UI{
     /**
@@ -42,27 +42,26 @@ public class GUI extends UI{
     }
 
     public void stop() {
-        //TODO cosa deve fare?
+        //TODO cosa deve fare stop?
     }
 
     /**
-     * method that allows the player to set his nickname.
-     * This method is blocking that means that until the player enter his nickname everything will be waiting (see also run method)
+     * method that allows the player to set his nickname creating an event that is handled in the run method.
+     * This method is blocking that means that until the player enter his nickname everything will be waiting (see also run method).
      * @return the player's nickname
      */
     public String chooseNickname() {
-        //mando l'evento per gestirlo dentro run con swingUtilities.invokeLater
         update(new ChooseNickname("message","everyone"));
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        //thread speciale che aspetta l'input
+        //thread with return parameter
         Callable<String> task = () -> {
             synchronized(lock) { lock.wait();}
             //System.out.println("Nickname: "+nickname);
             return nickname;
         };
 
-        //aspetta il return del thread sopra
+        //start the thread and save his return in a future type
         Future<String> future = executor.submit(task);
 
         try {
@@ -111,12 +110,12 @@ public class GUI extends UI{
             idString = valueOf(id);
         }
         return "assets/images/cards/" + (isFacedown ? "back" : "front") + "/" + idString + ".png";
-
     }
 
     /**
-     * An event is received from the server, it is added to the queue where it will be handled in the run method.
-     * @param e th received event
+     * When an event is received from the server, it is added to the queue where it will be handled in the run method.
+     * Asynchronous event are handled directly from here.
+     * @param e the received event
      */
     @Override
     public void update(GenericEvent e){
@@ -139,6 +138,10 @@ public class GUI extends UI{
         }}}
     }
 
+    /**
+     * notify view-controller listener on a new chat message from this player
+     * @param message the message as text
+     */
     public void sendChatMessage(String message){
         listener.addEvent(new ChatMessage(message,nickname,null));
     }
@@ -154,7 +157,7 @@ public class GUI extends UI{
     }
 
     /**
-     * Represent  all the logic behind the user interface.
+     * Represent the logic behind the client's user interface and his connection to the game.
      * Here event are taken from the queue and handled based on their type
      */
     @Override
@@ -331,7 +334,6 @@ public class GUI extends UI{
                                 if(e.ok) f.update(e.gameView,0);
                                 else JOptionPane.showMessageDialog(f, message);
                             }
-                            //if(e.response instanceof ReconnectionResponse) f.addChatMessage("game", e.response.getMessage());
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
