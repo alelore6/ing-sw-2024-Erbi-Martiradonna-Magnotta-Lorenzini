@@ -66,6 +66,7 @@ public class GUI extends UI{
         Future<String> future = executor.submit(task);
 
         try {
+            f.setNickname(future.get());
             return future.get();
         } catch (InterruptedException |ExecutionException  e) {
             throw new RuntimeException(e);
@@ -131,10 +132,11 @@ public class GUI extends UI{
                 f.addChatMessage("game", e.getMessage());
                 JOptionPane.showMessageDialog(f, e.getMessage());
         }
+        else {if( e instanceof  PlayerDisconnected) f.addChatMessage("game", e.getMessage());
         else synchronized (inputEvents) {
                 inputEvents.add(e);
                 System.out.println("[DEBUG] received: "+ e.getClass().getName());
-        }}
+        }}}
     }
 
     public void sendChatMessage(String message){
