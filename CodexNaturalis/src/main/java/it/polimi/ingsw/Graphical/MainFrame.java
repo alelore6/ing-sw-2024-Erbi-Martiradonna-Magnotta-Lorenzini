@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Graphical;
 
 import it.polimi.ingsw.Model.Game;
+import it.polimi.ingsw.Model.TokenColor;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.View.GUI;
 
@@ -10,20 +11,60 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 
+/**
+ *  represent the frame for the graphic UI.
+ *  It contains all the panels and the switch logic.
+ */
 public class MainFrame extends JFrame {
+    /**
+     * the UI that communicates with the frame
+     */
     private GUI gui;
+    /**
+     * the menu bar that allows the switch between panels
+     */
     private JMenuBar menuBar;
+    /**
+     * panel that contains all the game panels
+     */
     private JPanel mainPanel;
+    /**
+     * the default panel with the logo
+     */
     private JPanel backgroundPanel;
+    /**
+     * the panel that contains the table center information and logic
+     */
     private TableCenterPanel tableCenterPanel;
+    /**
+     * the panel of the owner of the frame
+     */
     public PersonalPanel myPanel;
+    /**
+     * the panel that contains the chat and its logic
+     */
     private ChatPanel chatPanel;
+    /**
+     * map between other player's nicknames and their panel
+     */
     private HashMap<String, PlayerPanel> otherPlayers;
+    /**
+     * the owner of the frame nickname
+     */
     private String nickname;
+    /**
+     * the logo shown in dialogs
+     */
     private ImageIcon icon;
-    private JPanel temp;
+    /**
+     * lock that allows the synchronization for game actions
+     */
     private Object playLock=new Object();
 
+    /**
+     * Constructor: create the split pane with the chat panel and the default panel.
+     * @param gui the UI that communicates with the frame
+     */
     public MainFrame(GUI gui) {
         super("CodexNaturalis");
         this.gui=gui;
@@ -70,12 +111,15 @@ public class MainFrame extends JFrame {
         setVisible(true);
     }
 
-
+    /**
+     * Creates the actual game panels calling the relative constructor and add the relative menu item by calling the addToMenuBar method.
+     * @param gameView the game info based on which the panels are created.
+     */
     private void createGamePanels(GameView gameView) {
         tableCenterPanel = new TableCenterPanel(gameView,playLock);
-        addToMenuBar("Table center");
+        addToMenuBar("Table center", null);
         mainPanel.add(tableCenterPanel, "Table center");
-        addToMenuBar("My panel");
+        addToMenuBar("My panel", gameView.getPlayerViewByNickname(nickname).token.color);
 
         otherPlayers = new HashMap<String, PlayerPanel>();
 
@@ -86,14 +130,28 @@ public class MainFrame extends JFrame {
             } else {
                 PlayerPanel playerPanel = new PlayerPanel(gameView.players.get(i), false);
                 otherPlayers.put(gameView.players.get(i).nickname, playerPanel);
-                addToMenuBar(gameView.players.get(i).nickname + "'s panel");
+                addToMenuBar(gameView.players.get(i).nickname + "'s panel", gameView.players.get(i).token.color);
                 mainPanel.add(playerPanel, gameView.players.get(i).nickname + "'s panel");
             }
         }
     }
 
-    private void addToMenuBar(String label) {
+    /**
+     *  add a menu item to the menu bar
+     * @param label the label of the menu item
+     * @param color the color of the menu item
+     */
+    private void addToMenuBar(String label, TokenColor color) {
         JMenuItem menuItem = new JMenuItem(label);
+
+        if(color!=null){
+            switch (color) {
+                case RED : menuItem.setBackground(Color.RED); break;
+                case GREEN : menuItem.setBackground(Color.GREEN); break;
+                case BLUE : menuItem.setBackground(Color.decode("#256fe6")); break;
+                case YELLOW : menuItem.setBackground(Color.YELLOW); break;
+            }
+        }
 
         menuItem.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         menuItem.setMargin(new Insets(5, 10, 5, 10));
@@ -108,15 +166,21 @@ public class MainFrame extends JFrame {
         menuBar.add(menuItem);
     }
 
-
+    /**
+     * allows the switch between different game panels using CardLayout
+     * @param label the name of the selected panel
+     */
     public void switchPanel(String label) {
         CardLayout layout = (CardLayout) (mainPanel.getLayout());
         layout.show(mainPanel, label);
         mainPanel.repaint();
         mainPanel.revalidate();
-        //System.out.println("Switching panel: " + label);
     }
 
+    /**
+     * Creates the game panels by calling the createGamePanels method and the menu bar.
+     * @param gameView the game info based on which the panels are created.
+     */
     public void reactStartGame(GameView gameView) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -130,7 +194,11 @@ public class MainFrame extends JFrame {
             }});
     }
 
-
+    /**
+     * updates the game panels based on the gameview info.
+     * @param gameView contains all the info about the game in a certain moment, like a screenshot.
+     * @param playPhase indicates the turn phase for the owner of the frame: 1 for play phase, 2 for draw phase, 0 else.
+     */
     public void update(GameView gameView, int playPhase) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
@@ -157,42 +225,61 @@ public class MainFrame extends JFrame {
             }});
     }
 
+    /**
+     * show an input dialog in this frame.
+     * @param title the title of the dialog.
+     * @param message the message shown in the dialog.
+     * @param possibilities the possibilities of choices for the input (null for free text area).
+     * @return the input as a string.
+     */
     public String showInputDialog(String title, String message, Object[] possibilities) {
         return (String) JOptionPane.showInputDialog(this, message, title, JOptionPane.PLAIN_MESSAGE, icon, possibilities, null);
     }
 
-    public void showMessageDialog(String message){
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-        JOptionPane.showMessageDialog(mainPanel,message);}});
-    }
-
+    /**
+     * reports the chat message to the chat panel where it will be added.
+     * @param nickname the sender of the chat message.
+     * @param message the message text.
+     */
     public void addChatMessage(String nickname, String message){
-//        SwingUtilities.invokeLater(new Runnable() {
-//            @Override
-//            public void run() {
-                chatPanel.addChatMessage(message,nickname);
-//            }
-//        });
+        chatPanel.addChatMessage(message,nickname);
     }
 
+    /**
+     * reports the sending of a chat message to the gui element.
+     * @param message the message text.
+     */
     protected void sendChatMessage(String message){
         gui.sendChatMessage(message);
     }
 
+    /**
+     * sets the nickname of the owner of the frame.
+     * @param nickname
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * getter for lock for synchronization.
+     * @return the lock object.
+     */
     public Object getLock(){
         return playLock;
     }
-
+    /**
+     * transmitter for the play action from the personal panel.
+     * @return the encoded information for the play.
+     */
     public CardComponent getPlayChoice(){
         return myPanel.getPlayChoice();
     }
 
+    /**
+     * transmitter for the draw choice from the table center panel.
+     * @return the encoded position for the draw.
+     */
     public int getDrawChoice(){
         return tableCenterPanel.getDrawChoice();
     }
@@ -202,6 +289,10 @@ public class MainFrame extends JFrame {
             @Override
             public void run() {
                 Game model = new Game(4, new String[]{"1111", "2222", "3333", "4444"}, null);
+                model.players[0].setToken(TokenColor.GREEN);
+                model.players[1].setToken(TokenColor.RED);
+                model.players[2].setToken(TokenColor.BLUE);
+                model.players[3].setToken(TokenColor.YELLOW);
                 MainFrame mainFrame = new MainFrame(null);
                 mainFrame.setNickname("2222");
                 mainFrame.reactStartGame(model.clone());
