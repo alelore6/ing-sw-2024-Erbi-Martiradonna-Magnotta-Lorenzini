@@ -3,7 +3,6 @@ package it.polimi.ingsw.Graphical;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.GameView;
 import it.polimi.ingsw.View.GUI;
-import it.polimi.ingsw.Model.ConverterCardColorInt;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Dimension;
-import javax.swing.border.EmptyBorder;
 
 public class TableCenterPanel extends JSplitPane {
     private GameView gameView;
@@ -136,8 +134,13 @@ public class TableCenterPanel extends JSplitPane {
         deckPanel.setBorder(BorderFactory.createTitledBorder(title));
 
         JLabel deckLabel = new JLabel();
-        int colorId = ConverterCardColorInt.getCardColorId(cardColor);
-        deckLabel.setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+        try{
+            int colorId = getCardColorId(cardColor,deckIndex==0);
+            deckLabel.setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+        }
+        catch(IllegalArgumentException e){
+            deckLabel.setIcon(possiblePlayImage);
+        }
         deckLabels[deckIndex] = deckLabel;
         deckPanel.add(deckLabel, BorderLayout.CENTER);
 
@@ -223,14 +226,21 @@ public class TableCenterPanel extends JSplitPane {
             } else {
                 deckCardColor = gameView.tableCenterView.topResourceCardColor;
             }
-            int colorId = ConverterCardColorInt.getCardColorId(deckCardColor);
-            deckLabels[i].setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+            try{
+                int colorId = getCardColorId(deckCardColor, i==0);
+                deckLabels[i].setIcon(getImageIcon(GUI.getCardPath(colorId, true), 0, 0));
+            }
+            catch (IllegalArgumentException e ){
+                deckLabels[i].setIcon(possiblePlayImage);
+            }
         }
     }
 
     public void showDrawButton() {
+        int i=0;
         for (JButton button : drawButtons) {
-            button.setVisible(true);
+            if(i<2 || cardsID[i-2]>0) button.setVisible(true);
+            i++;
         }
     }
 
@@ -247,6 +257,24 @@ public class TableCenterPanel extends JSplitPane {
         if (drawing) {
             showDrawButton();
         }
+    }
+
+    public static int getCardColorId(CardColor color,boolean gold) {
+        int id=0;
+        switch (color) {
+            case RED:
+                id=1; break;
+            case GREEN:
+                id=11; break;
+            case PURPLE:
+                id=31; break;
+            case BLUE:
+                id=21; break;
+            default:
+                throw new IllegalArgumentException("Unknown CardColor: " + color);
+        }
+        if (gold) return id+40;
+        else return id;
     }
 
     public static void main(String[] args) {

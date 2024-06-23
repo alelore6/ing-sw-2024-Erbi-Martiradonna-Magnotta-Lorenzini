@@ -30,7 +30,7 @@ public class Game{
      * String that represents the turn order.
      */
     private String turnOrder = "";
-    private final ServerImpl server;
+    private  ServerImpl server;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -100,7 +100,7 @@ public class Game{
         this.isFinished = false;
         this.remainingTurns = -1;
         this.curPlayerPosition = -1;
-        this.server = mvListeners.get(0).server;
+        if(mvListeners != null && mvListeners.size() > 0) this.server = mvListeners.get(0).server;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i],this);
@@ -230,7 +230,7 @@ public class Game{
 
                 for (int i=0; i<order.length;i++) {
                     int x=i+1;
-                    turnOrder = turnOrder.concat(" | "+ x + ". " + order[i] + " ");
+                    turnOrder = turnOrder.concat("\n\t"+ x + ". " + order[i] + " ");
                 }
 
 
