@@ -1,6 +1,6 @@
 # CodexNaturalis in Java
 
-![CodexNaturalis icon](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/tree/main/CodexNaturalis/src/main/resources/assets/images/rulebook/01.png)
+![CodexNaturalis icon](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/blob/main/CodexNaturalis/src/main/resources/assets/images/rulebook/01.png)
 
 ## Voto
 Voto __/30
