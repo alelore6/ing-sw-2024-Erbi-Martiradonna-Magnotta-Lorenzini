@@ -331,7 +331,7 @@ public class GUI extends UI{
                                 if(e.ok) f.update(e.gameView,0);
                                 else JOptionPane.showMessageDialog(f, message);
                             }
-                            if(e.response instanceof ReconnectionResponse) f.addChatMessage("game", e.response.getMessage());
+                            //if(e.response instanceof ReconnectionResponse) f.addChatMessage("game", e.response.getMessage());
                             if(e.response!=null)
                                 System.out.println("Received ack for "+ e.response.getClass().getName());
                             break;
