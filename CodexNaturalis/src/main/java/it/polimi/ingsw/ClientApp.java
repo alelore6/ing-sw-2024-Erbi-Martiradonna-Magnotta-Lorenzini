@@ -146,13 +146,9 @@ public class ClientApp {
     }
 
     public void stop(){
-        try {
-            running = false;
-            client.getUserInterface().stop();
-            client.getUserInterface().getListener().stop();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        running = false;
+        client.getUserInterface().stop();
+        client.getUserInterface().getListener().stop();
     }
 
     private String insertIP() throws IOException {

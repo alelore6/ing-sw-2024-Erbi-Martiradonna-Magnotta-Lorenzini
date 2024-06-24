@@ -329,12 +329,12 @@ public class GUI extends UI{
                             break;
 
                         case AckResponse e:
-                            if (e.response instanceof PlayCardResponse || e.response instanceof DrawCardResponse) {
+                            if (e.receivedEvent instanceof PlayCardResponse || e.receivedEvent instanceof DrawCardResponse) {
                                 if(e.ok) f.update(e.gameView,0);
                                 else JOptionPane.showMessageDialog(f, message);
                             }
-                            if(e.response!=null)
-                                System.out.println("Received ack for "+ e.response.getClass().getName());
+                            if(e.receivedEvent!=null)
+                                System.out.println("Received ack for "+ e.receivedEvent.getClass().getName());
                             break;
                         default:
                             //do nothing

@@ -12,7 +12,7 @@ public class AckResponse extends GenericResponse{
      */
     public final boolean ok;
 
-    public final GenericResponse response;
+    public final GenericEvent receivedEvent;
 
     public final GameView gameView;
     /**
@@ -25,7 +25,7 @@ public class AckResponse extends GenericResponse{
         //per esito positivo e per aggiornare view
         super("Event has gone successfully", nickname);
         this.ok = true;
-        this.response = response;
+        this.receivedEvent = response;
         mustBeSentToAll=true;
         this.gameView = gameView;
     }
@@ -35,15 +35,21 @@ public class AckResponse extends GenericResponse{
         //togliere il booleano da input e sistemare utilizzi
         super(message, nickname);
         this.ok = isOk;
-        this.response = response;
+        this.receivedEvent = response;
         mustBeSentToAll=true;
         this.gameView = null;
     }
 
+    public AckResponse(String nickname, ServerMessage event){
+        super("", nickname);
+        ok = true;
+        receivedEvent = event;
+        gameView = null;
+    }
 
     @Override
     public String msgOutput(){
-        if(response == null)    return "";
-        return "\n\u001B[30m" + (ok ? "\u001B[42m" + response.message : "\u001B[41m" + message) + "\u001B[0m";
+        if(receivedEvent == null)    return "";
+        return "\n\u001B[30m" + (ok ? "\u001B[42m" + receivedEvent.message : "\u001B[41m" + message) + "\u001B[0m";
     }
 }

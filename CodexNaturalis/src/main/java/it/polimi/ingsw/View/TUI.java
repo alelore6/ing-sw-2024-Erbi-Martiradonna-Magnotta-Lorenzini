@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 
 import static it.polimi.ingsw.Model.Position.*;
 import static java.lang.String.join;
+import static java.lang.Thread.sleep;
 
 public class TUI extends UI {
 
@@ -437,6 +438,14 @@ public class TUI extends UI {
     }
 
     private boolean listenToDisconnection(String command){
+        if(command == null)  return false;
+
+        ArrayList<String> words = new ArrayList<String>(Arrays.asList(command.split(" ")));
+
+        if(words.get(0).equalsIgnoreCase("EXIT")) {
+            client.clientApp.stop();
+            return true;
+        }
 
         return false;
     }
@@ -450,10 +459,8 @@ public class TUI extends UI {
         }
         else if(e instanceof FinalRankings){
             printOut(setColorForString("GREEN", e.msgOutput(), true));
-            printOut("Insert a comment about your game experience: ");
 
-            // TODO: non lo fa fare: si blocca in in.close() in stop() qua.
-            client.clientApp.stop();
+            notifyListener(new AckResponse(client.getNickname(), (FinalRankings) e));
         }
         else if(e instanceof StartTurn){
             printOut("It's " + setColorForString(((StartTurn) e).color, ((StartTurn) e).turnPlayer, true) + "'s turn.");
@@ -523,7 +530,7 @@ public class TUI extends UI {
                         printOut(ev.msgOutput());
 
                     // If login fails.
-                    if(ev instanceof AckResponse && ((AckResponse) ev).response instanceof ReconnectionResponse && ((AckResponse) ev).ok == false){
+                    if(ev instanceof AckResponse && ((AckResponse) ev).receivedEvent instanceof ReconnectionResponse && ((AckResponse) ev).ok == false){
                         printErr("Exiting...");
                         System.exit(1);
                     }

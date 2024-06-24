@@ -362,6 +362,12 @@ public class Controller {
                 //String p = passwords.get(event.nickname);
                 synchronized (flux_lock) {wait++;}
             }
+            else if(event instanceof AckResponse){
+                if(((AckResponse) event).receivedEvent instanceof FinalRankings){
+                    server.notifyEndSent();
+                    if(server.getEndSent() >= server.controller.getMVListeners().size()) server.restart();
+                }
+            }
     }
 
     /**

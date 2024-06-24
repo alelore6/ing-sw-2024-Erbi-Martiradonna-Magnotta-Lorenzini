@@ -13,7 +13,6 @@ public class ModelViewListener extends Listener {
 
     private GenericRequest lastRequest;
     private int requestEventIndex = 0;
-    private volatile boolean endSent = false;
     public final Client client;
     public String nickname;
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
@@ -94,6 +93,7 @@ public class ModelViewListener extends Listener {
                                         lastRequest = (GenericRequest) currentEvent;
                                         requestEventIndex++;
                                     }
+
                                     if(!(client instanceof ClientSkeleton)){
                                         server.logger.addLog(currentEvent, Severity.SENDING);
 
@@ -103,8 +103,7 @@ public class ModelViewListener extends Listener {
                                     }
                                     else client.update(currentEvent);
 
-                                    if(currentEvent instanceof FinalRankings) endSent = true;
-                                    else if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
+                                    if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
                                 }
                                 else{
                                     getEventQueue().addFirst(currentEvent);
@@ -139,6 +138,10 @@ public class ModelViewListener extends Listener {
 
     @Override
     public synchronized void addEvent(GenericEvent event) {
+        // This is for stopping the check for 0/1 remaining player situation.
+        if(event instanceof FinalRankings)
+            server.controller.getGame().stop();
+
         synchronized (lock_queue) {
             if(event instanceof AckResponse)        ack = (AckResponse) event;
             else if(event instanceof ChatMessage)   chatMessages.add((ChatMessage) event);
@@ -146,13 +149,5 @@ public class ModelViewListener extends Listener {
             else                                    getEventQueue().add(event);
         }
 
-        if(event instanceof FinalRankings){
-
-            while(!endSent){}
-
-            server.notifyEndSent();
-
-            if(server.getEndSent() >= server.controller.getMVListeners().size()) server.restart();
-        }
     }
 }

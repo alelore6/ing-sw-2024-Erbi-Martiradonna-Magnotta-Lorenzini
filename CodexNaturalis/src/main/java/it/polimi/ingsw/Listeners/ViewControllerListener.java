@@ -5,6 +5,7 @@ import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.AckResponse;
+import it.polimi.ingsw.Events.FinalRankings;
 import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
@@ -15,7 +16,7 @@ public class ViewControllerListener extends Listener {
      * attribute representing the client bound to this listener.
      * Every view has a different client and so, a specific listener.
      */
-    private Client client;
+    private ClientImpl client;
 
     /**
      * Class representing the listener situated between the view and the controller.
@@ -23,7 +24,7 @@ public class ViewControllerListener extends Listener {
      * sending this event through the network to the controller class.
      * @param client Client needed to pass the update to.
      */
-    public ViewControllerListener(Client client) {
+    public ViewControllerListener(ClientImpl client) {
         this.client = client;
     }
 
@@ -46,16 +47,19 @@ public class ViewControllerListener extends Listener {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
                             // System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
                             try {
-                                ((ClientImpl) client).sendEvent(currentEvent);
+                                client.sendEvent(currentEvent);
                             } catch (RemoteException e) {
-                                if(((ClientImpl) client).getUserInterface().running){
+                                if(client.getUserInterface().running){
                                     e.printStackTrace();
                                     throw new RuntimeException(e);
                                 }
                             }
+
+                            if(currentEvent instanceof AckResponse && ((AckResponse) currentEvent).receivedEvent instanceof FinalRankings) {
+                                client.clientApp.stop();
+                            }
                         }
                     }
-
                 }
             }
         };
@@ -63,8 +67,7 @@ public class ViewControllerListener extends Listener {
         eventThread.start();
     }
 
-    public void stop() throws InterruptedException {
+    public void stop(){
         running = false;
-        eventThread.interrupt();
     }
 }

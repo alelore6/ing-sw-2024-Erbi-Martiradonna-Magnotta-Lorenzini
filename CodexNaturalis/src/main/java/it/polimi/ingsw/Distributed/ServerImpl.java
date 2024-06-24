@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static java.lang.Thread.sleep;
+
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
     private final ServerApp serverApp;
@@ -112,7 +114,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                             try {
                                 clients.get(nickname).ping();
                             } catch (RemoteException e) {
-
+                                disconnectPlayer(nickname);
                             }
                         }
                         for(String nickname : disconnectedClients){
@@ -122,7 +124,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 }
 
                 try {
-                    Thread.sleep(PING_INTERVAL);
+                    sleep(PING_INTERVAL);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -196,8 +198,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     public synchronized void restart(){
-
-        controller.getGame().stop();
 
         System.exit(0);
 

@@ -21,6 +21,9 @@ public class Game{
      * attribute representing if threads of this class are running.
      */
     private volatile boolean running = true;
+    /**
+     * attribute that indicates if the turn of a disconnected player has been skipped.
+     */
     private volatile boolean isTurnSkipped = false;
     /**
      * number of players in the current game
@@ -30,7 +33,6 @@ public class Game{
      * String that represents the turn order.
      */
     private String turnOrder = "";
-    private  ServerImpl server;
     /**
      * attribute that keeps count of the number of turns completed since the beginning
      */
@@ -38,7 +40,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    public static final int timeoutOnePlayer = 60;
+    public static final int timeoutOnePlayer = 30;
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -100,7 +102,6 @@ public class Game{
         this.isFinished = false;
         this.remainingTurns = -1;
         this.curPlayerPosition = -1;
-        if(mvListeners != null && mvListeners.size() > 0) this.server = mvListeners.get(0).server;
         players = new Player[numPlayers];
         for (int i=0;i<numPlayers;i++ ){
             players[i]= new Player(nicknames[i],this);
@@ -254,9 +255,8 @@ public class Game{
                 while(running){
                     if     (getActivePlayers() == 1) OPLProcedure();
                     else if(getActivePlayers() == 0){
-                        ModelViewListener fakeListener = new ModelViewListener(server);
-
-                        fakeListener.addEvent(new FinalRankings(null, null));
+                        // If there's no player left.
+                        System.exit(2);
                     }
                     if(isTurnSkipped){
                         isTurnSkipped = false;
@@ -286,7 +286,7 @@ public class Game{
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
                     EndGameTriggered event=new EndGameTriggered(nickname + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
-                    getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                    if(!players[i].isDisconnected) getMVListenerByNickname(players[i].getNickname()).addEvent(event);
                 }
                 break;
             //both decks are found empty simultaneously
@@ -428,7 +428,7 @@ public class Game{
 
             // send play card request event
             PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayerNickname(),clone());
-            getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
+            if(!players[curPlayerPosition].isDisconnected) getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
 
             //check there are still card on table center
             boolean empty = true;
@@ -441,7 +441,7 @@ public class Game{
             //if both deck are not empty and !empty, a draw will be requested
             if (!tablecenter.getResDeck().AckEmpty || !tablecenter.getGoldDeck().AckEmpty || !empty) {
                 DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), clone(), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
-                getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(drawCard);
+                if(!players[curPlayerPosition].isDisconnected) getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(drawCard);
             }
             turnCounter++;
             remainingTurns--;
@@ -689,8 +689,6 @@ public class Game{
         }
 
         players[pos].isDisconnected = false;
-
-        // TODO: ricollegarlo effettivamente.
     }
 
     public ModelViewListener getMVListenerByNickname(String nickname){
