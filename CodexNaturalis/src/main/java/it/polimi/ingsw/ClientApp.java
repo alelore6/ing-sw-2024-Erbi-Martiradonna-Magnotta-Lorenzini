@@ -147,6 +147,7 @@ public class ClientApp {
 
     public void stop(){
         try {
+            running = false;
             client.getUserInterface().stop();
             client.getUserInterface().getListener().stop();
         } catch (InterruptedException e) {

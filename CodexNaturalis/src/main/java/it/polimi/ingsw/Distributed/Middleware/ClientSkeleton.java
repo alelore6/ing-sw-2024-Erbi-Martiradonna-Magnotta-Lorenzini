@@ -6,7 +6,6 @@ import it.polimi.ingsw.Distributed.Client;
 import it.polimi.ingsw.Distributed.ServerImpl;
 import it.polimi.ingsw.Events.FinalRankings;
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.Events.PingMessage;
 import it.polimi.ingsw.View.View;
 
 import java.io.*;
@@ -40,18 +39,16 @@ public class ClientSkeleton implements Client {
     }
 
     @Override
-    public void ping() throws RemoteException {
-        update(new PingMessage(nickname));
-    }
+    public void ping() throws RemoteException {}
 
     @Override
     public synchronized void update(GenericEvent e) throws RemoteException {
         try {
-            if(!(e instanceof PingMessage)) logger.addLog(e, Severity.SENDING);
+            logger.addLog(e, Severity.SENDING);
             out.reset();
             out.writeObject(e);
             out.flush();
-            if(!(e instanceof PingMessage)) logger.addLog(e, Severity.SENT);
+            logger.addLog(e, Severity.SENT);
         } catch (IOException ex) {
             throw new RemoteException("Cannot send " + e.getClass().getName() + " to client");
         }
@@ -69,7 +66,6 @@ public class ClientSkeleton implements Client {
             logger.addLog((GenericEvent) null, Severity.RECEIVING);
             event = (GenericEvent) in.readObject();
             logger.addLog(event, Severity.RECEIVED);
-
         } catch (IOException e) {
             throw new RemoteException("Cannot receive from client", e);
         } catch (ClassNotFoundException e) {

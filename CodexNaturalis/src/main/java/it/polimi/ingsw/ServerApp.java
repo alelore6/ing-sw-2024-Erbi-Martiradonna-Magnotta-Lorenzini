@@ -97,13 +97,16 @@ public class ServerApp {
                     new Thread(){
                         @Override
                         public void run(){
+                            ClientSkeleton clientSkeleton = null;
                             try{
-                                ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);
+                                clientSkeleton = new ClientSkeleton(socket, logger);
                                 System.out.println(" (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
                                 while (running)    clientSkeleton.receive(server);
 
-                            }catch(RemoteException ignored){}
+                            }catch(RemoteException e){
+                                server.disconnectPlayer(clientSkeleton.getNickname());
+                            }
                         }
                     }.start();
                 } catch (IOException e) {
@@ -119,7 +122,7 @@ public class ServerApp {
 
 
         try{
-            Naming.unbind("rmi://localhost/HelloServer");
+            Naming.unbind("CodexNaturalis_Server");
             UnicastRemoteObject.unexportObject(server, true);
             registry = LocateRegistry.getRegistry();
         }catch (Exception e){

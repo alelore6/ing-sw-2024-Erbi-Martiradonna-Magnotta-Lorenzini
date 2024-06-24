@@ -119,7 +119,6 @@ public class GUI extends UI{
      */
     @Override
     public void update(GenericEvent e){
-        if (e instanceof PingMessage) return;
         if (e instanceof ChatMessage){ if(!e.nickname.equals(nickname))f.addChatMessage(e.nickname,e.getMessage());}
         else {if (e instanceof ChatAck){
             if(!((ChatAck) e).isOk)     f.addChatMessage("game", "error sending the chat message");}

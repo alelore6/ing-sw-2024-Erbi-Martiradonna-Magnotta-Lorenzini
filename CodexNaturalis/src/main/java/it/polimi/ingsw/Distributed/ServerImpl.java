@@ -112,19 +112,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                             try {
                                 clients.get(nickname).ping();
                             } catch (RemoteException e) {
-                                System.err.println(nickname + " is disconnected.");
 
-                                disconnectedClients.add(nickname);
-
-                                ModelViewListener listener = controller.getMVListenerByNickname(nickname);
-
-                                listener.stop();
-
-                                synchronized (controller.getMVListeners()){
-                                    controller.getMVListeners().remove(listener);
-                                    if(controller.getMVListeners().size() == 0) controller.getGame().isFinished = true;
-                                }
-                                controller.disconnectPlayer(nickname);
                             }
                         }
                         for(String nickname : disconnectedClients){
@@ -140,6 +128,22 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                 }
             }
         }).start();
+    }
+
+    public void disconnectPlayer(String nickname){
+        System.err.println(nickname + " is disconnected.");
+
+        disconnectedClients.add(nickname);
+
+        ModelViewListener listener = controller.getMVListenerByNickname(nickname);
+
+        listener.stop();
+
+        synchronized (controller.getMVListeners()){
+            controller.getMVListeners().remove(listener);
+            if(controller.getMVListeners().size() == 0) controller.getGame().isFinished = true;
+        }
+        controller.disconnectPlayer(nickname);
     }
 
     public Client findClientByNickname(String nickname, Client clientToExclude){
