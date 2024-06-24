@@ -17,6 +17,7 @@ import java.util.List;
 public class ServerImpl extends UnicastRemoteObject implements Server{
 
     private final ServerApp serverApp;
+
     private volatile int endSent = 0;
     public static final int PING_INTERVAL = 3000; // milliseconds
     public final Controller controller = new Controller(this);
@@ -157,6 +158,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void update(Client client, GenericEvent event) throws RemoteException{
         // If client is connected with RMI.
         if(!(client instanceof ClientSkeleton))
+
             logger.addLog(event, Severity.RECEIVED);
         synchronized(lock_update){
             if(event instanceof ClientRegister){
@@ -185,15 +187,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         }
     }
 
+    public int getEndSent() {
+        return endSent;
+    }
+
     public synchronized void restart(){
 
         controller.getGame().stop();
-
-        boolean allSent = false;
-
-        while(true){
-            if(endSent >= controller.getMVListeners().size()) break;
-        }
 
         System.exit(0);
 

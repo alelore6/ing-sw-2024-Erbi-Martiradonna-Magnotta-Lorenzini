@@ -149,6 +149,10 @@ public class ModelViewListener extends Listener {
             else                                    getEventQueue().add(event);
         }
 
-        if(event instanceof FinalRankings) server.restart();
+        if(event instanceof FinalRankings){
+            server.notifyEndSent();
+
+            if(server.getEndSent() >= server.controller.getMVListeners().size()) server.restart();
+        }
     }
 }

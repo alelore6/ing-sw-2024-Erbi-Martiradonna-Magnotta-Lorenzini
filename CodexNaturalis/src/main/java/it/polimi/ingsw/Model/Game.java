@@ -38,7 +38,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    private int timeoutOnePlayer = 60; // TODO: risettare a 30.
+    public static final int timeoutOnePlayer = 60;
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -390,13 +390,11 @@ public class Game{
 
 
         //send FinalRankings event to everyone
-        FinalRankings event = new FinalRankings("everyone", rankings);
-        event.mustBeSentToAll = true;
+        FinalRankings event = new FinalRankings("every one", rankings);
+
         for(int i = 0; i < numPlayers; i++){
             if(!players[i].isDisconnected)  getMVListenerByNickname(players[i].getNickname()).addEvent(event);
         }
-
-
     }
 
     /**

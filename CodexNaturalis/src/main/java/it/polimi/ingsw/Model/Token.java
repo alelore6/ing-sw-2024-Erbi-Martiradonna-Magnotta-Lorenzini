@@ -30,7 +30,7 @@ public class Token {
      */
     public Token(TokenColor color, Scoretrack scoretrack, Player player) {
         this.color = color;
-        this.scoreTrackPos = 0;
+        this.scoreTrackPos = 19;
         this.scoretrack = scoretrack;
         this.player = player;
         scoretrack.addToken(this);
