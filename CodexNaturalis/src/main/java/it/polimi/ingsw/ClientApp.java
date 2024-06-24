@@ -20,14 +20,33 @@ import it.polimi.ingsw.View.TUI;
 
 import static it.polimi.ingsw.Distributed.ServerImpl.PING_INTERVAL;
 
+/**
+ * Class that define the application client side.
+ */
 public class ClientApp {
-
+    /**
+     * The buffering character-input stream that uses a default-sized input buffer.
+     * This is for taking the IP from the user.
+     */
     private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
-    private Server server;
+    /**
+     * The server to which the client is connected to.
+     */
+    Server server;
+    /**
+     * The particular instance of the client.
+     */
     private ClientImpl client;
-
+    /**
+     * Boolean that indicates if thread-loops are running.
+     */
     private volatile boolean running = true;
 
+    /**
+     * Constructor
+     * @param args the arguments taken by command line.
+     * @throws InterruptedException if either Socket or RMI thread is interrupted.
+     */
     private ClientApp(String[] args) throws InterruptedException {
         List<String> args_list = Arrays.asList(args);
 
@@ -145,12 +164,20 @@ public class ClientApp {
         System.exit(0);
     }
 
+    /**
+     * Method to stop the client.
+     */
     public void stop(){
         running = false;
         client.getUserInterface().stop();
         client.getUserInterface().getListener().stop();
     }
 
+    /**
+     * Method for entering the IP.
+     * @return the IP address.
+     * @throws IOException
+     */
     private String insertIP() throws IOException {
         System.out.println("Enter server IP address: ");
 

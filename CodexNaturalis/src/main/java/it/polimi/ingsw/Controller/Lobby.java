@@ -5,12 +5,12 @@ import it.polimi.ingsw.Exceptions.PlayerNotFoundException;
 import java.util.ArrayList;
 
 /**
- * Class that represent the waiting lobby before the game starts.
+ * Class that represents the waiting lobby before the game starts.
  * The lobby exists w/o the actual players. Only nicknames are used in this class and players will be created after the game creates.
  */
 public class Lobby {
     /**
-     * represent the number of players in the game, is set by the first player to join the lobby.
+     * represents the number of players in the game, is set by the first player to join the lobby.
      */
     private int numPlayers;
     /**

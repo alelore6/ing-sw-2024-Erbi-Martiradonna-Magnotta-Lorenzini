@@ -9,15 +9,34 @@ import java.rmi.RemoteException;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * Listener from model to view, i.e., server to client.
+ */
 public class ModelViewListener extends Listener {
 
+    /**
+     * Attribute containing the last request sent.
+     */
     private GenericRequest lastRequest;
+    /**
+     * Attribute representing the number of requests sent without the corresponding response.
+     * In order for the listener to send a new request, this must be zero.
+     */
     private int requestEventIndex = 0;
+    /**
+     * The client associated with the listener.
+     */
     public final Client client;
+    /**
+     * The nickname of the user associated with the listener.
+     */
     public String nickname;
+    /**
+     * The list of chat messages.
+     */
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
     /**
-     * the server bound to this specific listener.
+     * The server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client
      */
     public final ServerImpl server;
@@ -33,16 +52,6 @@ public class ModelViewListener extends Listener {
         this.server = server;
         this.client = client;
         this.nickname = client.getNickname();
-    }
-
-    /**
-     * This constructor is only for stopping the server when no one is playing anymore.
-     * In fact, it receives the FinalRankings event that restarts the server.
-     */
-    public ModelViewListener(ServerImpl server){
-        this.server = server;
-        this.client = null;
-        this.nickname = null;
     }
 
     /**
@@ -118,24 +127,27 @@ public class ModelViewListener extends Listener {
         }.start();
     }
 
-    public int getRequestEventIndex() {
-        return requestEventIndex;
-    }
-
-    public void setRequestEventIndex(int requestEventIndex) {
-        this.requestEventIndex = requestEventIndex;
-    }
-
+    /**
+     * Method to add a chat message to the specific list.
+     * @param message
+     */
     public void addChatMessage(ChatMessage message) {
         synchronized (lock_queue) {
             chatMessages.add(message);
         }
     }
 
+    /**
+     * Method to stop the running threads.
+     */
     public void stop(){
         running = false;
     }
 
+    /**
+     * Method to handle the event to be sent to the corresponding client.
+     * @param event event to be handled.
+     */
     @Override
     public synchronized void addEvent(GenericEvent event) {
         // This is for stopping the check for 0/1 remaining player situation.

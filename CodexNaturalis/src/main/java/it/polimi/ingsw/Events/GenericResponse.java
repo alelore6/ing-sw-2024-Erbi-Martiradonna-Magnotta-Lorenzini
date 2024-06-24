@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Class representing a generic response event.
+ */
 public abstract class GenericResponse extends GenericEvent{
     /**
      * Constructor

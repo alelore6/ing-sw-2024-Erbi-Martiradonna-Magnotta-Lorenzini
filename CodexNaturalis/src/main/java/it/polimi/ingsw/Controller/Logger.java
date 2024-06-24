@@ -9,23 +9,39 @@ import java.io.PrintStream;
  * or some warning/failure.
  */
 public class Logger{
+    /**
+     * Object to print on System.out.
+     */
     private final PrintStream out = new PrintStream(System.out, true);
+    /**
+     * Object to print on System.err.
+     */
     private final PrintStream outErr = new PrintStream(System.err, true);
 
-    public Logger() {
-    }
+    /**
+     * Constructor
+     *
+     */
+    public Logger() {}
 
+    /**
+     * Method for adding an event to the logger.
+     * @param event
+     * @param s
+     */
     public void addLog(GenericEvent event, Severity s){
-        if(event == null){ // it means it is receiving an event soon
-            // useless for me
-            // out.println("[" + s + "] listening for an event...");
-        }
+        if(event == null){}
         else if(s == Severity.FAILURE)   outErr.println("[FAILURE] " + event.nickname + "'s " + event.getClass().getName() + " event: " + event.msgOutput() + "\n");
         else{
             out.println("[" + s + "] " + event.nickname + "'s " + event.getClass().getName().split("\\.")[event.getClass().getName().split("\\.").length - 1] + ".");
         }
     }
 
+    /**
+     * Method for adding a string to the logger.
+     * @param message
+     * @param s
+     */
     public void addLog(String message, Severity s){
         out.println("[" + s + "] " + message);
     }

@@ -248,7 +248,7 @@ public class Controller {
             else if(event instanceof ChatMessage){
 
                 if(event.mustBeSentToAll)   sendEventToAll(event);
-                else if(server.findClientByNickname(((ChatMessage) event).recipient, null) != null)
+                else if(server.getClients().containsKey(((ChatMessage) event).recipient))
                     getMVListenerByNickname(((ChatMessage) event).recipient).addChatMessage((ChatMessage) event);
                 else {
                     getMVListenerByNickname(nickname).addEvent(new ChatAck((ChatMessage) event, false));

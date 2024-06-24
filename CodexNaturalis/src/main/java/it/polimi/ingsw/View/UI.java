@@ -13,16 +13,40 @@ public abstract class UI implements View{
     protected final ClientImpl client;
     protected final ViewControllerListener listener;
     public volatile boolean running = true;
+    protected String nickname;
 
+    /**
+     * Constructor
+     * @param client
+     */
     public UI(ClientImpl client) {
         this.client = client;
+        this.nickname = client.getNickname();
         this.listener = new ViewControllerListener(client);
     }
 
-    public abstract void stop();
+    /**
+     * Method to stop the running threads.
+     */
+    public void stop(){
+        running = false;
+    }
 
+    /**
+     * Getter for the listener.
+     * @return the listener.
+     */
     public ViewControllerListener getListener() {
         return listener;
+    }
+
+    /**
+     * Method to send the event designated to the server controller.
+     * @param event the event sent to the listener.
+     * @see ViewControllerListener
+     */
+    public final void notifyListener(GenericEvent event) {
+        listener.addEvent(event);
     }
 
     public abstract String chooseNickname();

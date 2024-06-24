@@ -5,6 +5,7 @@ import it.polimi.ingsw.Events.*;
 import it.polimi.ingsw.Model.*;
 import it.polimi.ingsw.ModelView.HandView;
 import it.polimi.ingsw.ModelView.PlayerView;
+import org.jetbrains.annotations.Contract;
 
 import java.io.*;
 import java.rmi.RemoteException;
@@ -15,28 +16,71 @@ import static it.polimi.ingsw.Model.Position.*;
 import static java.lang.String.join;
 import static java.lang.Thread.sleep;
 
+/**
+ * Class that handles event with respect to CLI-clients.
+ */
 public class TUI extends UI {
 
+    /**
+     * String having the last inputs entered by the user.
+     */
     private final Queue<String> lastInputs = new LinkedList<>();
+    /**
+     * Reader that permits to take inputs as strings.
+     */
     private final BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+    /**
+     * Object to print on System.out.
+     */
     private final PrintStream out = new PrintStream(System.out, true);
+    /**
+     * Object to print on System.err.
+     */
     private final PrintStream outErr = new PrintStream(System.err, true);
+    /**
+     * String that, when the game starts, indicates the first user playing.
+     */
     private String firstPlayer = "";
+    /**
+     * Matrix containing the last played cards by the user.
+     */
     private Card[][] lastPlayedCards = null;
+    /**
+     * Array containing the two public objective cards.
+     */
     private final ObjectiveCard[] publicObjCards = new ObjectiveCard[2];
+    /**
+     * Boolean indicating if the public objective cards have been saved.
+     */
     private boolean objBool = true;
+    /**
+     * The private objective card.
+     */
     private ObjectiveCard privateObjectiveCard = null;
+    /**
+     * Lock for event queue.
+     */
     private Object lock_events = new Object();
+    /**
+     * Thread running.
+     */
     private Thread TUIThread, commandThread;
 
+    /**
+     * Constructor
+     * @param client
+     */
     public TUI(ClientImpl client) {
         super(client);
     }
 
-    // This method allows to receive the user's choice between min and max included.
-    // It runs until a proper answer isn't given.
-    // WATCH OUT! This method is meant only for inputs. The proper output must be implemented elsewhere
-    //                                                  (e.g. let the user know the mapping between min:max and choices)
+    /**
+     * This method allows to receive the user's choice between min and max included, and
+     * it runs until a proper answer isn't given.
+     * @param min
+     * @param max
+     * @return the number inserted in System.in and it is between min and max.
+     */
     private final int chooseInt(int min, int max){
         boolean isValid = false;
         String choice = null;
@@ -76,10 +120,9 @@ public class TUI extends UI {
         return intChoice;
     }
 
-    public final void notifyListener(GenericEvent e) {
-        listener.addEvent(e);
-    }
-
+    /**
+     * Method to clear the console.
+     */
     public final static void clearConsole(){
         try{
             final String so = System.getProperty("os.name");
@@ -90,10 +133,19 @@ public class TUI extends UI {
         catch (Exception ignored){}
     }
 
+    /**
+     * Method to ask the user to insert his nickname without spaces and at least 4 characters long.
+     * @return the nickname inserted.
+     */
     public String chooseNickname() {
         return chooseString("nickname");
     }
 
+    /**
+     * Method to ask the user to insert a string without spaces and at least 4 characters long.
+     * @param s the name of the string requested.
+     * @return the string inserted.
+     */
     private final String chooseString(String s){
         boolean isValid = false;
         String tempString = null;
@@ -123,19 +175,37 @@ public class TUI extends UI {
         return tempString.trim();
     }
 
+    /**
+     * Method to print on System.out.
+     * @param s
+     */
     public final void printOut(String s){
         out.println(s);
     }
 
+    /**
+     * Method to print on System.err.
+     * @param err
+     */
     public final void printErr(String err){
         outErr.println(err);
     }
 
+    /**
+     * Method to print a default error message if still running.
+     * @return
+     */
     private String inputError(){
         return running ? "Input not allowed. Please try again" : "";
     }
 
-    private String setColorForBackground(String color, String string){
+    /**
+     * Method to add a color to the background of a string to be printed on terminal.
+     * @param color
+     * @param string
+     * @return the colored string.
+     */
+    private static String setColorForBackground(String color, String string){
         String c;
         String reset = "\u001B[49m";
         switch (color){
@@ -153,6 +223,13 @@ public class TUI extends UI {
         return reset + c + string + reset;
     }
 
+    /**
+     * Method to add a color to the string to be printed on terminal.
+     * @param color
+     * @param string
+     * @param isBright
+     * @return the colored string.
+     */
     public static String setColorForString(String color, String string, boolean isBright){
         String c;
         String temp = isBright ? "9" : "3";
@@ -173,6 +250,13 @@ public class TUI extends UI {
         return c + string + resetColor;
     }
 
+    /**
+     * Method to print a playable or starting card in the terminal.
+     * @param card
+     * @see GoldCard
+     * @see ResourceCard
+     * @see StartingCard
+     */
     protected void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
@@ -228,6 +312,11 @@ public class TUI extends UI {
         }
     }
 
+    /**
+     * Method to print an objective card in the terminal.
+     * @param card
+     * @see ObjectiveCard
+     */
     protected void printCard(ObjectiveCard card){
         printOut("\n| OBJECTIVE CARD NUMBER " + card.getID() + "'S REQUESTS:");
         if(card instanceof ObjectiveCard1){
@@ -260,6 +349,12 @@ public class TUI extends UI {
         }
     }
 
+    /**
+     * Method to print the card with the specified ID. In order for it to be printed, the player
+     * must have been played it or having it in the objective cards.
+     * @param ID
+     * @param playedCards
+     */
     private void requestCard(int ID, Card[][] playedCards){
         if(playedCards == null){
             printErr("You can't see the card: you haven't even started the game!");
@@ -284,6 +379,12 @@ public class TUI extends UI {
         else printErr("You can't see the card: it's not present on your played cards.");
     }
 
+    /**
+     * Method to print the grid where the user can play a card. If a card can be placed in a certain
+     * position, it prints the spot with yellow, else with black. If a card is present in a position,
+     * it simply prints the card's ID colored by the card's color.
+     * @param playedCards
+     */
     private void printGrid(Card[][] playedCards){
         int minRow = 100;
         int minColumn = 100;
@@ -362,6 +463,12 @@ public class TUI extends UI {
     }
 
     // It returns true if the string is a chat message, and it also sends it.
+
+    /**
+     * Method to check if the string is a chat command.
+     * @param string
+     * @return true if the string is a chat command.
+     */
     private boolean listenToChat(String string){
         if(string == null)  return false;
 
@@ -376,7 +483,7 @@ public class TUI extends UI {
             if(words.size() > 3 && words.get(1).equalsIgnoreCase("P")){
                 recipient = words.get(2);
 
-                if(client.getNickname().equals(recipient)){
+                if(nickname.equals(recipient)){
                     printErr("You can't send a message to yourself!");
                     return true;
                 }
@@ -396,7 +503,7 @@ public class TUI extends UI {
 
             words.remove(0);
 
-            listener.addEvent(new ChatMessage(join(" ", words), client.getNickname(), recipient));
+            listener.addEvent(new ChatMessage(join(" ", words), nickname, recipient));
 
             return true;
         }
@@ -404,6 +511,11 @@ public class TUI extends UI {
         return false;
     }
 
+    /**
+     * Method to check if the string is a card command.
+     * @param string
+     * @return true if the string is a card command.
+     */
     private boolean listenToCard(String string, Card[][] playedCards){
         if(string == null)  return false;
 
@@ -437,6 +549,11 @@ public class TUI extends UI {
         return false;
     }
 
+    /**
+     * Method to check if the string is a disconnection command.
+     * @param string
+     * @return true if the string is a disconnection command.
+     */
     private boolean listenToDisconnection(String command){
         if(command == null)  return false;
 
@@ -450,31 +567,40 @@ public class TUI extends UI {
         return false;
     }
 
-    public final void update(GenericEvent e){
-        if(e instanceof ChatMessage){
-            if(e instanceof ChatAck == e.nickname.equals(client.getNickname())){
-                printOut(e.msgOutput());
+    /**
+     * Method to handle the incoming events, treating them with respect to their type.
+     * @param event
+     * @see GenericEvent
+     */
+    public final void update(GenericEvent event){
+        if(event instanceof ChatMessage){
+            if(event instanceof ChatAck == event.nickname.equals(nickname)){
+                printOut(event.msgOutput());
             }
             // else ignored
         }
-        else if(e instanceof FinalRankings){
-            printOut(setColorForString("GREEN", e.msgOutput(), true));
+        else if(event instanceof FinalRankings){
+            printOut(setColorForString("GREEN", event.msgOutput(), true));
 
-            notifyListener(new AckResponse(client.getNickname(), (FinalRankings) e));
+            notifyListener(new AckResponse(nickname, (FinalRankings) event));
         }
-        else if(e instanceof StartTurn){
-            printOut("It's " + setColorForString(((StartTurn) e).color, ((StartTurn) e).turnPlayer, true) + "'s turn.");
+        else if(event instanceof StartTurn){
+            printOut("It's " + setColorForString(((StartTurn) event).color, ((StartTurn) event).turnPlayer, true) + "'s turn.");
         }
-        else if(e instanceof ServerMessage && (e.mustBeSentToAll = true || e.nickname == client.getNickname())){
-            if(e.msgOutput() != null) printOut(e.msgOutput());
+        else if(event instanceof ServerMessage && (event.mustBeSentToAll = true || event.nickname == nickname)){
+            if(event.msgOutput() != null) printOut(event.msgOutput());
         }
         else{
             synchronized(lock_events){
-                inputEvents.add(e);
+                inputEvents.add(event);
             }
         }
     }
 
+    /**
+     * Method that contains all the threads of this class. It handles the event filtered by the
+     * update method, and it also listens to strings inserted by the user such as command, requests' input etc.
+     */
     @Override
     public void run() {
 
@@ -517,10 +643,10 @@ public class TUI extends UI {
                         ev = inputEvents.poll();
                     }
 
-                    if(ev instanceof JoinLobby && !((JoinLobby) ev).getNewNickname().equals(client.getNickname()))
+                    if(ev instanceof JoinLobby && !((JoinLobby) ev).getNewNickname().equals(nickname))
                         client.setNickname(((JoinLobby) ev).getNewNickname());
                     // Ignore all other player's events
-                    else if(!ev.mustBeSentToAll && !ev.nickname.equals(client.getNickname())) continue;
+                    else if(!ev.mustBeSentToAll && !ev.nickname.equals(nickname)) continue;
 
                     int n = -1;
 
@@ -555,7 +681,7 @@ public class TUI extends UI {
                                 n = chooseInt(1, 6);
                             } while (n <= 4 && !presentCards[n-1]);
 
-                            notifyListener(new DrawCardResponse(n,client.getNickname()));
+                            notifyListener(new DrawCardResponse(n,nickname));
                             break;
 
                         case ErrorJoinLobby e :
@@ -571,12 +697,12 @@ public class TUI extends UI {
                             printCard(e.objCard2);
                             printOut(e.msgOutput2());
                             n = chooseInt(1,2);
-                            notifyListener(new ChooseObjectiveResponse(e.getChosenCard(n), client.getNickname()));
+                            notifyListener(new ChooseObjectiveResponse(e.getChosenCard(n), nickname));
                             privateObjectiveCard = e.getChosenCard(n);
                             break;
 
                         case NumPlayersRequest e :
-                            notifyListener(new NumPlayersResponse(chooseInt(2,4), client.getNickname()));
+                            notifyListener(new NumPlayersResponse(chooseInt(2,4), nickname));
                             break;
 
                         case PlayCardRequest e :
@@ -629,7 +755,7 @@ public class TUI extends UI {
                             if(chooseInt(1,2) == 2) e.getPlayerView(e.nickname).hand.handCards[n-1].isFacedown = true;
 
                             printOut(e.msgOutput3());
-                            notifyListener(new PlayCardResponse(client.getNickname(), e.getPlayerView(e.nickname).hand.handCards[n-1], chooseInt(-40, 40), chooseInt(-40, 40)));
+                            notifyListener(new PlayCardResponse(nickname, e.getPlayerView(e.nickname).hand.handCards[n-1], chooseInt(-40, 40), chooseInt(-40, 40)));
                             break;
 
                         case SetTokenColorRequest e :
@@ -640,12 +766,12 @@ public class TUI extends UI {
                                 n = chooseInt(1, 4);
                             } while (!e.choiceIsValid(n));
 
-                            notifyListener(new SetTokenColorResponse(n, client.getNickname()));
+                            notifyListener(new SetTokenColorResponse(n, nickname));
                             break;
 
                         case JoinLobby e :
 
-                            notifyListener(new SetPassword(client.getNickname(), chooseString("password")));
+                            notifyListener(new SetPassword(nickname, chooseString("password")));
                             break;
 
                         case PlaceStartingCard e :
@@ -653,7 +779,7 @@ public class TUI extends UI {
                             printOut(e.msgOutput2());
                             if(chooseInt(1,2) == 2) e.startingCard.isFacedown = true;
 
-                            notifyListener(new PlaceStartingCard( e.startingCard, client.getNickname()));
+                            notifyListener(new PlaceStartingCard( e.startingCard, nickname));
                             printOut("\nWaiting for other players...");
                             break;
 
@@ -663,7 +789,7 @@ public class TUI extends UI {
                             PlayerView p = null;
 
                             for(PlayerView player : e.gameView.players){
-                                if(player.nickname.equals(client.getNickname())){
+                                if(player.nickname.equals(nickname)){
                                     p = player;
                                     break;
                                 }
@@ -676,7 +802,7 @@ public class TUI extends UI {
                             break;
 
                         case ReconnectionRequest e:
-                            notifyListener(new ReconnectionResponse( client.getNickname(),chooseString("password")));
+                            notifyListener(new ReconnectionResponse( nickname,chooseString("password")));
                             break;
 
                         default :
@@ -689,6 +815,10 @@ public class TUI extends UI {
         TUIThread.start();
     }
 
+    /**
+     * Method to stop the running threads.
+     */
+    @Override
     public void stop(){
         running = false;
 

@@ -1,6 +1,10 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Class representing a generic request event.
+ */
 public abstract class GenericRequest extends GenericEvent{
+
     /**
      * Constructor
      *

@@ -24,10 +24,6 @@ public class GUI extends UI{
      */
     private MainFrame f;
     /**
-     * the nickname of the player
-     */
-    private String nickname;
-    /**
      * lock for synchronizations
      */
     private Object lock=new Object();
@@ -39,10 +35,6 @@ public class GUI extends UI{
     public GUI(ClientImpl client) {
         super(client);
         f = new MainFrame(this);
-    }
-
-    public void stop() {
-        //TODO cosa deve fare stop?
     }
 
     /**
@@ -125,6 +117,7 @@ public class GUI extends UI{
         else if (e instanceof FinalRankings) {
             f.addChatMessage("game", e.getMessage());
             JOptionPane.showMessageDialog(f,e.getMessage());
+            notifyListener(new AckResponse(nickname, (FinalRankings) e));
         }
         else if(e instanceof EndGameTriggered){
                 f.addChatMessage("game", e.getMessage());
@@ -145,16 +138,6 @@ public class GUI extends UI{
         listener.addEvent(new ChatMessage(message,nickname,null));
     }
 
-
-    /**
-     * Every time the player make a play action the listener is notified
-     * @param e the event that is sent to the listener
-     */
-    @Override
-    public void notifyListener(GenericEvent e) {
-        listener.addEvent(e);
-    }
-
     /**
      * Represent the logic behind the client's user interface and his connection to the game.
      * Here event are taken from the queue and handled based on their type
@@ -165,7 +148,7 @@ public class GUI extends UI{
         Thread GUI = new Thread(){
             @Override
             public void run(){
-        while(true){
+        while(running){
                     synchronized (inputEvents) {
                     if(inputEvents.isEmpty())   continue;}
                     GenericEvent ev = inputEvents.poll();

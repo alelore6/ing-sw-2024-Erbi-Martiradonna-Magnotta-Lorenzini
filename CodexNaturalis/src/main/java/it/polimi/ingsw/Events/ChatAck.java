@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Ack for chat messages.
+ */
 public class ChatAck extends ChatMessage{
 
     public final boolean isOk;
@@ -7,10 +10,8 @@ public class ChatAck extends ChatMessage{
     /**
      * Constructor
      *
-     * @param msg       message describing the event
-     * @param sender
-     * @param recipient
-     * @param isForEveryone
+     * @param msg the chat message describing the event.
+     * @param isOk the ack's outcome.
      */
     public ChatAck(ChatMessage msg, boolean isOk) {
         super(msg.message, msg.nickname, msg.recipient);

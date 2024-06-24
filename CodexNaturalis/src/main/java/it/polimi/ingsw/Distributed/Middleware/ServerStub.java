@@ -22,11 +22,22 @@ public class ServerStub implements Server, Serializable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
+    /**
+     * Constructor
+     *
+     * @param ip
+     * @param port
+     */
     public ServerStub(String ip, int port) {
         this.ip = ip;
         this.port = port;
     }
 
+    /**
+     * Method to register a socket type connection with the server.
+     * @param client
+     * @throws RemoteException
+     */
     public void register(Client client) throws RemoteException {
         try{
             this.socket = new Socket(ip, port);
@@ -48,8 +59,17 @@ public class ServerStub implements Server, Serializable {
         System.out.println("Connected!");
     }
 
+    /**
+     * Method to pong with the client.
+     */
     public void ping(){}
 
+    /**
+     * Method to update the server with an event using a socket type connection.
+     * @param client
+     * @param event
+     * @throws RemoteException
+     */
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException {
         try {
@@ -65,6 +85,12 @@ public class ServerStub implements Server, Serializable {
         //socket: client skeleton is always reading
     }
 
+    /**
+     * Method to receive an event coming from a socket type connection.
+     * @param client
+     * @return
+     * @throws RemoteException
+     */
     public GenericEvent receive(Client client) throws RemoteException {
         //socket: receive from client skeleton update()
 
@@ -82,6 +108,10 @@ public class ServerStub implements Server, Serializable {
         return ev;
     }
 
+    /**
+     * Method to close the socket connection.
+     * @throws RemoteException
+     */
     public void close() throws RemoteException{
         try {
             socket.close();

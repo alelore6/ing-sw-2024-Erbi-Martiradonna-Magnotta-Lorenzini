@@ -22,6 +22,13 @@ public class ClientSkeleton implements Client {
 
     private String nickname = null;
 
+    /**
+     * Constructor
+     *
+     * @param socket
+     * @param logger
+     * @throws RemoteException
+     */
     public ClientSkeleton(Socket socket, Logger logger) throws RemoteException {
         this.logger = logger;
         this.socket = socket;
@@ -38,23 +45,37 @@ public class ClientSkeleton implements Client {
         }
     }
 
+    /**
+     * Method to pong with the server.
+     * @throws RemoteException
+     */
     @Override
     public void ping() throws RemoteException {}
 
+    /**
+     * Method to update the client with an event using a socket type connection.
+     * @param event
+     * @throws RemoteException
+     */
     @Override
-    public synchronized void update(GenericEvent e) throws RemoteException {
+    public synchronized void update(GenericEvent event) throws RemoteException {
         try {
-            logger.addLog(e, Severity.SENDING);
+            logger.addLog(event, Severity.SENDING);
             out.reset();
-            out.writeObject(e);
+            out.writeObject(event);
             out.flush();
-            logger.addLog(e, Severity.SENT);
+            logger.addLog(event, Severity.SENT);
         } catch (IOException ex) {
-            throw new RemoteException("Cannot send " + e.getClass().getName() + " to client");
+            throw new RemoteException("Cannot send " + event.getClass().getName() + " to client");
         }
         //socket: server stub is always reading (same as receive() here)
     }
 
+    /**
+     * Method to update the server with an event coming from a socket type connection.
+     * @param server
+     * @throws RemoteException
+     */
     public void receive(ServerImpl server) throws RemoteException {
 
         // Saves the server just in case (see the notifyEndSent() call above).
@@ -74,11 +95,19 @@ public class ClientSkeleton implements Client {
         server.update(this, event);
     }
 
+    /**
+     * Setter for the nickname.
+     * @param nickname
+     */
     @Override
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
 
+    /**
+     * Getter for the nickname.
+     * @return
+     */
     @Override
     public String getNickname() {
         return nickname;

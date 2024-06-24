@@ -40,7 +40,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    public static final int timeoutOnePlayer = 30;
+    public static final int timeoutOnePlayer = 60;
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -72,22 +72,25 @@ public class Game{
      */
     public TableCenter tablecenter;
 
-    public ArrayList<ModelViewListener> getMvListeners() {
-        return mvListeners;
-    }
-
     private ArrayList<ModelViewListener> mvListeners;
 
     protected final ArrayList<TokenColor> availableTokens;
-
+    /**
+     * Attribute that counts how many players have completed a specific action.
+     * Usually, the server waits for all the players using this.
+     */
     public int waitNumClient = 0;
 
     public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done
 
     public boolean isTriggered = false; //to see if endgame is triggered
 
-    public final Object lock           = new Object();
-    public final Object OPLLock        = new Object();
+    public final Object lock = new Object();
+    /**
+     * Lock for waiting a certain amount of time when only one player is remaining.
+     */
+    public final Object OPLLock = new Object();
+
     /**
      * Constructor: initializes the Game class, creating the players, turnCounter, remainingTurns, isFinished and
      * creating the startingDeck instance as well.
@@ -115,29 +118,38 @@ public class Game{
         }
     }
 
+    /**
+     * Setter for the players' array.
+     * @param players
+     */
     public void setPlayers(Player[] players) {
         this.players = players;
     }
+
     /**
      * Getter for tablecenter instance
      * @return Tablecenter instance
      */
     public TableCenter getTablecenter() {return tablecenter;}
+
     /**
      * Getter for array of players
      * @return array of players
      */
     public Player[] getPlayers() {return players;}
+
     /**
      * Getter for number of players
      * @return number of players
      */
     public int getNumPlayers() {return numPlayers;}
+
     /**
      * Getter for remainingTurns attribute
      * @return remainingTurns
      */
     public int getRemainingTurns() {return remainingTurns;}
+
     /**
      * Getter for turnCounter attribute
      * @return turnCounter
@@ -156,6 +168,7 @@ public class Game{
      * After the game has been initialized, the method starts it, laying all the cards on the table
      * and filling each player's hand, making them also choose the objective card between the two given.
      * It also randomly chooses the first player and orders the other ones from left to right.
+     * In the end, it loops checking the number of remaining players.
      * @throws RuntimeException if the decks are empty (should not happen at the beginning)
      * @throws WrongPlayException thrown by the method playStartingCard
      */
@@ -252,6 +265,7 @@ public class Game{
                 nextPlayer(players[p]);
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
+                // Loop that checks if the active players are less than 2.
                 while(running){
                     if     (getActivePlayers() == 1) OPLProcedure();
                     else if(getActivePlayers() == 0){
@@ -588,13 +602,17 @@ public class Game{
         }
     }
 
+    /**
+     * Method to clone the game.
+     * @return the game cloned.
+     */
     @Override
     public GameView clone(){
         return new GameView(this);
     }
 
     /**
-     * the One Player Left procedure is called when it is noted that there's only one active player.
+     * The One Player Left procedure is called when it is noted that there's only one active player.
      */
     private synchronized void OPLProcedure(){
         try{
@@ -622,20 +640,24 @@ public class Game{
         }
     }
 
-    public void disconnectPlayer(Player p){
-        p.isDisconnected = true;
+    /**
+     * Method to disconnect a player from the game.
+     * @param player
+     */
+    public void disconnectPlayer(Player player){
+        player.isDisconnected = true;
         int pos = -1;
 
         synchronized (mvListeners){
             for(int i = 0; i < players.length; i++){
                 if(!players[i].isDisconnected){
-                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected("every one", p.getNickname(), getActivePlayers(), false));
+                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected("every one", player.getNickname(), getActivePlayers(), false));
                 }
             }
         }
 
         // If it's the disconnected player's turn, simply skips it and go to the next player.
-        if(getCurrentPlayerNickname().equals(p.getNickname())){
+        if(getCurrentPlayerNickname().equals(player.getNickname())){
             if(turnPhase == 0){
                 // Skips the turn.
             }
@@ -649,7 +671,7 @@ public class Game{
                 }
 
                 try{
-                    p.getHand().DrawPositionedCard(newCard);
+                    player.getHand().DrawPositionedCard(newCard);
                 }catch (HandFullException ignored){}
                 catch (isEmptyException e){
                     // TODO: bisogna gestirla?
@@ -669,14 +691,26 @@ public class Game{
         }
     }
 
+    /**
+     * Method that returns the number of currently active players. Notice that it is equivalent to the
+     * number of listeners in their list.
+     * @return
+     */
     private int getActivePlayers(){
         return mvListeners.size();
     }
 
+    /**
+     * Method to stop the running threads.
+     */
     public void stop(){
         running = false;
     }
 
+    /**
+     * Method to rejoin the game after a disconnection.
+     * @param newListener the listener associated to the rejoined player.
+     */
     public synchronized void rejoin(ModelViewListener newListener) {
         int pos = -1;
 
@@ -691,6 +725,11 @@ public class Game{
         players[pos].isDisconnected = false;
     }
 
+    /**
+     * Getter for the listener associated with the nickname.
+     * @param nickname
+     * @return the listener if found, else null.
+     */
     public ModelViewListener getMVListenerByNickname(String nickname){
         for(ModelViewListener listener : mvListeners){
             if(listener.nickname.equals(nickname)){
@@ -701,14 +740,29 @@ public class Game{
         return null;
     }
 
+    /**
+     * Getter for available tokens.
+     * @return
+     */
     public ArrayList<TokenColor> getAvailableTokens() {
         return availableTokens;
     }
 
+    /**
+     * Setter for the listeners' list.
+     * @param mvListeners
+     */
     public void setMVListeners(ArrayList<ModelViewListener> mvListeners) {
         this.mvListeners = mvListeners;
     }
 
+    /**
+     * Getter for the listeners' list.
+     * @return the listeners' list.
+     */
+    public ArrayList<ModelViewListener> getMvListeners() {
+        return mvListeners;
+    }
 }
 
 

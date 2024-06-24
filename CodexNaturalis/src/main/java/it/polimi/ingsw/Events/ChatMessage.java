@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Class representing a chat message.
+ */
 public class ChatMessage extends GenericEvent{
     public final String recipient;
     /**

@@ -18,16 +18,41 @@ import java.rmi.registry.Registry;
 
 import static java.lang.Thread.sleep;
 
+/**
+ * Class that define the application server side.
+ */
 public class ServerApp {
 
+    /**
+     * The particular instance of the client.
+     */
     private static ServerImpl server;
+    /**
+     * The logger.
+     */
     private static final Logger logger = new Logger();
+    /**
+     * Boolean that indicates if thread-loops are running.
+     */
     private volatile boolean running = true;
+    /**
+     * The socket instance to accept socket connections.
+     */
     private Socket socket = null;
+    /**
+     * The registry instance to accept RMI connections.
+     */
     private Registry registry = null;
-
+    /**
+     * Attribute that represents the port where socket connections are open.
+     */
     public static final int SOCKET_PORT = 2002;
 
+    /**
+     * Constructor
+     *
+     * @throws InterruptedException
+     */
     public ServerApp() throws InterruptedException {
         try {
             server = new ServerImpl(this, logger);
@@ -65,7 +90,11 @@ public class ServerApp {
         }catch (InterruptedException ignored){}
     }
 
-    //server start rmi
+    /**
+     * Method to start RMI connections.
+     * @throws RemoteException
+     * @throws AlreadyBoundException
+     */
     private void startRMI () throws RemoteException, AlreadyBoundException {
         new Thread(){
             @Override
@@ -86,6 +115,11 @@ public class ServerApp {
         }.start();
     }
 
+    /**
+     * Method to start socket connections.
+     * @param port
+     * @throws RemoteException
+     */
     private void startSocket(int port) throws RemoteException {
         try {
             ServerSocket serverSocket = new ServerSocket(port);
@@ -118,6 +152,9 @@ public class ServerApp {
         }
     }
 
+    /**
+     * Method to restart the server.
+     */
     public void restart(){
 
 
