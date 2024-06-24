@@ -67,27 +67,23 @@ public class ServerApp {
 
     //server start rmi
     private void startRMI () throws RemoteException, AlreadyBoundException {
+        new Thread(){
+            @Override
+            public void run(){
+                try{
+                    if(registry == null){
+                        registry = LocateRegistry.createRegistry(1099);
+                    }
 
-        if(registry == null){
-//            // Get the public address
-//            BufferedReader in = null;
-//            String ip = null;
-//            try {
-//                URL whatismyip = new URL("https://checkip.amazonaws.com");
-//                in = new BufferedReader(new InputStreamReader(whatismyip.openStream()));
-//                ip = in.readLine();
-//                if(in != null) in.close();
-//            }
-//            catch(IOException e){e.printStackTrace();}
-//
-//            System.setProperty("java.rmi.server.hostname", ip);
-            registry = LocateRegistry.createRegistry(1099);
-        }
+                    //Binding the server to the RMI registry so that the client can look up
+                    registry.rebind("CodexNaturalis_Server", server);
 
-        //Binding the server to the RMI registry so that the client can look up
-        registry.rebind("CodexNaturalis_Server", server);
-
-        System.out.println("RMI started and registered");
+                    System.out.println("RMI started and registered");
+                }catch (RemoteException e){
+                    System.err.println("Cannot start RMI.\n");
+                }
+            }
+        }.start();
     }
 
     private void startSocket(int port) throws RemoteException {
@@ -99,6 +95,7 @@ public class ServerApp {
                     socket = serverSocket.accept();
 
                     new Thread(){
+                        @Override
                         public void run(){
                             try{
                                 ClientSkeleton clientSkeleton = new ClientSkeleton(socket, logger);

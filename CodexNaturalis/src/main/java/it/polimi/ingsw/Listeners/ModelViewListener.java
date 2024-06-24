@@ -13,6 +13,7 @@ public class ModelViewListener extends Listener {
 
     private GenericRequest lastRequest;
     private int requestEventIndex = 0;
+    private volatile boolean endSent = false;
     public final Client client;
     public String nickname;
     private final Queue<ChatMessage> chatMessages = new LinkedList<ChatMessage>();
@@ -98,16 +99,12 @@ public class ModelViewListener extends Listener {
 
                                         client.update(currentEvent);
 
-                                        if(currentEvent instanceof FinalRankings){
-                                            server.notifyEndSent();
-                                        }
-
                                         server.logger.addLog(currentEvent, Severity.SENT);
-
                                     }
                                     else client.update(currentEvent);
 
-                                    if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
+                                    if(currentEvent instanceof FinalRankings) endSent = true;
+                                    else if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
                                 }
                                 else{
                                     getEventQueue().addFirst(currentEvent);
@@ -150,6 +147,9 @@ public class ModelViewListener extends Listener {
         }
 
         if(event instanceof FinalRankings){
+
+            while(!endSent){}
+
             server.notifyEndSent();
 
             if(server.getEndSent() >= server.controller.getMVListeners().size()) server.restart();

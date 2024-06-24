@@ -56,8 +56,6 @@ public class ClientSkeleton implements Client {
             throw new RemoteException("Cannot send " + e.getClass().getName() + " to client");
         }
         //socket: server stub is always reading (same as receive() here)
-
-        if(e instanceof FinalRankings && server != null)    server.notifyEndSent();
     }
 
     public void receive(ServerImpl server) throws RemoteException {
