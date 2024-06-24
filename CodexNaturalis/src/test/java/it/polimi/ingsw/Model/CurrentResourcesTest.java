@@ -72,12 +72,7 @@ public class CurrentResourcesTest {
         //posso farlo anche dentro ogni test per fare i diversi casi
     }
 
-    //per settare campi privati senza setter
-    private void setField(Object target, String fieldName, Object value) throws Exception {
-        Field field = target.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(target, value);
-    }
+
 
     @Test
     public void testUpdateStartingCardFaceDown() {

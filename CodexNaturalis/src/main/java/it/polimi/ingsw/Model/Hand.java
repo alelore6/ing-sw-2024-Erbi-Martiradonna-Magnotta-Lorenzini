@@ -5,7 +5,8 @@ import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 
 /**
- * Class that contains player's hand and played cards
+ * Class that contains player's hand and his played cards.
+ * Also contains the logic behind the play and the draw actions.
  */
 public class Hand {
     /**
@@ -29,6 +30,9 @@ public class Hand {
         return displayedCards;
     }
 
+    /**
+     * Number of cards played
+     */
     private int NcardsPlayed=0;
 
     /**
@@ -66,7 +70,7 @@ public class Hand {
      * Draw one of the positioned card in table center and add it to the player's hand
      * @param card the chosen card
      * @throws HandFullException if hand is already full, should not happen
-     * @throws isEmptyException if the deck that should substitute the chosen card is empty
+     * @throws isEmptyException if the deck that should substitute the chosen card is empty or the card was not found in the table center
      */
     public void DrawPositionedCard( PlayableCard card) throws HandFullException, isEmptyException {
         int result = player.game.tablecenter.drawAndPosition(card);
@@ -92,14 +96,6 @@ public class Hand {
         }
     }
 
-    /**
-     * Getter for card in hand
-     * @param pos the position that describes the card in the hand we want to get
-     * @return the card in tha hand at the pos position
-     */
-    protected PlayableCard getHandCard(int pos){
-        return HandCards[pos];
-    }
 
     public PlayableCard[] getHandCards(){return HandCards;}
 
@@ -135,7 +131,7 @@ public class Hand {
             }
         }
         else{
-            displayedCards[40][40]=card;
+            displayedCards[x][y]=card;
             card.playOrder=NcardsPlayed;
             NcardsPlayed++;
             player.getCurrentResources().update(card, null);
