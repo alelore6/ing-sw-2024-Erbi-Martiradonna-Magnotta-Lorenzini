@@ -14,7 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class PersonalPanel extends JSplitPane {
+
     protected final String nickname;
     private final PlayerView playerView;
     private final PlayerPanel playerPanel;

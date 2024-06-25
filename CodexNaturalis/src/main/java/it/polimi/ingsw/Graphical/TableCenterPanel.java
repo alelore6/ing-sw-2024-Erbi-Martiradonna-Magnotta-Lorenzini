@@ -12,21 +12,65 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Dimension;
 
+/**
+ * The panel where the game takes place, you can see both decks (Gold Deck and Resource Deck) and all the  four cards on the floor from where, when the time is right, you can draw, the score track ,as well as  the two community objective cards.
+ * It extends JSplitPane to be able to divide the screen between card section and score track section.
+ */
 public class TableCenterPanel extends JSplitPane {
+    /**
+     * the game view gives all the required information about the game in any exact moment.
+     */
     private GameView gameView;
+    /**
+     * card labels is an array of labels associated to each card spot  associated to a JLabel to visualize through the layout manager each card image that lands on the spot.
+     */
     private ArrayList<JLabel> cardLabels;
+    /**
+     * deck labels is an array of two labels associated to each deck spot associated with a JLabel to visualize through the layout manager each deck peek card image.
+     */
     private JLabel[] deckLabels;
+    /**
+     * An array  of integers that keeps track of the IDs of the cards present in the central spots of the table.
+     */
     private int[] cardsID;
+    /**
+     * an encoding of the draw choice of a player.
+     */
     private int drawChoice;
+    /**
+     * a boolean that sets when is the time to draw for each player.
+     */
     private boolean drawing = false;
+    /**
+     * Spots is an Array of 27 JButton to create 27 spots on score tracks to keep track of each player's current and final score;
+     */
     private JButton[] spots;
+    /**
+     * SpotXCoords is an array of all width coordinates of spots on score tracks to correctly place them on the score track.
+     */
     private int[] spotXCoords = {/* coordinate */};
+    /**
+     * SpotXCoords is an array of all height coordinates of spots on score tracks to correctly place them on the score track.
+     */
     private int[] spotYCoords = { /* coordinate */};
+    /**
+     * DrawButtons contains all the draw buttons, JButtons used to draw from center of table.
+     */
     private ArrayList<JButton> drawButtons;
-    private JLabel cardLabel;
+    /**
+     * PossiblePlayImage is an image used as a placeholder for spaces where there are no cards available, setting a default image to improve the game's user interface and maintaining visual coherence.
+     */
     private ImageIcon possiblePlayImage = null;
+    /**
+     * DrawLock is used as a synchronization mechanism to ensure that draw card operations in the game are performed in a safe and coordinated manner, preventing potential concurrency issues in a multithreaded environment.
+     */
     private final Object drawLock;
 
+    /**
+     * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
+     * @param gameView
+     * @param drawLock
+     */
     public TableCenterPanel(GameView gameView, Object drawLock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
@@ -48,6 +92,10 @@ public class TableCenterPanel extends JSplitPane {
         this.setDividerLocation(860);
     }
 
+    /**
+     * CreateRightPanel generates the right panel that will compose the Table Center Panel, drawing the score track image with each spot created using JButtons to allow token to land on them to keep track of points.
+     * @return
+     */
     private JPanel createRightPanel() {
         ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
         int originalWidth = img.getIconWidth();
@@ -80,6 +128,10 @@ public class TableCenterPanel extends JSplitPane {
         return rightPanel;
     }
 
+    /**
+     * createLeftPanel method is crucial for creating the left panel of the game table in the TableCenterPanel class. It manages the organization and addition of card decks, center cards and objective cards, as well as management of draw buttons.
+     * @return
+     */
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
         leftPanel.setLayout(new GridLayout(4, 1, 10, 10));
@@ -111,6 +163,12 @@ public class TableCenterPanel extends JSplitPane {
         return leftPanel;
     }
 
+    /**
+     * addObjectiveCardSpot Adds a spot for an objective card, displaying the card icon or a placeholder if there is no card.
+     * @param panel
+     * @param title
+     * @param cardID
+     */
     private void addObjectiveCardSpot(JPanel panel, String title, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
@@ -128,6 +186,13 @@ public class TableCenterPanel extends JSplitPane {
         panel.add(cardPanel);
     }
 
+    /**
+     * addDeck method adds a deck of cards with the top card icon and a button to draw cards from that deck.
+     * @param panel
+     * @param title
+     * @param cardColor
+     * @param deckIndex
+     */
     public void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
         JPanel deckPanel = new JPanel();
         deckPanel.setLayout(new BorderLayout());
@@ -157,6 +222,13 @@ public class TableCenterPanel extends JSplitPane {
         deckPanel.add(drawButton, BorderLayout.EAST);
         panel.add(deckPanel);
     }
+
+    /**
+     * addCardSpot adds a spot for a central card, displaying the card icon or a placeholder if there is no card, and includes a button to draw the card.
+     * @param panel
+     * @param index
+     * @param cardID
+     */
     private void addCardSpot(JPanel panel, int index, int cardID) {
         JPanel cardPanel = new JPanel();
         cardPanel.setLayout(new BorderLayout());
@@ -184,6 +256,14 @@ public class TableCenterPanel extends JSplitPane {
         panel.add(cardPanel);
     }
 
+    /**
+     * getImageIcon method loads an image from the specified path into the application's classpath, resizes it to the desired size, and returns it as an ImageIcon.
+     * This method is useful for managing card images and other graphic assets in the game GUI
+     * @param path
+     * @param scaleX
+     * @param scaleY
+     * @return
+     */
     private ImageIcon getImageIcon(String path, int scaleX, int scaleY) {
         BufferedImage img = null;
         try {
@@ -194,6 +274,11 @@ public class TableCenterPanel extends JSplitPane {
         return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_SMOOTH));
     }
 
+    /**
+     * drawCard method handles the selection of a card to draw, updating the internal state to reflect the user's choice,
+     * hiding the draw buttons, and notifying any waiting threads that a draw action has completed.
+     * @param spotID
+     */
     private void drawCard(int spotID) {
         if (drawing) {
             this.drawChoice = spotID;
@@ -204,10 +289,17 @@ public class TableCenterPanel extends JSplitPane {
         }
     }
 
+    /**
+     * getDrawChoice is used to encode player choice to obtain the index of the player's drawing choice, allowing the system to react based on this choice.
+     * @return
+     */
     public int getDrawChoice() {
         return drawChoice;
     }
 
+    /**
+     * UpdateCard  update the card spot information after a draw, to replace the drawn card with a new one.
+     */
     private void updateCards() {
         for (int i = 0; i < 4; i++) {
             if (gameView.tableCenterView.centerCards[i] == null) {
@@ -220,6 +312,9 @@ public class TableCenterPanel extends JSplitPane {
         }
     }
 
+    /**
+     * UpdateDeck  update the deck spot information after a draw, to replace the drawn card with a new one.
+     */
     private void updateDeck() {
         for (int i = 0; i < 2; i++) {
             CardColor deckCardColor;
@@ -238,6 +333,9 @@ public class TableCenterPanel extends JSplitPane {
         }
     }
 
+    /**
+     * showDrawButton shows draw button to make them usable.
+     */
     public void showDrawButton() {
         int i=0;
         for (JButton button : drawButtons) {
@@ -246,11 +344,20 @@ public class TableCenterPanel extends JSplitPane {
         }
     }
 
+    /**
+     * hideDrawButton hides draw button to make them unusable.
+     */
     private void hideDrawButton() {
         for (JButton button : drawButtons) {
             button.setVisible(false);
         }
     }
+
+    /**
+     * Update method update the entire Tabel Center Panel to keep playing without have to create each time a new panel.
+     * @param gameView
+     * @param drawing
+     */
     public void update(GameView gameView, boolean drawing) {
         this.gameView = gameView;
         this.drawing = drawing;
@@ -261,6 +368,12 @@ public class TableCenterPanel extends JSplitPane {
         }
     }
 
+    /**
+     * getCardColorId method is essential for mapping card colors to their respective numeric IDs, taking into account whether the cards are gold or resource to facilitate card image retrieval.
+     * @param color
+     * @param gold
+     * @return
+     */
     public static int getCardColorId(CardColor color,boolean gold) {
         int id=0;
         switch (color) {

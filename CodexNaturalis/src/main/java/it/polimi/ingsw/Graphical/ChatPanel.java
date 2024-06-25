@@ -5,13 +5,31 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+/**
+ * the panel that contains chat between all players and between only two players.
+ */
 public class ChatPanel extends JPanel {
+    /**
+     * Chat Area is where you can visualize all messages.
+     */
     private final JTextArea chatArea;
+    /**
+     * Input area is where you can write all messages.
+     */
     private final JTextArea inputArea;
+    /**
+     * Recipient that contains all the nicknames of  message receievers and the public board option.
+     */
     private  JComboBox<String> recipientComboBox;
+
     private Font plainFont;
     private MainFrame f;
 
+    /**
+     * Constructor: creates the input area , the chat area and the send button;
+     * then it creates scroll pane to be able to send and receive any number of messages.
+     * @param f: the UI that communicates with the Main Frame.
+     */
     public ChatPanel(MainFrame f) {
         super(new BorderLayout());
         this.f = f;
@@ -51,6 +69,10 @@ public class ChatPanel extends JPanel {
         add(inputPanel, BorderLayout.SOUTH);
     }
 
+    /**
+     * Creates the Recipient with all the names and the "Public" option.
+     * @param nickname : contains all the nicknames of other players who you can chat to.
+     */
   public void createRecipient(String[] nickname) {
       recipientComboBox = new JComboBox<>(getRecipientOptions(nickname));
       recipientComboBox.setFont(plainFont);
@@ -63,6 +85,12 @@ public class ChatPanel extends JPanel {
       add(recipientPanel, BorderLayout.NORTH);
 
   }
+
+    /**
+     * This the getter of all names in Recipient to chat to and Public option.
+     * @param nicknames
+     * @return
+     */
     private String[] getRecipientOptions(String[] nicknames) {
         String[] options = new String[nicknames.length + 1];
         options[0] = "Public";
@@ -70,6 +98,9 @@ public class ChatPanel extends JPanel {
         return options;
     }
 
+    /**
+     * Send message option,is the command that actually sends the message through send button.
+     */
     private void sendChatMessage() {
         String message = inputArea.getText().trim();
         String recipient = "Public";
@@ -89,6 +120,11 @@ public class ChatPanel extends JPanel {
         }
     }
 
+    /**
+     * This is the line that add the message to the chat area where who received the message can read it.
+     * @param message
+     * @param nickname
+     */
     public void addChatMessage(String message, String nickname) {
         chatArea.append(" " + nickname.toUpperCase() + ": " + message + "\n");
     }
