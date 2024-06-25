@@ -26,10 +26,10 @@ public class GUI extends UI{
     /**
      * lock for synchronizations
      */
-    private Object lock=new Object();
+    private final Object lock=new Object();
 
     /**
-     * Constructor
+     * Constructor: calls the constructor of the mainFrame class
      * @param client the owner of the GUI
      */
     public GUI(ClientImpl client) {
@@ -112,32 +112,37 @@ public class GUI extends UI{
     @Override
     public void update(GenericEvent e){
         if (e instanceof ChatMessage){ if(!e.nickname.equals(nickname))f.addChatMessage(e.nickname,e.getMessage());}
-        else {if (e instanceof ChatAck){
-            if(!((ChatAck) e).isOk)     f.addChatMessage("game", "error sending the chat message");}
-        else if (e instanceof FinalRankings) {
-            f.addChatMessage("game", e.getMessage());
-            JOptionPane.showMessageDialog(f,e.getMessage());
-            notifyListener(new AckResponse(nickname, (FinalRankings) e));
-        }
-        else if(e instanceof EndGameTriggered){
+        else {
+            if (e instanceof FinalRankings) {
                 f.addChatMessage("game", e.getMessage());
-                JOptionPane.showMessageDialog(f, e.getMessage());
+                JOptionPane.showMessageDialog(f,e.getMessage());
+                notifyListener(new AckResponse(nickname, (FinalRankings) e));
+            }
+            else if(e instanceof EndGameTriggered){
+                    f.addChatMessage("game", e.getMessage());
+                    JOptionPane.showMessageDialog(f, e.getMessage());
+            }
+            else if( e instanceof  PlayerDisconnected) f.addChatMessage("game", e.getMessage());
+            else synchronized (inputEvents) {
+                    inputEvents.add(e);
+                    System.out.println("[DEBUG] received: "+ e.getClass().getName());
+            }
         }
-        else {if( e instanceof  PlayerDisconnected) f.addChatMessage("game", e.getMessage());
-        else synchronized (inputEvents) {
-                inputEvents.add(e);
-                System.out.println("[DEBUG] received: "+ e.getClass().getName());
-        }}}
     }
 
     /**
      * notify view-controller listener on a new chat message from this player
-     * @param message the message as text
+     * @param message the text message
      */
     public void sendChatMessage(String message){
         listener.addEvent(new ChatMessage(message,nickname,null));
     }
 
+    /**
+     * notify view-controller listener on a new private chat message from this player
+     * @param message the text message
+     * @param nickname the receiver of the message
+     */
     public void sendPrivateChatMessage(String message, String nickname){listener.addEvent(new ChatMessage(message,this.nickname,nickname));}
     /**
      * Represent the logic behind the client's user interface and his connection to the game.
@@ -187,7 +192,6 @@ public class GUI extends UI{
                             break;
 
                         case ChooseObjectiveRequest e :
-                            n=0;
                             try {
                                 while(n==0){
                                     ImageDialog dialog = new ImageDialog(f, message,getCardPath(e.objCard1.getID(),false), getCardPath(e.objCard2.getID(),false),false);
@@ -255,6 +259,7 @@ public class GUI extends UI{
                                 s = f.showInputDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
                             }
                             f.setNickname(e.getNewNickname());
+                            f.addChatMessage("game", "You have joined the game. Waiting for other players to start the game.");
                             newEvent = new SetPassword( e.getNewNickname(),s.trim());
                             notifyListener(newEvent);
                             break;

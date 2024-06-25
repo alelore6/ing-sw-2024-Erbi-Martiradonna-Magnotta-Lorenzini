@@ -19,7 +19,7 @@ public class MainFrame extends JFrame {
     /**
      * the UI that communicates with the frame
      */
-    private GUI gui;
+    private final GUI gui;
     /**
      * the menu bar that allows the switch between panels
      */
@@ -27,11 +27,7 @@ public class MainFrame extends JFrame {
     /**
      * panel that contains all the game panels
      */
-    private JPanel mainPanel;
-    /**
-     * the default panel with the logo
-     */
-    private JPanel backgroundPanel;
+    private final JPanel mainPanel;
     /**
      * the panel that contains the table center information and logic
      */
@@ -43,7 +39,7 @@ public class MainFrame extends JFrame {
     /**
      * the panel that contains the chat and its logic
      */
-    private ChatPanel chatPanel;
+    private final ChatPanel chatPanel;
     /**
      * map between other player's nicknames and their panel
      */
@@ -59,7 +55,7 @@ public class MainFrame extends JFrame {
     /**
      * lock that allows the synchronization for game actions
      */
-    private Object playLock=new Object();
+    private final Object playLock=new Object();
 
     /**
      * Constructor: create the split pane with the chat panel and the default panel.
@@ -90,7 +86,7 @@ public class MainFrame extends JFrame {
             Image icon = img.getImage().getScaledInstance(35, 35, Image.SCALE_DEFAULT);
             this.icon = new ImageIcon(icon);
 
-            backgroundPanel = new JPanel() {
+            JPanel backgroundPanel = new JPanel() {
                 @Override
                 protected void paintComponent(Graphics g) {
                     super.paintComponent(g);
@@ -273,7 +269,7 @@ public class MainFrame extends JFrame {
 
     /**
      * sets the nickname of the owner of the frame.
-     * @param nickname
+     * @param nickname the nickname of the owner of the frame
      */
     public void setNickname(String nickname) {
         this.nickname = nickname;
@@ -302,24 +298,6 @@ public class MainFrame extends JFrame {
         return tableCenterPanel.getDrawChoice();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                Game model = new Game(4, new String[]{"1111", "2222", "3333", "4444"}, null);
-                model.players[0].setToken(TokenColor.GREEN);
-                model.players[1].setToken(TokenColor.RED);
-                model.players[2].setToken(TokenColor.BLUE);
-                model.players[3].setToken(TokenColor.YELLOW);
-                MainFrame mainFrame = new MainFrame(null);
-                mainFrame.setNickname("2222");
-                mainFrame.reactStartGame(model.clone());
-                mainFrame.addChatMessage("test", "test");
-                mainFrame.addChatMessage("game", "test");
-
-            }
-        });
-    }
 
 
 }

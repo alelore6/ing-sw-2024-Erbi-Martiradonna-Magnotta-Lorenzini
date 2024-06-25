@@ -20,7 +20,7 @@ import java.util.List;
  */
 class PlayedCardsPanel extends JPanel {
     /**
-     * the constant that describes the overlapping of the images
+     * the value that determines the overlapping of the images
      */
     private final int overlapOffset = 50;
     /**
@@ -28,7 +28,7 @@ class PlayedCardsPanel extends JPanel {
      */
     private final List<CardComponent> cardComponents;
     /**
-     * the possible play image
+     * image that indicates a position where it's possible to play a card
      */
     private BufferedImage possiblePlayImage =null;
     /**
@@ -150,7 +150,11 @@ class PlayedCardsPanel extends JPanel {
     }
 
 
-
+    /**
+     * draws the cards on the panel in order based on the positionOrder attribute in cardComponent.
+     * Allows the overlapping corners.
+     * @param g the <code>Graphics</code> object to protect
+     */
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -171,10 +175,13 @@ class PlayedCardsPanel extends JPanel {
     }
 
 
-
+    /**
+     * makes the preferred size of the panel variable based on the cards played
+     * @return the preferred dimension
+     */
     @Override
     public Dimension getPreferredSize() {
-        if (cardComponents.size() > 0) {
+        if (!cardComponents.isEmpty()) {
             int maxRow = cardComponents.stream().mapToInt(CardComponent::getRow).max().orElse(0);
             int maxCol = cardComponents.stream().mapToInt(CardComponent::getCol).max().orElse(0);
             int componentWidth = 250;
@@ -194,11 +201,17 @@ class PlayedCardsPanel extends JPanel {
     protected CardComponent getSelectedPosition() {
         return selectedCard;
     }
-
+    /**
+     * getter for the center row in the matrix of played cards
+     * @return the center row index
+     */
     protected int getCenter_row() {
         return center_row;
     }
-
+    /**
+     * getter for the center column in the matrix of played cards
+     * @return the center column index
+     */
     protected int getCenter_col() {
         return center_col;
     }

@@ -22,8 +22,8 @@ public class ChatPanel extends JPanel {
      */
     private  JComboBox<String> recipientComboBox;
 
-    private Font plainFont;
-    private MainFrame f;
+    private final Font plainFont;
+    private final MainFrame f;
 
     /**
      * Constructor: creates the input area , the chat area and the send button;
@@ -36,7 +36,7 @@ public class ChatPanel extends JPanel {
         setMinimumSize(new Dimension(300, 500));
         setPreferredSize(new Dimension(300, 500));
 
-        Font plainFont = new Font("Serif", Font.PLAIN, 16);
+        plainFont = new Font("Serif", Font.PLAIN, 16);
 
         chatArea = new JTextArea(20, 30);
         chatArea.setEditable(false);
@@ -130,16 +130,5 @@ public class ChatPanel extends JPanel {
     }
 
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("Chat Panel");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 600);
-        String[] nicknames = {"Player1", "Player2", "Player3"};
-        ChatPanel c = new ChatPanel(null);
-        frame.add(c);
-        frame.setVisible(true);
-        c.addChatMessage("test", "test");
-        c.addChatMessage("test", "game");
-    }
 }
 

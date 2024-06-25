@@ -11,11 +11,7 @@ public class PlayerPanel extends JScrollPane {
     /**
      * the played cards panel contained
      */
-    private PlayedCardsPanel panel ;
-    /**
-     * the current player info
-     */
-    private PlayerView playerView;
+    private final PlayedCardsPanel panel ;
 
     /**
      * Constructor that also creates the relative played cards panel
@@ -24,7 +20,6 @@ public class PlayerPanel extends JScrollPane {
      */
     PlayerPanel(PlayerView playerView, boolean playing){
         super();
-        this.playerView = playerView;
         this.panel= new PlayedCardsPanel(playerView.hand.playedCards, playing);
         setViewportView(panel);
     }
@@ -34,7 +29,6 @@ public class PlayerPanel extends JScrollPane {
      * @param playerView the players info
      */
     protected void update(PlayerView playerView) {
-        this.playerView = playerView;
         panel.update(playerView.hand.playedCards);
     }
 
@@ -46,8 +40,16 @@ public class PlayerPanel extends JScrollPane {
         return panel.getSelectedPosition();
     }
 
+    /**
+     * getter for the center row in the matrix of played cards from the playedCardsPanel
+     * @return the center row index
+     */
     protected int getCenterRow(){return panel.getCenter_row();}
 
+    /**
+     * getter for the center column in the matrix of played cards from the playedCardPanel
+     * @return the center column index
+     */
     protected int getCenterCol(){return panel.getCenter_col();}
 
 

@@ -392,17 +392,5 @@ public class TableCenterPanel extends JSplitPane {
         else return id;
     }
 
-    public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
-        String[] playerNames = {"1", "2", "3", "4"};
-        Game game = new Game(4, playerNames, null);
-        GameView gameView = new GameView(game);
-        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
-
-        frame.add(panel);
-        frame.setVisible(true);
-    }
 }
 

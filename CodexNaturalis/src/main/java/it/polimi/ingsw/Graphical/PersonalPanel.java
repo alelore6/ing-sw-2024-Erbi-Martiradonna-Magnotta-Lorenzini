@@ -14,27 +14,63 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Class that represent the panel of the player that owns the frame
+ */
 public class PersonalPanel extends JSplitPane {
-
+    /**
+     * nickname of the owner of the frame
+     */
     protected final String nickname;
-    private final PlayerView playerView;
+    /**
+     * the scroll pane that contains the player's played cards
+     */
     private final PlayerPanel playerPanel;
+    /**
+     * indicates the chosen card to play from the hand
+     */
     private int choice;
-    private ArrayList<JButton> playButtons;
-    private  ArrayList<JLabel> labels;
-    private int[] cardsID= new int[3];
-    private boolean[] isFacedown= new boolean[3];
+    /**
+     * list of buttons that make the play
+     */
+    private final ArrayList<JButton> playButtons;
+    /**
+     * list of JLabel containing the images of the hand cards
+     */
+    private final ArrayList<JLabel> labels;
+    /**
+     * the id of the cards in the hand of the player
+     */
+    private final int[] cardsID= new int[3];
+    /**
+     * keep traces of the flipping actions on the hand cards
+     */
+    private final boolean[] isFacedown= new boolean[3];
+    /**
+     * represent the chosen card to play from the hand
+     */
     private JLabel selectedLabel;
+    /**
+     * indicates whether it's the player's turn to play
+     */
     private boolean playing = false;
+    /**
+     * the image for empty card slot
+     */
     private ImageIcon possiblePlayImage =null;
+    /**
+     * lock for the synchronization of the play actions
+     */
     private final Object lock;
 
-
+    /**
+     * Constructor: creates a split pane with the player's played cards and his hand cards
+     * @param playerView the player info based on which the panel is build
+     * @param lock lock for the synchronization of the play actions
+     */
     PersonalPanel(PlayerView playerView, Object lock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.nickname = playerView.nickname;
-        this.playerView = playerView;
         this.lock = lock;
         this.playButtons = new ArrayList<>();
         this.labels = new ArrayList<>();
@@ -129,6 +165,9 @@ public class PersonalPanel extends JSplitPane {
         rightPanel.setMinimumSize(new Dimension(390, 300));
     }
 
+    /**
+     * show the play buttons next to the cards to allow the selection
+     */
     private void showPlayButton() {
         int i=0;
         for(JButton b : playButtons){
@@ -137,12 +176,20 @@ public class PersonalPanel extends JSplitPane {
         }
     }
 
+    /**
+     * hide the play button next to the cards when it's not the player's turn
+     */
     private void hidePlayButton() {
         for(JButton b : playButtons){
             b.setVisible(false);
         }
     }
 
+    /**
+     * load the cards image
+     * @param path the path to the image
+     * @return the card image
+     */
     private ImageIcon getImageIcon(String path) {
         BufferedImage img = null;
         try {
@@ -153,12 +200,20 @@ public class PersonalPanel extends JSplitPane {
         return new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
     }
 
+    /**
+     * Getter for play action wrapped in a card component class
+     * @return the card component representing the play
+     */
     public CardComponent getPlayChoice() {
         CardComponent c=new CardComponent(new StartingCard(choice),playerPanel.getPlayPosition().getRow()-playerPanel.getCenterRow(), playerPanel.getPlayPosition().getCol()-playerPanel.getCenterCol(),0);
         c.setFlipped(isFacedown[choice]);
         return c;
     }
 
+    /**
+     * allows the player to confirm the play action through a confirm dialog after checking both position and hand are chosen.
+     * Also check that it's the player's turn with the playing attribute
+     */
     private void confirmPlay(){
         if (playing){
             CardComponent c=playerPanel.getPlayPosition();
@@ -173,7 +228,11 @@ public class PersonalPanel extends JSplitPane {
         }
     }
 
-
+    /**
+     * Updates the panel with the new info. Also calls the update method on his player panel.
+     * @param playerView the updated player info
+     * @param playing indicates whether it's the player's turn. If true calls the show play button method.
+     */
     protected void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
         if (playing) {
@@ -202,20 +261,5 @@ public class PersonalPanel extends JSplitPane {
 
     }
 
-    public static void main(String[] args) {
-        // Creazione del frame principale
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
 
-        PersonalPanel panel = new PersonalPanel(new PlayerView(new Player("test", null)), new Object());
-
-        // Aggiunta di JSplitPane al frame
-        frame.add(panel);
-
-        // Visualizzazione del frame
-        frame.setVisible(true);
-
-        panel.update(null,true);
-    }
 }

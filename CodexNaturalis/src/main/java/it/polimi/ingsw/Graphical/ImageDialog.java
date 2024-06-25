@@ -10,9 +10,24 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+/**
+ * Class that represent a dialog that allows to choose between two shown images
+ */
 public class ImageDialog extends JDialog {
+    /**
+     * represent the chosen image
+     */
     private int choice;
 
+    /**
+     * Constructor: creates the dialog with 2 images and the relative choice buttons
+     * @param parent the container of the dialog
+     * @param message the message shown at the top of the dialog
+     * @param cardPath1 the path to the first image
+     * @param cardPath2 the path to the second image
+     * @param useFront decides whether the label for the images are front/back or Card 1/Card2
+     * @throws IOException if images cant be loaded
+     */
     public ImageDialog(Frame parent, String message, String cardPath1, String cardPath2, boolean useFront) throws IOException {
         super(parent, "Choose Image", true);
         setLayout(new BorderLayout());
@@ -38,12 +53,6 @@ public class ImageDialog extends JDialog {
             label1 = new JLabel("Front  ");
             label2 = new JLabel("Back  ");
         }
-
-        //label1.setHorizontalAlignment(SwingConstants.CENTER);
-        //label2.setHorizontalAlignment(SwingConstants.CENTER);
-
-        //label1.setPreferredSize(label1.getPreferredSize());
-        //label2.setPreferredSize(label2.getPreferredSize());
 
         JPanel imagePanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -95,6 +104,10 @@ public class ImageDialog extends JDialog {
         setLocationRelativeTo(parent);
     }
 
+    /**
+     * Getter for the chosen image
+     * @return an int representing the chosen image
+     */
     public int getChoice() {
         return choice;
     }

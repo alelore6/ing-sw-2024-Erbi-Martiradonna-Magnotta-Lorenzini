@@ -28,6 +28,9 @@ public class CardComponent {
      * the play order of the card so that overlapping corners are correct
      */
     private final int positionOrder;
+    /**
+     * indicates whether tha card has been flipped
+     */
     private boolean flipped;
 
     /**
@@ -91,9 +94,17 @@ public class CardComponent {
         return card.getID();
     }
 
+    /**
+     * Setter for the flipped attribute
+     * @param flipped indicates whether the card has been flipped
+     */
     public void setFlipped(boolean flipped) {
         this.flipped = flipped;
     }
 
+    /**
+     * Getter for the flipped attribute
+     * @return the value of the flipped attribute
+     */
     public boolean isFlipped() {return flipped;}
 }
