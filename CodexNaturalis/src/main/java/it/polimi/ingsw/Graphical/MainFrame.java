@@ -73,7 +73,7 @@ public class MainFrame extends JFrame {
 
 
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
-        this.chatPanel=new ChatPanel(this);
+       this.chatPanel=new ChatPanel(this);
         splitPane.add(chatPanel, JSplitPane.LEFT);
         splitPane.setDividerLocation(300); // Imposta la posizione iniziale del divisore
 
@@ -253,6 +253,10 @@ public class MainFrame extends JFrame {
         gui.sendChatMessage(message);
     }
 
+    public void sendPrivateChatMessage(String message, String recipient) {
+        gui.sendPrivateChatMessage(message,nickname);
+    }
+
     /**
      * sets the nickname of the owner of the frame.
      * @param nickname
@@ -302,5 +306,6 @@ public class MainFrame extends JFrame {
             }
         });
     }
+
 
 }
