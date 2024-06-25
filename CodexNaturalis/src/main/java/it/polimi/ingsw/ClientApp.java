@@ -56,17 +56,14 @@ public class ClientApp {
         boolean isLocal = args_list.contains("-local");
         String ip = null;
 
+        try{
+            ip = isLocal ? "localhost" : insertIP();
+        }catch(IOException e){
+            System.err.println("Input error. Exiting...");
+            System.exit(1);
+        }
+
         if(isRMI){   //RMI
-            try{
-                ip = isLocal ? "localhost" : insertIP();
-
-            }catch(IOException e){
-                // TODO: se avanza tempo, capire perché se richiedo l'inserimento di un IP
-                //  dopo l'errato inserimento, non prende l'input per una volta.
-                System.err.println("Input error. Exiting...");
-                System.exit(1);
-            }
-
             try{
                 Registry registry = LocateRegistry.getRegistry(ip);
 
@@ -107,14 +104,6 @@ public class ClientApp {
             RMIPing.join();
         }
         else{   //socket
-
-            try{
-                ip = isLocal ? "localhost" : insertIP();
-            }catch(IOException e){
-                System.err.println("Input error. Exiting...");
-                System.exit(1);
-            }
-
             server = new ServerStub(ip, SOCKET_PORT);
 
             try{
