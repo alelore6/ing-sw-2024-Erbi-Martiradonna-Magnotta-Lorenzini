@@ -112,7 +112,7 @@ public class Controller {
             if (lobby == null && !numPlayersRequestSent){
                 this.newNickname = nickname;
 
-                mvListener.addEvent(new NumPlayersRequest(oldNickname));
+                mvListener.addEvent(new NumPlayersRequest("every one"));
                 numPlayersRequestSent = true;
             }
             else{
