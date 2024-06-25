@@ -35,9 +35,9 @@ public class ScoretrackView implements Serializable {
     }
 
     /**
-     * Method to get a nickname with the corresponding color. (TODO)
+     * Method to get a nickname from an index.
      * @param index the position in the array.
-     * @return the colored nickname or null if index is out of bound.
+     * @return the  nickname or null if index is out of bound.
      */
     public String nickToString(int index){
         return index >= 0 && index < nicknames.length ? nicknames[index] : null;

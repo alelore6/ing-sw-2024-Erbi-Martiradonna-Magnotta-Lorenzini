@@ -115,7 +115,7 @@ public class GUI extends UI{
         else {
             if (e instanceof FinalRankings) {
                 f.addChatMessage("game", e.getMessage());
-                JOptionPane.showMessageDialog(f,e.getMessage());
+                JOptionPane.showMessageDialog(f,"Game Over");
                 notifyListener(new AckResponse(nickname, (FinalRankings) e));
             }
             else if(e instanceof EndGameTriggered){
@@ -322,8 +322,8 @@ public class GUI extends UI{
                                 if(e.ok) f.update(e.gameView,0);
                                 else JOptionPane.showMessageDialog(f, message);
                             }
-                            if(e.receivedEvent!=null)
-                                System.out.println("Received ack for "+ e.receivedEvent.getClass().getName());
+//                            if(e.receivedEvent!=null)
+//                                System.out.println("Received ack for "+ e.receivedEvent.getClass().getName());
                             break;
                         default:
                             //do nothing

@@ -34,9 +34,6 @@ public class ControllerTest {
          modelViewListener2 = Mockito.mock(ModelViewListener.class);
    }
 
-    @After
-    public void tearDown() throws Exception {
-    }
 
     @Test
     public void createGame() throws RemoteException {
@@ -49,17 +46,7 @@ public class ControllerTest {
          verify(controller).createGame();
     }
 
-   @Test
-           public void createLobbyTest() {
-     assertNotNull(lobby ,"lobby is created successfully");
-       }
 
-
-    @Test
-    public void endGame() throws RemoteException {
-        controller.createGame();
-
-    }
 
     @Test
     public void addPlayerToLobby() throws RemoteException {
@@ -74,38 +61,7 @@ public class ControllerTest {
    verify(controller,times(1)).createGame();
     }
 
-    @Test
-    public void getGame() {
 
-    }
-
-    @Test
-    public void updateModel() {
-
-    }
-
-    @Test
-    public void getMVListenerByNickname() throws RemoteException {
-
- when(controller.getMVListenerByNickname("player1")).thenReturn(modelViewListener1);
- when(controller.getMVListenerByNickname("player2")).thenReturn(modelViewListener2);
- when(controller.getMVListenerByNickname("player3")).thenReturn(null);
-
- assertEquals(modelViewListener1,controller.getMVListenerByNickname("player1"));
- assertEquals(modelViewListener2,controller.getMVListenerByNickname("player2"));
-  assertTrue(controller.getMVListenerByNickname("player3") == null);
-
-    }
-
-    @Test
-    public void getMVListeners() {
-
-    }
-
-
-    @Test
-    public void addMVListener() {
-    }
 }
 /*
 

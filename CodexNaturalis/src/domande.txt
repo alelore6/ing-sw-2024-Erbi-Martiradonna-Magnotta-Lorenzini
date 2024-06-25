@@ -1,3 +1,20 @@
+Javadoc:
+-Distributed: gianluca
+- model: michele
+- eventi, modelView , view: fili
+
+
+
+Test:
+Deck: fili
+TableCenter: gianluca
+Token: gianluca
+Controller: michele
+
+
+UML: Ale
+README: Ale
+
 
 - test su tutto.
 

@@ -482,7 +482,7 @@ public class Game{
     protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
         // credo sia al contrario
-        if (objectiveCard instanceof ObjectiveCard2) {  //TODO fixare
+        if (objectiveCard instanceof ObjectiveCard2) {
             int minPoints = 1000;
             //calcolo punti a seconda del tipo di obj card
             for (Resource resource : ((ObjectiveCard2) objectiveCard).getReqMap().keySet()) {
@@ -666,16 +666,13 @@ public class Game{
 
                 // Draws the first card on the table.
                 for(PlayableCard card : tablecenter.getCenterCards()){
-                    newCard = card;
-                    break;
+                    if(card!=null){newCard = card;
+                    break;}
                 }
 
                 try{
                     player.getHand().DrawPositionedCard(newCard);
-                }catch (HandFullException ignored){}
-                catch (isEmptyException e){
-                    // TODO: bisogna gestirla?
-                }
+                }catch (HandFullException | isEmptyException ignored){}
             }
             else if(turnPhase == 2){
                 // Skips the turn.

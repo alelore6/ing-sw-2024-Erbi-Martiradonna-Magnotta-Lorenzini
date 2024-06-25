@@ -42,31 +42,7 @@ public class Lobby {
         }
     }
 
-    /**
-     * Disconnects a player in the lobby, He won't participate the game and another player will be needed to start the game.
-     * @param nickname the nickname of the player that has disconnected
-     * @throws PlayerNotFoundException if the player cant be found in the players list
-     */
-    public void disconnect(String nickname) throws PlayerNotFoundException {
-        boolean isRemoved = false;
 
-        synchronized (lock_players){
-            for( int i = 0; i < players.size(); i++){
-                if(players.get(i).equals(nickname)){
-                    players.remove(i);
-                    isRemoved = true;
-
-
-                    break;
-                }
-            }
-
-            if(!isRemoved){
-                throw new PlayerNotFoundException(nickname);
-            }
-        }
-        // notify listeners
-    }
 
     /**
      * Getter for players list
