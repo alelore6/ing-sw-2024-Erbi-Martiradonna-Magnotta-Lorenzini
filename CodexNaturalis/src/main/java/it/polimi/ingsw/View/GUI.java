@@ -138,7 +138,7 @@ public class GUI extends UI{
         listener.addEvent(new ChatMessage(message,nickname,null));
     }
 
-    public void sendPrivateChatMessage(String message, String nickname){listener.addEvent(new ChatMessage(message,nickname,null));}
+    public void sendPrivateChatMessage(String message, String nickname){listener.addEvent(new ChatMessage(message,this.nickname,nickname));}
     /**
      * Represent the logic behind the client's user interface and his connection to the game.
      * Here event are taken from the queue and handled based on their type

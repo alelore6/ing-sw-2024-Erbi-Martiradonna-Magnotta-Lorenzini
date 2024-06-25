@@ -189,6 +189,15 @@ public class MainFrame extends JFrame {
                 menuBar.setLayout(new BoxLayout(menuBar, BoxLayout.X_AXIS));
                 createGamePanels(gameView);
                 setJMenuBar(menuBar);
+                String[] nicknames = new String[gameView.numPlayers-1];
+                int index = 0;
+                for (int i = 0; i < gameView.numPlayers; i++) {
+                    if (!gameView.players.get(i).nickname.equalsIgnoreCase(nickname)) {
+                     nicknames[index] = gameView.players.get(i).nickname;
+                     index ++;
+                    }
+                }
+                chatPanel.createRecipient(nicknames);
                 revalidate();
                 switchPanel("Table center");
             }});
@@ -254,7 +263,7 @@ public class MainFrame extends JFrame {
     }
 
     public void sendPrivateChatMessage(String message, String recipient) {
-        gui.sendPrivateChatMessage(message,nickname);
+        gui.sendPrivateChatMessage(message,recipient);
     }
 
     /**

@@ -8,10 +8,11 @@ import java.awt.event.ActionListener;
 public class ChatPanel extends JPanel {
     private final JTextArea chatArea;
     private final JTextArea inputArea;
-    private final JComboBox<String> recipientComboBox;
+    private  JComboBox<String> recipientComboBox;
+    private Font plainFont;
     private MainFrame f;
 
-    public ChatPanel(MainFrame f, String[] nicknames) {
+    public ChatPanel(MainFrame f) {
         super(new BorderLayout());
         this.f = f;
         setMinimumSize(new Dimension(300, 500));
@@ -31,10 +32,6 @@ public class ChatPanel extends JPanel {
         inputArea.setWrapStyleWord(true);
         inputArea.setFont(plainFont);
 
-        recipientComboBox = new JComboBox<>(getRecipientOptions(nicknames));
-        recipientComboBox.setFont(plainFont);
-        recipientComboBox.setToolTipText("Recipient (select 'Public' for public message)");
-
         JButton sendButton = new JButton("Send");
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -50,15 +47,22 @@ public class ChatPanel extends JPanel {
         inputPanel.add(inputScrollPane, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        JPanel recipientPanel = new JPanel(new BorderLayout());
-        recipientPanel.add(recipientComboBox, BorderLayout.CENTER);
-        recipientPanel.add(new JLabel("Recipient:"), BorderLayout.WEST);
-
         add(chatScrollPane, BorderLayout.CENTER);
-        add(recipientPanel, BorderLayout.NORTH);
         add(inputPanel, BorderLayout.SOUTH);
     }
 
+  public void createRecipient(String[] nickname) {
+      recipientComboBox = new JComboBox<>(getRecipientOptions(nickname));
+      recipientComboBox.setFont(plainFont);
+      recipientComboBox.setToolTipText("Recipient (select 'Public' for public message)");
+
+      JPanel recipientPanel = new JPanel(new BorderLayout());
+      recipientPanel.add(recipientComboBox, BorderLayout.CENTER);
+      recipientPanel.add(new JLabel("Recipient:"), BorderLayout.WEST);
+
+      add(recipientPanel, BorderLayout.NORTH);
+
+  }
     private String[] getRecipientOptions(String[] nicknames) {
         String[] options = new String[nicknames.length + 1];
         options[0] = "Public";
@@ -68,7 +72,10 @@ public class ChatPanel extends JPanel {
 
     private void sendChatMessage() {
         String message = inputArea.getText().trim();
-        String recipient = (String) recipientComboBox.getSelectedItem();
+        String recipient = "Public";
+        if (recipientComboBox!=null) {
+             recipient = (String) recipientComboBox.getSelectedItem();
+        }
         if (!message.isEmpty()) {
             if ("Public".equals(recipient)) {
                 chatArea.append(" Me: " + message + "\n");
@@ -78,7 +85,7 @@ public class ChatPanel extends JPanel {
                 f.sendPrivateChatMessage(message, recipient);
             }
             inputArea.setText("");
-            recipientComboBox.setSelectedIndex(0); // Reset to "Public"
+            recipientComboBox.setSelectedIndex(0);
         }
     }
 
@@ -92,7 +99,7 @@ public class ChatPanel extends JPanel {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 600);
         String[] nicknames = {"Player1", "Player2", "Player3"};
-        ChatPanel c = new ChatPanel(null, nicknames);
+        ChatPanel c = new ChatPanel(null);
         frame.add(c);
         frame.setVisible(true);
         c.addChatMessage("test", "test");
