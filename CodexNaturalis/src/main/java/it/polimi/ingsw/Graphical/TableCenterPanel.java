@@ -254,95 +254,119 @@ public class TableCenterPanel extends JSplitPane {
             case 2 :
                 final_x = rightPanelX+325;
                 final_y = rightPanelY+700;
+                break;
 
             case 3 :
                 final_x = rightPanelX+365;
                 final_y = rightPanelY+625;
+                break;
 
             case 4 :
                 final_x=rightPanelX+281;
                final_y= rightPanelY+625;
+               break;
 
             case 5 :
                 final_x = rightPanelX+200;
                 final_y = rightPanelY+625;
+                break;
 
             case 6 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+625;
+                break;
             case 7 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+550;
+                break;
             case 8 :
                 final_x = rightPanelX+200;
                 final_y = rightPanelY+550;
-
+                break;
             case 9 :
                 final_x = rightPanelX+281;
                 final_y = rightPanelY+550;
+                break;
             case 10 :
                 final_x = rightPanelX+365;
                 final_y = rightPanelY+550;
+                break;
             case 11 :
                 final_x = rightPanelX+365;
                 final_y = rightPanelY+475;
+                break;
             case 12 :
                 final_x = rightPanelX+281;
                 final_y = rightPanelY+475;
+                break;
             case 13 :
                 final_x = rightPanelX+200;
                 final_y = rightPanelY+475;
+                break;
             case 14 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+475;
+                break;
             case 15 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+400;
+                break;
             case 16 :
                 final_x = rightPanelX+200;
                 final_y = rightPanelY+400;
+                break;
             case 17 :
                 final_x = rightPanelX+281;
                 final_y = rightPanelY+400;
+                break;
             case 18 :
                 final_x = rightPanelX+365;
                 final_y = rightPanelY+400;
+                break;
             case 19 :
                 final_x = rightPanelX+365;
                 final_y = rightPanelY+324;
+                break;
             case 20 :
                 final_x = rightPanelX+242;
                 final_y = rightPanelY+285;
+                break;
             case 21 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+324;
+                break;
             case 22 :
                final_x = rightPanelX+118;
                final_y = rightPanelY+248;
-
+               break;
             case 23 :
                 final_x = rightPanelX+118;
                 final_y = rightPanelY+172;
+                break;
             case 24:
                 final_x = rightPanelX+167;
                 final_y = rightPanelY+110;
+                break;
             case 25 :
                 final_x = rightPanelX+242;
                 final_y = rightPanelY+96;
+                break;
             case 26 :
                 final_x = rightPanelX+316;
                 final_y = rightPanelY+110;
+                break;
             case 27 :
                 final_x = rightPanelX+366;
                 final_y = rightPanelY+172;
+                break;
             case 28 :
                 final_x = rightPanelX+366;
                 final_y = rightPanelY+248;
+                break;
             case 29 :
                 final_x = rightPanelX+242;
                 final_y = rightPanelY+285;
-
-
+                break;
 
         }
 
