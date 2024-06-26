@@ -312,10 +312,10 @@ public class TableCenterPanel extends JSplitPane {
                 break;
             case 19 :
                 final_x = 110;
-                final_y = -80;
+                final_y = -90;
                 break;
             case 20 :
-                final_x = -13;
+                final_x = -15;
                 final_y = -129;
                 break;
             case 21 :
@@ -445,12 +445,10 @@ public class TableCenterPanel extends JSplitPane {
         deckPanel.add(deckLabel, BorderLayout.CENTER);
 
         JButton drawButton = new JButton("Draw");
-        drawButton.setPreferredSize(new Dimension(100, 10));
-        drawButton.setMargin(new Insets(2, 2, 2, 2));
+        drawButton.setPreferredSize(new Dimension(75, 10));
         final int index=deckIndex==0? 6: 5;
 
         drawButton.addActionListener(e -> {
-            System.out.println("Draw from " + title);
             drawCard(index);
         });
         drawButtons.add(drawButton);
@@ -480,10 +478,8 @@ public class TableCenterPanel extends JSplitPane {
         cardPanel.add(cardLabel, BorderLayout.CENTER);
 
         JButton drawButton = new JButton("Draw");
-        drawButton.setPreferredSize(new Dimension(100, 1));
-        drawButton.setMargin(new Insets(2, 1, 5, 1));
+        drawButton.setPreferredSize(new Dimension(80, 1));
         drawButton.addActionListener(e -> {
-            //System.out.println("Draw card " + (index + 1));
             drawCard(index + 1);
         });
         drawButtons.add(drawButton);
@@ -643,7 +639,11 @@ public class TableCenterPanel extends JSplitPane {
         game.players[1].setToken(YELLOW);
         game.players[2].setToken(GREEN);
         game.players[3].setToken(BLUE);
-
+        int x=30;
+        game.players[0].getToken().move(x);
+        game.players[1].getToken().move(x);
+        game.players[2].getToken().move(x);
+        game.players[3].getToken().move(x);
 
         GameView gameView = new GameView(game);
 
