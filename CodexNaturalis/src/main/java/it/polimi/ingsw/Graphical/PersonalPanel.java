@@ -137,7 +137,7 @@ public class PersonalPanel extends JSplitPane {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         choice = index;
-                        System.out.println("You have chosen card N. "+ (choice+1)+ " ID: "+cardsID[choice]);
+                        //System.out.println("You have chosen card N. "+ (choice+1)+ " ID: "+cardsID[choice]);
                         if (selectedLabel != null) {
                             selectedLabel.setBorder(null);
                         }

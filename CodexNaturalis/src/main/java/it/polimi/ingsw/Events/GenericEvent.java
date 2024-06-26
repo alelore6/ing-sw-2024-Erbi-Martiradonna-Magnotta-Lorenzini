@@ -39,8 +39,8 @@ public abstract class GenericEvent implements Serializable {
     }
 
     /**
-     * Method to return the colored message for GUI.
-     * @return the colored message.
+     * Method to return the  message for GUI.
+     * @return the  message.
      */
     public String getMessage() {
         return message;

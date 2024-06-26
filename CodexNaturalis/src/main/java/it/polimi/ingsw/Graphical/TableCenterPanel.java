@@ -11,6 +11,9 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Dimension;
+import java.util.HashMap;
+
+import static it.polimi.ingsw.Model.TokenColor.*;
 
 /**
  * The panel where the game takes place, you can see both decks (Gold Deck and Resource Deck) and all the  four cards on the floor from where, when the time is right, you can draw, the score track ,as well as  the two community objective cards.
@@ -21,6 +24,8 @@ public class TableCenterPanel extends JSplitPane {
      * the game view gives all the required information about the game in any exact moment.
      */
     private GameView gameView;
+
+    private final ArrayList<TokenColor> chosenColor = new ArrayList<>();
     /**
      * card labels is an array of labels associated to each card spot  associated to a JLabel to visualize through the layout manager each card image that lands on the spot.
      */
@@ -33,6 +38,13 @@ public class TableCenterPanel extends JSplitPane {
      * An array  of integers that keeps track of the IDs of the cards present in the central spots of the table.
      */
     private int[] cardsID;
+
+    int[][] originalCoordinates = {
+            {112, 1920}, {512, 1920}, {912, 1920}, {912, 1730}, {512, 1730}, {112, 1730}, {112, 1540},
+            {512, 1540}, {912, 1540}, {912, 1350}, {512, 1350}, {112, 1350}, {112, 1160}, {512, 1160},
+            {912, 1160}, {912, 970}, {512, 970}, {112, 970}, {112, 780}, {512, 780}, {512, 590}, {112, 590},
+            {112, 400}, {512, 400}, {912, 400}, {512, 210}, {912, 210}, {912, 20}, {512, 20}, {512, 300}
+    };
     /**
      * an encoding of the draw choice of a player.
      */
@@ -60,8 +72,12 @@ public class TableCenterPanel extends JSplitPane {
     private final Object drawLock;
 
     private Image[] pawnImages;
-    private int[] pawnXCoords = {100, 200, 300, 400}; //
-    private int[] pawnYCoords = {100, 200, 300, 400};
+    private static int CENTER_X = 0;
+    private static int CENTER_Y = 0;
+    private static int START_X = 100;
+    private static int START_Y = 100;
+    private HashMap<TokenColor, Integer> pawnXCoords = new HashMap<TokenColor, Integer>(); //
+    private HashMap<TokenColor, Integer> pawnYCoords = new HashMap<TokenColor, Integer>();
     /**
      * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
      * @param gameView
@@ -78,21 +94,95 @@ public class TableCenterPanel extends JSplitPane {
         this.spots = new JButton[5];
         this.pawnImages = new Image[5];
         this.drawButtons = new ArrayList<>();
+
+        for(int i = 0; i < gameView.numPlayers; i++){
+            chosenColor.add(gameView.players.get(i).token.color);
+        }
+
+        for(TokenColor c : chosenColor){
+            pawnXCoords.put(c, START_X);
+            pawnYCoords.put(c, START_Y);
+        }
+
+        for(String nickname : gameView.tableCenterView.scoreTrack.points.keySet()){
+            setNewTokenCoordinates(gameView.tableCenterView.scoreTrack.points.get(nickname), gameView.getPlayerViewByNickname(nickname).token.color);
+        }
+
         try {
             BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
             possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
 
-            pawnImages[0] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
-            pawnImages[1] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_rouge.png"));
-            pawnImages[2] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_jaune.png"));
-            pawnImages[3] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_vert.png"));
+            for(int i = 0; i < 4; i++){
+                if(chosenColor.contains(RED))    pawnImages[0] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_rouge.png"));
+                if(chosenColor.contains(YELLOW)) pawnImages[1] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_jaune.png"));
+                if(chosenColor.contains(GREEN))  pawnImages[2] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_vert.png"));
+                if(chosenColor.contains(BLUE))   pawnImages[3] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         this.setLeftComponent(createLeftPanel());
         this.setRightComponent(createRightPanel());
 
-        this.setDividerLocation(860);
+        this.setDividerLocation(1210);
+    }
+
+    public void setNewTokenCoordinates(int position, TokenColor color){
+
+        int[] finalCoordinates = getTokenCoordinates(position, color);
+
+        pawnXCoords.replace(color, finalCoordinates[0]);
+        pawnYCoords.replace(color, finalCoordinates[1]);
+    }
+
+    private int[] getTokenCoordinates(int position, TokenColor color){
+        int X_OFFSET = 0;
+        int Y_OFFSET = 0;
+        int final_x = 0;
+        int final_y = 0;
+        final int radius = 10;
+
+        switch(color){
+            case RED :
+                X_OFFSET = 1;
+                Y_OFFSET = -1;
+                break;
+
+            case YELLOW :
+                X_OFFSET = -1;
+                Y_OFFSET = -1;
+                break;
+
+            case GREEN :
+                X_OFFSET = 1;
+                Y_OFFSET = 1;
+                break;
+
+            case BLUE :
+                X_OFFSET = -1;
+                Y_OFFSET = 1;
+                break;
+
+            default:
+                break;
+        }
+
+        switch (position){
+            case 0 :
+                final_x = 95;
+                final_y = 790;
+                break;
+
+            case 1 :
+                final_x = 180;
+                final_y = 790;
+                break;
+        }
+
+        final_x += X_OFFSET * radius;
+        final_y += Y_OFFSET * radius;
+
+        return new int[]{final_x, final_y};
     }
 
     /**
@@ -120,20 +210,45 @@ public class TableCenterPanel extends JSplitPane {
                 super.paintComponent(g);
                 int x = (int) ((getWidth() - finalWidth) / 2);
                 int y = (int) ((getHeight() - finalHeight) / 2);
+                CENTER_X = x;
+                CENTER_Y = y;
                 g.drawImage(resizedIcon.getImage(), x, y, this);
 
-                for (int i = 0; i < 4; i++) {
-                    g.drawImage(pawnImages[i], pawnXCoords[i], pawnYCoords[i], 30, 30, this);
+                for (int i = 0; i < chosenColor.size(); i++) {
+
+                    TokenColor color = null;
+                    Image image = null;
+
+                    switch(chosenColor.get(i)){
+                        case RED -> {
+                            color = RED;
+                            image = pawnImages[0];
+                        }
+                        case YELLOW -> {
+                            color = YELLOW;
+                            image = pawnImages[1];
+                        }
+                        case GREEN -> {
+                            color = GREEN;
+                            image = pawnImages[2];
+                        }
+                        case BLUE -> {
+                            color = BLUE;
+                            image = pawnImages[3];
+                        }
+                    }
+
+                    if(image != null)
+                        g.drawImage(image, pawnXCoords.get(color), pawnYCoords.get(color), 30, 30, this);
                 }
             }
         };
         rightPanel.setLayout(new BorderLayout());
         setVisible(true);
-        rightPanel.setMinimumSize(new Dimension(350, 300));
+        rightPanel.setMinimumSize(new Dimension(386, 300));
 
         return rightPanel;
     }
-
 
     /**
      * createLeftPanel method is crucial for creating the left panel of the game table in the TableCenterPanel class. It manages the organization and addition of card decks, center cards and objective cards, as well as management of draw buttons.
@@ -166,6 +281,7 @@ public class TableCenterPanel extends JSplitPane {
         } else {
             addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
         }
+        leftPanel.setMinimumSize(new Dimension(1210, 300));
         hideDrawButton();
         return leftPanel;
     }
@@ -255,7 +371,7 @@ public class TableCenterPanel extends JSplitPane {
         drawButton.setPreferredSize(new Dimension(100, 1));
         drawButton.setMargin(new Insets(2, 1, 5, 1));
         drawButton.addActionListener(e -> {
-            System.out.println("Draw card " + (index + 1));
+            //System.out.println("Draw card " + (index + 1));
             drawCard(index + 1);
         });
         drawButtons.add(drawButton);
@@ -370,6 +486,11 @@ public class TableCenterPanel extends JSplitPane {
         this.drawing = drawing;
         updateDeck();
         updateCards();
+
+        for(String nickname : gameView.tableCenterView.scoreTrack.points.keySet()){
+            setNewTokenCoordinates(gameView.tableCenterView.scoreTrack.points.get(nickname), gameView.getPlayerViewByNickname(nickname).token.color);
+        }
+
         if (drawing) {
             showDrawButton();
         }
@@ -399,16 +520,25 @@ public class TableCenterPanel extends JSplitPane {
         else return id;
     }
     public static void main(String[] args) {
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
+        MainFrame mainFrame = new MainFrame(null);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
         String[] playerNames = {"1", "2", "3", "4"};
         Game game = new Game(4, playerNames, null);
-        GameView gameView = new GameView(game);
-        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
+        game.players[0].setToken(RED);
+        game.players[1].setToken(YELLOW);
+        game.players[2].setToken(GREEN);
+        game.players[3].setToken(BLUE);
 
-        frame.add(panel);
-        frame.setVisible(true);
+
+        GameView gameView = new GameView(game);
+
+
+        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
+        mainFrame.mainPanel.add(panel, "Table center");
+        mainFrame.switchPanel("Table center");
+
+        mainFrame.setVisible(true);
     }
 }
 

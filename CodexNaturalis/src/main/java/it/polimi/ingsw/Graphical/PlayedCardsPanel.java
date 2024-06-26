@@ -92,7 +92,7 @@ class PlayedCardsPanel extends JPanel {
                         Rectangle imageBounds = new Rectangle(x, y, 250, 150);
                         if (imageBounds.contains(clickPoint)) {
                             if(c.getCardID()==-1){
-                                System.out.println("position chosen: "+ (c.getRow()-center_row)+","+(c.getCol()-center_col));
+                                //System.out.println("position chosen: "+ (c.getRow()-center_row)+","+(c.getCol()-center_col));
                                 selectedCard = c;
                                 repaint();
                             }

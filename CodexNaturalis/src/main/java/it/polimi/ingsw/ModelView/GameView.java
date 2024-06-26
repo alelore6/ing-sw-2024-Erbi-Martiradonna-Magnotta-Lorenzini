@@ -14,7 +14,7 @@ public class GameView implements Serializable {
      */
     public final ArrayList<PlayerView> players;
     /**
-     * the number of players
+     * the number of players in the game
      */
     public final int numPlayers;
     /**
@@ -36,8 +36,8 @@ public class GameView implements Serializable {
     }
 
     /**
-     * getter for a player's info
-     * @param nickname the player selected
+     * getter for a specific player's info
+     * @param nickname the nickname of the player
      * @return the player's info
      */
     public PlayerView getPlayerViewByNickname(String nickname){

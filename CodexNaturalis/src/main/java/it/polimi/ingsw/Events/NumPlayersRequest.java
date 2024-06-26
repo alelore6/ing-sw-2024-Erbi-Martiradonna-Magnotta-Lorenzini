@@ -11,7 +11,10 @@ public class NumPlayersRequest extends GenericRequest{
     public NumPlayersRequest(String nickname){
         super("You are the first player in the lobby, please set the number of players for the game.",nickname);
     }
-
+    /**
+     * Getter for the event message in a cli friendly format
+     * @return the message
+     */
     @Override
     public String msgOutput() {
         return super.msgOutput() + "\nEnter a number between 2 and 4:";

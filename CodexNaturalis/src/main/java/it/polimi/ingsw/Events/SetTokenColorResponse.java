@@ -13,7 +13,7 @@ public class SetTokenColorResponse extends GenericResponse {
 
     /**
      * Constructor
-     * @param tokenColor the chosen color
+     * @param choice the index of the chosen color
      * @param nickname the player that sends the event
      */
     public SetTokenColorResponse(int choice, String nickname) {

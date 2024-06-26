@@ -10,13 +10,16 @@ import it.polimi.ingsw.Events.GenericEvent;
 
 import java.rmi.RemoteException;
 
+/**
+ * Listener between the player UI and the server
+ */
 public class ViewControllerListener extends Listener {
 
     /**
      * attribute representing the client bound to this listener.
      * Every view has a different client and so, a specific listener.
      */
-    private ClientImpl client;
+    private final ClientImpl client;
 
     /**
      * Class representing the listener situated between the view and the controller.

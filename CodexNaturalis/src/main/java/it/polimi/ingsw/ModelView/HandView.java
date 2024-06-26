@@ -36,7 +36,8 @@ public class HandView implements Serializable {
     }
 
     /**
-     * method to restrict the matrix to its minimum (up to a margin) in terms of size
+     * method to restrict the matrix to its minimum (up to a margin) in terms of size.
+     * Also add a card with negative id in the position where its possible to play a card.
      * @param matrix the matrix before
      * @return the restricted matrix
      */
@@ -95,6 +96,13 @@ public class HandView implements Serializable {
         return subMatrix;
     }
 
+    /**
+     * checks if the position can accept a play card following the game rules
+     * @param playedCards the matirx of played cards
+     * @param x the row-coordinates of the position
+     * @param y the column-coordinates of the position
+     * @return a boolean representing the result of the method
+     */
     private static boolean checkNear(Card[][] playedCards, int x, int y){
         int check = 0;
         boolean hasNear = false;
