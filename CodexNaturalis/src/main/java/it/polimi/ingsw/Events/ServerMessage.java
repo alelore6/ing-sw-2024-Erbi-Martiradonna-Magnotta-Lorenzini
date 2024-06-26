@@ -1,5 +1,8 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Event that needs to be handled asynchronously
+ */
 public class ServerMessage extends GenericEvent{
     /**
      * Constructor
@@ -9,6 +12,6 @@ public class ServerMessage extends GenericEvent{
      */
     public ServerMessage(String message, String nickname) {
         super(message, nickname);
-        mustBeSentToAll = (nickname == null ? true : false);
+        mustBeSentToAll = (nickname == null);
     }
 }

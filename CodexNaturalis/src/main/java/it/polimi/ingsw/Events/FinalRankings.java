@@ -21,7 +21,10 @@ public class FinalRankings extends ServerMessage{
         super("The final rankings are:\n ",nickname);
         this.rankings = rankings;
     }
-
+    /**
+     * Getter for the event message in a cli friendly format
+     * @return the message
+     */
     @Override
     public String msgOutput() {
 
@@ -46,12 +49,20 @@ public class FinalRankings extends ServerMessage{
        return m;
     }
 
-
+    /**
+     * Getter for the event message in a gui friendly format
+     * @return the message
+     */
     @Override
     public String getMessage() {
         return msgOutput();
     }
 
+    /**
+     * takes the element with the highest value in the map, removes it and add it in the sorted map
+     * @param map the map before
+     * @param sorted new linked map ordered
+     */
     public static void sortHashmap(HashMap<String, Integer> map, LinkedHashMap<String, Integer> sorted) {
 
         if (map.isEmpty()) {

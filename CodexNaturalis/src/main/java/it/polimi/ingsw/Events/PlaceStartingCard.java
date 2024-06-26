@@ -22,7 +22,10 @@ public class PlaceStartingCard extends GenericRequest{
         super("Now it's time to place your starting card.", nickname);
         this.startingCard = startingCard;
     }
-
+    /**
+     * Getter for the second part of the event message in a cli friendly format
+     * @return the message
+     */
     public String msgOutput2(){
         return "\nEnter (1) if you want the card faced up, (2) if faced down: ";
     }

@@ -23,6 +23,10 @@ public class SetTokenColorRequest extends GenericRequest{
         this.availableColors = availableColors;
     }
 
+    /**
+     * Getter for the second part of the event message in a cli friendly format
+     * @return the message
+     */
     public String msgOutput2() {
 
         String s = "\n";
@@ -36,6 +40,11 @@ public class SetTokenColorRequest extends GenericRequest{
         return s;
     }
 
+    /**
+     * checks if the choice is valid
+     * @param n the index of the chosen color
+     * @return the outcome of the check
+     */
     public boolean choiceIsValid(int n){
         if(n == 1 && availableColors.contains(TokenColor.RED))      return true;
         if(n == 2 && availableColors.contains(TokenColor.YELLOW))   return true;

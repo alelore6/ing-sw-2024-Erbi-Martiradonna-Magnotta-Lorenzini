@@ -21,12 +21,17 @@ public class TableCenterView implements Serializable {
      * the score track info
      */
     public final ScoretrackView scoreTrack;
-
+    /**
+     * represent the color of the card on the top of the resource deck
+     */
     public final CardColor topResourceCardColor;
+    /**
+     * represent the color of the card on the top of the gold deck
+     */
     public final CardColor topGoldCardColor;
     /**
      * Constructor that works like a clone method
-     * @param tableCenter
+     * @param tableCenter the table center of the game
      */
     public TableCenterView(TableCenter tableCenter) {
         objCards=tableCenter.getObjCards();

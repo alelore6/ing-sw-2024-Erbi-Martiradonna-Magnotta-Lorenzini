@@ -63,6 +63,10 @@ public class AckResponse extends GenericResponse{
         gameView = null;
     }
 
+    /**
+     * Getter for the event message in a cli friendly format
+     * @return the message
+     */
     @Override
     public String msgOutput(){
         if(receivedEvent == null)    return "";

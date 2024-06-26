@@ -255,8 +255,9 @@ public class GUI extends UI{
                             break;
 
                         case JoinLobby e :
+                            String addMsg= nickname.equals(e.getNewNickname()) ?"\n Nickname: "+ e.getNewNickname(): "\nSince your nickname was already chosen, this is your assigned nickname: "+e.getNewNickname();
                             while(s==null || s.length()<4 || s.contains(" ")) {
-                                s = f.showInputDialog("Set password",message+"\n Nickname: "+ e.getNewNickname(), null);
+                                s = f.showInputDialog("Set password",message+addMsg, null);
                             }
                             f.setNickname(e.getNewNickname());
                             f.addChatMessage("game", "You have joined the game. Waiting for other players to start the game.");

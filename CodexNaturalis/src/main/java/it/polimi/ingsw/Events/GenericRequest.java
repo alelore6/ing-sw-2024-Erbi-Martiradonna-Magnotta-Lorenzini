@@ -14,7 +14,10 @@ public abstract class GenericRequest extends GenericEvent{
     public GenericRequest(String message, String nickname) {
         super(message, nickname);
     }
-
+    /**
+     * Getter for the event message in a cli friendly format
+     * @return the message
+     */
     @Override
     public String msgOutput() {
         return "\u001B[47m" + "\u001B[30m" + super.msgOutput() + "\u001B[0m";

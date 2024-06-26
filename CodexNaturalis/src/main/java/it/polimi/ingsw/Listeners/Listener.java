@@ -8,13 +8,25 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * represent a generic listener that works like an intermediary in a connection
+ */
 public abstract class Listener {
-
+    /**
+     * represent if the listener is running or the player has disconnected
+     */
     public volatile boolean running = true;
+    /**
+     * thread that actually handle the events
+     */
     protected Thread eventThread = null;
-
+    /**
+     * lock for the event queue
+     */
     public final Object lock_queue = new Object();
-
+    /**
+     * ack relative to the last response handled
+     */
     protected AckResponse ack = null;
 
     /**
@@ -51,6 +63,10 @@ public abstract class Listener {
         }
     }
 
+    /**
+     * Getter for the last ack received
+     * @return the last ack
+     */
     public AckResponse getPendingAck() {
         return ack;
     }
