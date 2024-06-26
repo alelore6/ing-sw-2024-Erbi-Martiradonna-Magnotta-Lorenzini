@@ -120,6 +120,7 @@ public class GameTest {
 //        verify(mvListeners.get(0)).addEvent(any(PlaceStartingCard.class));
         testGame.waitNumClient = testGame.getMvListeners().size();
         testGame.startGame();
+
     }
 
     @Test

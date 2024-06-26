@@ -8,15 +8,12 @@ import java.io.InputStreamReader;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.ExportException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Scanner;
 
 import it.polimi.ingsw.Distributed.Middleware.ServerStub;
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.View.TUI;
 
 import static it.polimi.ingsw.Distributed.ServerImpl.PING_INTERVAL;
 
@@ -119,7 +116,7 @@ public class ClientApp {
                     while (running) {
                         GenericEvent receivedEvent = null;
                         try {
-                            receivedEvent = ((ServerStub) server).receive(client);
+                            receivedEvent = ((ServerStub) server).receive();
                             if(receivedEvent != null)
                                 client.getUserInterface().update(receivedEvent);
                         }catch(RemoteException e){

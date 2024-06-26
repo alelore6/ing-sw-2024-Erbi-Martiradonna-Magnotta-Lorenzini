@@ -12,22 +12,43 @@ import java.io.*;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * Class representing the client for socket connections. It's constructor differentiates from the class ClientImpl because of
+ * the "socket" attribute.
+ */
 public class ClientSkeleton implements Client {
 
+    /**
+     * The object output stream where the client writes to the server.
+     */
     private ObjectOutputStream out;
+    /**
+     * The object input stream where the client receives from the server
+     */
     private ObjectInputStream in;
+    /**
+     * The logger class needed to "log" every action that goes through the network
+     */
     private final Logger logger;
+    /**
+     * The end point for the communication between client and server
+     */
     public final Socket socket;
+    /**
+     * The server from which the client receives information
+     */
     private ServerImpl server;
 
+    /**
+     * The nickname associated with the client
+     */
     private String nickname = null;
 
     /**
-     * Constructor
-     *
-     * @param socket
-     * @param logger
-     * @throws RemoteException
+     * Constructor. Creates the object input and the object output streams and initializes the class.
+     * @param socket the server socket needed for the communication between client and server.
+     * @param logger the logger class of the client.
+     * @throws RemoteException Exception thrown by remote connections
      */
     public ClientSkeleton(Socket socket, Logger logger) throws RemoteException {
         this.logger = logger;
@@ -47,15 +68,15 @@ public class ClientSkeleton implements Client {
 
     /**
      * Method to pong with the server.
-     * @throws RemoteException
+     * @throws RemoteException exception thrown in remote connections.
      */
     @Override
     public void ping() throws RemoteException {}
 
     /**
      * Method to update the client with an event using a socket type connection.
-     * @param event
-     * @throws RemoteException
+     * @param event an event received by the server which the client needs to unmarshall and elaborate.
+     * @throws RemoteException exception thrown in remote connections.
      */
     @Override
     public synchronized void update(GenericEvent event) throws RemoteException {
@@ -73,8 +94,8 @@ public class ClientSkeleton implements Client {
 
     /**
      * Method to update the server with an event coming from a socket type connection.
-     * @param server
-     * @throws RemoteException
+     * @param server the server to which the client will send the specified event.
+     * @throws RemoteException exception thrown in remote connections.
      */
     public void receive(ServerImpl server) throws RemoteException {
 
@@ -97,7 +118,7 @@ public class ClientSkeleton implements Client {
 
     /**
      * Setter for the nickname.
-     * @param nickname
+     * @param nickname the nickname attribute.
      */
     @Override
     public void setNickname(String nickname) {
@@ -106,7 +127,7 @@ public class ClientSkeleton implements Client {
 
     /**
      * Getter for the nickname.
-     * @return
+     * @return the nickname attribute.
      */
     @Override
     public String getNickname() {

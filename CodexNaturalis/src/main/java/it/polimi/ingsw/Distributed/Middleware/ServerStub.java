@@ -1,10 +1,8 @@
 package it.polimi.ingsw.Distributed.Middleware;
 
 import it.polimi.ingsw.Distributed.Client;
-import it.polimi.ingsw.Distributed.ClientImpl;
 import it.polimi.ingsw.Distributed.Server;
 import it.polimi.ingsw.Events.GenericEvent;
-import it.polimi.ingsw.View.View;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -13,20 +11,37 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.rmi.RemoteException;
 
+/**
+ * Class representing the server in socket connections.
+ */
 public class ServerStub implements Server, Serializable {
 
+    /**
+     * The IP address of the server
+     */
     private final String ip;
+    /**
+     * The port on which the server accepts connections from clients.
+     */
     private final int port;
+    /**
+     * The socket class needed for the connection.
+     */
     private Socket socket;
 
+    /**
+     * The stream to write objects to the clients.
+     */
     private ObjectOutputStream out;
+    /**
+     * The stream to receive objects from the clients.
+     */
     private ObjectInputStream in;
 
     /**
-     * Constructor
-     *
-     * @param ip
-     * @param port
+     * Constructor Initializes the IP and port attributes.
+     * @param ip IP address of the server
+     * @param port Port number of the server on which the clients will connect.
      */
     public ServerStub(String ip, int port) {
         this.ip = ip;
@@ -35,8 +50,8 @@ public class ServerStub implements Server, Serializable {
 
     /**
      * Method to register a socket type connection with the server.
-     * @param client
-     * @throws RemoteException
+     * @param client the client to register a connection with.
+     * @throws RemoteException exception thrown in remote connections.
      */
     public void register(Client client) throws RemoteException {
         try{
@@ -65,10 +80,10 @@ public class ServerStub implements Server, Serializable {
     public void ping(){}
 
     /**
-     * Method to update the server with an event using a socket type connection.
-     * @param client
-     * @param event
-     * @throws RemoteException
+     * Method to update a client with an event using a socket type connection.
+     * @param client the client to which the event is sent to.
+     * @param event the event (information) which the server sends to the client.
+     * @throws RemoteException exception thrown in remote connections.
      */
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException {
@@ -87,11 +102,10 @@ public class ServerStub implements Server, Serializable {
 
     /**
      * Method to receive an event coming from a socket type connection.
-     * @param client
-     * @return
-     * @throws RemoteException
+     * @return the generic event object read from the object input stream.
+     * @throws RemoteException exception thrown in remote connections.
      */
-    public GenericEvent receive(Client client) throws RemoteException {
+    public GenericEvent receive() throws RemoteException {
         //socket: receive from client skeleton update()
 
         GenericEvent ev = null;
@@ -110,7 +124,7 @@ public class ServerStub implements Server, Serializable {
 
     /**
      * Method to close the socket connection.
-     * @throws RemoteException
+     * @throws RemoteException exception thrown in remote connections.
      */
     public void close() throws RemoteException{
         try {
