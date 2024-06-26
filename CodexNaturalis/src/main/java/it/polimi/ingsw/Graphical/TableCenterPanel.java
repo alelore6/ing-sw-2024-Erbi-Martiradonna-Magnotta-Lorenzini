@@ -48,14 +48,8 @@ public class TableCenterPanel extends JSplitPane {
     /**
      * SpotXCoords is an array of all width coordinates of spots on score tracks to correctly place them on the score track.
      */
-    private int[] spotXCoords = {/* coordinate */};
-    /**
-     * SpotXCoords is an array of all height coordinates of spots on score tracks to correctly place them on the score track.
-     */
-    private int[] spotYCoords = { /* coordinate */};
-    /**
-     * DrawButtons contains all the draw buttons, JButtons used to draw from center of table.
-     */
+
+
     private ArrayList<JButton> drawButtons;
     /**
      * PossiblePlayImage is an image used as a placeholder for spaces where there are no cards available, setting a default image to improve the game's user interface and maintaining visual coherence.
@@ -66,11 +60,16 @@ public class TableCenterPanel extends JSplitPane {
      */
     private final Object drawLock;
 
+    private int[][] tokenPositions = new int[4][2];
+    private int[] spotXCoords = { 13,45,60,70,120 };
+    private int[] spotYCoords = { 24,30,50,100,29};
+    private Image pawnImage;
     /**
      * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
      * @param gameView
      * @param drawLock
      */
+
     public TableCenterPanel(GameView gameView, Object drawLock) {
         super(JSplitPane.HORIZONTAL_SPLIT);
         this.gameView = gameView;
@@ -78,11 +77,12 @@ public class TableCenterPanel extends JSplitPane {
         this.cardLabels = new ArrayList<>();
         this.deckLabels = new JLabel[2];
         this.cardsID = new int[4];
-        this.spots = new JButton[27];
+        this.spots = new JButton[5];
         this.drawButtons = new ArrayList<>();
         try {
             BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
             possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
+            pawnImage = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -118,15 +118,19 @@ public class TableCenterPanel extends JSplitPane {
                 int x = (int) ((getWidth() - finalWidth) / 2);
                 int y = (int) ((getHeight() - finalHeight) / 2);
                 g.drawImage(resizedIcon.getImage(), x, y, this);
+
+                for (int i = 0; i < spotXCoords.length; i++) {
+                    g.drawImage(pawnImage, spotXCoords[i], spotYCoords[i], 20, 20, this);
+                }
             }
         };
         rightPanel.setLayout(new BorderLayout());
-
         setVisible(true);
         rightPanel.setMinimumSize(new Dimension(350, 300));
 
         return rightPanel;
     }
+
 
     /**
      * createLeftPanel method is crucial for creating the left panel of the game table in the TableCenterPanel class. It manages the organization and addition of card decks, center cards and objective cards, as well as management of draw buttons.
@@ -391,6 +395,17 @@ public class TableCenterPanel extends JSplitPane {
         if (gold) return id+40;
         else return id;
     }
+    public static void main(String[] args) {
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
+        String[] playerNames = {"1", "2", "3", "4"};
+        Game game = new Game(4, playerNames, null);
+        GameView gameView = new GameView(game);
+        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
 
+        frame.add(panel);
+        frame.setVisible(true);
+    }
 }
 

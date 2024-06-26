@@ -14,7 +14,7 @@ public class ChatPanel extends JPanel {
      */
     private final JTextArea chatArea;
     /**
-     * Input area is where you can write all messages.
+     * Input area is where you can write any message.
      */
     private final JTextArea inputArea;
     /**
@@ -88,7 +88,7 @@ public class ChatPanel extends JPanel {
 
     /**
      * This the getter of all names in Recipient to chat to and Public option.
-     * @param nicknames
+     * @param nicknames nicknames of all players
      * @return
      */
     private String[] getRecipientOptions(String[] nicknames) {
@@ -122,7 +122,7 @@ public class ChatPanel extends JPanel {
 
     /**
      * This is the line that add the message to the chat area where who received the message can read it.
-     * @param message
+     * @param message the message received
      * @param nickname
      */
     public void addChatMessage(String message, String nickname) {

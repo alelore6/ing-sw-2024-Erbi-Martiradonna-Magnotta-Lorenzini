@@ -2,6 +2,10 @@ package it.polimi.ingsw.Model;
 
 import java.io.Serializable;
 
+/**
+ * Corner class represents a generic corner of a card with all of his property.
+ */
+
 public class Corner implements Serializable {
     protected Position pos;
     protected Resource resource;

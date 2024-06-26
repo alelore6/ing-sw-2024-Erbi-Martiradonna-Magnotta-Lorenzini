@@ -2,6 +2,10 @@ package it.polimi.ingsw.Model;
 
 import java.io.Serializable;
 
+/**
+ *
+ */
+
 public abstract class Card implements Serializable {
     protected int ID;
     protected CardColor color;
