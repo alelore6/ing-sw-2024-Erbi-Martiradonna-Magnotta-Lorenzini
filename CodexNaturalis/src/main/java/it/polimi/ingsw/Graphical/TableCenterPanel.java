@@ -72,12 +72,13 @@ public class TableCenterPanel extends JSplitPane {
     private final Object drawLock;
 
     private Image[] pawnImages;
-    private static int CENTER_X = 0;
-    private static int CENTER_Y = 0;
+    private  int CENTER_X = 0;
+    private  int CENTER_Y = 0;
     private static int START_X = 100;
     private static int START_Y = 100;
     private HashMap<TokenColor, Integer> pawnXCoords = new HashMap<TokenColor, Integer>(); //
     private HashMap<TokenColor, Integer> pawnYCoords = new HashMap<TokenColor, Integer>();
+    ;
     /**
      * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
      * @param gameView
@@ -124,72 +125,16 @@ public class TableCenterPanel extends JSplitPane {
         this.setLeftComponent(createLeftPanel());
         this.setRightComponent(createRightPanel());
 
-        this.setDividerLocation(1210);
+        /*this.setDividerLocation(1210);*/
     }
 
-    public void setNewTokenCoordinates(int position, TokenColor color){
 
-        int[] finalCoordinates = getTokenCoordinates(position, color);
-
-        pawnXCoords.replace(color, finalCoordinates[0]);
-        pawnYCoords.replace(color, finalCoordinates[1]);
-    }
-
-    private int[] getTokenCoordinates(int position, TokenColor color){
-        int X_OFFSET = 0;
-        int Y_OFFSET = 0;
-        int final_x = 0;
-        int final_y = 0;
-        final int radius = 10;
-
-        switch(color){
-            case RED :
-                X_OFFSET = 1;
-                Y_OFFSET = -1;
-                break;
-
-            case YELLOW :
-                X_OFFSET = -1;
-                Y_OFFSET = -1;
-                break;
-
-            case GREEN :
-                X_OFFSET = 1;
-                Y_OFFSET = 1;
-                break;
-
-            case BLUE :
-                X_OFFSET = -1;
-                Y_OFFSET = 1;
-                break;
-
-            default:
-                break;
-        }
-
-        switch (position){
-            case 0 :
-                final_x = 95;
-                final_y = 790;
-                break;
-
-            case 1 :
-                final_x = 180;
-                final_y = 790;
-                break;
-        }
-
-        final_x += X_OFFSET * radius;
-        final_y += Y_OFFSET * radius;
-
-        return new int[]{final_x, final_y};
-    }
 
     /**
      * CreateRightPanel generates the right panel that will compose the Table Center Panel, drawing the score track image with each spot created using JButtons to allow token to land on them to keep track of points.
      * @return
      */
-    private JPanel createRightPanel() {
+    public JPanel createRightPanel() {
         ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
         int originalWidth = img.getIconWidth();
         int originalHeight = img.getIconHeight();
@@ -245,11 +190,167 @@ public class TableCenterPanel extends JSplitPane {
         };
         rightPanel.setLayout(new BorderLayout());
         setVisible(true);
-        rightPanel.setMinimumSize(new Dimension(386, 300));
+        rightPanel.setMinimumSize(new Dimension(820, 300));
 
         return rightPanel;
     }
 
+    public void setNewTokenCoordinates(int position, TokenColor color){
+
+        int[] finalCoordinates = getTokenCoordinates(position, color);
+
+        pawnXCoords.replace(color, finalCoordinates[0]);
+        pawnYCoords.replace(color, finalCoordinates[1]);
+    }
+
+    private int[] getTokenCoordinates(int position, TokenColor color){
+        int X_OFFSET = 0;
+        int Y_OFFSET = 0;
+        int final_x = 0;
+        int final_y = 0;
+        final int radius = 10;
+
+        int rightPanelWidth = createRightPanel().getWidth();
+        int rightPanelHeight = createRightPanel().getHeight();
+        int rightPanelX = createRightPanel().getX();
+        int rightPanelY = createRightPanel().getY();
+
+        switch(color){
+            case RED :
+                X_OFFSET = 1;
+                Y_OFFSET = -1;
+                break;
+
+            case YELLOW :
+                X_OFFSET = -1;
+                Y_OFFSET = -1;
+                break;
+
+            case GREEN :
+                X_OFFSET = 1;
+                Y_OFFSET = 1;
+                break;
+
+            case BLUE :
+                X_OFFSET = -1;
+                Y_OFFSET = 1;
+                break;
+
+            default:
+                break;
+        }
+
+        switch (position){
+            case 0 :
+                final_x = rightPanelX+160;
+                final_y = rightPanelY+700;
+                break;
+
+            case 1 :
+                final_x = rightPanelX+240;
+                final_y = rightPanelY+700;
+                break;
+
+            case 2 :
+                final_x = rightPanelX+325;
+                final_y = rightPanelY+700;
+
+            case 3 :
+                final_x = rightPanelX+365;
+                final_y = rightPanelY+625;
+
+            case 4 :
+                final_x=rightPanelX+281;
+               final_y= rightPanelY+625;
+
+            case 5 :
+                final_x = rightPanelX+200;
+                final_y = rightPanelY+625;
+
+            case 6 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+625;
+            case 7 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+550;
+            case 8 :
+                final_x = rightPanelX+200;
+                final_y = rightPanelY+550;
+
+            case 9 :
+                final_x = rightPanelX+281;
+                final_y = rightPanelY+550;
+            case 10 :
+                final_x = rightPanelX+365;
+                final_y = rightPanelY+550;
+            case 11 :
+                final_x = rightPanelX+365;
+                final_y = rightPanelY+475;
+            case 12 :
+                final_x = rightPanelX+281;
+                final_y = rightPanelY+475;
+            case 13 :
+                final_x = rightPanelX+200;
+                final_y = rightPanelY+475;
+            case 14 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+475;
+            case 15 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+400;
+            case 16 :
+                final_x = rightPanelX+200;
+                final_y = rightPanelY+400;
+            case 17 :
+                final_x = rightPanelX+281;
+                final_y = rightPanelY+400;
+            case 18 :
+                final_x = rightPanelX+365;
+                final_y = rightPanelY+400;
+            case 19 :
+                final_x = rightPanelX+365;
+                final_y = rightPanelY+324;
+            case 20 :
+                final_x = rightPanelX+242;
+                final_y = rightPanelY+285;
+            case 21 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+324;
+            case 22 :
+               final_x = rightPanelX+118;
+               final_y = rightPanelY+248;
+
+            case 23 :
+                final_x = rightPanelX+118;
+                final_y = rightPanelY+172;
+            case 24:
+                final_x = rightPanelX+167;
+                final_y = rightPanelY+110;
+            case 25 :
+                final_x = rightPanelX+242;
+                final_y = rightPanelY+96;
+            case 26 :
+                final_x = rightPanelX+316;
+                final_y = rightPanelY+110;
+            case 27 :
+                final_x = rightPanelX+366;
+                final_y = rightPanelY+172;
+            case 28 :
+                final_x = rightPanelX+366;
+                final_y = rightPanelY+248;
+            case 29 :
+                final_x = rightPanelX+242;
+                final_y = rightPanelY+285;
+
+
+
+        }
+
+        final_x += X_OFFSET * radius;
+        final_y += Y_OFFSET * radius;
+
+        return new int[]{final_x, final_y};
+    }
     /**
      * createLeftPanel method is crucial for creating the left panel of the game table in the TableCenterPanel class. It manages the organization and addition of card decks, center cards and objective cards, as well as management of draw buttons.
      * @return
