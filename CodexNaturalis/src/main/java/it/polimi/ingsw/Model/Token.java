@@ -75,7 +75,6 @@ public class Token {
      */
     public void move(int points){
         scoreTrackPos = scoretrack.points.get(this);
-        boolean isTriggered = false;
         if(scoreTrackPos == 29 || (scoreTrackPos + points) > 29){  //if currentpos is 29 or goes over 29 sets position at 29
             scoretrack.getTokenPos()[scoreTrackPos] -= 1;
             scoretrack.getTokenPos()[29] += 1;

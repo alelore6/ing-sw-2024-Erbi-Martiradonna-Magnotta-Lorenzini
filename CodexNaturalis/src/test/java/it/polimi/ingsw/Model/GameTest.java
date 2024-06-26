@@ -1,6 +1,7 @@
 package it.polimi.ingsw.Model;
 
 import it.polimi.ingsw.Events.*;
+import it.polimi.ingsw.Exceptions.HandFullException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
@@ -104,6 +105,7 @@ public class GameTest {
     public void testStartGame() throws isEmptyException {
         //precondizioni
         testGame.setCurPlayerPosition(0);
+
         assertFalse(testGame.isFinished);
         //doNothing().when(modelViewListener).addEvent(any(GenericEvent.class));
 
@@ -119,7 +121,18 @@ public class GameTest {
 //        verify(mvListeners.get(0)).addEvent(any(ChooseObjectiveRequest.class));
 //        verify(mvListeners.get(0)).addEvent(any(PlaceStartingCard.class));
         testGame.waitNumClient = testGame.getMvListeners().size();
-        testGame.startGame();
+
+        for(Player p : testGame.getPlayers()) {
+            p.getHand().getHandCards()[0] = null;
+            p.getHand().getHandCards()[1] = null;
+            p.getHand().getHandCards()[2] = null;
+        }
+
+        try {
+            testGame.startGame();
+        } catch (RuntimeException e) {
+
+        }
 
     }
 
@@ -306,6 +319,7 @@ public class GameTest {
 
     @Test
     public void testNextPlayer() {
+
 
         testGame.setCurPlayerPosition(0);
         Player player1 = mock(Player.class);

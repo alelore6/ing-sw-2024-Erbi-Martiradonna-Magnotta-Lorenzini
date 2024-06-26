@@ -28,11 +28,15 @@ public class TableCenter {
      * array containing the two common objective cards laying on the table
      */
     private final ObjectiveCard[] objCards = new ObjectiveCard[2];
+
+
     /**
      * array containing the four playing cards (two resource and two gold) layed on the table,
      * that can be drawn alternatively to the two decks
      */
-    private final PlayableCard[] centerCards = new PlayableCard[4]; //first two are resource cards, last two are gold
+    private  PlayableCard[] centerCards = new PlayableCard[4]; //first two are resource cards, last two are goldù
+
+
 
 
     /**
@@ -119,40 +123,40 @@ public class TableCenter {
         int result=0;
         int i;
         boolean found = false;
-        for (i = 0; i < centerCards.length; i++) {   //iterate array to find card passed by parameter
-            if (centerCards[i] == playablecard) {
+        for (i = 0; i < getCenterCards().length; i++) {   //iterate array to find card passed by parameter
+            if (getCenterCards()[i] == playablecard) {
                 found = true;
                 break;
             }
         }
 
         if (found) {
-            centerCards[i] = null; //if card  passed by parameter is found but I cant draw, just empty the space
+            getCenterCards()[i] = null; //if card  passed by parameter is found but I cant draw, just empty the space
 
             if (playablecard instanceof ResourceCard) {  //if card passed by param. is a resource card I draw from ResourceDeck
-                if (resDeck.getNCards() > 0) {
+
                     try {
-                        centerCards[i] = resDeck.draw();
+                        getCenterCards()[i] = resDeck.draw();
 
                     } catch(isEmptyException e){
                         result=1;
                         try {
-                            centerCards[i] = goldDeck.draw();
+                            getCenterCards()[i] = goldDeck.draw();
 
                         } catch (isEmptyException e1) {
                             game.endGame(4);
                         }
                     }
-                }
+
 
             } else if (playablecard instanceof GoldCard) { //if instead card is GoldCard I first draw from goldDeck
                 try {
-                    centerCards[i] = goldDeck.draw();
+                    getCenterCards()[i] = goldDeck.draw();
 
                 } catch (isEmptyException e) {
                     result=1;
                     try {
-                        centerCards[i] = resDeck.draw();
+                        getCenterCards()[i] = resDeck.draw();
 
                     } catch (isEmptyException e1) {
                         game.endGame(4);
@@ -162,6 +166,10 @@ public class TableCenter {
             return result;
         }
         return -1; //return statement in case the card is not found (the player won't draw anything)
+    }
+
+    public void setCenterCards(PlayableCard[] centerCards) {
+        this.centerCards = centerCards;
     }
 }
 
