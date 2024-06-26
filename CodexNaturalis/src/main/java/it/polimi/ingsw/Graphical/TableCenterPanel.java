@@ -39,12 +39,7 @@ public class TableCenterPanel extends JSplitPane {
      */
     private int[] cardsID;
 
-    int[][] originalCoordinates = {
-            {112, 1920}, {512, 1920}, {912, 1920}, {912, 1730}, {512, 1730}, {112, 1730}, {112, 1540},
-            {512, 1540}, {912, 1540}, {912, 1350}, {512, 1350}, {112, 1350}, {112, 1160}, {512, 1160},
-            {912, 1160}, {912, 970}, {512, 970}, {112, 970}, {112, 780}, {512, 780}, {512, 590}, {112, 590},
-            {112, 400}, {512, 400}, {912, 400}, {512, 210}, {912, 210}, {912, 20}, {512, 20}, {512, 300}
-    };
+    private JPanel rightPanel;
     /**
      * an encoding of the draw choice of a player.
      */
@@ -155,10 +150,12 @@ public class TableCenterPanel extends JSplitPane {
                 super.paintComponent(g);
                 int x = (int) ((getWidth() - finalWidth) / 2);
                 int y = (int) ((getHeight() - finalHeight) / 2);
-                CENTER_X = x;
-                CENTER_Y = y;
-                g.drawImage(resizedIcon.getImage(), x, y, this);
+                CENTER_X = getWidth()/2;
+                CENTER_Y = getHeight()/2;
 
+                g.drawImage(resizedIcon.getImage(), x, y, null);
+                g.drawImage(pawnImages[0], CENTER_X, CENTER_Y, 50, 50, null);
+                System.out.println(CENTER_X+" "+CENTER_Y);
                 for (int i = 0; i < chosenColor.size(); i++) {
 
                     TokenColor color = null;
@@ -184,14 +181,12 @@ public class TableCenterPanel extends JSplitPane {
                     }
 
                     if(image != null)
-                        g.drawImage(image, pawnXCoords.get(color), pawnYCoords.get(color), 30, 30, this);
+                        g.drawImage(image, CENTER_X+pawnXCoords.get(color), CENTER_Y+pawnYCoords.get(color), 30, 30, this);
                 }
             }
         };
-        rightPanel.setLayout(new BorderLayout());
-        setVisible(true);
-        rightPanel.setMinimumSize(new Dimension(386, 300));
-
+        rightPanel.setMinimumSize(new Dimension(390, 300));
+        this.rightPanel=rightPanel;
         return rightPanel;
     }
 
@@ -209,11 +204,6 @@ public class TableCenterPanel extends JSplitPane {
         int final_x = 0;
         int final_y = 0;
         final int radius = 10;
-
-        int rightPanelWidth = createRightPanel().getWidth();
-        int rightPanelHeight = createRightPanel().getHeight();
-        int rightPanelX = createRightPanel().getX();
-        int rightPanelY = createRightPanel().getY();
 
         switch(color){
             case RED :
@@ -242,132 +232,108 @@ public class TableCenterPanel extends JSplitPane {
 
         switch (position){
             case 0 :
-                final_x = rightPanelX+160;
-                final_y = rightPanelY+700;
+                final_x = -98;
+                final_y = 286;
                 break;
 
             case 1 :
-                final_x = rightPanelX+240;
-                final_y = rightPanelY+700;
+                final_x = 240;
+                final_y = 700;
                 break;
 
             case 2 :
-                final_x = rightPanelX+325;
-                final_y = rightPanelY+700;
-                break;
+                final_x = 325;
+                final_y = 700;
 
-            case 3 :
-                final_x = rightPanelX+365;
-                final_y = rightPanelY+625;
-                break;
-
-            case 4 :
-                final_x=rightPanelX+281;
-               final_y= rightPanelY+625;
-               break;
-
-            case 5 :
-                final_x = rightPanelX+200;
-                final_y = rightPanelY+625;
-                break;
-
-            case 6 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+625;
-                break;
-            case 7 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+550;
-                break;
-            case 8 :
-                final_x = rightPanelX+200;
-                final_y = rightPanelY+550;
-                break;
-            case 9 :
-                final_x = rightPanelX+281;
-                final_y = rightPanelY+550;
-                break;
-            case 10 :
-                final_x = rightPanelX+365;
-                final_y = rightPanelY+550;
-                break;
-            case 11 :
-                final_x = rightPanelX+365;
-                final_y = rightPanelY+475;
-                break;
-            case 12 :
-                final_x = rightPanelX+281;
-                final_y = rightPanelY+475;
-                break;
-            case 13 :
-                final_x = rightPanelX+200;
-                final_y = rightPanelY+475;
-                break;
-            case 14 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+475;
-                break;
-            case 15 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+400;
-                break;
-            case 16 :
-                final_x = rightPanelX+200;
-                final_y = rightPanelY+400;
-                break;
-            case 17 :
-                final_x = rightPanelX+281;
-                final_y = rightPanelY+400;
-                break;
-            case 18 :
-                final_x = rightPanelX+365;
-                final_y = rightPanelY+400;
-                break;
-            case 19 :
-                final_x = rightPanelX+365;
-                final_y = rightPanelY+324;
-                break;
-            case 20 :
-                final_x = rightPanelX+242;
-                final_y = rightPanelY+285;
-                break;
-            case 21 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+324;
-                break;
-            case 22 :
-               final_x = rightPanelX+118;
-               final_y = rightPanelY+248;
-               break;
-            case 23 :
-                final_x = rightPanelX+118;
-                final_y = rightPanelY+172;
-                break;
-            case 24:
-                final_x = rightPanelX+167;
-                final_y = rightPanelY+110;
-                break;
-            case 25 :
-                final_x = rightPanelX+242;
-                final_y = rightPanelY+96;
-                break;
-            case 26 :
-                final_x = rightPanelX+316;
-                final_y = rightPanelY+110;
-                break;
-            case 27 :
-                final_x = rightPanelX+366;
-                final_y = rightPanelY+172;
-                break;
-            case 28 :
-                final_x = rightPanelX+366;
-                final_y = rightPanelY+248;
-                break;
-            case 29 :
-                final_x = rightPanelX+242;
-                final_y = rightPanelY+285;
-                break;
-
+//            case 3 :
+//                final_x = rightPanelX+365;
+//                final_y = rightPanelY+625;
+//
+//            case 4 :
+//                final_x=rightPanelX+281;
+//               final_y= rightPanelY+625;
+//
+//            case 5 :
+//                final_x = rightPanelX+200;
+//                final_y = rightPanelY+625;
+//
+//            case 6 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+625;
+//            case 7 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+550;
+//            case 8 :
+//                final_x = rightPanelX+200;
+//                final_y = rightPanelY+550;
+//
+//            case 9 :
+//                final_x = rightPanelX+281;
+//                final_y = rightPanelY+550;
+//            case 10 :
+//                final_x = rightPanelX+365;
+//                final_y = rightPanelY+550;
+//            case 11 :
+//                final_x = rightPanelX+365;
+//                final_y = rightPanelY+475;
+//            case 12 :
+//                final_x = rightPanelX+281;
+//                final_y = rightPanelY+475;
+//            case 13 :
+//                final_x = rightPanelX+200;
+//                final_y = rightPanelY+475;
+//            case 14 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+475;
+//            case 15 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+400;
+//            case 16 :
+//                final_x = rightPanelX+200;
+//                final_y = rightPanelY+400;
+//            case 17 :
+//                final_x = rightPanelX+281;
+//                final_y = rightPanelY+400;
+//            case 18 :
+//                final_x = rightPanelX+365;
+//                final_y = rightPanelY+400;
+//            case 19 :
+//                final_x = rightPanelX+365;
+//                final_y = rightPanelY+324;
+//            case 20 :
+//                final_x = rightPanelX+242;
+//                final_y = rightPanelY+285;
+//            case 21 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+324;
+//            case 22 :
+//               final_x = rightPanelX+118;
+//               final_y = rightPanelY+248;
+//
+//            case 23 :
+//                final_x = rightPanelX+118;
+//                final_y = rightPanelY+172;
+//            case 24:
+//                final_x = rightPanelX+167;
+//                final_y = rightPanelY+110;
+//            case 25 :
+//                final_x = rightPanelX+242;
+//                final_y = rightPanelY+96;
+//            case 26 :
+//                final_x = rightPanelX+316;
+//                final_y = rightPanelY+110;
+//            case 27 :
+//                final_x = rightPanelX+366;
+//                final_y = rightPanelY+172;
+//            case 28 :
+//                final_x = rightPanelX+366;
+//                final_y = rightPanelY+248;
+//            case 29 :
+//                final_x = rightPanelX+242;
+//                final_y = rightPanelY+285;
+//
+//
+//
         }
 
         final_x += X_OFFSET * radius;
