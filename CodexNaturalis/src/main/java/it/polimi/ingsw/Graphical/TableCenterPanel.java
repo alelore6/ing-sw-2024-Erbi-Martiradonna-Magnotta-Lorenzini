@@ -49,7 +49,6 @@ public class TableCenterPanel extends JSplitPane {
      * SpotXCoords is an array of all width coordinates of spots on score tracks to correctly place them on the score track.
      */
 
-
     private ArrayList<JButton> drawButtons;
     /**
      * PossiblePlayImage is an image used as a placeholder for spaces where there are no cards available, setting a default image to improve the game's user interface and maintaining visual coherence.
@@ -60,10 +59,9 @@ public class TableCenterPanel extends JSplitPane {
      */
     private final Object drawLock;
 
-    private int[][] tokenPositions = new int[4][2];
-    private int[] spotXCoords = { 13,45,60,70,120 };
-    private int[] spotYCoords = { 24,30,50,100,29};
-    private Image pawnImage;
+    private Image[] pawnImages;
+    private int[] pawnXCoords = {100, 200, 300, 400}; //
+    private int[] pawnYCoords = {100, 200, 300, 400};
     /**
      * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
      * @param gameView
@@ -78,11 +76,16 @@ public class TableCenterPanel extends JSplitPane {
         this.deckLabels = new JLabel[2];
         this.cardsID = new int[4];
         this.spots = new JButton[5];
+        this.pawnImages = new Image[5];
         this.drawButtons = new ArrayList<>();
         try {
             BufferedImage img = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/other/possible_play_image.png"));
             possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
-            pawnImage = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
+
+            pawnImages[0] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
+            pawnImages[1] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_rouge.png"));
+            pawnImages[2] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_jaune.png"));
+            pawnImages[3] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_vert.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -119,8 +122,8 @@ public class TableCenterPanel extends JSplitPane {
                 int y = (int) ((getHeight() - finalHeight) / 2);
                 g.drawImage(resizedIcon.getImage(), x, y, this);
 
-                for (int i = 0; i < spotXCoords.length; i++) {
-                    g.drawImage(pawnImage, spotXCoords[i], spotYCoords[i], 20, 20, this);
+                for (int i = 0; i < 4; i++) {
+                    g.drawImage(pawnImages[i], pawnXCoords[i], pawnYCoords[i], 30, 30, this);
                 }
             }
         };
