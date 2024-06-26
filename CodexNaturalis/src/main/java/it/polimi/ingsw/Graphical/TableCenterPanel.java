@@ -255,7 +255,7 @@ public class TableCenterPanel extends JSplitPane {
         drawButton.setPreferredSize(new Dimension(100, 1));
         drawButton.setMargin(new Insets(2, 1, 5, 1));
         drawButton.addActionListener(e -> {
-            System.out.println("Draw card " + (index + 1));
+            //System.out.println("Draw card " + (index + 1));
             drawCard(index + 1);
         });
         drawButtons.add(drawButton);

@@ -18,7 +18,7 @@ public class ChatPanel extends JPanel {
      */
     private final JTextArea inputArea;
     /**
-     * Recipient that contains all the nicknames of  message receievers and the public board option.
+     * Recipient that contains all the nicknames of  message receivers and the public board option.
      */
     private  JComboBox<String> recipientComboBox;
 
@@ -89,7 +89,7 @@ public class ChatPanel extends JPanel {
     /**
      * This the getter of all names in Recipient to chat to and Public option.
      * @param nicknames nicknames of all players
-     * @return
+     * @return the valid options as array
      */
     private String[] getRecipientOptions(String[] nicknames) {
         String[] options = new String[nicknames.length + 1];
@@ -122,8 +122,8 @@ public class ChatPanel extends JPanel {
 
     /**
      * This is the line that add the message to the chat area where who received the message can read it.
-     * @param message the message received
-     * @param nickname
+     * @param message the  received message
+     * @param nickname the sender of the message
      */
     public void addChatMessage(String message, String nickname) {
         chatArea.append(" " + nickname.toUpperCase() + ": " + message + "\n");

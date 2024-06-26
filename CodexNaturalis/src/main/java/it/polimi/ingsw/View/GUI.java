@@ -125,7 +125,7 @@ public class GUI extends UI{
             else if( e instanceof  PlayerDisconnected) f.addChatMessage("game", e.getMessage());
             else synchronized (inputEvents) {
                     inputEvents.add(e);
-                    System.out.println("[DEBUG] received: "+ e.getClass().getName());
+                    //System.out.println("[DEBUG] received: "+ e.getClass().getName());
             }
         }
     }
@@ -287,7 +287,7 @@ public class GUI extends UI{
                             break;
                         case StartTurn e:
                             //show message + update view
-                            f.addChatMessage("game",e.gameView.tableCenterView.scoreTrack.points.toString());
+                            f.addChatMessage("game","Points: "+e.gameView.tableCenterView.scoreTrack.points.toString());
                             if(e.turnPlayer.equals(nickname)) JOptionPane.showMessageDialog(f, message);
                             else f.addChatMessage("game", e.getMessage());
                             f.update(e.gameView,0);
