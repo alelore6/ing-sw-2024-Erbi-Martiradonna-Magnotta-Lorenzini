@@ -27,7 +27,8 @@ public class MainFrame extends JFrame {
     /**
      * panel that contains all the game panels
      */
-    private final JPanel mainPanel;
+    protected final JPanel mainPanel;
+
     /**
      * the panel that contains the table center information and logic
      */
@@ -113,6 +114,7 @@ public class MainFrame extends JFrame {
      */
     private void createGamePanels(GameView gameView) {
         tableCenterPanel = new TableCenterPanel(gameView,playLock);
+
         addToMenuBar("Table center", null);
         mainPanel.add(tableCenterPanel, "Table center");
         addToMenuBar("My panel", gameView.getPlayerViewByNickname(nickname).token.color);
@@ -298,6 +300,11 @@ public class MainFrame extends JFrame {
         return tableCenterPanel.getDrawChoice();
     }
 
-
-
+    /**
+     * Getter for the table center panel.
+     * @return the table center panel.
+     */
+    public TableCenterPanel getTableCenterPanel() {
+        return tableCenterPanel;
+    }
 }

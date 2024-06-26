@@ -302,6 +302,7 @@ public class GUI extends UI{
                         case TurnOrder e:
                             f.addChatMessage("game", e.getMessage());
                             f.reactStartGame(e.gameView);
+
                             break;
 
                         case ReconnectionRequest e:
