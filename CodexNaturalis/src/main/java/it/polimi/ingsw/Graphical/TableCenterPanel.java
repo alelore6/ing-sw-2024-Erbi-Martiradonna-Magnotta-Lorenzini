@@ -190,7 +190,7 @@ public class TableCenterPanel extends JSplitPane {
         };
         rightPanel.setLayout(new BorderLayout());
         setVisible(true);
-        rightPanel.setMinimumSize(new Dimension(820, 300));
+        rightPanel.setMinimumSize(new Dimension(386, 300));
 
         return rightPanel;
     }
@@ -382,7 +382,7 @@ public class TableCenterPanel extends JSplitPane {
         } else {
             addObjectiveCardSpot(leftPanel, "Objective Card 2", -1);
         }
-        leftPanel.setMinimumSize(new Dimension(1210, 300));
+        leftPanel.setMinimumSize(new Dimension(820, 300));
         hideDrawButton();
         return leftPanel;
     }
