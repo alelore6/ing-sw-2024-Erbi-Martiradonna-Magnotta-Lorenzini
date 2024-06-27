@@ -19,8 +19,8 @@ public enum Resource implements Serializable {
     MANUSCRIPT;
 
     /**
-     *
-     * @return
+     * toString method is used to print on a line of code the resource overriding its original method.
+     * @return null.
      */
 
     @Override

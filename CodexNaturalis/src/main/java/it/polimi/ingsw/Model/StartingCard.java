@@ -11,8 +11,8 @@ public class StartingCard extends Card{
     public Resource[] resource;
 
     /**
-     * Constructor
-     * @param fake_ID
+     * Constructor that creates a fake starting card to let the view know where a card can be played and where a card can't be played.
+     * @param fake_ID a fake starting card used just to create the spot where a real card can be placed.
      */
     public StartingCard(int fake_ID) {
         this.ID = fake_ID;

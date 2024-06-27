@@ -8,11 +8,11 @@ import java.util.HashMap;
  */
 public class CurrentResources implements Serializable {
     /**
-     * the player that owns the class
+     * the player that owns the class.
      */
     private final Player player;
     /**
-     * the map that connects every resource to relative number owned by the player
+     * the map that connects every resource to relative number owned by the player.
      */
     protected final HashMap<Resource,Integer> currentResources;
 

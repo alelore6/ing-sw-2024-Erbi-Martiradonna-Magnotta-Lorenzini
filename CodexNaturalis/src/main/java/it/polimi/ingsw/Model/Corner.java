@@ -49,8 +49,8 @@ public class Corner implements Serializable {
     }
 
     /**
-     *
-     * @return
+     * getStringResource is useful in TUI to get resource of a corner.
+     * @return none if corner is empty, or the resource in the corner.
      */
     public String getStringResource(){
         return resource == null ? "none" : resource.toString();

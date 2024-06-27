@@ -16,7 +16,7 @@ public abstract class Card implements Serializable {
      */
     protected CardColor color;
     /**
-     *
+     * playOrder is an integer that assigns to each card the number of the turn when it gets played: zero for the starting card, one for the first played card, two for the second, and so on.
      */
     protected int playOrder;
     /**
@@ -80,8 +80,8 @@ public abstract class Card implements Serializable {
     }
 
     /**
-     *
-     * @return
+     * getPlayOrder is a getter used to know about the number of the turn when any given card gets played.
+     * @return the number of the turn when a card gets played.
      */
     public int getPlayOrder() {return playOrder;}
 }
