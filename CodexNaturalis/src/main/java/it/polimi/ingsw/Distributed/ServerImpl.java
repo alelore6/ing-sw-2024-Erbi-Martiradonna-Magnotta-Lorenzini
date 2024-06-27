@@ -161,8 +161,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                                 }
                             }
                         }
-                        for(String nickname : toDelete){
-                            clients.remove(nickname);
+                        for(int i = 0; i < toDelete.size(); i++){
+                            clients.remove(toDelete.get(i));
+                            toDelete.remove(i);
                         }
                     }
                 }

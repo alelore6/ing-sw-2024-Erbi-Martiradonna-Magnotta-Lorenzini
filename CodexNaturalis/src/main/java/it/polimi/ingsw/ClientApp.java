@@ -157,7 +157,6 @@ public class ClientApp {
         running = false;
         // client.getUserInterface().stop();
         // client.getUserInterface().getListener().stop();
-        System.exit(0);
     }
 
     /**
