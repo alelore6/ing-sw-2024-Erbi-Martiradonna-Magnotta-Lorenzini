@@ -220,7 +220,6 @@ public class Game{
                         p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
                     } catch (isEmptyException | HandFullException e) {
                         //should not happen
-                        throw new RuntimeException(e);
                     }
 
 

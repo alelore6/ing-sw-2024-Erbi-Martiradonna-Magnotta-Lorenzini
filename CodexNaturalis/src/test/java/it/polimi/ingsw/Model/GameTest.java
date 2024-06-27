@@ -490,8 +490,11 @@ public class GameTest {
 
 
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
-
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
 
 
 
@@ -590,7 +593,11 @@ public class GameTest {
 
 
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
 
         ModelViewListener listener1 = mock(ModelViewListener.class);
         ModelViewListener listener2 = mock(ModelViewListener.class);
