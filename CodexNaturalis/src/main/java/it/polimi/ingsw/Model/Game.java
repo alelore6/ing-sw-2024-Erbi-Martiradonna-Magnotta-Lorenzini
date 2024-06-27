@@ -481,16 +481,24 @@ public class Game{
         }
     }
 
-    private static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
-        Card[][] submatrix = new Card[3][3];
-        for (int i = row, x = 0; i < row + 3; i++, x++) {
-            for (int j = col, y = 0; j < col + 3; j++, y++) {
+    private static Card[][] getSubmatrix(Card[][] matrix, int row, int col) { //find 4x4 submatrixs in a NxN matrix
+        Card[][] submatrix = new Card[4][4];
+        for (int i = row, x = 0; i < row + 4; i++, x++) {
+            for (int j = col, y = 0; j < col + 4; j++, y++) {
                 submatrix[x][y] = matrix[i][j];
             }
         }
         return submatrix;
     }
 
+    /**
+     * Calculates the points totalized by the constraint set by the objective card.
+     * The method separates between the two types of Objective Card, analyzing the player's grid and resources
+     * In order to see if the player has achieved what the objective card is requesting.
+     * @param objectiveCard the card used to see if the player achieved it's objective
+     * @param playerPos the player position used to retrieve the player and analyze its grid
+     * @return points received by the objective card
+     */
     int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
         // credo sia al contrario
@@ -516,21 +524,22 @@ public class Game{
 
 
         } else {// ObjectiveCard1
-            //Serve scannerizzare l'intera matrice del player 81x81 in sottomatrici 3x3 e se trovo la pattern indicata
-            //allora setto un attributo found sulla carta ad 1. SE l'attributo found è a 1 sulle carte trovate (ne basta una)
-            //allora i punti NON SARANNO VALIDI!!! 0 punti.
+            //We need to scan the entire 81x81 player matrix into 4x4 submatrices and if I find the indicated pattern
+            //then I set a found attribute on the card to 1. IF the found attribute is 1 on the found cards (one is enough)
+            //then the points WILL NOT BE VALID!!! 0 points.
+
             int totalpoints = 0;
             int rows = 81;
             int columns = 81;
             Card[] savedCards = new Card[3];
-            for (int k = 0; k < rows - 2; k++) {
-                for (int j = 0; j < columns - 2; j++) {
+            for (int k = 0; k < rows - 3; k++) {
+                for (int j = 0; j < columns - 3; j++) {
                     //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
                     Card[][] subMatrix = getSubmatrix(players.get(playerPos).getHand().getDisplayedCards(), k, j);
                     boolean found = true;
 
                     int counter = 0;
-                    //PER OGNI 3X3 SOTTOMATRICE SVOLGO
+                    //for each 4x4 matrix I do:
                         for (int index = 0; index < 3; index++) { //quindi 3 iterazioni (per le 3 carte)
                             int x = 0; //ROWS
                             int y = 0; //COLUMNS
@@ -549,28 +558,56 @@ public class Game{
                                     y = 2;
                                     break;
                                 case 4:
-                                    x = 1;
-                                    y = 0;
+                                    x = 0;
+                                    y = 3;
                                     break;
                                 case 5:
                                     x = 1;
-                                    y = 1;
+                                    y = 0;
                                     break;
                                 case 6:
                                     x = 1;
-                                    y = 2;
+                                    y = 1;
                                     break;
                                 case 7:
-                                    x = 2;
-                                    y = 0;
+                                    x = 1;
+                                    y = 2;
                                     break;
                                 case 8:
-                                    x = 2;
-                                    y = 1;
+                                    x = 1;
+                                    y = 3;
                                     break;
                                 case 9:
                                     x = 2;
+                                    y = 0;
+                                    break;
+                                case 10:
+                                    x = 2;
+                                    y = 1;
+                                    break;
+                                case 11:
+                                    x = 2;
                                     y = 2;
+                                    break;
+                                case 12:
+                                    x = 2;
+                                    y = 3;
+                                    break;
+                                case 13:
+                                    x = 3;
+                                    y = 0;
+                                    break;
+                                case 14:
+                                    x = 3;
+                                    y = 1;
+                                    break;
+                                case 15:
+                                    x = 3;
+                                    y = 2;
+                                    break;
+                                case 16:
+                                    x = 3;
+                                    y = 3;
                                     break;
                             }
 
@@ -580,7 +617,7 @@ public class Game{
                             }
 
                             if (subMatrix[x][y] != null) {
-                                if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) { //se il colore corrisponde a quello della required in quella posizione
+                                if (subMatrix[x][y].getColor() == ((ObjectiveCard1) objectiveCard).getCardColors()[index]) { //if the color matches that of the required in that position
                                     savedCards[index] = subMatrix[x][y];
                                     counter++;
 

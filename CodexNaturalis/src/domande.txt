@@ -153,4 +153,8 @@ TODO: - se un utente inserisce un nick con dei punti, lato server cambiare con _
 //TODO FIXARE GETCOLOR RESOURCE DECK GOLD DECK
 
 
+-Dopo disconnessione il giocatore non riceve messaggi privati
+-Dopo aver finito la partita si viene buttati fuori istantaneamente senza poter vedere i rankings.
+-Carte obiettivo che sono in realtà una matrice 4x4 (bisognerebbe cambiare il JSON)
+
 
