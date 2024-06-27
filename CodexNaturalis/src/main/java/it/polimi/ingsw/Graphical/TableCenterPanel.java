@@ -31,15 +31,15 @@ public class TableCenterPanel extends JSplitPane {
     /**
      * card labels is an array of labels associated to each card spot  associated to a JLabel to visualize through the layout manager each card image that lands on the spot.
      */
-    private ArrayList<JLabel> cardLabels;
+    private final ArrayList<JLabel> cardLabels;
     /**
      * deck labels is an array of two labels associated to each deck spot associated with a JLabel to visualize through the layout manager each deck peek card image.
      */
-    private JLabel[] deckLabels;
+    private final JLabel[] deckLabels;
     /**
      * An array  of integers that keeps track of the IDs of the cards present in the central spots of the table.
      */
-    private int[] cardsID;
+    private final int[] cardsID;
     /**
      * an encoding of the draw choice of a player.
      */
@@ -48,14 +48,10 @@ public class TableCenterPanel extends JSplitPane {
      * a boolean that sets when is the time to draw for each player.
      */
     private boolean drawing = false;
-    /**
-     * Spots is an Array of 27 JButton to create 27 spots on score tracks to keep track of each player's current and final score;
-     */
-    private JButton[] spots;
-    /**
-     * SpotXCoords is an array of all width coordinates of spots on score tracks to correctly place them on the score track.
-     */
 
+    /**
+     * list of draw buttons
+     */
     private ArrayList<JButton> drawButtons;
     /**
      * PossiblePlayImage is an image used as a placeholder for spaces where there are no cards available, setting a default image to improve the game's user interface and maintaining visual coherence.
@@ -88,11 +84,11 @@ public class TableCenterPanel extends JSplitPane {
     /**
      * tokenXCoord is a mapping od token colors to their respective abscissas coordinates.
      */
-    private HashMap<TokenColor, Integer> tokenXCoords = new HashMap<TokenColor, Integer>();
+    private final HashMap<TokenColor, Integer> tokenXCoords = new HashMap<TokenColor, Integer>();
     /**
      * tokenYCoord is a mapping od token colors to their respective ordinates coordinates.
      */
-    private HashMap<TokenColor, Integer> tokenYCoords = new HashMap<TokenColor, Integer>();
+    private final HashMap<TokenColor, Integer> tokenYCoords = new HashMap<TokenColor, Integer>();
     ;
     /**
      * TableCenterPanel constructor builds a new Table Center Panel, configures the interface of the central panel of the game, dividing the space into two main sections (left and right panel)for managing decks and cards, and for viewing the game table with all the tokens required. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interactions.
@@ -107,7 +103,7 @@ public class TableCenterPanel extends JSplitPane {
         this.cardLabels = new ArrayList<>();
         this.deckLabels = new JLabel[2];
         this.cardsID = new int[4];
-        this.spots = new JButton[5];
+
         this.tokenImages = new Image[5];
         this.drawButtons = new ArrayList<>();
 

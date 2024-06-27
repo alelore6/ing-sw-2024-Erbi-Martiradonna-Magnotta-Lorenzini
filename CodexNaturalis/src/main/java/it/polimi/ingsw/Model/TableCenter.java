@@ -112,7 +112,7 @@ public class TableCenter {
      * Later it replaces it (if possible) with a card of the same type (gold or resource) and if not
      * just replaces it with the other type.
      * If both decks are empty, the card slot remains empty and endgame process is triggered
-     * @param playablecard
+     * @param playablecard the card that is chosen for the draw
      * @return an integer representing the state of the draw:
      *   0 means the draw was correct and neither of the decks were empty
      *   1 means the draw was correct but one or both the decks were empty
@@ -168,6 +168,10 @@ public class TableCenter {
         return -1; //return statement in case the card is not found (the player won't draw anything)
     }
 
+    /**
+     * Setter for the center cards
+     * @param centerCards the center card
+     */
     public void setCenterCards(PlayableCard[] centerCards) {
         this.centerCards = centerCards;
     }

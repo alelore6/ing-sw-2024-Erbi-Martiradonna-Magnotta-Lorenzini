@@ -42,6 +42,7 @@ public class Player {
      * Also calls the constructor for class Hand and currentResources
      *
      * @param nickname the player's nickname
+     * @param game the game the player is participating
      */
     public Player(String nickname, Game game){
         this.nickname=nickname;
@@ -112,6 +113,7 @@ public class Player {
     /**
      * Setter for player's token after choosing the color
      * @param color the token's color that the player has chosen
+     * @return a boolean representing the success of the operation
      */
     public boolean setToken(TokenColor color) {
         synchronized (game.availableTokens) {

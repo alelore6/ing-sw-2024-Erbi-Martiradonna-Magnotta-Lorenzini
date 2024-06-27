@@ -53,7 +53,7 @@ public class Game{
 
     /**
      * Setter for curPlayerPosition.
-     * @param curPlayerPosition
+     * @param curPlayerPosition index of the current player in the players array
      */
     public void setCurPlayerPosition(int curPlayerPosition) {
         this.curPlayerPosition = curPlayerPosition;
@@ -86,12 +86,21 @@ public class Game{
      * Usually, the server waits for all the players using this.
      */
     public int waitNumClient = 0;
-
-    public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done
+    /**
+     * number representing the turn phase: 0: start turn, 1: play done, 2: draw done
+     */
+    public int turnPhase=0;
+    /**
+     * boolean representing whether the game has started
+     */
     public boolean isStarted = false;
-
-    public boolean isTriggered = false; //to see if endgame is triggered
-
+    /**
+     * boolean representing whether end game has been triggered or not
+     */
+    public boolean isTriggered = false;
+    /**
+     * lock for synchronization with the controller
+     */
     public final Object lock = new Object();
     /**
      * Lock for waiting a certain amount of time when only one player is remaining.
@@ -104,6 +113,7 @@ public class Game{
      *
      * @param numPlayers number of players in the current game
      * @param nicknames  array of nicknames passed by user, used to create the players classes
+     * @param mvListeners the model-view listeners of the players
      */
     public Game(int numPlayers, String[] nicknames, ArrayList<ModelViewListener> mvListeners) {
         this.mvListeners =  mvListeners;
@@ -132,9 +142,9 @@ public class Game{
     public TableCenter getTablecenter() {return tablecenter;}
 
     /**
-     * Getter for array of players
+     * Getter for the list of players
      *
-     * @return array of players
+     * @return the list of players
      */
     public ArrayList<Player> getPlayers() {return players;}
 
@@ -146,14 +156,22 @@ public class Game{
 
     /**
      * Getter for remainingTurns attribute
-     * @return remainingTurns
+     * @return number of remaining turns after the triggering of the end game phase, else -1
      */
     public int getRemainingTurns() {return remainingTurns;}
 
+    /**
+     * Getter for the current player's nickname
+     * @return the current player's nickname
+     */
     public String getCurrentPlayerNickname(){
         return curPlayerPosition != -1 ? players.get(curPlayerPosition).getNickname() : null;
     }
 
+    /**
+     * Getter for the current player index in the list of players
+     * @return the index of the current player in the list of players
+     */
     public int getCurPlayerPosition() {
         return curPlayerPosition;
     }
@@ -164,7 +182,6 @@ public class Game{
      * It also randomly chooses the first player and orders the other ones from left to right.
      * In the end, it loops checking the number of remaining players.
      * @throws RuntimeException if the decks are empty (should not happen at the beginning)
-     * @throws WrongPlayException thrown by the method playStartingCard
      */
     public void startGame() throws RuntimeException{
 
@@ -364,7 +381,6 @@ public class Game{
      * two different ways of calculating the points, one for each type of objective card.
      * The first one simply requires to check how many times the player has the required set of resources
      * The second one checks through matrix operations if the players respected a certain card pattern
-     * @return winning player or players
      */
     public void checkWinner(){
 
@@ -640,7 +656,7 @@ public class Game{
 
     /**
      * Method to disconnect a player from the game.
-     * @param player
+     * @param player the disconnected player
      */
     public void disconnectPlayer(Player player){
 
@@ -746,7 +762,7 @@ public class Game{
 
     /**
      * Setter for the listeners' list.
-     * @param mvListeners
+     * @param mvListeners the list of model-view listeners
      */
     public void setMVListeners(ArrayList<ModelViewListener> mvListeners) {
         this.mvListeners = mvListeners;

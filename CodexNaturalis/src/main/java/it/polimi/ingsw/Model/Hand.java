@@ -96,7 +96,10 @@ public class Hand {
         }
     }
 
-
+    /**
+     * Getter for the hand cards of the player
+     * @return the hand cards of the player
+     */
     public PlayableCard[] getHandCards(){return HandCards;}
 
     /**

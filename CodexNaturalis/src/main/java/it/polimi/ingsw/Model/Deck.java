@@ -23,8 +23,8 @@ public abstract class Deck implements Serializable {
 
     /**
      * Method to draw a card from a deck.
-     * @return
-     * @throws isEmptyException
+     * @return the drawn card
+     * @throws isEmptyException if deck is empty
      */
     public abstract Card draw() throws isEmptyException;
 

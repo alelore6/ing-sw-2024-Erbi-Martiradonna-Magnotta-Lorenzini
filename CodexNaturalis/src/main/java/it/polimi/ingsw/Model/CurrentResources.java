@@ -28,6 +28,10 @@ public class CurrentResources implements Serializable {
          }
      }
 
+    /**
+     * Getter for the current resources attribute
+     * @return the player's current resources as hashmap
+     */
     public HashMap<Resource, Integer> getCurrentResources() {
         return currentResources;
     }

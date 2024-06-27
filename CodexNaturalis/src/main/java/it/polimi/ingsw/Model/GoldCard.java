@@ -25,6 +25,9 @@ public class GoldCard extends PlayableCard{
         req.put(resource, value);
     }
 
+    /**
+     * the map between the resources and the relative required number to play a card
+     */
     HashMap<Resource,Integer> req = new HashMap<>();
 
     /**

@@ -51,7 +51,7 @@ public class StartingDeck extends Deck{
     /**
      * draw method represents the draw action, it practically is an assignment to each active player of a starting card to be able to play.
      * @return the starting card drawn
-     * @throws isEmptyException
+     * @throws isEmptyException if the deck is empty
      */
     public StartingCard draw() throws isEmptyException {
         if (NCards == 0) {
