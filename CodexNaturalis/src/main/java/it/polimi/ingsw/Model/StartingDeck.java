@@ -9,7 +9,7 @@ import static it.polimi.ingsw.Model.CardColor.WHITE;
 
 public class StartingDeck extends Deck{
 
-    int NCards = 6;
+    private int NCards = 6;
     private StartingCard[] cards;
 
     public StartingDeck() {

@@ -33,7 +33,7 @@ public class ClientSkeleton implements Client {
     /**
      * The end point for the communication between client and server
      */
-    public final Socket socket;
+    private final Socket socket;
 
     /**
      * The nickname associated with the client

@@ -10,7 +10,7 @@ public class FinalRankings extends ServerMessage{
     /**
      * represent a map between every player and his points
      */
-    public final HashMap<String,Integer> rankings;
+    private final HashMap<String,Integer> rankings;
 
     /**
      * Constructor
@@ -63,7 +63,7 @@ public class FinalRankings extends ServerMessage{
      * @param map the map before
      * @param sorted new linked map ordered
      */
-    public static void sortHashmap(HashMap<String, Integer> map, LinkedHashMap<String, Integer> sorted) {
+    private static void sortHashmap(HashMap<String, Integer> map, LinkedHashMap<String, Integer> sorted) {
 
         if (map.isEmpty()) {
             return; //should never happen

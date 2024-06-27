@@ -19,7 +19,7 @@ import static it.polimi.ingsw.Model.TokenColor.*;
  * The panel where the game takes place, you can see both decks (Gold Deck and Resource Deck) and all the  four cards on the floor from where, when the time is right, you can draw, the score track ,as well as  the two community objective cards.
  * It extends JSplitPane to be able to divide the screen between card section and score track section.
  */
-public class TableCenterPanel extends JSplitPane {
+class TableCenterPanel extends JSplitPane {
     /**
      * the game view gives all the required information about the game in any exact moment.
      */
@@ -129,7 +129,7 @@ public class TableCenterPanel extends JSplitPane {
      * CreateRightPanel generates the right panel that will compose the Table Center Panel, drawing the score track image with each spot created using JButtons to allow token to land on them to keep track of points.
      * @return
      */
-    public JPanel createRightPanel() {
+    private JPanel createRightPanel() {
         ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
         int originalWidth = img.getIconWidth();
         int originalHeight = img.getIconHeight();
@@ -190,7 +190,7 @@ public class TableCenterPanel extends JSplitPane {
         return rightPanel;
     }
 
-    public void setNewTokenCoordinates(int position, TokenColor color){
+    private void setNewTokenCoordinates(int position, TokenColor color){
 
         int[] finalCoordinates = getTokenCoordinates(position, color);
 
@@ -428,7 +428,7 @@ public class TableCenterPanel extends JSplitPane {
      * @param cardColor
      * @param deckIndex
      */
-    public void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
+    private void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
         JPanel deckPanel = new JPanel();
         deckPanel.setLayout(new BorderLayout());
         deckPanel.setBorder(BorderFactory.createTitledBorder(title));
@@ -567,7 +567,7 @@ public class TableCenterPanel extends JSplitPane {
     /**
      * showDrawButton shows draw button to make them usable.
      */
-    public void showDrawButton() {
+    private void showDrawButton() {
         int i=0;
         for (JButton button : drawButtons) {
             if(i<2 || cardsID[i-2]>0) button.setVisible(true);
@@ -612,7 +612,7 @@ public class TableCenterPanel extends JSplitPane {
      * @param gold
      * @return
      */
-    public static int getCardColorId(CardColor color,boolean gold) {
+    private static int getCardColorId(CardColor color,boolean gold) {
         int id=0;
         switch (color) {
             case RED:

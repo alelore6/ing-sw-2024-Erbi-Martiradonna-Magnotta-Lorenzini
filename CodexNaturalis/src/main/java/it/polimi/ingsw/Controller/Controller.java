@@ -67,7 +67,7 @@ public class Controller {
     /**
      * Creates and starts the actual game.
      */
-    protected void createGame() throws RemoteException{
+    void createGame() throws RemoteException{
         String[] temp = new String[lobby.getNumPlayers()];
         lobby.getPlayers().toArray(temp);
         model = new Game(lobby.getNumPlayers(), temp, MVListeners);
@@ -89,7 +89,7 @@ public class Controller {
         }.start();
     }
 
-    public void createLobby(int numPlayers) throws RemoteException {
+    private void createLobby(int numPlayers) throws RemoteException {
         synchronized(this){
         this.lobby  = new Lobby();
         lobby.setNumPlayers(numPlayers);}
@@ -375,7 +375,7 @@ public class Controller {
      * @return the player.
      * @see Player
      */
-    public Player getPlayerByNickname(String nickname){
+    private Player getPlayerByNickname(String nickname){
         try {
             for (Player player : model.getPlayers()) {
                 if (player.getNickname().equals(nickname)) {
@@ -395,7 +395,7 @@ public class Controller {
      * @throws RemoteException
      * @see ModelViewListener
      */
-    public void sendEventToAll(GenericEvent event) throws RemoteException {
+    private void sendEventToAll(GenericEvent event) throws RemoteException {
         event.mustBeSentToAll = true;
 
         for(String nickname : server.getClients().keySet()) getMVListenerByNickname(nickname).addEvent(event);

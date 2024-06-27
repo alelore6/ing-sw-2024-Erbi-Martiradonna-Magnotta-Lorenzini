@@ -26,7 +26,7 @@ public class ModelViewListener extends Listener {
     /**
      * The client associated with the listener.
      */
-    public final Client client;
+    private final Client client;
     /**
      * The nickname of the user associated with the listener.
      */
@@ -39,7 +39,7 @@ public class ModelViewListener extends Listener {
      * The server bound to this specific listener.
      * The listener will pass the information to the server which will likewise, pass it to the client
      */
-    public final ServerImpl server;
+    private final ServerImpl server;
 
     /**
      * Constructor

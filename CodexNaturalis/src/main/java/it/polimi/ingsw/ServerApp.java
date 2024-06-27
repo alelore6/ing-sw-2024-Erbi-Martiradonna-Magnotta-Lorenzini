@@ -50,7 +50,7 @@ public class ServerApp {
      *
      * @throws InterruptedException
      */
-    public ServerApp() throws InterruptedException {
+    private ServerApp() throws InterruptedException {
         try {
             server = new ServerImpl(this, logger);
         } catch (RemoteException e) {

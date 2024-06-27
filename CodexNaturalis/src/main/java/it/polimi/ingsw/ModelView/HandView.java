@@ -41,7 +41,7 @@ public class HandView implements Serializable {
      * @param matrix the matrix before
      * @return the restricted matrix
      */
-    public static Card[][] subMatrix(Card[][] matrix) {
+    private static Card[][] subMatrix(Card[][] matrix) {
 
         if(matrix != null && matrix[40] != null && matrix[40][40] == null)
             return null;

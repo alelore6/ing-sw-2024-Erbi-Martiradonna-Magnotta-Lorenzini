@@ -108,7 +108,7 @@ class PlayedCardsPanel extends JPanel {
      * update the panel adding the new cards
      * @param matrix the player's played cards
      */
-    protected void update(Card[][] matrix){
+    void update(Card[][] matrix){
         int row =matrix.length;
         int col=matrix[0].length;
         removeAll(); // Rimuove tutti i componenti presenti nel JPanel
@@ -198,21 +198,21 @@ class PlayedCardsPanel extends JPanel {
      * getter for the selected possible play
      * @return the card component that describes the selected image on the panel
      */
-    protected CardComponent getSelectedPosition() {
+    CardComponent getSelectedPosition() {
         return selectedCard;
     }
     /**
      * getter for the center row in the matrix of played cards
      * @return the center row index
      */
-    protected int getCenter_row() {
+    int getCenter_row() {
         return center_row;
     }
     /**
      * getter for the center column in the matrix of played cards
      * @return the center column index
      */
-    protected int getCenter_col() {
+    int getCenter_col() {
         return center_col;
     }
 

@@ -33,9 +33,9 @@ public class Player {
     /**
      * indicate when it's this player's turn
      */
-    protected int position;
+    int position;
 
-    protected volatile boolean isDisconnected;
+    volatile boolean isDisconnected;
 
     /**
      * Constructor:

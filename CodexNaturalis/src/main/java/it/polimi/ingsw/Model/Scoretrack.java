@@ -22,7 +22,7 @@ public class Scoretrack {
     /**
      * Constructor: initializes array representing all the 30 positions of the score track (from 0 to 29)
      */
-    protected Scoretrack() {
+    Scoretrack() {
         tokenPos = new int[30];
         points = new HashMap<Token, Integer>();
     }
@@ -31,7 +31,7 @@ public class Scoretrack {
      * getter for the token positions array
      * @return token positions array
      */
-    protected int[] getTokenPos() {
+    int[] getTokenPos() {
         return tokenPos;
     }
 
@@ -39,7 +39,7 @@ public class Scoretrack {
      * add a token to the scoretrack
      * @param token the player's token
      */
-    protected void addToken(Token token) {
+    void addToken(Token token) {
         points.put(token,0); //TODO Per cambiare punti iniziali modificare qui
     }
 
@@ -48,7 +48,7 @@ public class Scoretrack {
      * @param token the player's token
      * @param point updated points
      */
-    protected void move(Token token,int point) {
+    void move(Token token,int point) {
         points.replace(token,point);
     }
 

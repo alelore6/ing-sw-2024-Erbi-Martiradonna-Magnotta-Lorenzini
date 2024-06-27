@@ -9,17 +9,17 @@ import java.util.LinkedList;
 
 public abstract class UI implements View{
 
-    protected final Deque<GenericEvent> inputEvents = new LinkedList<>();
-    protected final ClientImpl client;
-    protected final ViewControllerListener listener;
+    final Deque<GenericEvent> inputEvents = new LinkedList<>();
+    final ClientImpl client;
+    final ViewControllerListener listener;
     public volatile boolean running = true;
-    protected String nickname;
+    String nickname;
 
     /**
      * Constructor
      * @param client
      */
-    public UI(ClientImpl client) {
+    UI(ClientImpl client) {
         this.client = client;
         this.listener = new ViewControllerListener(client);
     }

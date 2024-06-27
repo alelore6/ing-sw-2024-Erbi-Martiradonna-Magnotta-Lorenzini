@@ -15,19 +15,19 @@ public abstract class Listener {
     /**
      * represent if the listener is running or the player has disconnected
      */
-    public volatile boolean running = true;
+    volatile boolean running = true;
     /**
      * thread that actually handle the events
      */
-    protected Thread eventThread = null;
+    Thread eventThread = null;
     /**
      * lock for the event queue
      */
-    public final Object lock_queue = new Object();
+    final Object lock_queue = new Object();
     /**
      * ack relative to the last response handled
      */
-    protected AckResponse ack = null;
+    AckResponse ack = null;
 
     /**
      * attribute representing the queue of generic events
@@ -39,7 +39,7 @@ public abstract class Listener {
      * method getter for the event queue of this specific listener
      * @return Queue of Generic Events
      */
-    public Deque<GenericEvent> getEventQueue() {
+    Deque<GenericEvent> getEventQueue() {
         return eventQueue;
     }
 

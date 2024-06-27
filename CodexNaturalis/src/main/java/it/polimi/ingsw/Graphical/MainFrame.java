@@ -27,7 +27,7 @@ public class MainFrame extends JFrame {
     /**
      * panel that contains all the game panels
      */
-    protected final JPanel mainPanel;
+    final JPanel mainPanel;
 
     /**
      * the panel that contains the table center information and logic
@@ -36,7 +36,7 @@ public class MainFrame extends JFrame {
     /**
      * the panel of the owner of the frame
      */
-    public PersonalPanel myPanel;
+    private PersonalPanel myPanel;
     /**
      * the panel that contains the chat and its logic
      */
@@ -256,7 +256,7 @@ public class MainFrame extends JFrame {
      * reports the sending of a chat message to the gui element.
      * @param message the message text.
      */
-    protected void sendChatMessage(String message){
+    void sendChatMessage(String message){
         gui.sendChatMessage(message);
     }
 

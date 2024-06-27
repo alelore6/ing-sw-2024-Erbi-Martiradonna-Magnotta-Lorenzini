@@ -7,7 +7,7 @@ public class ChatAck extends ChatMessage{
     /**
      * represent if the relative chat message has been sent correctly
      */
-    public final boolean isOk;
+    private final boolean isOk;
 
     /**
      * Constructor

@@ -10,7 +10,7 @@ public class StartGame extends GenericEvent{
     /**
      * the game info at the moment of the event
      */
-    public final GameView model;
+    private final GameView model;
     /**
      * Constructor
      * @param nickname the player that receives the event

@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * Class that represents the waiting lobby before the game starts.
  * The lobby exists w/o the actual players. Only nicknames are used in this class and players will be created after the game creates.
  */
-public class Lobby {
+class Lobby {
     /**
      * represents the number of players in the game, is set by the first player to join the lobby.
      */
@@ -33,7 +33,7 @@ public class Lobby {
      * @param nickname the nickname of the player the is being added
      * @return the result of tha action
      */
-    protected boolean addPlayer(String nickname){
+    boolean addPlayer(String nickname){
         synchronized (lock_players){
             if(players.size() == 0 || players.size() < numPlayers){
                 return players.add(nickname);

@@ -123,7 +123,7 @@ public class TUI extends UI {
     /**
      * Method to clear the console.
      */
-    public final static void clearConsole(){
+    private static void clearConsole(){
         try{
             final String so = System.getProperty("os.name");
 
@@ -259,7 +259,7 @@ public class TUI extends UI {
      * @see ResourceCard
      * @see StartingCard
      */
-    protected void printCard(Card card){
+    private void printCard(Card card){
         if(card instanceof PlayableCard){
             printOut("| CARD NUMBER " + card.getID() + "'S DESCRIPTION:"
                     + "\n\tColor: " + setColorForString(card.getColor().toString(), card.getColor().toString(), false) +
@@ -319,7 +319,7 @@ public class TUI extends UI {
      * @param card
      * @see ObjectiveCard
      */
-    protected void printCard(ObjectiveCard card){
+    private void printCard(ObjectiveCard card){
         printOut("\n| OBJECTIVE CARD NUMBER " + card.getID() + "'S REQUESTS:");
         if(card instanceof ObjectiveCard1){
             printOut("\tPoints: " + card.getPoints() + "\n\tCards' disposition:");

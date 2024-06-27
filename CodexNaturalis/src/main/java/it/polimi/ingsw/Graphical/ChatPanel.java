@@ -8,7 +8,7 @@ import java.awt.event.ActionListener;
 /**
  * the panel that contains chat between all players and between only two players.
  */
-public class ChatPanel extends JPanel {
+class ChatPanel extends JPanel {
     /**
      * Chat Area is where you can visualize all messages.
      */

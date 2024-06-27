@@ -80,7 +80,7 @@ public class Game{
     /**
      * List of available tokens, in the sense that they're not chosen yet.
      */
-    protected final ArrayList<TokenColor> availableTokens;
+    final ArrayList<TokenColor> availableTokens;
     /**
      * Attribute that counts how many players have completed a specific action.
      * Usually, the server waits for all the players using this.
@@ -465,7 +465,7 @@ public class Game{
         }
     }
 
-    protected static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
+    private static Card[][] getSubmatrix(Card[][] matrix, int row, int col) {
         Card[][] submatrix = new Card[3][3];
         for (int i = row, x = 0; i < row + 3; i++, x++) {
             for (int j = col, y = 0; j < col + 3; j++, y++) {
@@ -475,7 +475,7 @@ public class Game{
         return submatrix;
     }
 
-    protected int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
+    int checkObjectivePoints(ObjectiveCard objectiveCard, int playerPos) {
 
         // credo sia al contrario
         if (objectiveCard instanceof ObjectiveCard2) {
@@ -734,7 +734,7 @@ public class Game{
      * @param nickname
      * @return the listener if found, else null.
      */
-    public ModelViewListener getMVListenerByNickname(String nickname){
+    private ModelViewListener getMVListenerByNickname(String nickname){
         for(ModelViewListener listener : mvListeners){
             if(listener.nickname.equals(nickname)){
                 return listener;

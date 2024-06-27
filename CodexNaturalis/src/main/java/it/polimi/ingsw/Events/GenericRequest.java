@@ -11,7 +11,7 @@ public abstract class GenericRequest extends GenericEvent{
      * @param message  message describing the event
      * @param nickname player that receives or sends the event
      */
-    public GenericRequest(String message, String nickname) {
+    GenericRequest(String message, String nickname) {
         super(message, nickname);
     }
     /**

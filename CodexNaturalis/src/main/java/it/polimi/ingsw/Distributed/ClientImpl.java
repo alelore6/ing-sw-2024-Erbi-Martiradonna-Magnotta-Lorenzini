@@ -25,7 +25,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
     /**
      * The user interface.
      */
-    protected UI userInterface;
+    private final UI userInterface;
     /**
      * The nickname of the user.
      */
@@ -33,7 +33,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
     /**
      * The server to which the client is connected to.
      */
-    public final Server server;
+    private final Server server;
 
     /**
      * Constructor
@@ -92,7 +92,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
      * @see TUI
      * @see GUI
      */
-    public void run() {
+    private void run() {
         userInterface.run();
     }
 

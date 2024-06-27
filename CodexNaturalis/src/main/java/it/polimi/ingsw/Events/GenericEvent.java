@@ -9,7 +9,7 @@ public abstract class GenericEvent implements Serializable {
     /**
      * message that describes the event.
      */
-    protected final String message;
+    final String message;
     /**
      * the player that receives or sends the event
      */
@@ -24,7 +24,7 @@ public abstract class GenericEvent implements Serializable {
      * @param message message describing the event
      * @param nickname player that receives or sends the event
      */
-    public GenericEvent(String message, String nickname) {
+    GenericEvent(String message, String nickname) {
         this.message = message;
         this.nickname = nickname;
         if(nickname == null || nickname.equals("every one")) mustBeSentToAll = true;

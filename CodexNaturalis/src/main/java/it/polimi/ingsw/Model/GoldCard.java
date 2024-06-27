@@ -13,7 +13,7 @@ public class GoldCard extends PlayableCard{
         req.put(resource, value);
     }
 
-    protected HashMap<Resource,Integer> req = new HashMap<>();
+    HashMap<Resource,Integer> req = new HashMap<>();
 
     public Resource getRPoints() {
         return RPoints;

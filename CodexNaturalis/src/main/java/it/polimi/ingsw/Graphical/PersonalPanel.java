@@ -21,7 +21,7 @@ public class PersonalPanel extends JSplitPane {
     /**
      * nickname of the owner of the frame
      */
-    protected final String nickname;
+    private final String nickname;
     /**
      * the scroll pane that contains the player's played cards
      */
@@ -233,7 +233,7 @@ public class PersonalPanel extends JSplitPane {
      * @param playerView the updated player info
      * @param playing indicates whether it's the player's turn. If true calls the show play button method.
      */
-    protected void update(PlayerView playerView, boolean playing ) {
+    void update(PlayerView playerView, boolean playing ) {
         this.playing=playing;
         if (playing) {
             showPlayButton();

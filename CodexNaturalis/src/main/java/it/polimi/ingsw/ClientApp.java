@@ -29,7 +29,7 @@ public class ClientApp {
     /**
      * The server to which the client is connected to.
      */
-    Server server;
+    private Server server;
     /**
      * The particular instance of the client.
      */

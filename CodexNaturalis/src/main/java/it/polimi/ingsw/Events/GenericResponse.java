@@ -10,7 +10,7 @@ public abstract class GenericResponse extends GenericEvent{
      * @param message  message describing the event
      * @param nickname player that receives or sends the event
      */
-    public GenericResponse(String message, String nickname) {
+    GenericResponse(String message, String nickname) {
         super(message, nickname);
     }
 }
