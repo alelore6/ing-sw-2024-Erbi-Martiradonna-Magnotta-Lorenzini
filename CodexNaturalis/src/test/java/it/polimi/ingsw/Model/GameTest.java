@@ -424,21 +424,6 @@ public class GameTest {
     }
 
 
-    //TODO da finire test rejoin
-//    @Test
-//    public void testRejoin() {
-//        Player player = testGame.getPlayers()[0];
-//        testGame.disconnectPlayer(player);
-//
-//        assertTrue(player.isDisconnected);
-//
-//        ModelViewListener newListener = mock(ModelViewListener.class);
-//        //when(newListener.nickname).thenReturn(player.getNickname());
-//
-//        testGame.rejoin(newListener);
-//
-//        assertFalse(player.isDisconnected);
-//    }
 
     @Test
     public void testCheckObjectivePoints1() {

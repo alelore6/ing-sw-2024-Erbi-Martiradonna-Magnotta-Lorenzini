@@ -262,7 +262,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
         // System.exit(0);
 
-        // TODO: se avanza tempo (lavoro già iniziato).
         serverApp.stop();
     }
 }
