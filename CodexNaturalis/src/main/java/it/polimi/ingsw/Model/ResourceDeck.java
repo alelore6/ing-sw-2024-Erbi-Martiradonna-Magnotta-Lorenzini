@@ -7,10 +7,19 @@ import java.io.*;
 
 import static it.polimi.ingsw.Model.Position.*;
 
+/**
+ * ResourceDeck is the class that represents resource deck in the game, it extends deck because it uses some of the methods and attributes of that class.
+ */
 public class ResourceDeck extends Deck{
-
+    /**
+     * cards in an array of resource cards that composes the gold deck
+     */
     private ResourceCard[] cards;
 
+
+    /**
+     * Constructor builds the resource deck, initialize the number of resource cards, then it loads from JSON file resource cards. Every resource card is initialized with four corners and all possible resources.
+     */
     public ResourceDeck(){
 
         NCards = 40;
@@ -47,6 +56,12 @@ public class ResourceDeck extends Deck{
         cards = (ResourceCard[]) shuffle(cards);
 
     }
+
+    /**
+     * draw method represents draw action, removing one card from resource deck and returning it.
+     * @return the drawn gold card
+     * @throws isEmptyException if deck is empty.
+     */
     public ResourceCard draw() throws isEmptyException {
         if(getNCards() == 0){
             throw new isEmptyException(this);
@@ -64,6 +79,10 @@ public class ResourceDeck extends Deck{
         }
     }
 
+    /**
+     * peek method is used to know about the color of the first card of the resource deck without drawing it.
+     * @return the color of the first card of the deck.
+     */
     public CardColor peek() {
         return cards[getNCards()-1].getColor();
     }

@@ -3,7 +3,7 @@ package it.polimi.ingsw.Model;
 import java.io.FileNotFoundException;
 
 /**
- * ObjectiveCard1 represents the first type of objectives, those that add points when the number of resource units required is present in your game board.
+ * ObjectiveCard1 represents the first type of objectives, those that add points  to your score when the number of resource units required is present in your game board.
  */
 public class ObjectiveCard1 extends ObjectiveCard{
 

@@ -19,7 +19,7 @@ import static it.polimi.ingsw.Model.TokenColor.*;
  * The panel where the game takes place, you can see both decks (Gold Deck and Resource Deck) and all the  four cards on the floor from where, when the time is right, you can draw, the score track ,as well as  the two community objective cards.
  * It extends JSplitPane to be able to divide the screen between card section and score track section.
  */
-class TableCenterPanel extends JSplitPane {
+public class TableCenterPanel extends JSplitPane {
     /**
      * the game view gives all the required information about the game in any exact moment.
      */
@@ -65,19 +65,39 @@ class TableCenterPanel extends JSplitPane {
      * DrawLock is used as a synchronization mechanism to ensure that draw card operations in the game are performed in a safe and coordinated manner, preventing potential concurrency issues in a multithreaded environment.
      */
     private final Object drawLock;
-
-    private Image[] pawnImages;
+    /**
+     * tokenImages is an array of images representing every token.
+     */
+    private Image[] tokenImages;
+    /**
+     * CENTER_X is the center abscissa of right panel.
+     */
     private  int CENTER_X = 0;
+    /**
+     * CENTER_Y is the center ordinate of right panel.
+     */
     private  int CENTER_Y = 0;
+    /**
+     * START_X is the abscissa where token get drawn,unless being moved by other methods.
+     */
     private static int START_X = 100;
+    /**
+     *START_Y is the ordinate where tokens get drawn,unless being moved by other methods.
+     */
     private static int START_Y = 100;
-    private HashMap<TokenColor, Integer> pawnXCoords = new HashMap<TokenColor, Integer>(); //
-    private HashMap<TokenColor, Integer> pawnYCoords = new HashMap<TokenColor, Integer>();
+    /**
+     * tokenXCoord is a mapping od token colors to their respective abscissas coordinates.
+     */
+    private HashMap<TokenColor, Integer> tokenXCoords = new HashMap<TokenColor, Integer>();
+    /**
+     * tokenYCoord is a mapping od token colors to their respective ordinates coordinates.
+     */
+    private HashMap<TokenColor, Integer> tokenYCoords = new HashMap<TokenColor, Integer>();
     ;
     /**
-     * TableCenterPanel constructor configures the interface of the central panel of the game, dividing the space into two main sections for managing decks and cards, and for viewing the game table. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interaction.
-     * @param gameView
-     * @param drawLock
+     * TableCenterPanel constructor builds a new Table Center Panel, configures the interface of the central panel of the game, dividing the space into two main sections (left and right panel)for managing decks and cards, and for viewing the game table with all the tokens required. Initializes the necessary resources, manages panel layouts and sets default images and buttons for user interactions.
+     * @param gameView game view associated with all information that TableCenterPanel needs to be created and exploited.
+     * @param drawLock the lock object used for synchronization when drawing.
      */
 
     public TableCenterPanel(GameView gameView, Object drawLock) {
@@ -88,7 +108,7 @@ class TableCenterPanel extends JSplitPane {
         this.deckLabels = new JLabel[2];
         this.cardsID = new int[4];
         this.spots = new JButton[5];
-        this.pawnImages = new Image[5];
+        this.tokenImages = new Image[5];
         this.drawButtons = new ArrayList<>();
 
         for(int i = 0; i < gameView.numPlayers; i++){
@@ -96,8 +116,8 @@ class TableCenterPanel extends JSplitPane {
         }
 
         for(TokenColor c : chosenColor){
-            pawnXCoords.put(c, START_X);
-            pawnYCoords.put(c, START_Y);
+            tokenXCoords.put(c, START_X);
+            tokenYCoords.put(c, START_Y);
         }
 
         for(String nickname : gameView.tableCenterView.scoreTrack.points.keySet()){
@@ -109,10 +129,10 @@ class TableCenterPanel extends JSplitPane {
             possiblePlayImage = new ImageIcon(img.getScaledInstance(300, 180, Image.SCALE_DEFAULT));
 
             for(int i = 0; i < 4; i++){
-                if(chosenColor.contains(RED))    pawnImages[0] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_rouge.png"));
-                if(chosenColor.contains(YELLOW)) pawnImages[1] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_jaune.png"));
-                if(chosenColor.contains(GREEN))  pawnImages[2] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_vert.png"));
-                if(chosenColor.contains(BLUE))   pawnImages[3] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
+                if(chosenColor.contains(RED))    tokenImages[0] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_rouge.png"));
+                if(chosenColor.contains(YELLOW)) tokenImages[1] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_jaune.png"));
+                if(chosenColor.contains(GREEN))  tokenImages[2] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_vert.png"));
+                if(chosenColor.contains(BLUE))   tokenImages[3] = ImageIO.read(this.getClass().getClassLoader().getResource("assets/images/tokens/CODEX_pion_bleu.png"));
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -126,10 +146,10 @@ class TableCenterPanel extends JSplitPane {
 
 
     /**
-     * CreateRightPanel generates the right panel that will compose the Table Center Panel, drawing the score track image with each spot created using JButtons to allow token to land on them to keep track of points.
-     * @return
+     * CreateRightPanel generates the right panel that will compose the Table Center Panel, drawing the score track image where in position 0 all tokens will be generated ready to be used to track each player score.
+     * @return the right panel complete of all its features.
      */
-    private JPanel createRightPanel() {
+    public JPanel createRightPanel() {
         ImageIcon img = new ImageIcon(this.getClass().getClassLoader().getResource("assets/images/plateau/plateau.png"));
         int originalWidth = img.getIconWidth();
         int originalHeight = img.getIconHeight();
@@ -154,8 +174,7 @@ class TableCenterPanel extends JSplitPane {
                 CENTER_Y = getHeight()/2;
 
                 g.drawImage(resizedIcon.getImage(), x, y, null);
-//                g.drawImage(pawnImages[0], CENTER_X, CENTER_Y, 50, 50, null);
-//                System.out.println(CENTER_X+" "+CENTER_Y);
+
                 for (int i = 0; i < chosenColor.size(); i++) {
 
                     TokenColor color = null;
@@ -164,24 +183,24 @@ class TableCenterPanel extends JSplitPane {
                     switch(chosenColor.get(i)){
                         case RED -> {
                             color = RED;
-                            image = pawnImages[0];
+                            image = tokenImages[0];
                         }
                         case YELLOW -> {
                             color = YELLOW;
-                            image = pawnImages[1];
+                            image = tokenImages[1];
                         }
                         case GREEN -> {
                             color = GREEN;
-                            image = pawnImages[2];
+                            image = tokenImages[2];
                         }
                         case BLUE -> {
                             color = BLUE;
-                            image = pawnImages[3];
+                            image = tokenImages[3];
                         }
                     }
 
                     if(image != null)
-                        g.drawImage(image, CENTER_X+pawnXCoords.get(color), CENTER_Y+pawnYCoords.get(color), 30, 30, this);
+                        g.drawImage(image, CENTER_X+tokenXCoords.get(color), CENTER_Y+tokenYCoords.get(color), 30, 30, this);
                 }
             }
         };
@@ -190,14 +209,25 @@ class TableCenterPanel extends JSplitPane {
         return rightPanel;
     }
 
+    /**
+     * setNewTokenCoordinates update the position of a token on the score track after getTokenCordinates indicates where a token must land on score track.
+     * @param position actual position of  token.
+     * @param color color of the token that must move.
+     */
     private void setNewTokenCoordinates(int position, TokenColor color){
 
         int[] finalCoordinates = getTokenCoordinates(position, color);
 
-        pawnXCoords.replace(color, finalCoordinates[0]);
-        pawnYCoords.replace(color, finalCoordinates[1]);
+        tokenXCoords.replace(color, finalCoordinates[0]);
+        tokenYCoords.replace(color, finalCoordinates[1]);
     }
 
+    /**
+     *  getTokenCoordinates displays each token position on the score track separating even the position of each different token in the same value in score track.
+     * @param position actual position of a token.
+     * @param color color of the token that must move.
+     * @return new position of the token after a score change.
+     */
     private int[] getTokenCoordinates(int position, TokenColor color){
         int X_OFFSET = 0;
         int Y_OFFSET = 0;
@@ -364,7 +394,7 @@ class TableCenterPanel extends JSplitPane {
     }
     /**
      * createLeftPanel method is crucial for creating the left panel of the game table in the TableCenterPanel class. It manages the organization and addition of card decks, center cards and objective cards, as well as management of draw buttons.
-     * @return
+     * @return left panel
      */
     private JPanel createLeftPanel() {
         JPanel leftPanel = new JPanel();
@@ -399,10 +429,10 @@ class TableCenterPanel extends JSplitPane {
     }
 
     /**
-     * addObjectiveCardSpot Adds a spot for an objective card, displaying the card icon or a placeholder if there is no card.
-     * @param panel
-     * @param title
-     * @param cardID
+     * addObjectiveCardSpot adds a spot for an objective card, displaying the card icon or a placeholder if there is no card.
+     * @param panel panel that contains sub-panels, to which card panel will be added.
+     * @param title title of ObjectiveCardSPot
+     * @param cardID ID of ObjectiveCard
      */
     private void addObjectiveCardSpot(JPanel panel, String title, int cardID) {
         JPanel cardPanel = new JPanel();
@@ -422,13 +452,13 @@ class TableCenterPanel extends JSplitPane {
     }
 
     /**
-     * addDeck method adds a deck of cards with the top card icon and a button to draw cards from that deck.
-     * @param panel
-     * @param title
-     * @param cardColor
-     * @param deckIndex
+     * addDeck creates deck panel with a title , and add it to the panel: it adds a deck of cards with the top card icon and a button to draw cards from that deck.
+     * @param panel panel that contains sub-panels, to which deck panel will be added.
+     * @param title title of deck panel border
+     * @param cardColor the color of the back of the card to be displayed.
+     * @param deckIndex index of deck, used tp determine the card color ID and array index for labels and buttons.
      */
-    private void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
+    public void addDeck(JPanel panel, String title, CardColor cardColor, int deckIndex) {
         JPanel deckPanel = new JPanel();
         deckPanel.setLayout(new BorderLayout());
         deckPanel.setBorder(BorderFactory.createTitledBorder(title));
@@ -457,10 +487,10 @@ class TableCenterPanel extends JSplitPane {
     }
 
     /**
-     * addCardSpot adds a spot for a central card, displaying the card icon or a placeholder if there is no card, and includes a button to draw the card.
-     * @param panel
-     * @param index
-     * @param cardID
+     * addCardSpot creates a card panel and adds a spot for each central card, displaying the card icon or a placeholder if there is no card, and includes a button to draw the card.
+     * @param panel panel that contains sub-panels, to which card panel will be added.
+     * @param index index of card spot to determine
+     * @param cardID IDs of cards
      */
     private void addCardSpot(JPanel panel, int index, int cardID) {
         JPanel cardPanel = new JPanel();
@@ -490,10 +520,10 @@ class TableCenterPanel extends JSplitPane {
     /**
      * getImageIcon method loads an image from the specified path into the application's classpath, resizes it to the desired size, and returns it as an ImageIcon.
      * This method is useful for managing card images and other graphic assets in the game GUI
-     * @param path
-     * @param scaleX
-     * @param scaleY
-     * @return
+     * @param path the file path to the image resource.
+     * @param scaleX the width to which the image should be scaled.
+     * @param scaleY the height to which the image should be scaled.
+     * @return ImageIcon scaled.
      */
     private ImageIcon getImageIcon(String path, int scaleX, int scaleY) {
         BufferedImage img = null;
@@ -508,7 +538,7 @@ class TableCenterPanel extends JSplitPane {
     /**
      * drawCard method handles the selection of a card to draw, updating the internal state to reflect the user's choice,
      * hiding the draw buttons, and notifying any waiting threads that a draw action has completed.
-     * @param spotID
+     * @param spotID ID of the spot where the draw action must be done.
      */
     private void drawCard(int spotID) {
         if (drawing) {
@@ -522,7 +552,7 @@ class TableCenterPanel extends JSplitPane {
 
     /**
      * getDrawChoice is used to encode player choice to obtain the index of the player's drawing choice, allowing the system to react based on this choice.
-     * @return
+     * @return encode of the draw choice of a generic player.
      */
     public int getDrawChoice() {
         return drawChoice;
@@ -567,7 +597,7 @@ class TableCenterPanel extends JSplitPane {
     /**
      * showDrawButton shows draw button to make them usable.
      */
-    private void showDrawButton() {
+    public void showDrawButton() {
         int i=0;
         for (JButton button : drawButtons) {
             if(i<2 || cardsID[i-2]>0) button.setVisible(true);
@@ -587,7 +617,7 @@ class TableCenterPanel extends JSplitPane {
     /**
      * Update method update the entire Tabel Center Panel to keep playing without have to create each time a new panel.
      * @param gameView
-     * @param drawing
+     * @param drawing boolean to know
      */
     public void update(GameView gameView, boolean drawing) {
         this.gameView = gameView;
@@ -608,11 +638,11 @@ class TableCenterPanel extends JSplitPane {
 
     /**
      * getCardColorId method is essential for mapping card colors to their respective numeric IDs, taking into account whether the cards are gold or resource to facilitate card image retrieval.
-     * @param color
-     * @param gold
-     * @return
+     * @param color all type of colors of all cards.
+     * @param gold a boolean to distinguish gold card from resource card
+     * @return ID encode of a cord from its color and type.
      */
-    private static int getCardColorId(CardColor color,boolean gold) {
+    public static int getCardColorId(CardColor color,boolean gold) {
         int id=0;
         switch (color) {
             case RED:
@@ -641,7 +671,7 @@ class TableCenterPanel extends JSplitPane {
         game.players.get(1).setToken(YELLOW);
         game.players.get(2).setToken(GREEN);
         game.players.get(3).setToken(BLUE);
-        int x=30;
+        int x=15;
         game.players.get(0).getToken().move(x);
         game.players.get(1).getToken().move(x);
         game.players.get(2).getToken().move(x);

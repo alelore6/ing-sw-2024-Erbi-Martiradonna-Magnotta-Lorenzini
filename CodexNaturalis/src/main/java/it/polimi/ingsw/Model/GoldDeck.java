@@ -8,10 +8,18 @@ import java.io.*;
 import static it.polimi.ingsw.Model.Position.*;
 import static it.polimi.ingsw.Model.Position.DOWN_DX;
 
+/**
+ * GoldDeck is the class that represents gold deck in the game, it extends deck because it uses some of the methods and attributes of that class.
+ */
 public class GoldDeck extends Deck{
-
+    /**
+     * cards in an array of gold cards that composes the gold deck
+     */
     private GoldCard[] cards;
 
+    /**
+     * Constructor builds the gold deck, initialize the number of gold cards, then it loads from JSON file  gold cards. Every gold card is initialized with four corners and all possible resources.
+     */
     public GoldDeck(){
 
         NCards = 40;
@@ -55,7 +63,11 @@ public class GoldDeck extends Deck{
         cards = (GoldCard[]) shuffle(cards);
     }
 
-
+    /**
+     * draw method represents draw action, removing one card from gold deck and returning it.
+     * @return the drawn gold card
+     * @throws isEmptyException if deck is empty.
+     */
     public GoldCard draw() throws isEmptyException {
         if(getNCards() == 0){
             throw new isEmptyException(this);
@@ -73,6 +85,10 @@ public class GoldDeck extends Deck{
         }
     }
 
+    /**
+     * peek method is used to know about the color of the first card of the gold deck without drawing it.
+     * @return the color of the first card of the deck.
+     */
     public CardColor peek(){
         return cards[getNCards()-1].getColor();
     }

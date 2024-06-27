@@ -18,6 +18,10 @@ public enum Resource implements Serializable {
     INKWELL,
     MANUSCRIPT;
 
+    /**
+     *
+     * @return
+     */
 
     @Override
     public String toString(){
