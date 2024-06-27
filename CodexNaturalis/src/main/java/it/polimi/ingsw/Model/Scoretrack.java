@@ -40,7 +40,7 @@ public class Scoretrack {
      * @param token the player's token
      */
     void addToken(Token token) {
-        points.put(token,0); //TODO Per cambiare punti iniziali modificare qui
+        points.put(token,0);
     }
 
     /**

@@ -88,7 +88,6 @@ public class ClientApp {
                             try {
                                 UnicastRemoteObject.unexportObject(server, true);
                             } catch (NoSuchObjectException e1) {
-                                // TODO: gestire l'eccezione (viene lanciata).
                             }
                             running = false;
                             ClientApp.this.stop();
@@ -158,13 +157,12 @@ public class ClientApp {
         running = false;
         // client.getUserInterface().stop();
         // client.getUserInterface().getListener().stop();
-        System.exit(0);
     }
 
     /**
      * Method for entering the IP.
      * @return the IP address.
-     * @throws IOException
+     * @throws IOException if an input error occurs
      */
     private String insertIP() throws IOException {
         System.out.println("Enter server IP address: ");
