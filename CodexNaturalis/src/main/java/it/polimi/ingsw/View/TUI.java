@@ -334,10 +334,10 @@ public class TUI extends UI {
                 }
                 else grid += "  ";
 
-                if(i == 3 || i == 6)    grid += "\n\t\t";
+                if(i == 4 || i == 8 || i == 12)    grid += "\n\t\t";
 
                 // Shouldn't happen.
-                if(i > 9)   printErr("\nPRINT ERROR.\n");
+                if(i > 16)   printErr("\nPRINT ERROR.\n");
             }
 
             printOut(grid);
