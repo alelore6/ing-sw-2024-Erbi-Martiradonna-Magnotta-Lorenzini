@@ -223,7 +223,7 @@ public class Controller {
                         server.disconnectedClients.remove(nickname);
                     }
 
-                    sendEventToAll(new PlayerDisconnected("every one", nickname, MVListeners.size(), true));
+                    sendEventToAll(new PlayerDisconnected("every one", nickname, MVListeners.size() + 1, true));
 
                     synchronized (MVListeners){
                         MVListeners.add(l);

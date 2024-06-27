@@ -151,6 +151,6 @@ public class ServerApp {
      * Method to restart the server.
      */
     public void stop(){
-        System.exit(0);
+        // System.exit(0);
     }
 }

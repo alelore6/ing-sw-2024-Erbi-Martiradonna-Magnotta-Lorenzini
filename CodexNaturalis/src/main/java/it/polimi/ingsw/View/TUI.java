@@ -561,7 +561,8 @@ public class TUI extends UI {
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(command.split(" ")));
 
         if(words.get(0).equalsIgnoreCase("EXIT")) {
-            client.clientApp.stop();
+            // client.clientApp.stop();
+            System.exit(0);
             return true;
         }
 
