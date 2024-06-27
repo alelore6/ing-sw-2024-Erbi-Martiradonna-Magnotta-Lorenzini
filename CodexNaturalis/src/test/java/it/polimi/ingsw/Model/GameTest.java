@@ -303,7 +303,11 @@ public class GameTest {
 
 
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
 
         testGame.setCurPlayerPosition(1);
         assertEquals(1, testGame.getCurPlayerPosition());
@@ -340,7 +344,11 @@ public class GameTest {
         when(player3.getNickname()).thenReturn("Arlecchino");
         when(player4.getNickname()).thenReturn("Pinocchio");
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
 
         Token token1 = mock(Token.class);
         Token token2 = mock(Token.class);
@@ -409,7 +417,7 @@ public class GameTest {
         when(player3.getCurrentResources()).thenReturn(mockResources);
         when(player4.getCurrentResources()).thenReturn(mockResources);
 
-        testGame.nextPlayer(testGame.getPlayers()[0]);
+        testGame.nextPlayer(testGame.getPlayers().get(0));
 
         assertEquals(1, testGame.getCurPlayerPosition());
 

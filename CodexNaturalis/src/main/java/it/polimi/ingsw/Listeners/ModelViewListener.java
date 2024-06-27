@@ -112,7 +112,8 @@ public class ModelViewListener extends Listener {
                                     }
                                     else client.update(currentEvent);
 
-                                    if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
+                                    if(currentEvent instanceof FinalRankings) ModelViewListener.this.stop();
+                                    else if(currentEvent instanceof ErrorJoinLobby) server.controller.deleteClient(client);
                                 }
                                 else{
                                     getEventQueue().addFirst(currentEvent);

@@ -6,9 +6,6 @@ import it.polimi.ingsw.Exceptions.WrongPlayException;
 import it.polimi.ingsw.Exceptions.isEmptyException;
 import it.polimi.ingsw.Listeners.ModelViewListener;
 import it.polimi.ingsw.ModelView.GameView;
-import it.polimi.ingsw.ModelView.PlayerView;
-import it.polimi.ingsw.ModelView.TableCenterView;
-import it.polimi.ingsw.Distributed.ServerImpl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +25,7 @@ public class Game{
     /**
      * number of players in the current game
      */
-    private final int numPlayers;
+    private volatile int numPlayers;
     /**
      * String that represents the turn order.
      */
@@ -64,9 +61,9 @@ public class Game{
      */
     private final StartingDeck StartingDeck;
     /**
-     * The dynamic array containing the players of this current game
+     * The array containing the players of this current game
      */
-    public Player[] players;
+    public ArrayList<Player> players;
     /**
      * The tablecenter attribute containing the two decks (resource and gold) and the cards on it (2 res, 2 gold, 2 obj)
      */
@@ -82,6 +79,7 @@ public class Game{
     public int waitNumClient = 0;
 
     public int turnPhase=0;// 0: start turn, 1: play done, 2: draw done
+    public boolean isStarted = false;
 
     public boolean isTriggered = false; //to see if endgame is triggered
 
@@ -105,9 +103,9 @@ public class Game{
         this.isFinished = false;
         this.remainingTurns = -1;
         this.curPlayerPosition = -1;
-        players = new Player[numPlayers];
+        players = new ArrayList<>(numPlayers);
         for (int i=0;i<numPlayers;i++ ){
-            players[i]= new Player(nicknames[i],this);
+            players.add(new Player(nicknames[i], this));
         }
         tablecenter = new TableCenter(new ResourceDeck(), new GoldDeck(), new ObjectiveDeck(), this);
         StartingDeck = new StartingDeck();
@@ -122,7 +120,7 @@ public class Game{
      * Setter for the players' array.
      * @param players
      */
-    public void setPlayers(Player[] players) {
+    public void setPlayers(ArrayList<Player> players) {
         this.players = players;
     }
 
@@ -134,9 +132,10 @@ public class Game{
 
     /**
      * Getter for array of players
+     *
      * @return array of players
      */
-    public Player[] getPlayers() {return players;}
+    public ArrayList<Player> getPlayers() {return players;}
 
     /**
      * Getter for number of players
@@ -157,7 +156,7 @@ public class Game{
     public int getTurnCounter() {return turnCounter;}
 
     public String getCurrentPlayerNickname(){
-        return curPlayerPosition != -1 ? players[curPlayerPosition].getNickname() : null;
+        return curPlayerPosition != -1 ? players.get(curPlayerPosition).getNickname() : null;
     }
 
     public int getCurPlayerPosition() {
@@ -228,6 +227,13 @@ public class Game{
                     pos++;
                 }
 
+                while(true) {
+                    //wait for everyone to complete the start
+                    synchronized (lock){
+                        if (waitNumClient == getActivePlayers()) break;
+                    }
+                }
+
                 //dopo che ho inizializzato tutti
                 String[] order= new String[numPlayers];
                 //DECISIONE RANDOMICA PRIMO GIOCATORE, genero int da 0 a numplayer
@@ -237,23 +243,19 @@ public class Game{
                 for(int i = 0; i < numPlayers; i++){
                     //loop per settare la posizione in senso orario (da sinistra a destra) di tutti i player
                     if (j >= numPlayers) {j = 0;}
-                    players[j].position = i;
-                    order[i]=players[j].getNickname();
+                    players.get(j).position = i;
+                    order[i]= players.get(j).getNickname();
                     j++;
                 }
+
 
                 for (int i=0; i<order.length;i++) {
                     int x=i+1;
                     turnOrder = turnOrder.concat("\n\t"+ x + ". " + order[i] + " ");
                 }
 
+                isStarted = true;
 
-                while(true) {
-                    //wait for everyone to complete the start
-                    synchronized (lock){
-                        if (waitNumClient == getActivePlayers()) break;
-                    }
-                }
                 turnPhase=-1;
                 //notify all players on turn order
                 TurnOrder event = new TurnOrder("every one", turnOrder, Game.this.clone());
@@ -262,12 +264,12 @@ public class Game{
                 //perchè next player fa l'avanzamento
                 int p= firstPlayerPos-1;
                 if (p<0) p=numPlayers-1;
-                nextPlayer(players[p]);
+                nextPlayer(players.get(p));
                 //INIZIO IL GIOCO CHIAMANDO IL METODO NEXTPLAYER SUL PRIMO GIOCATORE
 
                 // Loop that checks if the active players are less than 2.
                 while(running){
-                    if     (getActivePlayers() == 1) OPLProcedure();
+                    if     (getActivePlayers() == 1) OPLProcedure(true);
                     else if(getActivePlayers() == 0){
                         // If there's no player left.
                         System.exit(2);
@@ -275,7 +277,7 @@ public class Game{
                     if(isTurnSkipped){
                         isTurnSkipped = false;
                         if(getRemainingTurns() == 0)        checkWinner();
-                        else if(getCurrentPlayerNickname() != null) nextPlayer(players[getCurPlayerPosition()]);
+                        else if(getCurrentPlayerNickname() != null) nextPlayer(players.get(getCurPlayerPosition()));
                     }
                 }
             }
@@ -295,12 +297,12 @@ public class Game{
             case 0,1,2,3:
                 isTriggered = true;
                 // a full round plus the turns remaining of this one
-                remainingTurns = numPlayers + (numPlayers-(players[curPlayerPosition].position + 1)); //calcolo turni rimanenti
-                String nickname = players[curPlayerPosition].getNickname();
+                remainingTurns = numPlayers + (numPlayers-(players.get(curPlayerPosition).position + 1)); //calcolo turni rimanenti
+                String nickname = players.get(curPlayerPosition).getNickname();
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
-                    EndGameTriggered event=new EndGameTriggered(nickname + " has reached 20 points. Starting endgame process",players[i].getNickname(),clone());
-                    if(!players[i].isDisconnected) getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                    EndGameTriggered event=new EndGameTriggered(nickname + " has reached 20 points. Starting endgame process", players.get(i).getNickname(),clone());
+                    if(!players.get(i).isDisconnected) getMVListenerByNickname(players.get(i).getNickname()).addEvent(event);
                 }
                 break;
             //both decks are found empty simultaneously
@@ -311,8 +313,8 @@ public class Game{
                 remainingTurns = numPlayers + (numPlayers-curPlayerPosition); //calcolo turni rimanenti
                 //notify all players
                 for(int i=0;i<numPlayers;i++){
-                    EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
-                    getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                    EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process", players.get(i).getNickname(),clone());
+                    getMVListenerByNickname(players.get(i).getNickname()).addEvent(event);
                 }
                 break;
             //gold deck is found empty
@@ -327,8 +329,8 @@ public class Game{
                     //both decks are empty: same as case 4
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
-                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
-                        getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process", players.get(i).getNickname(),clone());
+                        getMVListenerByNickname(players.get(i).getNickname()).addEvent(event);
                     }
                 }
                 break;
@@ -342,8 +344,8 @@ public class Game{
                 if (tablecenter.getGoldDeck().AckEmpty){
                     remainingTurns = numPlayers + (numPlayers-curPlayerPosition);
                     for(int i=0;i<numPlayers;i++){
-                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process",players[i].getNickname(),clone());
-                        getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+                        EndGameTriggered event=new EndGameTriggered("Zero cards left! Starting endgame process", players.get(i).getNickname(),clone());
+                        getMVListenerByNickname(players.get(i).getNickname()).addEvent(event);
                     }
                 }
                 break;
@@ -352,9 +354,9 @@ public class Game{
                 isTriggered = true;
                 remainingTurns = 0;
                 for(int i = 0; i < numPlayers; i++){
-                    FinalRankings event = new FinalRankings(players[i].getNickname(), null);
-                    if(!players[i].isDisconnected){
-                        ModelViewListener listener = getMVListenerByNickname(players[i].getNickname());
+                    FinalRankings event = new FinalRankings(players.get(i).getNickname(), null);
+                    if(!players.get(i).isDisconnected){
+                        ModelViewListener listener = getMVListenerByNickname(players.get(i).getNickname());
                         if(listener != null) listener.addEvent(event);
                     }
                 }
@@ -384,7 +386,7 @@ public class Game{
 
         for(int i = 0; i < numPlayers; i++){ //ciclo per iterare su ogni player. calcolo punti per ogni player
 
-            Integer punti = tablecenter.getScoretrack().getRankings().get(players[i].getNickname());
+            Integer punti = tablecenter.getScoretrack().getRankings().get(players.get(i).getNickname());
             if (punti!=null) {
                 punteggi[i] = punti;
             }else{
@@ -394,12 +396,12 @@ public class Game{
 
             punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[0], i);
             punteggi[i] += checkObjectivePoints(getTablecenter().getObjCards()[1], i);
-            punteggi[i] += checkObjectivePoints(players[i].getObjective(), i);
+            punteggi[i] += checkObjectivePoints(players.get(i).getObjective(), i);
 
         }
 
         for(int i = 0; i < numPlayers; i++){
-            rankings.put(players[i].getNickname(), punteggi[i]);  //fill the rankings hashmap
+            rankings.put(players.get(i).getNickname(), punteggi[i]);  //fill the rankings hashmap
         }
 
 
@@ -407,7 +409,7 @@ public class Game{
         FinalRankings event = new FinalRankings("every one", rankings);
 
         for(int i = 0; i < numPlayers; i++){
-            if(!players[i].isDisconnected)  getMVListenerByNickname(players[i].getNickname()).addEvent(event);
+            if(!players.get(i).isDisconnected)  getMVListenerByNickname(players.get(i).getNickname()).addEvent(event);
         }
     }
 
@@ -424,7 +426,7 @@ public class Game{
         //find next player index
         int nextPlayerIndex;
         for(nextPlayerIndex = 0; nextPlayerIndex< numPlayers; nextPlayerIndex++){
-            if(players[nextPlayerIndex] == PreviousPlayer){break;}
+            if(players.get(nextPlayerIndex) == PreviousPlayer){break;}
         }
         if(nextPlayerIndex == numPlayers-1){ nextPlayerIndex = 0;}
         else{nextPlayerIndex++;}
@@ -432,17 +434,17 @@ public class Game{
         curPlayerPosition = nextPlayerIndex;
 
         //if player isn't disconnected
-        if(!players[curPlayerPosition].isDisconnected) {
+        if(!players.get(curPlayerPosition).isDisconnected) {
             //turn is starting
             turnPhase=0;
 
             //send StartTurn event
-            StartTurn startTurn = new StartTurn(getCurrentPlayerNickname(), players[curPlayerPosition].getToken().getColor().toString(), clone());
+            StartTurn startTurn = new StartTurn(getCurrentPlayerNickname(), players.get(curPlayerPosition).getToken().getColor().toString(), clone());
             for(ModelViewListener modelViewListener : mvListeners) modelViewListener.addEvent(startTurn);
 
             // send play card request event
             PlayCardRequest playCard = new PlayCardRequest(getCurrentPlayerNickname(),clone());
-            if(!players[curPlayerPosition].isDisconnected) getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(playCard);
+            if(!players.get(curPlayerPosition).isDisconnected) getMVListenerByNickname(players.get(curPlayerPosition).getNickname()).addEvent(playCard);
 
             //check there are still card on table center
             boolean empty = true;
@@ -454,8 +456,8 @@ public class Game{
             }
             //if both deck are not empty and !empty, a draw will be requested
             if (!tablecenter.getResDeck().AckEmpty || !tablecenter.getGoldDeck().AckEmpty || !empty) {
-                DrawCardRequest drawCard = new DrawCardRequest(players[curPlayerPosition].getNickname(), clone(), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
-                if(!players[curPlayerPosition].isDisconnected) getMVListenerByNickname(players[curPlayerPosition].getNickname()).addEvent(drawCard);
+                DrawCardRequest drawCard = new DrawCardRequest(players.get(curPlayerPosition).getNickname(), clone(), tablecenter.getResDeck().getNCards(), tablecenter.getGoldDeck().getNCards());
+                if(!players.get(curPlayerPosition).isDisconnected) getMVListenerByNickname(players.get(curPlayerPosition).getNickname()).addEvent(drawCard);
             }
             turnCounter++;
             remainingTurns--;
@@ -465,7 +467,7 @@ public class Game{
             turnCounter++;
             remainingTurns--;
             if (remainingTurns==0 ) checkWinner();
-            else nextPlayer(players[curPlayerPosition]);
+            else nextPlayer(players.get(curPlayerPosition));
         }
     }
 
@@ -492,9 +494,9 @@ public class Game{
                 //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
                 //avrà totalizzato
 
-                if (required != 0 && players[playerPos].getCurrentResources().currentResources!=null) {
-                    if ((players[playerPos].getCurrentResources().currentResources.get(resource) / required) < minPoints) {
-                        minPoints = players[playerPos].getCurrentResources().currentResources.get(resource) / required;
+                if (required != 0 && players.get(playerPos).getCurrentResources().currentResources!=null) {
+                    if ((players.get(playerPos).getCurrentResources().currentResources.get(resource) / required) < minPoints) {
+                        minPoints = players.get(playerPos).getCurrentResources().currentResources.get(resource) / required;
                     }
                 }
 
@@ -514,7 +516,7 @@ public class Game{
             for (int k = 0; k < rows - 2; k++) {
                 for (int j = 0; j < columns - 2; j++) {
                     //get the 3x3 submatrix needed to perform operations on (checking obj cards requisites)
-                    Card[][] subMatrix = getSubmatrix(players[playerPos].getHand().getDisplayedCards(), k, j);
+                    Card[][] subMatrix = getSubmatrix(players.get(playerPos).getHand().getDisplayedCards(), k, j);
                     boolean found = true;
 
                     int counter = 0;
@@ -592,9 +594,9 @@ public class Game{
                 }
             for(int rowz = 0; rowz < 81; rowz++){ //serve per resettare i checked a fine partita
                 for(int columnz = 0; columnz < 81; columnz++){
-                    if (!(players[playerPos].getHand().getDisplayedCards()[rowz][columnz] instanceof StartingCard) &&
-                            players[playerPos].getHand().getDisplayedCards()[rowz][columnz]!= null ) {
-                        ((PlayableCard)players[playerPos].getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
+                    if (!(players.get(playerPos).getHand().getDisplayedCards()[rowz][columnz] instanceof StartingCard) &&
+                            players.get(playerPos).getHand().getDisplayedCards()[rowz][columnz]!= null ) {
+                        ((PlayableCard) players.get(playerPos).getHand().getDisplayedCards()[rowz][columnz]).isChecked = 0;
                     }
                 }
             }
@@ -614,14 +616,16 @@ public class Game{
     /**
      * The One Player Left procedure is called when it is noted that there's only one active player.
      */
-    private synchronized void OPLProcedure(){
-        try{
-            // Wait for some seconds.
-            synchronized (OPLLock){
-                OPLLock.wait(timeoutOnePlayer*1000);
+    private synchronized void OPLProcedure(boolean wait){
+        if(wait){
+            try{
+                // Wait for some seconds.
+                synchronized (OPLLock){
+                    OPLLock.wait(timeoutOnePlayer*1000);
+                }
+            }catch(InterruptedException e){
+                e.printStackTrace();
             }
-        }catch(InterruptedException e){
-            e.printStackTrace();
         }
 
         if(getActivePlayers() > 1){
@@ -645,16 +649,24 @@ public class Game{
      * @param player
      */
     public void disconnectPlayer(Player player){
-        player.isDisconnected = true;
-        int pos = -1;
 
+        if(!isStarted){
+            players.remove(player);
+            numPlayers--;
+            if(numPlayers <= 1) OPLProcedure(false);
+        }
+        else player.isDisconnected = true;
+
+        // Send a notification to every active player.
         synchronized (mvListeners){
-            for(int i = 0; i < players.length; i++){
-                if(!players[i].isDisconnected){
-                    getMVListenerByNickname(players[i].getNickname()).addEvent(new PlayerDisconnected("every one", player.getNickname(), getActivePlayers(), false));
-                }
+            for(Player p : players){
+                if(!p.isDisconnected){
+                    getMVListenerByNickname(p.getNickname()).addEvent(new PlayerDisconnected("every one", player != null ? player.getNickname() : "A client", getActivePlayers(), false));
+                };
             }
         }
+
+        if(!isStarted) return;
 
         // If it's the disconnected player's turn, simply skips it and go to the next player.
         if(getCurrentPlayerNickname().equals(player.getNickname())){
@@ -680,7 +692,7 @@ public class Game{
 
             if(getCurrentPlayerNickname() != null){
                 for(ModelViewListener listener : mvListeners){
-                    listener.addEvent(new EndTurn(getCurrentPlayerNickname(), players[getCurPlayerPosition()].getNickname(), clone()));
+                    listener.addEvent(new EndTurn(getCurrentPlayerNickname(), players.get(getCurPlayerPosition()).getNickname(), clone()));
                 }
             }
 
@@ -715,11 +727,11 @@ public class Game{
         newListener.addEvent(new TurnOrder(newListener.nickname, turnOrder, this.clone()));
 
         // Notify the other players about the rejoining.
-        for (int i = 0; i < players.length; i++) {
-            if(players[i].getNickname().equals(newListener.nickname)) pos = i;
+        for (int i = 0; i < players.size(); i++) {
+            if(players.get(i).getNickname().equals(newListener.nickname)) pos = i;
         }
 
-        players[pos].isDisconnected = false;
+        players.get(pos).isDisconnected = false;
     }
 
     /**

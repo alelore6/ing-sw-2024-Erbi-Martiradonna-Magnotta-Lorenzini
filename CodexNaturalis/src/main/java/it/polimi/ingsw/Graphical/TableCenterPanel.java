@@ -629,21 +629,23 @@ public class TableCenterPanel extends JSplitPane {
         if (gold) return id+40;
         else return id;
     }
+
+    //TODO: da rimuovere.
     public static void main(String[] args) {
         MainFrame mainFrame = new MainFrame(null);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
         String[] playerNames = {"1", "2", "3", "4"};
         Game game = new Game(4, playerNames, null);
-        game.players[0].setToken(RED);
-        game.players[1].setToken(YELLOW);
-        game.players[2].setToken(GREEN);
-        game.players[3].setToken(BLUE);
+        game.players.get(0).setToken(RED);
+        game.players.get(1).setToken(YELLOW);
+        game.players.get(2).setToken(GREEN);
+        game.players.get(3).setToken(BLUE);
         int x=30;
-        game.players[0].getToken().move(x);
-        game.players[1].getToken().move(x);
-        game.players[2].getToken().move(x);
-        game.players[3].getToken().move(x);
+        game.players.get(0).getToken().move(x);
+        game.players.get(1).getToken().move(x);
+        game.players.get(2).getToken().move(x);
+        game.players.get(3).getToken().move(x);
 
         GameView gameView = new GameView(game);
 

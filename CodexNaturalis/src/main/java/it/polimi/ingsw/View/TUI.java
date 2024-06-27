@@ -172,6 +172,8 @@ public class TUI extends UI {
             else printOut(setColorForString("RED", "Invalid " + s + ". It must be at least 4 characters and can't contain spaces. Try again:", true));
         }
 
+        if(s.equals("nickname")) nickname = tempString;
+
         return tempString.trim();
     }
 

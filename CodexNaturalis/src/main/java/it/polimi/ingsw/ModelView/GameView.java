@@ -30,7 +30,7 @@ public class GameView implements Serializable {
         this.numPlayers = model.getNumPlayers();
         this.players = new ArrayList<PlayerView>();
         for(int i=0;i<numPlayers;i++){
-            players.add(new PlayerView(model.players[i]));
+            players.add(new PlayerView(model.players.get(i)));
         }
         this.tableCenterView = new TableCenterView(model.tablecenter);
     }

@@ -453,10 +453,10 @@ public class Controller {
     private void nextPlayer() throws RemoteException{
         if(model.turnPhase!=2) System.out.println("Something went wrong with previous player's turn");
         //end turn event
-        EndTurn endTurn=new EndTurn(model.getCurrentPlayerNickname(),model.players[model.getCurPlayerPosition()].getNickname(),model.clone());
+        EndTurn endTurn=new EndTurn(model.getCurrentPlayerNickname(), model.players.get(model.getCurPlayerPosition()).getNickname(),model.clone());
         sendEventToAll(endTurn);
         if(model.getRemainingTurns() == 0) model.checkWinner();
-        else model.nextPlayer(model.players[model.getCurPlayerPosition()]);
+        else model.nextPlayer(model.players.get(model.getCurPlayerPosition()));
     }
 
     /**

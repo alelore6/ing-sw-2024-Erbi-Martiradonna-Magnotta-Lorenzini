@@ -21,7 +21,6 @@ public abstract class UI implements View{
      */
     public UI(ClientImpl client) {
         this.client = client;
-        this.nickname = client.getNickname();
         this.listener = new ViewControllerListener(client);
     }
 

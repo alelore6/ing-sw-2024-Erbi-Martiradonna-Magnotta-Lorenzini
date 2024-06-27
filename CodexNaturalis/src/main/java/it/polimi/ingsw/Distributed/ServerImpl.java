@@ -31,6 +31,10 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
      */
     private volatile int endSent = 0;
     /**
+     * List of players to be deleted from the main list.
+     */
+    private ArrayList<String> toDelete = new ArrayList<>();
+    /**
      * Attribute representing how often the server pings the clients (in milliseconds).
      */
     public static final int PING_INTERVAL = 3000;
@@ -147,10 +151,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                     client.setNickname(temp);
                     clients.replace(temp, client);
                     listener.nickname = temp;
-
-                    controller.addPlayerToLobby(temp, listener, oldNickname);
                 }
             }
+            if(!isReconnected)  controller.addPlayerToLobby(temp, listener, oldNickname);
         }
     }
 
@@ -162,7 +165,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
         new Thread(() -> {
             while (true) {
                 synchronized (clients){
-                    synchronized(disconnectedClients){
+                    synchronized(toDelete){
                         for (String nickname : clients.keySet()) {
                             if(!(clients.get(nickname) instanceof ClientSkeleton)){
                                 try {
@@ -172,7 +175,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
                                 }
                             }
                         }
-                        for(String nickname : disconnectedClients){
+                        for(String nickname : toDelete){
                             clients.remove(nickname);
                         }
                     }
@@ -194,11 +197,16 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     public void disconnectPlayer(String nickname){
         System.err.println(nickname + " is disconnected.");
 
-        disconnectedClients.add(nickname);
+        toDelete.add(nickname);
+
+        synchronized(disconnectedClients){
+            if(controller.getGame().isStarted)
+                disconnectedClients.add(nickname);
+        }
 
         ModelViewListener listener = controller.getMVListenerByNickname(nickname);
 
-        listener.stop();
+        if(listener != null) listener.stop();
 
         synchronized (controller.getMVListeners()){
             controller.getMVListeners().remove(listener);
