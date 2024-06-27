@@ -644,10 +644,8 @@ public class TUI extends UI {
                         ev = inputEvents.poll();
                     }
 
-                    if(ev instanceof JoinLobby && !((JoinLobby) ev).getNewNickname().equals(nickname)){
+                    if(ev instanceof JoinLobby && !((JoinLobby) ev).getNewNickname().equals(nickname))
                         client.setNickname(((JoinLobby) ev).getNewNickname());
-                        nickname = client.getNickname();
-                    }
                     // Ignore all other player's events
                     else if(!ev.mustBeSentToAll && !ev.nickname.equals(nickname)) continue;
 
