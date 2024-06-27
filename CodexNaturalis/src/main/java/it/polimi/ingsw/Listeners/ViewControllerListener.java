@@ -65,8 +65,7 @@ public class ViewControllerListener extends Listener {
                                 client.sendEvent(currentEvent);
                             } catch (RemoteException e) {
                                 if(client.getUserInterface().running){
-                                    e.printStackTrace();
-                                    throw new RuntimeException(e);
+                                    System.err.println("Can't communicate with server.");
                                 }
                             }
                         }
