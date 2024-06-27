@@ -12,6 +12,7 @@ import java.util.List;
  * As opposed to the other deck classes, it doesn't implement Deck class because it returns  a Card, but ObjectiveCard doesn't extend Card.
  */
 public class ObjectiveDeck {
+
     /**
      * NCards is the integer to track the number of cards of the objective deck.
      */
@@ -96,4 +97,14 @@ public class ObjectiveDeck {
             return temp;
         }
     }
+
+    public int getNCards() {
+        return NCards;
+    }
+
+    public void setNCards(){
+        NCards = 16;
+    }
+
+
 }

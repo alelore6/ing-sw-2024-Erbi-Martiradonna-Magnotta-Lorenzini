@@ -201,23 +201,30 @@ public class Game{
                     getMVListenerByNickname(p.getNickname()).addEvent(setTokenColor);
 
                     //every player gets to choose between 2 objective cards
-                    ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
+                    ChooseObjectiveRequest chooseObjective = null;
+                    if (tablecenter.getObjDeck().getNCards() != 0) {
+                        chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
+                    }
                     getMVListenerByNickname(p.getNickname()).addEvent(chooseObjective);
 
                     //every place gets to place his starting card
                     StartingCard startingCard = null;
-                    try {
-                        startingCard = StartingDeck.draw();
-                        getMVListenerByNickname(p.getNickname()).addEvent(new PlaceStartingCard(startingCard, p.getNickname()));
-                    } catch (isEmptyException e) {
-                        //shouldn't happen
-                        throw new RuntimeException(e);
+                    if (StartingDeck.NCards != 0) {
+                        try {
+                            startingCard = StartingDeck.draw();
+                            getMVListenerByNickname(p.getNickname()).addEvent(new PlaceStartingCard(startingCard, p.getNickname()));
+                        } catch (isEmptyException e) {
+                            //shouldn't happen
+                            throw new RuntimeException(e);
+                        }
                     }
 
                     try {
-                        p.getHand().DrawFromDeck(tablecenter.getResDeck());
-                        p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
-                        p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
+                        if (p.getHand().getHandCards()[0] == null && p.getHand().getHandCards()[1] == null && p.getHand().getHandCards()[2] == null) {
+                            p.getHand().DrawFromDeck(tablecenter.getResDeck());
+                            p.getHand().DrawFromDeck(tablecenter.getResDeck());   //RIEMPIO LA MANO DEL GIOCATORE 2 carte res e 1 gold
+                            p.getHand().DrawFromDeck(tablecenter.getGoldDeck());
+                        }
                     } catch (isEmptyException | HandFullException e) {
                         //should not happen
                         throw new RuntimeException(e);

@@ -97,8 +97,17 @@ public class GameTest {
 
         testGame = new Game(numPlayers, nicknames, mvListeners);
 
+        testGame.players.get(0).setToken(TokenColor.YELLOW);
+        testGame.players.get(1).setToken(TokenColor.RED);
+        testGame.players.get(2).setToken(TokenColor.GREEN);
+        testGame.players.get(3).setToken(TokenColor.BLUE);
 
 
+        for(Player p : testGame.getPlayers()) {
+            p.getHand().getHandCards()[0] = null;
+            p.getHand().getHandCards()[1] = null;
+            p.getHand().getHandCards()[2] = null;
+        }
     }
 
     @Test
@@ -114,6 +123,7 @@ public class GameTest {
 //        when(game.getTablecenter().getGoldDeck().draw()).thenReturn(new GoldCard());
 //        when(game.getTablecenter().getObjDeck().draw()).thenReturn(new ObjectiveCard1());
 
+        testGame.tablecenter.getObjDeck().setNCards();
         testGame.startGame();
 
         //verifico che gli eventi siano inviati ai listener
@@ -128,11 +138,8 @@ public class GameTest {
             p.getHand().getHandCards()[2] = null;
         }
 
-        try {
-            testGame.startGame();
-        } catch (RuntimeException e) {
-
-        }
+        testGame.tablecenter.getObjDeck().setNCards();
+        testGame.startGame();
 
     }
 
@@ -309,10 +316,17 @@ public class GameTest {
         testGame.players.add(player3);
         testGame.players.add(player4);
 
+
+
         testGame.setCurPlayerPosition(1);
         assertEquals(1, testGame.getCurPlayerPosition());
         //when(game.getRemainingTurns()).thenReturn(2);
         testGame.endGame(0);
+        for(Player p : testGame.getPlayers()) {
+            p.getHand().getHandCards()[0] = null;
+            p.getHand().getHandCards()[1] = null;
+            p.getHand().getHandCards()[2] = null;
+        }
 
 
         testGame.checkWinner();
@@ -330,6 +344,15 @@ public class GameTest {
         Player player2 = mock(Player.class);
         Player player3 = mock(Player.class);
         Player player4 = mock(Player.class);
+
+        for(Player p : testGame.getPlayers()) {
+            p.getHand().getHandCards()[0] = null;
+            p.getHand().getHandCards()[1] = null;
+            p.getHand().getHandCards()[2] = null;
+        }
+
+
+        testGame.tablecenter.getObjDeck().setNCards();
 
         testGame.startGame();
 
@@ -389,7 +412,7 @@ public class GameTest {
         PlayableCard card1 = mock(PlayableCard.class);
         PlayableCard card2 = mock(PlayableCard.class);
         PlayableCard card3 = mock(PlayableCard.class);
-        PlayableCard[] handCards = new PlayableCard[]{card1, card2, card3};
+        PlayableCard[] handCards = new PlayableCard[]{null, null, null};
 
         when(hand1.getHandCards()).thenReturn(handCards);
         when(hand2.getHandCards()).thenReturn(handCards);
@@ -417,28 +440,17 @@ public class GameTest {
         when(player3.getCurrentResources()).thenReturn(mockResources);
         when(player4.getCurrentResources()).thenReturn(mockResources);
 
+        for(Player p : testGame.getPlayers()) {
+            p.getHand().getHandCards()[0] = null;
+            p.getHand().getHandCards()[1] = null;
+            p.getHand().getHandCards()[2] = null;
+        }
         testGame.nextPlayer(testGame.getPlayers().get(0));
 
         assertEquals(1, testGame.getCurPlayerPosition());
 
     }
 
-
-    //TODO da finire test rejoin
-//    @Test
-//    public void testRejoin() {
-//        Player player = testGame.getPlayers()[0];
-//        testGame.disconnectPlayer(player);
-//
-//        assertTrue(player.isDisconnected);
-//
-//        ModelViewListener newListener = mock(ModelViewListener.class);
-//        //when(newListener.nickname).thenReturn(player.getNickname());
-//
-//        testGame.rejoin(newListener);
-//
-//        assertFalse(player.isDisconnected);
-//    }
 
     @Test
     public void testCheckObjectivePoints1() {
@@ -490,7 +502,11 @@ public class GameTest {
 
 
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
 
 
 
@@ -590,7 +606,12 @@ public class GameTest {
 
 
 
-        testGame.players = new Player[]{player1, player2, player3, player4};
+        testGame.players = new ArrayList<>();
+        testGame.players.add(player1);
+        testGame.players.add(player2);
+        testGame.players.add(player3);
+        testGame.players.add(player4);
+
 
         ModelViewListener listener1 = mock(ModelViewListener.class);
         ModelViewListener listener2 = mock(ModelViewListener.class);
