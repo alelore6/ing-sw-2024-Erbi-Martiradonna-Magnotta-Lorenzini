@@ -25,13 +25,6 @@ public abstract class UI implements View{
     }
 
     /**
-     * Method to stop the running threads.
-     */
-    public void stop(){
-        running = false;
-    }
-
-    /**
      * Getter for the listener.
      * @return the listener.
      */

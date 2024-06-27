@@ -104,7 +104,6 @@ public class HandView implements Serializable {
      * @return a boolean representing the result of the method
      */
     private static boolean checkNear(Card[][] playedCards, int x, int y){
-        int check = 0;
         boolean hasNear = false;
         if(x-1 >= 0 && y-1 >= 0 && playedCards[x-1][y-1] != null){
             if(playedCards[x-1][y-1].getCorners()[3].getPosition() != null)

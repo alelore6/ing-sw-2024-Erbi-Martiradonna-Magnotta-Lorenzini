@@ -57,8 +57,6 @@ public class ServerApp {
             throw new RuntimeException(e);
         }
 
-        Scanner terminal = new Scanner(System.in);
-
         // creo server RMI
         try {
             startRMI();

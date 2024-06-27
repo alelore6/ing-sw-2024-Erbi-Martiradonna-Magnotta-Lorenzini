@@ -15,10 +15,6 @@ public class GoldCard extends PlayableCard{
 
     protected HashMap<Resource,Integer> req = new HashMap<>();
 
-    public void flip(){
-        isFacedown = !isFacedown;
-    }
-
     public Resource getRPoints() {
         return RPoints;
     }

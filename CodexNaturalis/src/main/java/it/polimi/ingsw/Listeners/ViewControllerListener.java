@@ -77,8 +77,4 @@ public class ViewControllerListener extends Listener {
 
         eventThread.start();
     }
-
-    public void stop(){
-        running = false;
-    }
 }

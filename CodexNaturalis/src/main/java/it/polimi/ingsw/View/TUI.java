@@ -478,7 +478,6 @@ public class TUI extends UI {
 
         // If not, the chat message has not the correct format in order to be sent.
         if(words.get(0).equalsIgnoreCase("CHAT")){
-            boolean isForEveryone = false;
             String recipient = null;
 
             // Private chat mode.
@@ -489,7 +488,7 @@ public class TUI extends UI {
                     printErr("You can't send a message to yourself!");
                     return true;
                 }
-                if(words.get(3).equals("")){
+                if(words.get(3).isEmpty()){
                     printErr("The message is empty!");
                     return true;
                 }
@@ -497,7 +496,7 @@ public class TUI extends UI {
                 words.remove(2);
                 words.remove(1);
             }
-            else if(words.size() == 1 || words.get(1).equals("")){
+            else if(words.size() == 1 || words.get(1).isEmpty()){
                 printErr("The message is empty!");
 
                 return true;
@@ -819,7 +818,7 @@ public class TUI extends UI {
 
     /**
      * Method to stop the running threads.
-     */
+     *//*
     @Override
     public void stop(){
         running = false;
@@ -833,4 +832,5 @@ public class TUI extends UI {
         commandThread.interrupt();
         TUIThread.interrupt();
     }
+    */
 }

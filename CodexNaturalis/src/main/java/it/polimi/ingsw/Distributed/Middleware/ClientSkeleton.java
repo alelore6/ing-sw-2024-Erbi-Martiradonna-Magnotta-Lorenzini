@@ -34,10 +34,6 @@ public class ClientSkeleton implements Client {
      * The end point for the communication between client and server
      */
     public final Socket socket;
-    /**
-     * The server from which the client receives information
-     */
-    private ServerImpl server;
 
     /**
      * The nickname associated with the client
@@ -98,10 +94,6 @@ public class ClientSkeleton implements Client {
      * @throws RemoteException exception thrown in remote connections.
      */
     public void receive(ServerImpl server) throws RemoteException {
-
-        // Saves the server just in case (see the notifyEndSent() call above).
-        this.server = server;
-
         //socket: receive from server stub update()
         GenericEvent event;
         try {

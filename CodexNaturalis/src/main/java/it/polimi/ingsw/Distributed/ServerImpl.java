@@ -81,20 +81,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     }
 
     /**
-     * Constructor with a particular RMI port.
-     * @param serverApp
-     * @param logger
-     * @param port
-     * @throws RemoteException
-     */
-    public ServerImpl(ServerApp serverApp, Logger logger, int port) throws RemoteException {
-        super(port);
-        this.serverApp = serverApp;
-        this.logger = logger;
-        pong();
-    }
-
-    /**
      * Method to pong the RMI clients
      * @see it.polimi.ingsw.ClientApp
      */

@@ -34,10 +34,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
      * The server to which the client is connected to.
      */
     public final Server server;
-    /**
-     * Boolean that indicates if the connection type is RMI.
-     */
-    public final boolean isRMI;
 
     /**
      * Constructor
@@ -52,7 +48,6 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
 
         this.clientApp = clientApp;
         this.server = server;
-        isRMI = !(server instanceof ServerStub);
         userInterface = isTUI ? new TUI(this) : new GUI(this);
 
         run();

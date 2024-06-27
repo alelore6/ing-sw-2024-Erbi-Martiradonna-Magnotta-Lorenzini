@@ -299,12 +299,4 @@ public class MainFrame extends JFrame {
     public int getDrawChoice(){
         return tableCenterPanel.getDrawChoice();
     }
-
-    /**
-     * Getter for the table center panel.
-     * @return the table center panel.
-     */
-    public TableCenterPanel getTableCenterPanel() {
-        return tableCenterPanel;
-    }
 }

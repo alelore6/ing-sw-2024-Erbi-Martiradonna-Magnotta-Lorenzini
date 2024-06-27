@@ -37,7 +37,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    public static final int timeoutOnePlayer = 10; //TODO: da risettare.
+    public static final int timeoutOnePlayer = 60;
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -49,12 +49,15 @@ public class Game{
     /**
      * integer representing the current player position in the array of players
      */
-     private int curPlayerPosition;
+    private int curPlayerPosition;
 
+    /**
+     * Setter for curPlayerPosition.
+     * @param curPlayerPosition
+     */
     public void setCurPlayerPosition(int curPlayerPosition) {
         this.curPlayerPosition = curPlayerPosition;
     }
-
 
     /**
      * The starting cards deck
@@ -69,8 +72,14 @@ public class Game{
      */
     public TableCenter tablecenter;
 
+    /**
+     * List of players' listeners.
+     */
     private ArrayList<ModelViewListener> mvListeners;
 
+    /**
+     * List of available tokens, in the sense that they're not chosen yet.
+     */
     protected final ArrayList<TokenColor> availableTokens;
     /**
      * Attribute that counts how many players have completed a specific action.
@@ -117,14 +126,6 @@ public class Game{
     }
 
     /**
-     * Setter for the players' array.
-     * @param players
-     */
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
-    /**
      * Getter for tablecenter instance
      * @return Tablecenter instance
      */
@@ -148,12 +149,6 @@ public class Game{
      * @return remainingTurns
      */
     public int getRemainingTurns() {return remainingTurns;}
-
-    /**
-     * Getter for turnCounter attribute
-     * @return turnCounter
-     */
-    public int getTurnCounter() {return turnCounter;}
 
     public String getCurrentPlayerNickname(){
         return curPlayerPosition != -1 ? players.get(curPlayerPosition).getNickname() : null;
@@ -747,14 +742,6 @@ public class Game{
         }
 
         return null;
-    }
-
-    /**
-     * Getter for available tokens.
-     * @return
-     */
-    public ArrayList<TokenColor> getAvailableTokens() {
-        return availableTokens;
     }
 
     /**

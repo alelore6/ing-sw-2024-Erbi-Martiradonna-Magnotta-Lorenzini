@@ -17,9 +17,6 @@ public abstract class Card implements Serializable {
     protected Corner[] frontCorners;
     protected Corner[] backCorners;
 
-    public Card getCard(){
-         return this;
-     }
     public int getID(){
           return this.ID;
      }
