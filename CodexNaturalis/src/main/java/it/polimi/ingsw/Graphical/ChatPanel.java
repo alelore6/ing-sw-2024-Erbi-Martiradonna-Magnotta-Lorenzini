@@ -116,7 +116,7 @@ class ChatPanel extends JPanel {
                 f.sendPrivateChatMessage(message, recipient);
             }
             inputArea.setText("");
-            recipientComboBox.setSelectedIndex(0);
+            if(recipientComboBox!=null) recipientComboBox.setSelectedIndex(0);
         }
     }
 
