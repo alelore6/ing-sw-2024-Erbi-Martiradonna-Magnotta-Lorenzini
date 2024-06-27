@@ -15,7 +15,7 @@ public class PlayerDisconnected extends ServerMessage{
      * @param isRejoined true if the player has reconnected, false if in case of disconnection
      */
     public PlayerDisconnected(String nickname, String disconnectedPlayer, int remainingPlayers, boolean isRejoined) {
-        super(disconnectedPlayer + " has " + (isRejoined ? "rejoined, " : "disconnected, ") + (remainingPlayers == 1 ? " 1 player left.\nIf no one reconnects in " + Game.timeoutOnePlayer + " seconds, you automatically win!\nWaiting for a player to reconnect..." : remainingPlayers + " players in lobby.\n") , nickname);
+        super(disconnectedPlayer + " has " + (isRejoined ? "rejoined, " : "disconnected, ") + (remainingPlayers == 1 ? "1 player left.\nIf no one reconnects in " + Game.timeoutOnePlayer + " seconds, you automatically win!\nWaiting for a player to reconnect..." : remainingPlayers + " players in lobby.\n") , nickname);
 
         if (remainingPlayers==1) message.concat("Waiting for a player to rejoin the game.");
     }

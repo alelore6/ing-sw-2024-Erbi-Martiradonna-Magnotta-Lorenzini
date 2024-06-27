@@ -12,6 +12,5 @@ public class ServerMessage extends GenericEvent{
      */
     public ServerMessage(String message, String nickname) {
         super(message, nickname);
-        mustBeSentToAll = (nickname == null);
     }
 }

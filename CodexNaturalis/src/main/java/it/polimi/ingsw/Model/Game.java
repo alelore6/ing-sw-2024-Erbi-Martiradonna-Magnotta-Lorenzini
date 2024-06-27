@@ -37,7 +37,7 @@ public class Game{
     /**
      * attribute representing the seconds to wait for another player to continue the game
      */
-    public static final int timeoutOnePlayer = 60;
+    public static final int timeoutOnePlayer = 10; //TODO: da risettare.
     /**
      * boolean that states if the game is either finished or still in act
      */
@@ -661,7 +661,8 @@ public class Game{
         synchronized (mvListeners){
             for(Player p : players){
                 if(!p.isDisconnected){
-                    getMVListenerByNickname(p.getNickname()).addEvent(new PlayerDisconnected("every one", player != null ? player.getNickname() : "A client", getActivePlayers(), false));
+                    PlayerDisconnected event = new PlayerDisconnected("every one", player != null ? player.getNickname() : "A client", getActivePlayers(), false);
+                    getMVListenerByNickname(p.getNickname()).addEvent(event);
                 };
             }
         }
@@ -692,7 +693,7 @@ public class Game{
 
             if(getCurrentPlayerNickname() != null){
                 for(ModelViewListener listener : mvListeners){
-                    listener.addEvent(new EndTurn(getCurrentPlayerNickname(), players.get(getCurPlayerPosition()).getNickname(), clone()));
+                    listener.addEvent(new EndTurn(getCurrentPlayerNickname(), listener.nickname, clone()));
                 }
             }
 

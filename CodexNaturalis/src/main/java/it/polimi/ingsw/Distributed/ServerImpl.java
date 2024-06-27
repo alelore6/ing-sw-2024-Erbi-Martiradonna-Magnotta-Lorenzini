@@ -274,10 +274,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
      */
     public synchronized void restart(){
 
-        System.exit(0);
+        // System.exit(0);
 
         // TODO: se avanza tempo (lavoro già iniziato).
-        // serverApp.restart();
-        // return;
+        serverApp.stop();
     }
 }

@@ -46,7 +46,19 @@ public class ViewControllerListener extends Listener {
             public void run() {
                 while(running) {
                     synchronized(lock_queue){
-                        if(!getEventQueue().isEmpty()) {
+                        if(ack != null){
+                            AckResponse response = ack;
+                            ack = null;
+
+                            try {
+                                client.sendEvent(response);
+                            } catch (RemoteException ignored) {}
+
+                            if(response instanceof AckResponse && response.receivedEvent instanceof FinalRankings) {
+                                client.clientApp.stop();
+                            }
+                        }
+                        else if(!getEventQueue().isEmpty()) {
                             GenericEvent currentEvent = getEventQueue().remove(); //remove and return the first queue element
                             // System.out.println("MANDATO EVENTO: " + currentEvent.msgOutput());
                             try {
@@ -56,10 +68,6 @@ public class ViewControllerListener extends Listener {
                                     e.printStackTrace();
                                     throw new RuntimeException(e);
                                 }
-                            }
-
-                            if(currentEvent instanceof AckResponse && ((AckResponse) currentEvent).receivedEvent instanceof FinalRankings) {
-                                client.clientApp.stop();
                             }
                         }
                     }

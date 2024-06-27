@@ -4,12 +4,9 @@ import it.polimi.ingsw.Controller.Logger;
 import it.polimi.ingsw.Distributed.Middleware.ClientSkeleton;
 import it.polimi.ingsw.Distributed.ServerImpl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URL;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -155,21 +152,7 @@ public class ServerApp {
     /**
      * Method to restart the server.
      */
-    public void restart(){
-
-
-        try{
-            Naming.unbind("CodexNaturalis_Server");
-            UnicastRemoteObject.unexportObject(server, true);
-            registry = LocateRegistry.getRegistry();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        running = false;
-
-        try{
-            new ServerApp();
-        }catch (InterruptedException ignored){}
+    public void stop(){
+        System.exit(0);
     }
 }

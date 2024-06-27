@@ -60,7 +60,7 @@ public class TUI extends UI {
     /**
      * Lock for event queue.
      */
-    private Object lock_events = new Object();
+    private final Object lock_events = new Object();
     /**
      * Thread running.
      */
@@ -553,7 +553,7 @@ public class TUI extends UI {
 
     /**
      * Method to check if the string is a disconnection command.
-     * @param string
+     * @param command
      * @return true if the string is a disconnection command.
      */
     private boolean listenToDisconnection(String command){
@@ -589,7 +589,7 @@ public class TUI extends UI {
         else if(event instanceof StartTurn){
             printOut("It's " + setColorForString(((StartTurn) event).color, ((StartTurn) event).turnPlayer, true) + "'s turn.");
         }
-        else if(event instanceof ServerMessage && (event.mustBeSentToAll = true || event.nickname == nickname)){
+        else if(event instanceof ServerMessage && (event.mustBeSentToAll || event.nickname.equals(nickname))){
             if(event.msgOutput() != null) printOut(event.msgOutput());
         }
         else{
