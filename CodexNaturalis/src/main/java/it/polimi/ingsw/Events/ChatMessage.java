@@ -4,6 +4,9 @@ package it.polimi.ingsw.Events;
  * Class representing a chat message.
  */
 public class ChatMessage extends GenericEvent{
+    /**
+     * the nickname of the receiver for private messages
+     */
     public final String recipient;
     /**
      * Constructor

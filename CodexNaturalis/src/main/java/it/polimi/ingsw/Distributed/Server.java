@@ -12,15 +12,15 @@ public interface Server extends Remote {
 
     /**
      * Method to pong with clients.
-     * @throws RemoteException
+     * @throws RemoteException default rmi exception
      */
     void ping() throws RemoteException;
 
     /**
      * Method to update servers with an event.
-     * @param client
-     * @param event
-     * @throws RemoteException
+     * @param client the client that sends the event
+     * @param event the event that modifies the model
+     * @throws RemoteException default rmi exception
      */
     void update(Client client, GenericEvent event) throws RemoteException;
 

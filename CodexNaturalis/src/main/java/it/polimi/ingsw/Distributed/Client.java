@@ -14,28 +14,28 @@ public interface Client extends Remote{
 
     /**
      * Method to pong with the server.
-     * @throws RemoteException
+     * @throws RemoteException default rmi exception
      */
     void ping() throws RemoteException;
 
     /**
      * Method to update clients with an event.
-     * @param event
-     * @throws RemoteException
+     * @param event the received event
+     * @throws RemoteException default rmi exception
      */
     void update(GenericEvent event) throws RemoteException;
 
     /**
      * Getter fot the nickname.
      * @return the nickname.
-     * @throws RemoteException
+     * @throws RemoteException default rmi exception
      */
     String getNickname() throws RemoteException;
 
     /**
      * Setter for the nickname.
-     * @param nickname
-     * @throws RemoteException
+     * @param nickname the entered nickname
+     * @throws RemoteException default rmi exception
      */
     void setNickname(String nickname) throws RemoteException;
 }

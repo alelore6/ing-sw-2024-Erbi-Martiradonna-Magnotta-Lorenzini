@@ -69,9 +69,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Constructor with the default RMI port.
-     * @param serverApp
-     * @param logger
-     * @throws RemoteException
+     * @param serverApp the server application that starts the server
+     * @param logger the logger of the app
+     * @throws RemoteException default rmi exception
      */
     public ServerImpl(ServerApp serverApp, Logger logger) throws RemoteException {
         super();
@@ -88,8 +88,8 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Method to register a client in the game.
-     * @param client
-     * @throws RemoteException
+     * @param client the client that is registering
+     * @throws RemoteException default rmi exception
      */
     public void register(Client client) throws RemoteException{
         boolean isReconnected = false;
@@ -178,7 +178,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Method to disconnect a player from the server.
-     * @param nickname
+     * @param nickname the nickname of the player that has disconnected
      */
     public void disconnectPlayer(String nickname){
         System.err.println(nickname + " is disconnected.");
@@ -203,9 +203,9 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Method to update the server with respect to the incoming event.
-     * @param client
-     * @param event
-     * @throws RemoteException
+     * @param client the sender of the event
+     * @param event the received event
+     * @throws RemoteException default rmi exception
      */
     @Override
     public void update(Client client, GenericEvent event) throws RemoteException{
@@ -230,7 +230,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Getter for the clients hash map.
-     * @return
+     * @return the hashmap of clients and their nicknames
      */
     public HashMap<String, Client> getClients(){
         return clients;
@@ -249,7 +249,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
     /**
      * Getter for the attribute 'endSent'.
-     * @return
+     * @return the number of game over event that has been sent
      */
     public int getEndSent() {
         return endSent;

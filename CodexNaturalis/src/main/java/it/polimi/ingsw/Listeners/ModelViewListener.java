@@ -47,6 +47,8 @@ public class ModelViewListener extends Listener {
      * Class that represents the listener situated between the Model and the View.
      * This listener will receive updates from the model and will pass them to the specific view, which will be updated aswell.
      * @param server the server that will receive the updates from this listener
+     * @param client the client that sends the updates to this listener
+     * @throws RemoteException default rmi exception
      */
     public ModelViewListener(ServerImpl server, Client client) throws RemoteException {
         this.server = server;
@@ -130,7 +132,7 @@ public class ModelViewListener extends Listener {
 
     /**
      * Method to add a chat message to the specific list.
-     * @param message
+     * @param message the received chat message
      */
     public void addChatMessage(ChatMessage message) {
         synchronized (lock_queue) {

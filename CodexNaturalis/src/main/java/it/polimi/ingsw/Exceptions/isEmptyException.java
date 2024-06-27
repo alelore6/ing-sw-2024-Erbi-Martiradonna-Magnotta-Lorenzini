@@ -11,6 +11,11 @@ public class isEmptyException extends Throwable{
      * the deck that throws the exception
      */
     public final Deck deck;
+
+    /**
+     * Constructor
+     * @param deck the deck that's empty
+     */
     public isEmptyException(Deck deck){
         super("The deck is empty.");
         this.deck=deck;

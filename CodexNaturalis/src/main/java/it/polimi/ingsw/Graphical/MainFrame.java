@@ -262,7 +262,7 @@ public class MainFrame extends JFrame {
 
     /**
      * reports the sending of a chat message to only one of the players to the gui element.
-     * @param message
+     * @param message the text message
      * @param recipient names who you want to send a message to.
      */
     public void sendPrivateChatMessage(String message, String recipient) {

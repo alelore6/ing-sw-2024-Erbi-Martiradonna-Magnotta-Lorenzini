@@ -34,6 +34,10 @@ public class PlayCardRequest extends GenericRequest {
         return gameView.getPlayerViewByNickname(nickname);
     }
 
+    /**
+     * Getter for the table center view
+     * @return the table center view
+     */
     public TableCenterView getTableView() {
         return gameView.tableCenterView;
     }

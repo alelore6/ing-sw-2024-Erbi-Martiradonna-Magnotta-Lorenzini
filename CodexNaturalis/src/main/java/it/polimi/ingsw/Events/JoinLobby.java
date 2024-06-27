@@ -11,7 +11,8 @@ public class JoinLobby extends GenericRequest{
 
     /**
      * Constructor
-     * @param oldNickname the player that has joined the lobby
+     * @param oldNickname the player chosen nickname that has joined the lobby
+     * @param newNickname the nickname of the player after connecting. It's different only if chosen nickname was already present
      */
     public JoinLobby(String oldNickname, String newNickname){
         super("You have joined a lobby, waiting for other players to start the game...\n" +

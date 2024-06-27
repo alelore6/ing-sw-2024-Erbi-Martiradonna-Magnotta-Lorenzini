@@ -38,10 +38,10 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
     /**
      * Constructor
      *
-     * @param clientApp
-     * @param server
-     * @param isTUI
-     * @throws RemoteException
+     * @param clientApp the app starting this client instance
+     * @param server the game server
+     * @param isTUI boolean representing the choice for the UI
+     * @throws RemoteException default rmi exception
      */
     public ClientImpl(ClientApp clientApp, Server server, boolean isTUI) throws RemoteException {
         super();
@@ -80,7 +80,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
 
     /**
      * Setter for the nickname.
-     * @param nickname
+     * @param nickname the entered nickname
      */
     @Override
     public void setNickname(String nickname) {
@@ -98,7 +98,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
 
     /**
      * Method to pong with the server.
-     * @throws RemoteException
+     * @throws RemoteException default rmi exception
      * @see ServerImpl
      */
     @Override
@@ -106,7 +106,7 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
 
     /**
      * Method to call the event handler in the UI.
-     * @param event
+     * @param event the received event
      * @see TUI
      * @see GUI
      */
@@ -117,8 +117,8 @@ public class ClientImpl extends UnicastRemoteObject implements Client{
 
     /**
      * Method to send an event to the server.
-     * @param event
-     * @throws RemoteException
+     * @param event the sending event
+     * @throws RemoteException default rmi exception
      * @see ServerImpl
      * @see ServerStub
      */

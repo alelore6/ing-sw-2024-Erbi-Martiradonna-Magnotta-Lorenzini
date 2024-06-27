@@ -141,6 +141,7 @@ public class ClientApp {
         }
     }
 
+
     public static void main(String[] args){
         ClientApp clientInstance;
         try{

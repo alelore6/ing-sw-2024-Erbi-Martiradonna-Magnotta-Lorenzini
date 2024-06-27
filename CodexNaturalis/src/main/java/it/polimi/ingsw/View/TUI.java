@@ -68,7 +68,7 @@ public class TUI extends UI {
 
     /**
      * Constructor
-     * @param client
+     * @param client the client that owns the UI
      */
     public TUI(ClientImpl client) {
         super(client);
@@ -179,7 +179,7 @@ public class TUI extends UI {
 
     /**
      * Method to print on System.out.
-     * @param s
+     * @param s the message to be printed in the console
      */
     public final void printOut(String s){
         out.println(s);
@@ -187,7 +187,7 @@ public class TUI extends UI {
 
     /**
      * Method to print on System.err.
-     * @param err
+     * @param err the error message to be printed in the console
      */
     public final void printErr(String err){
         outErr.println(err);
@@ -195,7 +195,7 @@ public class TUI extends UI {
 
     /**
      * Method to print a default error message if still running.
-     * @return
+     * @return the message that communicates an input error
      */
     private String inputError(){
         return running ? "Input not allowed. Please try again" : "";
@@ -227,9 +227,9 @@ public class TUI extends UI {
 
     /**
      * Method to add a color to the string to be printed on terminal.
-     * @param color
-     * @param string
-     * @param isBright
+     * @param color the color of the message
+     * @param string the string to be coloured
+     * @param isBright represent if the color is bright enough
      * @return the colored string.
      */
     public static String setColorForString(String color, String string, boolean isBright){
@@ -570,7 +570,7 @@ public class TUI extends UI {
 
     /**
      * Method to handle the incoming events, treating them with respect to their type.
-     * @param event
+     * @param event the received event
      * @see GenericEvent
      */
     public final void update(GenericEvent event){

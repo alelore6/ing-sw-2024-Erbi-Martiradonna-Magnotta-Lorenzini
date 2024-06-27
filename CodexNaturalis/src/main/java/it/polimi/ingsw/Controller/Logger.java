@@ -26,8 +26,8 @@ public class Logger{
 
     /**
      * Method for adding an event to the logger.
-     * @param event
-     * @param s
+     * @param event the handled event
+     * @param s the severity of the event
      */
     public void addLog(GenericEvent event, Severity s){
         if(event == null){}
@@ -39,8 +39,8 @@ public class Logger{
 
     /**
      * Method for adding a string to the logger.
-     * @param message
-     * @param s
+     * @param message the message to be added in the log
+     * @param s the severity of the message
      */
     public void addLog(String message, Severity s){
         out.println("[" + s + "] " + message);

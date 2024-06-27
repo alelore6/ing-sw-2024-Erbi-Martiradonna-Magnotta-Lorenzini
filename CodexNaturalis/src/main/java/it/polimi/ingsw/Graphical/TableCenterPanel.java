@@ -24,7 +24,9 @@ public class TableCenterPanel extends JSplitPane {
      * the game view gives all the required information about the game in any exact moment.
      */
     private GameView gameView;
-
+    /**
+     * the list of token colors in the game
+     */
     private final ArrayList<TokenColor> chosenColor = new ArrayList<>();
     /**
      * card labels is an array of labels associated to each card spot  associated to a JLabel to visualize through the layout manager each card image that lands on the spot.
@@ -38,8 +40,6 @@ public class TableCenterPanel extends JSplitPane {
      * An array  of integers that keeps track of the IDs of the cards present in the central spots of the table.
      */
     private int[] cardsID;
-
-    private JPanel rightPanel;
     /**
      * an encoding of the draw choice of a player.
      */
@@ -205,7 +205,9 @@ public class TableCenterPanel extends JSplitPane {
             }
         };
         rightPanel.setMinimumSize(new Dimension(390, 300));
-        this.rightPanel=rightPanel;
+        /**
+         *
+         */
         return rightPanel;
     }
 
@@ -616,7 +618,7 @@ public class TableCenterPanel extends JSplitPane {
 
     /**
      * Update method update the entire Tabel Center Panel to keep playing without have to create each time a new panel.
-     * @param gameView
+     * @param gameView the game info
      * @param drawing boolean to know
      */
     public void update(GameView gameView, boolean drawing) {
@@ -660,31 +662,5 @@ public class TableCenterPanel extends JSplitPane {
         else return id;
     }
 
-    //TODO: da rimuovere.
-    public static void main(String[] args) {
-        MainFrame mainFrame = new MainFrame(null);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); // full screen
-        String[] playerNames = {"1", "2", "3", "4"};
-        Game game = new Game(4, playerNames, null);
-        game.players.get(0).setToken(RED);
-        game.players.get(1).setToken(YELLOW);
-        game.players.get(2).setToken(GREEN);
-        game.players.get(3).setToken(BLUE);
-        int x=15;
-        game.players.get(0).getToken().move(x);
-        game.players.get(1).getToken().move(x);
-        game.players.get(2).getToken().move(x);
-        game.players.get(3).getToken().move(x);
-
-        GameView gameView = new GameView(game);
-
-
-        TableCenterPanel panel = new TableCenterPanel(gameView, new Object());
-        mainFrame.mainPanel.add(panel, "Table center");
-        mainFrame.switchPanel("Table center");
-
-        mainFrame.setVisible(true);
-    }
 }
 

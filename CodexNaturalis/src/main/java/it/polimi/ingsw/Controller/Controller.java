@@ -104,6 +104,7 @@ public class Controller {
      * @param mvListener the listener associated with the nickname
      * @param oldNickname the old nickname of the user. It may be different from
      *                    the actual one in case another equal one was found.
+     * @throws RemoteException default rmi exception
      * @see Lobby
      */
     public void addPlayerToLobby(String nickname, ModelViewListener mvListener, String oldNickname) throws RemoteException {
@@ -164,6 +165,7 @@ public class Controller {
      * Receive an event from the client and acts on the model.
      * @param event the event sent from the client
      * @param nickname the player that sent the event
+     * @throws RemoteException default rmi exception
      * @see GenericEvent
      * @see Game
      */
@@ -403,7 +405,7 @@ public class Controller {
 
     /**
      * Method to get a listener (if present) associated with a specific nickname.
-     * @param nickname
+     * @param nickname the nickname
      * @return the listener or null if none of them with that nickname has been found.
      * @see ModelViewListener
      */
@@ -430,7 +432,7 @@ public class Controller {
     /**
      * Method to add and start a listener. Calls handleEvent() into it to make it work.
      * @param listener the listener to be added.
-     * @throws RemoteException
+     * @throws RemoteException default rmi exception
      * @see ModelViewListener
      */
     public void addMVListener(ModelViewListener listener) throws RemoteException {
@@ -444,6 +446,7 @@ public class Controller {
      * Public method to add a temporary listener to the list. The controller will establish if it'll
      * go to the real one or not by the login.
      * @param listener the listener to add.
+     * @throws RemoteException default rmi exception
      */
     public void addTempMVL(ModelViewListener listener) throws RemoteException {
         tempMVListeners.add(listener);
@@ -461,7 +464,7 @@ public class Controller {
 
     /**
      * Method that disconnects a player by calling the necessary method in Game class.
-     * @param nickname
+     * @param nickname the nickname of the disconnected player
      * @see Game
      */
     public void disconnectPlayer(String nickname){
@@ -470,8 +473,8 @@ public class Controller {
 
     /**
      * Method that completely deletes a client, removing also its listener.
-     * @param client
-     * @throws RemoteException
+     * @param client the disconnected client
+     * @throws RemoteException default rmi exception
      * @see ModelViewListener
      * @see ServerImpl
      */

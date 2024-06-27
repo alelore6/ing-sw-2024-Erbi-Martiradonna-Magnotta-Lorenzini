@@ -1,8 +1,9 @@
 package it.polimi.ingsw.Events;
 
+/**
+ * Event that represent the client choice of a nickname
+ */
 public class ChooseNickname extends GenericEvent{
-
-
     /**
      * Constructor
      *
