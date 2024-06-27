@@ -120,7 +120,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
 
             synchronized(controller.getMVListeners()){
                 // If the client is not rejoining, but it's joining for the first time
-                if(controller.getMVListenerByNickname(client.getNickname()) == null)
+                if(controller.getMVListenerByNickname(temp) == null)
                      listener = new ModelViewListener(this, client);
                 else listener = controller.getMVListenerByNickname(client.getNickname());
 
