@@ -64,9 +64,9 @@ to close the game.
 You can rejoin a game if you have closed the app with the same nickname and password inserted at the start. Notice that you can even change the play mode, e.g, you can switch from TUI to GUI or the connection type.
 
 ## Documentation
-To read the JavaDoc documentation, click [here](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/tree/main/CodexNaturalis/deliverables/JavaDoc/index.html).
+To read the JavaDoc documentation, click [here](CodexNaturalis/deliverables/JavaDoc).
 
-To see the test coverage, click [here](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/tree/main/CodexNaturalis/deliverables/Coverage/index.html).
+To see the test coverage, click [here](CodexNaturalis/deliverables/Coverage).
 
 ## Softwares
 
