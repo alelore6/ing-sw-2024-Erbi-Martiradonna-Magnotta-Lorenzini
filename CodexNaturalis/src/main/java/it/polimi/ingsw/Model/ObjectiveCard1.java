@@ -10,11 +10,11 @@ public class ObjectiveCard1 extends ObjectiveCard{
     /**
      *req is an array that encodes position of cards on the game board, for some values of req , the objective card will bestow bonus points.
      */
-    private int[] req; //POSIZIONE carta di colore "1", poi la 2 e poi la 3
+    private int[] req; //POSITION card of color "1", then 2, then 3 and then 4.
     /**
      * color is an array of colors of cards, (Note: some objective card has in some position different color requirements).
      */
-    private CardColor[] color; //Colore 1, 2 e 3
+    private CardColor[] color; //Colors 1, 2, 3 and 4
 
     /**
      * getter used to know about which cards positions associated to array colors allows to any given objective card to add points to your score track.
