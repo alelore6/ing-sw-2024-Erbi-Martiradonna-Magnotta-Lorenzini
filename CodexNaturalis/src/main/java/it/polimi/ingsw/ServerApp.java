@@ -9,11 +9,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.rmi.*;
 import java.rmi.registry.LocateRegistry;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.Scanner;
 import java.rmi.registry.Registry;
-
-import static java.lang.Thread.sleep;
 
 /**
  * Class that define the application server side.
@@ -57,7 +53,7 @@ public class ServerApp {
             throw new RuntimeException(e);
         }
 
-        // creo server RMI
+        // create RMI server
         try {
             startRMI();
         } catch (RemoteException | AlreadyBoundException e) {
@@ -65,7 +61,7 @@ public class ServerApp {
             e.printStackTrace();
         }
 
-        // creo server socket
+        // create socket server
         Thread socketThread = new Thread(() -> {
             try {
                 startSocket(SOCKET_PORT);
@@ -79,7 +75,7 @@ public class ServerApp {
         socketThread.join();
     }
 
-    public static void main(String[] args) throws RemoteException {
+    public static void main(String[] args){
         try{
             new ServerApp();
         }catch (InterruptedException ignored){}
@@ -91,23 +87,20 @@ public class ServerApp {
      * @throws AlreadyBoundException
      */
     private void startRMI () throws RemoteException, AlreadyBoundException {
-        new Thread(){
-            @Override
-            public void run(){
-                try{
-                    if(registry == null){
-                        registry = LocateRegistry.createRegistry(1099);
-                    }
-
-                    //Binding the server to the RMI registry so that the client can look up
-                    registry.rebind("CodexNaturalis_Server", server);
-
-                    System.out.println("RMI started and registered");
-                }catch (RemoteException e){
-                    System.err.println("Cannot start RMI.\n");
+        new Thread(() -> {
+            try{
+                if(registry == null){
+                    registry = LocateRegistry.createRegistry(1099);
                 }
+
+                //Binding the server to the RMI registry so that the client can look up
+                registry.rebind("CodexNaturalis_Server", server);
+
+                System.out.println("RMI started and registered");
+            }catch (RemoteException e){
+                System.err.println("Cannot start RMI.\n");
             }
-        }.start();
+        }).start();
     }
 
     /**
@@ -123,21 +116,19 @@ public class ServerApp {
                 try{
                     socket = serverSocket.accept();
 
-                    new Thread(){
-                        @Override
-                        public void run(){
-                            ClientSkeleton clientSkeleton = null;
-                            try{
-                                clientSkeleton = new ClientSkeleton(socket, logger);
-                                System.out.println(" (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
+                    new Thread(() -> {
+                        ClientSkeleton clientSkeleton = null;
+                        try{
+                            clientSkeleton = new ClientSkeleton(socket, logger);
+                            System.out.println(" (" + socket.getRemoteSocketAddress() + ") is connected with socket.");
 
-                                while (running)    clientSkeleton.receive(server);
+                            while (running)    clientSkeleton.receive(server);
 
-                            }catch(RemoteException e){
-                                server.disconnectPlayer(clientSkeleton.getNickname());
-                            }
+                        }catch(RemoteException e){
+                            assert clientSkeleton != null;
+                            server.disconnectPlayer(clientSkeleton.getNickname());
                         }
-                    }.start();
+                    }).start();
                 } catch (IOException e) {
                     System.err.println("Socket failed: " + e.getMessage() );
                 }
