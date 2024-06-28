@@ -114,6 +114,10 @@ public class GameTest {
 //        when(game.getTablecenter().getGoldDeck().draw()).thenReturn(new GoldCard());
 //        when(game.getTablecenter().getObjDeck().draw()).thenReturn(new ObjectiveCard1());
 
+        testGame.players.get(0).setToken(TokenColor.YELLOW);
+        testGame.players.get(1).setToken(TokenColor.RED);
+        testGame.players.get(2).setToken(TokenColor.GREEN);
+        testGame.players.get(3).setToken(TokenColor.BLUE);
         testGame.startGame();
 
         //verifico che gli eventi siano inviati ai listener
@@ -331,6 +335,10 @@ public class GameTest {
         Player player3 = mock(Player.class);
         Player player4 = mock(Player.class);
 
+        testGame.players.get(0).setToken(TokenColor.YELLOW);
+        testGame.players.get(1).setToken(TokenColor.RED);
+        testGame.players.get(2).setToken(TokenColor.GREEN);
+        testGame.players.get(3).setToken(TokenColor.BLUE);
         testGame.startGame();
 
 

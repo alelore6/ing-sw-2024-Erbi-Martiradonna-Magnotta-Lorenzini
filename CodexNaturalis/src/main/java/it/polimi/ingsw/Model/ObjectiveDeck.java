@@ -96,4 +96,8 @@ public class ObjectiveDeck {
             return temp;
         }
     }
+
+    public int getNCards(){
+        return NCards;
+    }
 }

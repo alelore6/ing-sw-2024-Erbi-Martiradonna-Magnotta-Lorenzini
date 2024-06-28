@@ -213,17 +213,22 @@ public class Game{
                     getMVListenerByNickname(p.getNickname()).addEvent(setTokenColor);
 
                     //every player gets to choose between 2 objective cards
-                    ChooseObjectiveRequest chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
+                    ChooseObjectiveRequest chooseObjective = null;
+                    if (tablecenter.getObjDeck().getNCards() != 0) {
+                        chooseObjective = new ChooseObjectiveRequest(tablecenter.getObjDeck().draw(), tablecenter.getObjDeck().draw(), p.getNickname());
+                    }
                     getMVListenerByNickname(p.getNickname()).addEvent(chooseObjective);
 
                     //every place gets to place his starting card
                     StartingCard startingCard = null;
-                    try {
-                        startingCard = StartingDeck.draw();
-                        getMVListenerByNickname(p.getNickname()).addEvent(new PlaceStartingCard(startingCard, p.getNickname()));
-                    } catch (isEmptyException e) {
-                        //shouldn't happen
-                        throw new RuntimeException(e);
+                    if (StartingDeck.getNCards() != 0) {
+                        try {
+                            startingCard = StartingDeck.draw();
+                            getMVListenerByNickname(p.getNickname()).addEvent(new PlaceStartingCard(startingCard, p.getNickname()));
+                        } catch (isEmptyException e) {
+                            //shouldn't happen
+                            throw new RuntimeException(e);
+                        }
                     }
 
                     try {
