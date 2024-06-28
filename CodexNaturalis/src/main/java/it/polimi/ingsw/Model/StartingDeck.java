@@ -13,10 +13,6 @@ import static it.polimi.ingsw.Model.CardColor.WHITE;
  */
 public class StartingDeck extends Deck{
     /**
-     *  NCards is the number of cards in the starting deck, the number is equal to six.
-     */
-    private int NCards = 6;
-    /**
      * cards is an array of all starting cards.
      */
     private StartingCard[] cards;
@@ -26,7 +22,7 @@ public class StartingDeck extends Deck{
      * All cards are initialized with the apposite color WHITE and shuffled.
      */
     public StartingDeck() {
-
+        NCards = 6;
         try {
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream("assets/data/starting_cards.json");
             if (inputStream == null) {
