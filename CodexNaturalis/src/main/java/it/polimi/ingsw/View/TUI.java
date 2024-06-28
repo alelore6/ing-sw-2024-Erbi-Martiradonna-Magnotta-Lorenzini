@@ -472,7 +472,7 @@ public class TUI extends UI {
      * @return true if the string is a chat command.
      */
     private boolean listenToChat(String string){
-        if(string == null)  return false;
+        if(string == null || firstPlayer.isEmpty())  return false;
 
         ArrayList<String> words = new ArrayList<String>(Arrays.asList(string.split(" ")));
 
