@@ -172,6 +172,8 @@ public class GameTest {
 
         testGame.endGame(7);
 
+        assertTrue(testGame.isTriggered);
+
     }
 
     @Test
@@ -301,11 +303,6 @@ public class GameTest {
 
         testGame.getTablecenter().getObjCards()[0] = objectiveCard1;
         testGame.getTablecenter().getObjCards()[1] = objectiveCard2;
-
-
-
-
-
 
         testGame.players = new ArrayList<>();
         testGame.players.add(player1);
@@ -563,10 +560,12 @@ public class GameTest {
         testGame.disconnectPlayer(player1);
 
         testGame.turnPhase = 1;
+
+        testGame.isStarted = true;
         testGame.disconnectPlayer(player1);
 
         // Verifica che il giocatore sia stato segnato come disconnesso
-
+        assertTrue(player1.isDisconnected);
 
     }
 
@@ -654,9 +653,9 @@ public class GameTest {
         when(player3.getCurrentResources()).thenReturn(mockResources);
         when(player4.getCurrentResources()).thenReturn(mockResources);
 
+        testGame.isStarted = true;
+
         testGame.rejoin(listener1);
+        assertFalse(player1.isDisconnected);
     }
-
-
-
 }
