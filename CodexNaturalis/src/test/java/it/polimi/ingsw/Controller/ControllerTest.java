@@ -14,6 +14,8 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ControllerTest {
     private String nicknames[];
@@ -35,21 +37,21 @@ public class ControllerTest {
     public void setUp() throws Exception {
 
         mvListeners = new ArrayList<>();
-        model = Mockito.mock(Model.class);
-        lobby = Mockito.mock(Lobby.class);
-        mvListener1 = Mockito.mock(ModelViewListener.class);
-        mvListener2 = Mockito.mock(ModelViewListener.class);
-        mvListener3 = Mockito.mock(ModelViewListener.class);
-        mvListener4 = Mockito.mock(ModelViewListener.class);
-        server = Mockito.mock(ServerImpl.class);
-        logger = Mockito.mock(Logger.class);
-        game = Mockito.mock(Game.class);
+        model = mock(Model.class);
+        lobby = mock(Lobby.class);
+        mvListener1 = mock(ModelViewListener.class);
+        mvListener2 = mock(ModelViewListener.class);
+        mvListener3 = mock(ModelViewListener.class);
+        mvListener4 = mock(ModelViewListener.class);
+        server = mock(ServerImpl.class);
+        logger = mock(Logger.class);
+        game = mock(Game.class);
 
         controller = new Controller(server);
-        NumPlayersResponse numPlayersResponse1 = Mockito.mock(NumPlayersResponse.class);
-        NumPlayersResponse numPlayersResponse2 = Mockito.mock(NumPlayersResponse.class);
-        NumPlayersResponse numPlayersResponse3 = Mockito.mock(NumPlayersResponse.class);
-        NumPlayersResponse numPlayersResponse4 = Mockito.mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse1 = mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse2 = mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse3 = mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse4 = mock(NumPlayersResponse.class);
 
         mvListener1.nickname = "Alidoro";
         mvListener2.nickname = "Pulcinella";
@@ -108,6 +110,25 @@ public class ControllerTest {
 
         assertEquals(4, controller.getLobby().getPlayers().size());
     }
+
+    @Test
+    public void testAddPlayerToLobbyWhenLobbyIsFull() throws RemoteException {
+        controller.createLobby(2);
+        controller.addPlayerToLobby("Player1", mvListener1, null);
+        controller.addPlayerToLobby("Player2", mvListener2, null);
+
+        // Prova ad aggiungere un terzo giocatore quando la lobby è piena
+        controller.addPlayerToLobby("Player3", mvListener3, null);
+        assertEquals(2, controller.getLobby().getPlayers().size());
+    }
+
+    @Test
+    public void testAddPlayerToLobbyWhenIsNull() throws RemoteException {
+        controller.addPlayerToLobby("Player1", mvListener1, null);
+        assertNull(controller.getLobby());
+    }
+
+
 }
 
 
