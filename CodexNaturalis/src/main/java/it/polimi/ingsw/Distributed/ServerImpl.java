@@ -45,7 +45,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server{
     /**
      * The logger.
      */
-    public final Logger logger;
+    public Logger logger;
 
     /**
      * This lock allows serializing the incoming events from possible multiple clients, e.g.:
