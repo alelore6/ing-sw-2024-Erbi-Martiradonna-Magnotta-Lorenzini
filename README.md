@@ -24,9 +24,9 @@ Alessandro Lorenzini [@Alessandro-Lorenzini](https://github.com/Alessandro-Loren
 | Persistence | ![#c5f015](https://placehold.it/15/f03c15/f03c15) |
 
 ## Setup
-It is recommended to read first the [rulebook](CodexNaturalis/src/main/resources/assets/images/rulebook/CODEX_Rulebook_EN.pdf).
+It is recommended to read first the [rulebook](CodexNaturalis/src/main/resources/assets/images/rulebook/CODEX_Rulebook_EN.pdf) and to install [JDK](https://www.oracle.com/it/java/technologies/downloads/#java21).
 
-In [JARs](CodexNaturalis/deliverables/JARs) folder, there are two executable jars: one for the server and the other for clients. To start them, enter the following:
+In [JARs](CodexNaturalis/deliverables/final/JARs) folder, there are two executable jars: one for the server and the other for clients. To start them, enter the following:
 ```shell
 > java -jar Server.jar
 ```
@@ -43,24 +43,30 @@ If you insert the third one, the client will try to connect on localhost.
 
 ## TUI commands
 While playing with TUI, i.e., with command line, there are a few commands that are useful for playing:
-```shell
+```
 > CARD [ID]
 ```
 to print a card with the specified ID (they will appear while playing). Notice that it is permit if and only if you have the card on your played ones or it's a public or private objective card.
+
 Another one is
-```shell
+```
 > CHAT [P nickname] [message]
 ```
 and it sends to all the message using the chat functionality. If P and an existing nickname is inserted, it sends a private message only to that specified player.
 
 The last one is
-```shell
+```
 > EXIT
 ```
 to close the game.
 
 ## Disconnections
 You can rejoin a game if you have closed the app with the same nickname and password inserted at the start. Notice that you can even change the play mode, e.g, you can switch from TUI to GUI or the connection type.
+
+## Documentation
+To read the JavaDoc documentation, click [here](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/tree/main/CodexNaturalis/deliverables/JavaDoc/index.html).
+
+To see the test coverage, click [here](https://github.com/Alessandro-Lorenzini/ing-sw-2024-Erbi-Martiradonna-Magnotta-Lorenzini/tree/main/CodexNaturalis/deliverables/Coverage/index.html).
 
 ## Softwares
 
