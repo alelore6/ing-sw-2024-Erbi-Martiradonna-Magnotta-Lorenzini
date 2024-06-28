@@ -513,9 +513,9 @@ public class Game{
             for (Resource resource : ((ObjectiveCard2) objectiveCard).getReqMap().keySet()) {
                 //controllo le risorse necessarie per i punti
                 int required = ((ObjectiveCard2) objectiveCard).getReqMap().get(resource);
-                //in pratica controllo per ogni risorsa nelle currentersources quante volte ne ha per i requisiti della carta
-                //e prendendo il minimo di ogni risorsa sono sicuro di prendere il massimo numero  di punti che il giocatore
-                //avrà totalizzato
+                //basically I check for each resource in the currentresources how many times it has for the card requirements
+                //and by taking the minimum of each resource I am sure to take the maximum number of points that the player
+                //will have scored
 
                 if (required != 0 && players.get(playerPos).getCurrentResources().currentResources!=null) {
                     if ((players.get(playerPos).getCurrentResources().currentResources.get(resource) / required) < minPoints) {

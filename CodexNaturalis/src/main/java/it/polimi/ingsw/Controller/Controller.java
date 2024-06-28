@@ -89,7 +89,7 @@ public class Controller {
         }.start();
     }
 
-    private void createLobby(int numPlayers) throws RemoteException {
+    public void createLobby(int numPlayers) throws RemoteException {
         synchronized(this){
         this.lobby  = new Lobby();
         lobby.setNumPlayers(numPlayers);}
@@ -484,4 +484,10 @@ public class Controller {
         server.getClients().remove(client.getNickname());
         MVListeners.remove(listener);
     }
+
+    public Lobby getLobby(){
+        return lobby;
+    }
+
+
 }

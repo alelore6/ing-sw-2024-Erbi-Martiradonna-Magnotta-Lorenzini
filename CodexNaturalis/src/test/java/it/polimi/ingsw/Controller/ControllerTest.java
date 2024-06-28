@@ -46,7 +46,10 @@ public class ControllerTest {
         game = Mockito.mock(Game.class);
 
         controller = new Controller(server);
-        NumPlayersResponse numPlayersResponse = Mockito.mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse1 = Mockito.mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse2 = Mockito.mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse3 = Mockito.mock(NumPlayersResponse.class);
+        NumPlayersResponse numPlayersResponse4 = Mockito.mock(NumPlayersResponse.class);
 
         mvListener1.nickname = "Alidoro";
         mvListener2.nickname = "Pulcinella";
@@ -66,39 +69,44 @@ public class ControllerTest {
 
 
         nicknames = new String[]{"Alidoro", "Pulcinella", "Arlecchino", "Pinocchio"};
-        controller.updateModel(numPlayersResponse, "Alidoro");
+//        controller.updateModel(numPlayersResponse1, "Alidoro");
+//        controller.updateModel(numPlayersResponse2, "Pulcinella");
+//        controller.updateModel(numPlayersResponse3, "Arlecchino");
+//        controller.updateModel(numPlayersResponse4, "Pinocchio");
+
     }
 
     @Test
     public void createGame() throws RemoteException {
 
         assertNotNull(lobby.getNumPlayers());
+
+        controller.createLobby(4);
+
         controller.addPlayerToLobby("Alidoro", mvListener1, null);
         controller.addPlayerToLobby("Pulcinella", mvListener2, null);
         controller.addPlayerToLobby("Arlecchino", mvListener3, null);
         controller.addPlayerToLobby("Pinocchio", mvListener4, null);
 
 
+
         controller.createGame();
+
         game = controller.getGame();
 
         assertEquals(4, game.getPlayers().size());
-
-        try {
-            controller.createGame();
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
 
     }
 
     @Test
     public void addPlayerToLobby() throws RemoteException {
-        controller.addPlayerToLobby("Alidoro", this.mvListener1, null);
+        controller.createLobby(4);
+        controller.addPlayerToLobby("Alidoro", mvListener1, null);
         controller.addPlayerToLobby("Pulcinella", mvListener2, null);
         controller.addPlayerToLobby("Arlecchino", mvListener3, null);
         controller.addPlayerToLobby("Pinocchio", mvListener4, null);
 
+        assertEquals(4, controller.getLobby().getPlayers().size());
     }
 }
 
