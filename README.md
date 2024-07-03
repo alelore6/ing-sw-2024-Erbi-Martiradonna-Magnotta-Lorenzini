@@ -6,7 +6,7 @@
 Filippo Erbì [@mrmarfi](https://github.com/mrmarfi)<br>
 Gianluca Martiradonna [@gianluspng](https://github.com/gianluspng)<br>
 Michele Magnotta [@MicheleMagnotta](https://github.com/MicheleMagnotta)<br>
-Alessandro Lorenzini [@Alessandro-Lorenzini](https://github.com/Alessandro-Lorenzini)<br>
+Alessandro Lorenzini [@alelore6](https://github.com/alelore6)<br>
 
 ## Functionalities
 
